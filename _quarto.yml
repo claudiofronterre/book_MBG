@@ -24,7 +24,9 @@ format:
   html:
     theme: cosmo
   pdf:
-    documentclass: scrreprt
+    documentclass: krantz
+    keep-tex: true
+    include-in-header: preamble.tex
 
 editor: visual
 
