@@ -1,9 +1,3 @@
 # Preface {.unnumbered}
 
-This is a Quarto book.
-
-To learn more about Quarto books visit <https://quarto.org/docs/books>.
-
-```{r}
-1 + 1
-```
+Its companion book ``Model-based geostatistical for global public health'' by @diggleBook2019 is a strongly recommended complementary read, as you work your way through this book.

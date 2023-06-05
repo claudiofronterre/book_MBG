@@ -1,16 +1,59 @@
 # Introduction
+The book provides shows how to carry out model-based geostatistical analysis of public health data using the `RiskMap` R package. In this introductory chapter, we explain what are the pre-requisites for using this book and its learning objectives. We also explain what software should be installed and how. Finally, we give a brief overview of the class of models covered in this book, and the examples that will be used to illustrate the methods and use of software.
 
-This is a book created from markdown and executable code.
 
-See @knuth84 for additional discussion of literate programming.
+## Objectives of this book
+The overall aim of this book is to provide you with the skills to perform a geostatistical analysis of a data-set using the R software environment. 
+As you work your way through the book, you will learn to:
 
-```{r}
-1 + 1
+ * explore geo-statistical data-sets using graphical procedures and summary statitics;
+ * formulate and fit geostatistical models using the maximum likelihood estimation method;
+ * carry out prediction of health outcomes at different spatial scales;
+ * visualize and interpret the results from geostatical models;
+ * model the relationships between spatially referenced risk factors and the health outcome of interest;
+ * validate geostatistical models.
+
+Although the focus of this book is on public health, the statistical ideas, as well as the software used, can also be applied for the analysis of geostatistical data-sets arising from other scientific fields.
+
+## Pre-requisites for using this book
+
+To effectively understand and use the material presented in this book, it is expected that you should possess prior knowledge of basic probability theory,  foundational topics in statistical modelling and R programming. Below we provide a more detailed explanation of the pre-requisites for each of these three fields.
+
+### Topics in probability
+Basics probability theory is important to fully understand the content of this book. In particular, you should have knowledge of: the general definition and properties of continuous and discrete distribution; how the describe the properties of probability distributions through their mean, variance and skeweness; the concepts of stochastic dependence and correaltion; the distinction between marginal and conditional distributions; the basic properties of the Gaussian, Binomial and Poisson distributions; the definition and properties of the multivariate Gaussian distribution. The redear can find an extensive explanation and illustrations with examples of all these topics in @ross2013.
+
+### Topics in statistics
+Likelihood-based inference (whether frequensist or Bayesian) provides the theoretical bedrock for the estimation of almost any statistical model.  In this book will focus on maximum likelihood estimation methods of inference. Extensive use of the notions of point and interval estimates obtained using the maximum likelihood estimation methods will be made through the book. Recommended readings include chapters 1, 2 and 4 of @pawitan2001.
+
+Good knowledge of Generalized linear models (GLMs) is essential, as the geostatistical modelling framework builds on these as an extension. Before embarking on the use of this book, we thus encourage you to review the basic theory of GLMs and, in particular, how these are applied and interpreted. In this book, we will cover examples that will model continuously measured outcomes and counts. Hence, good understanding of linear regression modelling and modelling of counts data using Binomial and Poisson regression should be the main focus of the review. For comprehensive overview of GLMs and their implementation in R, we refer you to @dobson2008.
+
+
+### Topics in R programming
+Although this book does not require to possess advanced skills in R programming, it is important you have good knowledge in the following topics: creation and manipulation of vectors and matrices; logical vectors; character vectors; handling of lists and data frame objects; reading data into R; graphical procedures. A very large amount of freely available material covering these topics can be found online. Our recommendation is to start from the manual "An introduction to R" of the Comprehensive R Archive Network available at this link, available at [R manual](https://cran.r-project.org/manuals.html).
+
+## Obtaining and running the R packages
+It is advised that you obtain the latest 64-bit version of R in order to run the R code of this book. To install R, go to the R website, where you can download the installer packages for Windows and Mac, and find instructions for Linux, using binary files.
+
+* [Windows](https://cran.r-project.org/bin/windows/base/)
+* [Mac](https://cran.r-project.org/bin/macosx)
+* [Linux](https://cran.r-project.org/bin/linux)
+
+The list of R packages used in this book is provided in the table below. 
+
+::: l-body-outset
+| R package        | Used for                                    |
+|------------------|------------------------------------------------|
+| `RiskMap`        | Estimation of geostatistical models and spatial prediction                |
+| `sf`             | Handling of spatial data in R  |
+| `raster`         | Handling of raster files in R |
+| `ggplot2`        | Creating maps  |
+:::
+
+To install packages in R for the first time, you can use the command `install.packages` in the R console, as shown below for the `RiskMap` package.
+
+```{r eval=FALSE}
+install.packages("RiskMap")
 ```
-
-## Why this book
-
-## R packages used in this book
 
 ## Examples
 
