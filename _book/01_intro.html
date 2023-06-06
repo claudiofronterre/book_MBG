@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.2.269">
+<meta name="generator" content="quarto-1.2.475">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -224,10 +224,23 @@ div.csl-indent {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#why-this-book" id="toc-why-this-book" class="nav-link active" data-scroll-target="#why-this-book"><span class="toc-section-number">1.1</span>  Why this book</a></li>
-  <li><a href="#r-packages-used-in-this-book" id="toc-r-packages-used-in-this-book" class="nav-link" data-scroll-target="#r-packages-used-in-this-book"><span class="toc-section-number">1.2</span>  R packages used in this book</a></li>
-  <li><a href="#examples" id="toc-examples" class="nav-link" data-scroll-target="#examples"><span class="toc-section-number">1.3</span>  Examples</a></li>
-  <li><a href="#workflow-of-a-statistical-analysis" id="toc-workflow-of-a-statistical-analysis" class="nav-link" data-scroll-target="#workflow-of-a-statistical-analysis"><span class="toc-section-number">1.4</span>  Workflow of a statistical analysis</a></li>
+  <li><a href="#objectives-of-this-book" id="toc-objectives-of-this-book" class="nav-link active" data-scroll-target="#objectives-of-this-book"><span class="toc-section-number">1.1</span>  Objectives of this book</a></li>
+  <li><a href="#pre-requisites-for-using-this-book" id="toc-pre-requisites-for-using-this-book" class="nav-link" data-scroll-target="#pre-requisites-for-using-this-book"><span class="toc-section-number">1.2</span>  Pre-requisites for using this book</a>
+  <ul class="collapse">
+  <li><a href="#topics-in-probability" id="toc-topics-in-probability" class="nav-link" data-scroll-target="#topics-in-probability"><span class="toc-section-number">1.2.1</span>  Topics in probability</a></li>
+  <li><a href="#topics-in-statistics" id="toc-topics-in-statistics" class="nav-link" data-scroll-target="#topics-in-statistics"><span class="toc-section-number">1.2.2</span>  Topics in statistics</a></li>
+  <li><a href="#topics-in-r-programming" id="toc-topics-in-r-programming" class="nav-link" data-scroll-target="#topics-in-r-programming"><span class="toc-section-number">1.2.3</span>  Topics in R programming</a></li>
+  </ul></li>
+  <li><a href="#obtaining-and-running-the-r-packages" id="toc-obtaining-and-running-the-r-packages" class="nav-link" data-scroll-target="#obtaining-and-running-the-r-packages"><span class="toc-section-number">1.3</span>  Obtaining and running the R packages</a></li>
+  <li><a href="#example-data-sets-used-in-the-book" id="toc-example-data-sets-used-in-the-book" class="nav-link" data-scroll-target="#example-data-sets-used-in-the-book"><span class="toc-section-number">1.4</span>  Example data-sets used in the book</a>
+  <ul class="collapse">
+  <li><a href="#lead-concentration-in-galicia" id="toc-lead-concentration-in-galicia" class="nav-link" data-scroll-target="#lead-concentration-in-galicia"><span class="toc-section-number">1.4.1</span>  Lead concentration in Galicia</a></li>
+  <li><a href="#river-blindness-in-liberia" id="toc-river-blindness-in-liberia" class="nav-link" data-scroll-target="#river-blindness-in-liberia"><span class="toc-section-number">1.4.2</span>  River-blindness in Liberia</a></li>
+  <li><a href="#anopheles-gambiae-mosquitoes-in-southern-cameroon" id="toc-anopheles-gambiae-mosquitoes-in-southern-cameroon" class="nav-link" data-scroll-target="#anopheles-gambiae-mosquitoes-in-southern-cameroon"><span class="toc-section-number">1.4.3</span>  <em>Anopheles gambiae</em> mosquitoes in Southern Cameroon</a></li>
+  </ul></li>
+  <li><a href="#geostatistical-problems-and-geostatistical-models" id="toc-geostatistical-problems-and-geostatistical-models" class="nav-link" data-scroll-target="#geostatistical-problems-and-geostatistical-models"><span class="toc-section-number">1.5</span>  Geostatistical problems and geostatistical models</a></li>
+  <li><a href="#workflow-of-a-statistical-analysis" id="toc-workflow-of-a-statistical-analysis" class="nav-link" data-scroll-target="#workflow-of-a-statistical-analysis"><span class="toc-section-number">1.6</span>  Workflow of a statistical analysis</a></li>
+  <li><a href="#structure-of-the-book" id="toc-structure-of-the-book" class="nav-link" data-scroll-target="#structure-of-the-book"><span class="toc-section-number">1.7</span>  Structure of the book</a></li>
   </ul>
 </nav>
     </div>
@@ -251,30 +264,169 @@ div.csl-indent {
 
 </header>
 
-<p>This is a book created from markdown and executable code.</p>
-<p>See <span class="citation" data-cites="knuth84">Knuth (<a href="references.html#ref-knuth84" role="doc-biblioref">1984</a>)</span> for additional discussion of literate programming.</p>
+<p>The book provides shows how to carry out model-based geostatistical analysis of public health data using the <code>RiskMap</code> R package. In this introductory chapter, we explain what are the pre-requisites for using this book and its learning objectives. We also explain what software should be installed and how. Finally, we give a brief overview of the class of models covered in this book, and the examples that will be used to illustrate the methods and use of software.</p>
+<section id="objectives-of-this-book" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="objectives-of-this-book"><span class="header-section-number">1.1</span> Objectives of this book</h2>
+<p>The overall aim of this book is to provide you with the skills to perform a geostatistical analysis of a data-set using the R software environment. As you work your way through the book, you will learn to:</p>
+<ul>
+<li>explore geostatistical data-sets using graphical procedures and summary statistics;</li>
+<li>formulate and fit geostatistical models using the maximum likelihood estimation method;</li>
+<li>carry out prediction of health outcomes at different spatial scales;</li>
+<li>visualize and interpret the results from geostatistical models;</li>
+<li>model the relationships between spatially referenced risk factors and the health outcome of interest;</li>
+<li>validate the assumptions of geostatistical models and assess their predictive performance.</li>
+</ul>
+<p>Although the focus of this book is on public health, the statistical ideas, as well as the software used, can also be applied for the analysis of geostatistical data-sets arising from other scientific fields.</p>
+</section>
+<section id="pre-requisites-for-using-this-book" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="pre-requisites-for-using-this-book"><span class="header-section-number">1.2</span> Pre-requisites for using this book</h2>
+<p>To effectively understand and use the material presented in this book, it is expected that you should possess prior knowledge of basic probability theory, foundational topics in statistical modelling and R programming. Below we provide a more detailed explanation of the pre-requisites for each of these three fields.</p>
+<section id="topics-in-probability" class="level3" data-number="1.2.1">
+<h3 data-number="1.2.1" class="anchored" data-anchor-id="topics-in-probability"><span class="header-section-number">1.2.1</span> Topics in probability</h3>
+<p>Basics probability theory is important to fully understand the content of this book. In particular, you should have knowledge of: the general definition and properties of continuous and discrete distribution; how the describe the properties of probability distributions through their mean, variance and skeweness; the concepts of stochastic dependence and correaltion; the distinction between marginal and conditional distributions; the basic properties of the Gaussian, Binomial and Poisson distributions; the definition and properties of the multivariate Gaussian distribution. The redear can find an extensive explanation and illustrations with examples of all these topics in <span class="citation" data-cites="ross2013">Ross (<a href="references.html#ref-ross2013" role="doc-biblioref">2013</a>)</span>.</p>
+</section>
+<section id="topics-in-statistics" class="level3" data-number="1.2.2">
+<h3 data-number="1.2.2" class="anchored" data-anchor-id="topics-in-statistics"><span class="header-section-number">1.2.2</span> Topics in statistics</h3>
+<p>Likelihood-based inference (whether frequensist or Bayesian) provides the theoretical bedrock for the estimation of almost any statistical model. In this book will focus on maximum likelihood estimation methods of inference. Extensive use of the notions of point and interval estimates obtained using the maximum likelihood estimation methods will be made through the book. Recommended readings include chapters 1, 2 and 4 of <span class="citation" data-cites="pawitan2001">Pawitan (<a href="references.html#ref-pawitan2001" role="doc-biblioref">2001</a>)</span>.</p>
+<p>Good knowledge of Generalized linear models (GLMs) is essential, as the geostatistical modelling framework builds on these as an extension. Before embarking on the use of this book, we thus encourage you to review the basic theory of GLMs and, in particular, how these are applied and interpreted. In this book, we will cover examples that will model continuously measured outcomes and counts. Hence, good understanding of linear regression modelling and modelling of counts data using Binomial and Poisson regression should be the main focus of the review. For comprehensive overview of GLMs and their implementation in R, we refer you to <span class="citation" data-cites="dobson2008">Dobson and Barnett (<a href="references.html#ref-dobson2008" role="doc-biblioref">2008</a>)</span>.</p>
+</section>
+<section id="topics-in-r-programming" class="level3" data-number="1.2.3">
+<h3 data-number="1.2.3" class="anchored" data-anchor-id="topics-in-r-programming"><span class="header-section-number">1.2.3</span> Topics in R programming</h3>
+<p>Although this book does not require to possess advanced skills in R programming, it is important you have good knowledge in the following topics: creation and manipulation of vectors and matrices; logical vectors; character vectors; handling of lists and data frame objects; reading data into R; graphical procedures. A very large amount of freely available material covering these topics can be found online. Our recommendation is to start from the manual “An introduction to R” of the Comprehensive R Archive Network available at this link, available at <a href="https://cran.r-project.org/manuals.html">R manual</a>.</p>
+</section>
+</section>
+<section id="obtaining-and-running-the-r-packages" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="obtaining-and-running-the-r-packages"><span class="header-section-number">1.3</span> Obtaining and running the R packages</h2>
+<p>It is advised that you obtain the latest 64-bit version of R in order to run the R code of this book. To install R, go to the R website, where you can download the installer packages for Windows and Mac, and find instructions for Linux, using binary files.</p>
+<ul>
+<li><a href="https://cran.r-project.org/bin/windows/base/">Windows</a></li>
+<li><a href="https://cran.r-project.org/bin/macosx">Mac</a></li>
+<li><a href="https://cran.r-project.org/bin/linux">Linux</a></li>
+</ul>
+<p>The list of the R packages used in this book is provided in the Table 1.1.</p>
+<div class="l-body-outset">
+<p>Table 1.1: List of the R packages that will be used in the book with a description of their use in the data analysis.</p>
+<table class="table">
+<colgroup>
+<col style="width: 27%">
+<col style="width: 72%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>R package</th>
+<th>Used for</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>RiskMap</code></td>
+<td>Estimating of geostatistical models and spatial prediction</td>
+</tr>
+<tr class="even">
+<td><code>sf</code></td>
+<td>Handling of spatial data in R</td>
+</tr>
+<tr class="odd">
+<td><code>raster</code></td>
+<td>Handling of raster files in R</td>
+</tr>
+<tr class="even">
+<td><code>ggplot2</code></td>
+<td>Creating maps and exploratory plots</td>
+</tr>
+<tr class="odd">
+<td><code>crsuggest</code></td>
+<td>Guessing a coordinate reference systems when unknown</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>To install packages in R for the first time, you can use the command <code>install.packages</code> in the R console, as shown below for the <code>RiskMap</code> package.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span> <span class="sc">+</span> <span class="dv">1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 2</code></pre>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"RiskMap"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+</section>
+<section id="example-data-sets-used-in-the-book" class="level2" data-number="1.4">
+<h2 data-number="1.4" class="anchored" data-anchor-id="example-data-sets-used-in-the-book"><span class="header-section-number">1.4</span> Example data-sets used in the book</h2>
+<p>The geostatistical data-sets described in this section will be used throughout the book to illustrate the use of the R packages mentioned in the previous sections.</p>
+<p>Each of the three data-sets can be loaded from the <code>RiskMap</code> package, using the command</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(galicia)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<section id="why-this-book" class="level2" data-number="1.1">
-<h2 data-number="1.1" class="anchored" data-anchor-id="why-this-book"><span class="header-section-number">1.1</span> Why this book</h2>
+<p>for the lead concentration data from Galicia,</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(liberia)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>for the river-blindness data-set, and</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(anopheles)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>for the Anhopheles mosquitoes data-set.</p>
+<p>In the final chapter of this book, we will consider the analysis of additional data-sets to review the main statistical concepts presented in this book.</p>
+<section id="lead-concentration-in-galicia" class="level3" data-number="1.4.1">
+<h3 data-number="1.4.1" class="anchored" data-anchor-id="lead-concentration-in-galicia"><span class="header-section-number">1.4.1</span> Lead concentration in Galicia</h3>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figures/galicia_ch1.png" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">Figure 1.1: Data on the meausred lead concentration (in micrograms per gram dry weight) in moss samples collected in Galicia, North-West of Spain.</figcaption><p></p>
+</figure>
+</div>
+<p>Lead is a heavy metal which, in high concentrations, can cause chronic damage to living organisms over a long period of time. For this reason its spread and source must be regularly monitored. To assess the extent of the contamination in an area, measurements of lead are often taken from plants. The data here considered (Figure 1.1) consist of 132 locations of moss samples collected in 2000, in and around Galicia, a region in the North-Western part of Spain. One of the objectives of this survey was to establish the spatial pattern of lead concentration in Galicia so as to better identify possible sources of contamination; fore more information, see <span class="citation" data-cites="fernandez2000">Fernández, Rey, and Carballeira (<a href="references.html#ref-fernandez2000" role="doc-biblioref">2000</a>)</span>.</p>
+<p>In this case, geostatistical modelling can be used to predict the lead concentration across Galicia and allows to disentangle variation which is purely random, possibly due to measurement error, and genuine spatial variation, which is our main object of interest.</p>
+<p>This data-set will be used in this book to show how to carry out the spatial analysis of continuously measured variables using linear geostatistical models.</p>
 </section>
-<section id="r-packages-used-in-this-book" class="level2" data-number="1.2">
-<h2 data-number="1.2" class="anchored" data-anchor-id="r-packages-used-in-this-book"><span class="header-section-number">1.2</span> R packages used in this book</h2>
+<section id="river-blindness-in-liberia" class="level3" data-number="1.4.2">
+<h3 data-number="1.4.2" class="anchored" data-anchor-id="river-blindness-in-liberia"><span class="header-section-number">1.4.2</span> River-blindness in Liberia</h3>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figures/liberia_ch1.png" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">Figure 1.2: River-blindness data from a cross-sectional survey carried out in Liberia</figcaption><p></p>
+</figure>
+</div>
+<p>In low-resource settings, where disease registries are typically absent, cross-sectional surveys are an essential monitoring tool that enables the estimation of the disease burden in a population of interest. The data considered in this example have been collected as part of an Africa-wide initiative called the Rapid Epidemiological Mapping of Onchocerchiasis (REMO) carried out in 2011 in 20 African countries (<span class="citation" data-cites="zoure2014">Zouré et al. (<a href="references.html#ref-zoure2014" role="doc-biblioref">2014</a>)</span>). The goal of REMO is to identify areas where river-blindness (or onchocerchiasis), a disease transmitted by black flies who breed along fast flowing rivers, is still a public health problem. In this context, it is especially of interest to identify communities with a prevalence above 20% and for treatment is urgently needed.</p>
+<p>In this book, we will use data collected from Liberia to model nodule prevalence, which is based on a alternative and cheaper diagnostic technique for river-blindness. In the analysis of this data-set, we will illustrate how to formulate and fit Binomial geostatistical models, and how these can be used to predict prevalence within a region of interest.</p>
 </section>
-<section id="examples" class="level2" data-number="1.3">
-<h2 data-number="1.3" class="anchored" data-anchor-id="examples"><span class="header-section-number">1.3</span> Examples</h2>
+<section id="anopheles-gambiae-mosquitoes-in-southern-cameroon" class="level3" data-number="1.4.3">
+<h3 data-number="1.4.3" class="anchored" data-anchor-id="anopheles-gambiae-mosquitoes-in-southern-cameroon"><span class="header-section-number">1.4.3</span> <em>Anopheles gambiae</em> mosquitoes in Southern Cameroon</h3>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figures/anopheles_ch1.png" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">Figure 1.3: Map of the collected number of <em>Anopheles gambiae</em> mosquitoes in an area of Southern Cameroon.</figcaption><p></p>
+</figure>
+</div>
+<p>In studies of vector-borne and zoonotic diseases, understanding of the vector distribution can help to better guide the decision-making process for the implementation, monitoring and evaluation of control programmes. <em>Anopheles gambiae</em> mosquitoes are one of the main vectors for malaria transmission in sub-Saharan Africa. Their distribution over space is affected by several environmental and climatic factors, including temperature, humidity and vegetation.</p>
+<p>The data-set considered in this example is a sub-set taken from a large database (<span class="citation" data-cites="fossog2015">Tene Fossog et al. (<a href="references.html#ref-fossog2015" role="doc-biblioref">2015</a>)</span>) that was assembled to understand how the environment affects the distribution of different species of <em>Anopheles</em> mosquitoes in sub-Saharan Africa. We will use this data-set as an example in this book to illustrate application of Poisson geostatistical models for mapping mosquitoes abundance.</p>
 </section>
-<section id="workflow-of-a-statistical-analysis" class="level2" data-number="1.4">
-<h2 data-number="1.4" class="anchored" data-anchor-id="workflow-of-a-statistical-analysis"><span class="header-section-number">1.4</span> Workflow of a statistical analysis</h2>
+</section>
+<section id="geostatistical-problems-and-geostatistical-models" class="level2" data-number="1.5">
+<h2 data-number="1.5" class="anchored" data-anchor-id="geostatistical-problems-and-geostatistical-models"><span class="header-section-number">1.5</span> Geostatistical problems and geostatistical models</h2>
+<p>The main characteristic shared by the examples described in the previous section is that, in each of those, the goal of statistical analysis is to draw inferences on an unobserved spatially continuous surface using data collected from a finite set of locations.</p>
+</section>
+<section id="workflow-of-a-statistical-analysis" class="level2" data-number="1.6">
+<h2 data-number="1.6" class="anchored" data-anchor-id="workflow-of-a-statistical-analysis"><span class="header-section-number">1.6</span> Workflow of a statistical analysis</h2>
+</section>
+<section id="structure-of-the-book" class="level2" data-number="1.7">
+<h2 data-number="1.7" class="anchored" data-anchor-id="structure-of-the-book"><span class="header-section-number">1.7</span> Structure of the book</h2>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" role="doc-bibliography" style="display: none">
-<div id="ref-knuth84" class="csl-entry" role="doc-biblioentry">
-Knuth, Donald E. 1984. <span>“Literate Programming.”</span> <em>Comput. J.</em> 27 (2): 97–111. <a href="https://doi.org/10.1093/comjnl/27.2.97">https://doi.org/10.1093/comjnl/27.2.97</a>.
+<div id="ref-dobson2008" class="csl-entry" role="doc-biblioentry">
+Dobson, A. J., and A. Barnett. 2008. <em>An Introduction to Generalized Linear Models</em>. Third. Chapman; Hall/CRC.
+</div>
+<div id="ref-fernandez2000" class="csl-entry" role="doc-biblioentry">
+Fernández, J. A, A Rey, and A Carballeira. 2000. <span>“An Extended Study of Heavy Metal Deposition in Galicia (NW Spain) Based on Moss Analysis.”</span> <em>Science of The Total Environment</em> 254 (1): 31–44. <a href="https://doi.org/10.1016/S0048-9697(00)00431-9">https://doi.org/10.1016/S0048-9697(00)00431-9</a>.
+</div>
+<div id="ref-pawitan2001" class="csl-entry" role="doc-biblioentry">
+Pawitan, Yudi. 2001. <em>In All Likelihood : Statistical Modelling and Inference Using Likelihood</em>. Oxford ; New York: Clarendon Press : Oxford University Press.
+</div>
+<div id="ref-ross2013" class="csl-entry" role="doc-biblioentry">
+Ross, Sheldon. 2013. <em>First Course in Probability, a.</em> 9th ed. Harlow: Pearson Education UK.
+</div>
+<div id="ref-fossog2015" class="csl-entry" role="doc-biblioentry">
+Tene Fossog, Billy, Diego Ayala, Pelayo Acevedo, Pierre Kengne, Ignacio Ngomo Abeso Mebuy, Boris Makanga, Julie Magnus, et al. 2015. <span>“Habitat Segregation and Ecological Character Displacement in Cryptic African Malaria Mosquitoes.”</span> <em>Evolutionary Applications</em> 8 (4): 326–45. <a href="https://doi.org/10.1111/eva.12242">https://doi.org/10.1111/eva.12242</a>.
+</div>
+<div id="ref-zoure2014" class="csl-entry" role="doc-biblioentry">
+Zouré, Honorat GM, Mounkaila Noma, Afework H Tekle, Uche V Amazigo, Peter J Diggle, Emanuele Giorgi, and Jan HF Remme. 2014. <span>“Geographic Distribution of Onchocerciasis in the 20 Participating Countries of the African Programme for Onchocerciasis Control: (2) Pre-Control Endemicity Levels and Estimated Number Infected.”</span> <em>Parasites &amp; Vectors</em> 7 (1): 326–26.
 </div>
 </div>
 </section>

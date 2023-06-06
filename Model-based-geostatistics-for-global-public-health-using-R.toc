@@ -1,0 +1,40 @@
+\contentsline {fm}{Preface}{5}{chapter*.1}%
+\contentsline {chapter}{Preface}{5}{chapter*.1}%
+\contentsline {chapter}{\numberline {1}Introduction}{7}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Objectives of this book}{7}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Pre-requisites for using this book}{8}{section.1.2}%
+\contentsline {subsection}{\numberline {1.2.1}Topics in probability}{8}{subsection.1.2.1}%
+\contentsline {subsection}{\numberline {1.2.2}Topics in statistics}{8}{subsection.1.2.2}%
+\contentsline {subsection}{\numberline {1.2.3}Topics in R programming}{8}{subsection.1.2.3}%
+\contentsline {section}{\numberline {1.3}Obtaining and running the R packages}{9}{section.1.3}%
+\contentsline {section}{\numberline {1.4}Example data-sets used in the book}{10}{section.1.4}%
+\contentsline {subsection}{\numberline {1.4.1}Lead concentration in Galicia}{10}{subsection.1.4.1}%
+\contentsline {subsection}{\numberline {1.4.2}River-blindness in Liberia}{12}{subsection.1.4.2}%
+\contentsline {subsection}{\numberline {1.4.3}\emph {Anopheles gambiae} mosquitoes in Southern Cameroon}{13}{subsection.1.4.3}%
+\contentsline {section}{\numberline {1.5}Geostatistical problems and geostatistical models}{13}{section.1.5}%
+\contentsline {section}{\numberline {1.6}Workflow of a statistical analysis}{13}{section.1.6}%
+\contentsline {section}{\numberline {1.7}Structure of the book}{13}{section.1.7}%
+\contentsline {chapter}{\numberline {2}Exploratory analysis}{15}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Importing and processing spatial data in R}{15}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Visualizing geostatistical data}{15}{section.2.2}%
+\contentsline {section}{\numberline {2.3}Exploring associations}{15}{section.2.3}%
+\contentsline {section}{\numberline {2.4}Analysis of the residuals}{15}{section.2.4}%
+\contentsline {subsection}{\numberline {2.4.1}Diagnostics for overdispersion}{15}{subsection.2.4.1}%
+\contentsline {subsection}{\numberline {2.4.2}Diagnostics for residual spatial variation}{15}{subsection.2.4.2}%
+\contentsline {chapter}{\numberline {3}Model fitting}{17}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Linear Gaussian model}{17}{section.3.1}%
+\contentsline {section}{\numberline {3.2}Generalized linear geostatistical models}{17}{section.3.2}%
+\contentsline {chapter}{\numberline {4}Model validation}{19}{chapter.4}%
+\contentsline {section}{\numberline {4.1}How to simulate geostatistical data from a fitted model}{19}{section.4.1}%
+\contentsline {section}{\numberline {4.2}Validating the calibration of the model}{19}{section.4.2}%
+\contentsline {section}{\numberline {4.3}Validating the spatial correlation of the model}{19}{section.4.3}%
+\contentsline {chapter}{\numberline {5}Geostatistical prediction}{21}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Pixel-level predictive targets}{21}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Area-level predictive targets}{21}{section.5.2}%
+\contentsline {section}{\numberline {5.3}Comparing the predictive performance of geostatistical models}{21}{section.5.3}%
+\contentsline {chapter}{\numberline {6}Case studies}{23}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Mapping stunting risk in Ghan}{23}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Mapping river blindness in Malawi}{23}{section.6.2}%
+\contentsline {section}{\numberline {6.3}Mapping mosquitoes abundance in Cameroon}{23}{section.6.3}%
+\contentsline {fm}{References}{25}{chapter*.5}%
+\contentsline {chapter}{References}{25}{chapter*.5}%

@@ -1,38 +1,52 @@
 [
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Model-based geostatistics for global public health using R",
-    "section": "",
-    "text": "Preface\nThis is a Quarto book.\nTo learn more about Quarto books visit https://quarto.org/docs/books.\n\n1 + 1\n\n[1] 2"
+    "objectID": "01_intro.html#objectives-of-this-book",
+    "href": "01_intro.html#objectives-of-this-book",
+    "title": "1  Introduction",
+    "section": "1.1 Objectives of this book",
+    "text": "1.1 Objectives of this book\nThe overall aim of this book is to provide you with the skills to perform a geostatistical analysis of a data-set using the R software environment. As you work your way through the book, you will learn to:\n\nexplore geostatistical data-sets using graphical procedures and summary statistics;\nformulate and fit geostatistical models using the maximum likelihood estimation method;\ncarry out prediction of health outcomes at different spatial scales;\nvisualize and interpret the results from geostatistical models;\nmodel the relationships between spatially referenced risk factors and the health outcome of interest;\nvalidate the assumptions of geostatistical models and assess their predictive performance.\n\nAlthough the focus of this book is on public health, the statistical ideas, as well as the software used, can also be applied for the analysis of geostatistical data-sets arising from other scientific fields."
   },
   {
-    "objectID": "01_intro.html#why-this-book",
-    "href": "01_intro.html#why-this-book",
+    "objectID": "01_intro.html#pre-requisites-for-using-this-book",
+    "href": "01_intro.html#pre-requisites-for-using-this-book",
     "title": "1  Introduction",
-    "section": "1.1 Why this book",
-    "text": "1.1 Why this book"
+    "section": "1.2 Pre-requisites for using this book",
+    "text": "1.2 Pre-requisites for using this book\nTo effectively understand and use the material presented in this book, it is expected that you should possess prior knowledge of basic probability theory, foundational topics in statistical modelling and R programming. Below we provide a more detailed explanation of the pre-requisites for each of these three fields.\n\n1.2.1 Topics in probability\nBasics probability theory is important to fully understand the content of this book. In particular, you should have knowledge of: the general definition and properties of continuous and discrete distribution; how the describe the properties of probability distributions through their mean, variance and skeweness; the concepts of stochastic dependence and correaltion; the distinction between marginal and conditional distributions; the basic properties of the Gaussian, Binomial and Poisson distributions; the definition and properties of the multivariate Gaussian distribution. The redear can find an extensive explanation and illustrations with examples of all these topics in Ross (2013).\n\n\n1.2.2 Topics in statistics\nLikelihood-based inference (whether frequensist or Bayesian) provides the theoretical bedrock for the estimation of almost any statistical model. In this book will focus on maximum likelihood estimation methods of inference. Extensive use of the notions of point and interval estimates obtained using the maximum likelihood estimation methods will be made through the book. Recommended readings include chapters 1, 2 and 4 of Pawitan (2001).\nGood knowledge of Generalized linear models (GLMs) is essential, as the geostatistical modelling framework builds on these as an extension. Before embarking on the use of this book, we thus encourage you to review the basic theory of GLMs and, in particular, how these are applied and interpreted. In this book, we will cover examples that will model continuously measured outcomes and counts. Hence, good understanding of linear regression modelling and modelling of counts data using Binomial and Poisson regression should be the main focus of the review. For comprehensive overview of GLMs and their implementation in R, we refer you to Dobson and Barnett (2008).\n\n\n1.2.3 Topics in R programming\nAlthough this book does not require to possess advanced skills in R programming, it is important you have good knowledge in the following topics: creation and manipulation of vectors and matrices; logical vectors; character vectors; handling of lists and data frame objects; reading data into R; graphical procedures. A very large amount of freely available material covering these topics can be found online. Our recommendation is to start from the manual “An introduction to R” of the Comprehensive R Archive Network available at this link, available at R manual."
   },
   {
-    "objectID": "01_intro.html#r-packages-used-in-this-book",
-    "href": "01_intro.html#r-packages-used-in-this-book",
+    "objectID": "01_intro.html#obtaining-and-running-the-r-packages",
+    "href": "01_intro.html#obtaining-and-running-the-r-packages",
     "title": "1  Introduction",
-    "section": "1.2 R packages used in this book",
-    "text": "1.2 R packages used in this book"
+    "section": "1.3 Obtaining and running the R packages",
+    "text": "1.3 Obtaining and running the R packages\nIt is advised that you obtain the latest 64-bit version of R in order to run the R code of this book. To install R, go to the R website, where you can download the installer packages for Windows and Mac, and find instructions for Linux, using binary files.\n\nWindows\nMac\nLinux\n\nThe list of the R packages used in this book is provided in the Table 1.1.\n\nTable 1.1: List of the R packages that will be used in the book with a description of their use in the data analysis.\n\n\n\n\n\n\n\nR package\nUsed for\n\n\n\n\nRiskMap\nEstimating of geostatistical models and spatial prediction\n\n\nsf\nHandling of spatial data in R\n\n\nraster\nHandling of raster files in R\n\n\nggplot2\nCreating maps and exploratory plots\n\n\ncrsuggest\nGuessing a coordinate reference systems when unknown\n\n\n\n\nTo install packages in R for the first time, you can use the command install.packages in the R console, as shown below for the RiskMap package.\n\ninstall.packages(\"RiskMap\")"
   },
   {
-    "objectID": "01_intro.html#examples",
-    "href": "01_intro.html#examples",
+    "objectID": "01_intro.html#example-data-sets-used-in-the-book",
+    "href": "01_intro.html#example-data-sets-used-in-the-book",
     "title": "1  Introduction",
-    "section": "1.3 Examples",
-    "text": "1.3 Examples"
+    "section": "1.4 Example data-sets used in the book",
+    "text": "1.4 Example data-sets used in the book\nThe geostatistical data-sets described in this section will be used throughout the book to illustrate the use of the R packages mentioned in the previous sections.\nEach of the three data-sets can be loaded from the RiskMap package, using the command\n\ndata(galicia)\n\nfor the lead concentration data from Galicia,\n\ndata(liberia)\n\nfor the river-blindness data-set, and\n\ndata(anopheles)\n\nfor the Anhopheles mosquitoes data-set.\nIn the final chapter of this book, we will consider the analysis of additional data-sets to review the main statistical concepts presented in this book.\n\n1.4.1 Lead concentration in Galicia\n\n\n\nFigure 1.1: Data on the meausred lead concentration (in micrograms per gram dry weight) in moss samples collected in Galicia, North-West of Spain.\n\n\nLead is a heavy metal which, in high concentrations, can cause chronic damage to living organisms over a long period of time. For this reason its spread and source must be regularly monitored. To assess the extent of the contamination in an area, measurements of lead are often taken from plants. The data here considered (Figure 1.1) consist of 132 locations of moss samples collected in 2000, in and around Galicia, a region in the North-Western part of Spain. One of the objectives of this survey was to establish the spatial pattern of lead concentration in Galicia so as to better identify possible sources of contamination; fore more information, see Fernández, Rey, and Carballeira (2000).\nIn this case, geostatistical modelling can be used to predict the lead concentration across Galicia and allows to disentangle variation which is purely random, possibly due to measurement error, and genuine spatial variation, which is our main object of interest.\nThis data-set will be used in this book to show how to carry out the spatial analysis of continuously measured variables using linear geostatistical models.\n\n\n1.4.2 River-blindness in Liberia\n\n\n\nFigure 1.2: River-blindness data from a cross-sectional survey carried out in Liberia\n\n\nIn low-resource settings, where disease registries are typically absent, cross-sectional surveys are an essential monitoring tool that enables the estimation of the disease burden in a population of interest. The data considered in this example have been collected as part of an Africa-wide initiative called the Rapid Epidemiological Mapping of Onchocerchiasis (REMO) carried out in 2011 in 20 African countries (Zouré et al. (2014)). The goal of REMO is to identify areas where river-blindness (or onchocerchiasis), a disease transmitted by black flies who breed along fast flowing rivers, is still a public health problem. In this context, it is especially of interest to identify communities with a prevalence above 20% and for treatment is urgently needed.\nIn this book, we will use data collected from Liberia to model nodule prevalence, which is based on a alternative and cheaper diagnostic technique for river-blindness. In the analysis of this data-set, we will illustrate how to formulate and fit Binomial geostatistical models, and how these can be used to predict prevalence within a region of interest.\n\n\n1.4.3 Anopheles gambiae mosquitoes in Southern Cameroon\n\n\n\nFigure 1.3: Map of the collected number of Anopheles gambiae mosquitoes in an area of Southern Cameroon.\n\n\nIn studies of vector-borne and zoonotic diseases, understanding of the vector distribution can help to better guide the decision-making process for the implementation, monitoring and evaluation of control programmes. Anopheles gambiae mosquitoes are one of the main vectors for malaria transmission in sub-Saharan Africa. Their distribution over space is affected by several environmental and climatic factors, including temperature, humidity and vegetation.\nThe data-set considered in this example is a sub-set taken from a large database (Tene Fossog et al. (2015)) that was assembled to understand how the environment affects the distribution of different species of Anopheles mosquitoes in sub-Saharan Africa. We will use this data-set as an example in this book to illustrate application of Poisson geostatistical models for mapping mosquitoes abundance."
+  },
+  {
+    "objectID": "01_intro.html#geostatistical-problems-and-geostatistical-models",
+    "href": "01_intro.html#geostatistical-problems-and-geostatistical-models",
+    "title": "1  Introduction",
+    "section": "1.5 Geostatistical problems and geostatistical models",
+    "text": "1.5 Geostatistical problems and geostatistical models\nThe main characteristic shared by the examples described in the previous section is that, in each of those, the goal of statistical analysis is to draw inferences on an unobserved spatially continuous surface using data collected from a finite set of locations."
   },
   {
     "objectID": "01_intro.html#workflow-of-a-statistical-analysis",
     "href": "01_intro.html#workflow-of-a-statistical-analysis",
     "title": "1  Introduction",
-    "section": "1.4 Workflow of a statistical analysis",
-    "text": "1.4 Workflow of a statistical analysis\n\n\n\n\nKnuth, Donald E. 1984. “Literate Programming.” Comput. J. 27 (2): 97–111. https://doi.org/10.1093/comjnl/27.2.97."
+    "section": "1.6 Workflow of a statistical analysis",
+    "text": "1.6 Workflow of a statistical analysis"
+  },
+  {
+    "objectID": "01_intro.html#structure-of-the-book",
+    "href": "01_intro.html#structure-of-the-book",
+    "title": "1  Introduction",
+    "section": "1.7 Structure of the book",
+    "text": "1.7 Structure of the book\n\n\n\n\nDobson, A. J., and A. Barnett. 2008. An Introduction to Generalized Linear Models. Third. Chapman; Hall/CRC.\n\n\nFernández, J. A, A Rey, and A Carballeira. 2000. “An Extended Study of Heavy Metal Deposition in Galicia (NW Spain) Based on Moss Analysis.” Science of The Total Environment 254 (1): 31–44. https://doi.org/10.1016/S0048-9697(00)00431-9.\n\n\nPawitan, Yudi. 2001. In All Likelihood : Statistical Modelling and Inference Using Likelihood. Oxford ; New York: Clarendon Press : Oxford University Press.\n\n\nRoss, Sheldon. 2013. First Course in Probability, a. 9th ed. Harlow: Pearson Education UK.\n\n\nTene Fossog, Billy, Diego Ayala, Pelayo Acevedo, Pierre Kengne, Ignacio Ngomo Abeso Mebuy, Boris Makanga, Julie Magnus, et al. 2015. “Habitat Segregation and Ecological Character Displacement in Cryptic African Malaria Mosquitoes.” Evolutionary Applications 8 (4): 326–45. https://doi.org/10.1111/eva.12242.\n\n\nZouré, Honorat GM, Mounkaila Noma, Afework H Tekle, Uche V Amazigo, Peter J Diggle, Emanuele Giorgi, and Jan HF Remme. 2014. “Geographic Distribution of Onchocerciasis in the 20 Participating Countries of the African Programme for Onchocerciasis Control: (2) Pre-Control Endemicity Levels and Estimated Number Infected.” Parasites & Vectors 7 (1): 326–26."
   },
   {
     "objectID": "02_exploratory-analysis.html#importing-and-processing-spatial-data-in-r",
@@ -60,7 +74,7 @@
     "href": "02_exploratory-analysis.html#analysis-of-the-residuals",
     "title": "2  Exploratory analysis",
     "section": "2.4 Analysis of the residuals",
-    "text": "2.4 Analysis of the residuals\n\n2.4.1 Diagnostics for overdispersion\n\n\n2.4.2 Diagnostics for residual spatial variation\n\n\n\n\nKnuth, Donald E. 1984. “Literate Programming.” Comput. J. 27 (2): 97–111. https://doi.org/10.1093/comjnl/27.2.97."
+    "text": "2.4 Analysis of the residuals\n\n2.4.1 Diagnostics for overdispersion\n\n\n2.4.2 Diagnostics for residual spatial variation"
   },
   {
     "objectID": "03_model-fitting.html#linear-gaussian-model",
@@ -74,7 +88,7 @@
     "href": "03_model-fitting.html#generalized-linear-geostatistical-models",
     "title": "3  Model fitting",
     "section": "3.2 Generalized linear geostatistical models",
-    "text": "3.2 Generalized linear geostatistical models\n\n\n\n\nKnuth, Donald E. 1984. “Literate Programming.” Comput. J. 27 (2): 97–111. https://doi.org/10.1093/comjnl/27.2.97."
+    "text": "3.2 Generalized linear geostatistical models"
   },
   {
     "objectID": "04_model-validation.html#how-to-simulate-geostatistical-data-from-a-fitted-model",
@@ -95,7 +109,7 @@
     "href": "04_model-validation.html#validating-the-spatial-correlation-of-the-model",
     "title": "4  Model validation",
     "section": "4.3 Validating the spatial correlation of the model",
-    "text": "4.3 Validating the spatial correlation of the model\n\n\n\n\nKnuth, Donald E. 1984. “Literate Programming.” Comput. J. 27 (2): 97–111. https://doi.org/10.1093/comjnl/27.2.97."
+    "text": "4.3 Validating the spatial correlation of the model"
   },
   {
     "objectID": "05_geostatistical-prediction.html#pixel-level-predictive-targets",
@@ -116,7 +130,7 @@
     "href": "05_geostatistical-prediction.html#comparing-the-predictive-performance-of-geostatistical-models",
     "title": "5  Geostatistical prediction",
     "section": "5.3 Comparing the predictive performance of geostatistical models",
-    "text": "5.3 Comparing the predictive performance of geostatistical models\n\n\n\n\nKnuth, Donald E. 1984. “Literate Programming.” Comput. J. 27 (2): 97–111. https://doi.org/10.1093/comjnl/27.2.97."
+    "text": "5.3 Comparing the predictive performance of geostatistical models"
   },
   {
     "objectID": "06_case-studies.html#mapping-stunting-risk-in-ghan",
@@ -137,13 +151,13 @@
     "href": "06_case-studies.html#mapping-mosquitoes-abundance-in-cameroon",
     "title": "6  Case studies",
     "section": "6.3 Mapping mosquitoes abundance in Cameroon",
-    "text": "6.3 Mapping mosquitoes abundance in Cameroon\n\n\n\n\nKnuth, Donald E. 1984. “Literate Programming.” Comput. J. 27 (2): 97–111. https://doi.org/10.1093/comjnl/27.2.97."
+    "text": "6.3 Mapping mosquitoes abundance in Cameroon"
   },
   {
     "objectID": "references.html",
     "href": "references.html",
     "title": "References",
     "section": "",
-    "text": "Knuth, Donald E. 1984. “Literate Programming.” Comput.\nJ. 27 (2): 97–111. https://doi.org/10.1093/comjnl/27.2.97."
+    "text": "Dobson, A. J., and A. Barnett. 2008. An Introduction to Generalized\nLinear Models. Third. Chapman; Hall/CRC.\n\n\nFernández, J. A, A Rey, and A Carballeira. 2000. “An Extended\nStudy of Heavy Metal Deposition in Galicia (NW Spain) Based on Moss\nAnalysis.” Science of The Total Environment 254 (1):\n31–44. https://doi.org/10.1016/S0048-9697(00)00431-9.\n\n\nPawitan, Yudi. 2001. In All Likelihood : Statistical Modelling and\nInference Using Likelihood. Oxford ; New York: Clarendon Press :\nOxford University Press.\n\n\nRoss, Sheldon. 2013. First Course in Probability, a. 9th ed.\nHarlow: Pearson Education UK.\n\n\nTene Fossog, Billy, Diego Ayala, Pelayo Acevedo, Pierre Kengne, Ignacio\nNgomo Abeso Mebuy, Boris Makanga, Julie Magnus, et al. 2015.\n“Habitat Segregation and Ecological Character Displacement in\nCryptic African Malaria Mosquitoes.” Evolutionary\nApplications 8 (4): 326–45. https://doi.org/10.1111/eva.12242.\n\n\nZouré, Honorat GM, Mounkaila Noma, Afework H Tekle, Uche V Amazigo,\nPeter J Diggle, Emanuele Giorgi, and Jan HF Remme. 2014.\n“Geographic Distribution of Onchocerciasis in the 20 Participating\nCountries of the African Programme for Onchocerciasis Control: (2)\nPre-Control Endemicity Levels and Estimated Number Infected.”\nParasites & Vectors 7 (1): 326–26."
   }
 ]
