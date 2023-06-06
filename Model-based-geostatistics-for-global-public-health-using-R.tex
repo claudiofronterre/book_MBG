@@ -221,7 +221,7 @@
 
 \begin{document}
 \maketitle
-\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[borderline west={3pt}{0pt}{shadecolor}, enhanced, frame hidden, sharp corners, boxrule=0pt, breakable, interior hidden]}{\end{tcolorbox}}\fi
+\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[breakable, interior hidden, sharp corners, frame hidden, borderline west={3pt}{0pt}{shadecolor}, boxrule=0pt, enhanced]}{\end{tcolorbox}}\fi
 
 \renewcommand*\contentsname{Table of contents}
 {
@@ -264,20 +264,21 @@ environment. As you work your way through the book, you will learn to:
 \begin{itemize}
 \tightlist
 \item
-  explore geo-statistical data-sets using graphical procedures and
-  summary statitics;
+  explore geostatistical data-sets using graphical procedures and
+  summary statistics;
 \item
   formulate and fit geostatistical models using the maximum likelihood
   estimation method;
 \item
   carry out prediction of health outcomes at different spatial scales;
 \item
-  visualize and interpret the results from geostatical models;
+  visualize and interpret the results from geostatistical models;
 \item
   model the relationships between spatially referenced risk factors and
   the health outcome of interest;
 \item
-  validate geostatistical models.
+  validate the assumptions of geostatistical models and assess their
+  predictive performance.
 \end{itemize}
 
 Although the focus of this book is on public health, the statistical
@@ -363,7 +364,11 @@ instructions for Linux, using binary files.
   \href{https://cran.r-project.org/bin/linux}{Linux}
 \end{itemize}
 
-The list of R packages used in this book is provided in the table below.
+The list of the R packages used in this book is provided in the Table
+1.1.
+
+Table 1.1: List of the R packages that will be used in the book with a
+description of their use in the data analysis.
 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.2727}}
@@ -376,11 +381,13 @@ Used for
 \end{minipage} \\
 \midrule()
 \endhead
-\texttt{RiskMap} & Estimation of geostatistical model and spatial
+\texttt{RiskMap} & Estimating of geostatistical models and spatial
 prediction \\
 \texttt{sf} & Handling of spatial data in R \\
 \texttt{raster} & Handling of raster files in R \\
-\texttt{ggplot2} & Creating maps \\
+\texttt{ggplot2} & Creating maps and exploratory plots \\
+\texttt{crsuggest} & Guessing a coordinate reference systems when
+unknown \\
 \bottomrule()
 \end{longtable}
 
@@ -394,12 +401,161 @@ To install packages in R for the first time, you can use the command
 \end{Highlighting}
 \end{Shaded}
 
-\hypertarget{examples}{%
-\section{Examples}\label{examples}}
+\hypertarget{example-data-sets-used-in-the-book}{%
+\section{Example data-sets used in the
+book}\label{example-data-sets-used-in-the-book}}
+
+The geostatistical data-sets described in this section will be used
+throughout the book to illustrate the use of the R packages mentioned in
+the previous sections.
+
+Each of the three data-sets can be loaded from the \texttt{RiskMap}
+package, using the command
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{data}\NormalTok{(galicia)}
+\end{Highlighting}
+\end{Shaded}
+
+for the lead concentration data from Galicia,
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{data}\NormalTok{(liberia)}
+\end{Highlighting}
+\end{Shaded}
+
+for the river-blindness data-set, and
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{data}\NormalTok{(anopheles)}
+\end{Highlighting}
+\end{Shaded}
+
+for the Anhopheles mosquitoes data-set.
+
+In the final chapter of this book, we will consider the analysis of
+additional data-sets to review the main statistical concepts presented
+in this book.
+
+\hypertarget{lead-concentration-in-galicia}{%
+\subsection{Lead concentration in
+Galicia}\label{lead-concentration-in-galicia}}
+
+\begin{figure}
+
+{\centering \includegraphics{./figures/galicia_ch1.png}
+
+}
+
+\caption{Figure 1.1: Data on the meausred lead concentration (in
+micrograms per gram dry weight) in moss samples collected in Galicia,
+North-West of Spain.}
+
+\end{figure}
+
+Lead is a heavy metal which, in high concentrations, can cause chronic
+damage to living organisms over a long period of time. For this reason
+its spread and source must be regularly monitored. To assess the extent
+of the contamination in an area, measurements of lead are often taken
+from plants. The data here considered (Figure 1.1) consist of 132
+locations of moss samples collected in 2000, in and around Galicia, a
+region in the North-Western part of Spain. One of the objectives of this
+survey was to establish the spatial pattern of lead concentration in
+Galicia so as to better identify possible sources of contamination; fore
+more information, see Fernández, Rey, and Carballeira (2000).
+
+In this case, geostatistical modelling can be used to predict the lead
+concentration across Galicia and allows to disentangle variation which
+is purely random, possibly due to measurement error, and genuine spatial
+variation, which is our main object of interest.
+
+This data-set will be used in this book to show how to carry out the
+spatial analysis of continuously measured variables using linear
+geostatistical models.
+
+\hypertarget{river-blindness-in-liberia}{%
+\subsection{River-blindness in
+Liberia}\label{river-blindness-in-liberia}}
+
+\begin{figure}
+
+{\centering \includegraphics{./figures/liberia_ch1.png}
+
+}
+
+\caption{Figure 1.2: River-blindness data from a cross-sectional survey
+carried out in Liberia}
+
+\end{figure}
+
+In low-resource settings, where disease registries are typically absent,
+cross-sectional surveys are an essential monitoring tool that enables
+the estimation of the disease burden in a population of interest. The
+data considered in this example have been collected as part of an
+Africa-wide initiative called the Rapid Epidemiological Mapping of
+Onchocerchiasis (REMO) carried out in 2011 in 20 African countries
+(Zouré et al. (2014)). The goal of REMO is to identify areas where
+river-blindness (or onchocerchiasis), a disease transmitted by black
+flies who breed along fast flowing rivers, is still a public health
+problem. In this context, it is especially of interest to identify
+communities with a prevalence above 20\% and for treatment is urgently
+needed.
+
+In this book, we will use data collected from Liberia to model nodule
+prevalence, which is based on a alternative and cheaper diagnostic
+technique for river-blindness. In the analysis of this data-set, we will
+illustrate how to formulate and fit Binomial geostatistical models, and
+how these can be used to predict prevalence within a region of interest.
+
+\hypertarget{anopheles-gambiae-mosquitoes-in-southern-cameroon}{%
+\subsection{\texorpdfstring{\emph{Anopheles gambiae} mosquitoes in
+Southern
+Cameroon}{Anopheles gambiae mosquitoes in Southern Cameroon}}\label{anopheles-gambiae-mosquitoes-in-southern-cameroon}}
+
+\begin{figure}
+
+{\centering \includegraphics{./figures/anopheles_ch1.png}
+
+}
+
+\caption{Figure 1.3: Map of the collected number of \emph{Anopheles
+gambiae} mosquitoes in an area of Southern Cameroon.}
+
+\end{figure}
+
+In studies of vector-borne and zoonotic diseases, understanding of the
+vector distribution can help to better guide the decision-making process
+for the implementation, monitoring and evaluation of control programmes.
+\emph{Anopheles gambiae} mosquitoes are one of the main vectors for
+malaria transmission in sub-Saharan Africa. Their distribution over
+space is affected by several environmental and climatic factors,
+including temperature, humidity and vegetation.
+
+The data-set considered in this example is a sub-set taken from a large
+database (Tene Fossog et al. (2015)) that was assembled to understand
+how the environment affects the distribution of different species of
+\emph{Anopheles} mosquitoes in sub-Saharan Africa. We will use this
+data-set as an example in this book to illustrate application of Poisson
+geostatistical models for mapping mosquitoes abundance.
+
+\hypertarget{geostatistical-problems-and-geostatistical-models}{%
+\section{Geostatistical problems and geostatistical
+models}\label{geostatistical-problems-and-geostatistical-models}}
+
+The main characteristic shared by the examples described in the previous
+section is that, in each of those, the goal of statistical analysis is
+to draw inferences on an unobserved spatially continuous surface using
+data collected from a finite set of locations.
 
 \hypertarget{workflow-of-a-statistical-analysis}{%
 \section{Workflow of a statistical
 analysis}\label{workflow-of-a-statistical-analysis}}
+
+\hypertarget{structure-of-the-book}{%
+\section{Structure of the book}\label{structure-of-the-book}}
 
 \bookmarksetup{startatroot}
 
@@ -585,6 +741,12 @@ Interdisciplinary Statistics Ser. Milton: Chapman; Hall/CRC.
 Dobson, A. J., and A. Barnett. 2008. \emph{An Introduction to
 Generalized Linear Models}. Third. Chapman; Hall/CRC.
 
+\leavevmode\vadjust pre{\hypertarget{ref-fernandez2000}{}}%
+Fernández, J. A, A Rey, and A Carballeira. 2000. {``An Extended Study of
+Heavy Metal Deposition in Galicia (NW Spain) Based on Moss Analysis.''}
+\emph{Science of The Total Environment} 254 (1): 31--44.
+\url{https://doi.org/10.1016/S0048-9697(00)00431-9}.
+
 \leavevmode\vadjust pre{\hypertarget{ref-pawitan2001}{}}%
 Pawitan, Yudi. 2001. \emph{In All Likelihood : Statistical Modelling and
 Inference Using Likelihood}. Oxford ; New York: Clarendon Press : Oxford
@@ -593,6 +755,21 @@ University Press.
 \leavevmode\vadjust pre{\hypertarget{ref-ross2013}{}}%
 Ross, Sheldon. 2013. \emph{First Course in Probability, a.} 9th ed.
 Harlow: Pearson Education UK.
+
+\leavevmode\vadjust pre{\hypertarget{ref-fossog2015}{}}%
+Tene Fossog, Billy, Diego Ayala, Pelayo Acevedo, Pierre Kengne, Ignacio
+Ngomo Abeso Mebuy, Boris Makanga, Julie Magnus, et al. 2015. {``Habitat
+Segregation and Ecological Character Displacement in Cryptic African
+Malaria Mosquitoes.''} \emph{Evolutionary Applications} 8 (4): 326--45.
+\url{https://doi.org/10.1111/eva.12242}.
+
+\leavevmode\vadjust pre{\hypertarget{ref-zoure2014}{}}%
+Zouré, Honorat GM, Mounkaila Noma, Afework H Tekle, Uche V Amazigo,
+Peter J Diggle, Emanuele Giorgi, and Jan HF Remme. 2014. {``Geographic
+Distribution of Onchocerciasis in the 20 Participating Countries of the
+African Programme for Onchocerciasis Control: (2) Pre-Control Endemicity
+Levels and Estimated Number Infected.''} \emph{Parasites \& Vectors} 7
+(1): 326--26.
 
 \end{CSLReferences}
 

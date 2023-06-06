@@ -6,12 +6,12 @@ The book provides shows how to carry out model-based geostatistical analysis of 
 The overall aim of this book is to provide you with the skills to perform a geostatistical analysis of a data-set using the R software environment. 
 As you work your way through the book, you will learn to:
 
- * explore geo-statistical data-sets using graphical procedures and summary statitics;
+ * explore geostatistical data-sets using graphical procedures and summary statistics;
  * formulate and fit geostatistical models using the maximum likelihood estimation method;
  * carry out prediction of health outcomes at different spatial scales;
- * visualize and interpret the results from geostatical models;
+ * visualize and interpret the results from geostatistical models;
  * model the relationships between spatially referenced risk factors and the health outcome of interest;
- * validate geostatistical models.
+ * validate the assumptions of geostatistical models and assess their predictive performance.
 
 Although the focus of this book is on public health, the statistical ideas, as well as the software used, can also be applied for the analysis of geostatistical data-sets arising from other scientific fields.
 
@@ -38,15 +38,18 @@ It is advised that you obtain the latest 64-bit version of R in order to run the
 * [Mac](https://cran.r-project.org/bin/macosx)
 * [Linux](https://cran.r-project.org/bin/linux)
 
-The list of R packages used in this book is provided in the table below. 
+The list of the R packages used in this book is provided in the Table 1.1.
 
 ::: l-body-outset
+Table 1.1: List of the R packages that will be used in the book with a description of their use in the data analysis.
+
 | R package        | Used for                                    |
 |------------------|------------------------------------------------|
-| `RiskMap`        | Estimation of geostatistical models and spatial prediction                |
+| `RiskMap`        | Estimating of geostatistical models and spatial prediction                |
 | `sf`             | Handling of spatial data in R  |
 | `raster`         | Handling of raster files in R |
-| `ggplot2`        | Creating maps  |
+| `ggplot2`        | Creating maps and exploratory plots  |
+| `crsuggest`      | Guessing a coordinate reference systems when unknown |
 :::
 
 To install packages in R for the first time, you can use the command `install.packages` in the R console, as shown below for the `RiskMap` package.
@@ -55,6 +58,56 @@ To install packages in R for the first time, you can use the command `install.pa
 install.packages("RiskMap")
 ```
 
-## Examples
+## Example data-sets used in the book
+The geostatistical data-sets described in this section will be used throughout the book to illustrate the use of the R packages mentioned in the previous sections. 
+
+Each of the three data-sets can be loaded from the `RiskMap` package, using the command
+```{r eval=FALSE}
+data(galicia)
+```
+for the lead concentration data from Galicia,
+```{r eval=FALSE}
+data(liberia)
+```
+for the river-blindness data-set, and
+```{r eval=FALSE}
+data(anopheles)
+```
+for the Anhopheles mosquitoes data-set.
+
+In the final chapter of this book, we will consider the analysis of additional data-sets to review the main statistical concepts presented in this book. 
+
+### Lead concentration in Galicia
+
+![Figure 1.1: Data on the meausred lead concentration (in micrograms per gram dry weight) in moss samples collected in Galicia, North-West of Spain.](figures/galicia_ch1.png)
+
+Lead is a heavy metal which, in high concentrations, can cause chronic damage to living organisms over a long period of time. For this reason its spread and source must be regularly monitored. To assess the extent of the contamination in an area, measurements of lead are often taken from plants. The data here considered (Figure 1.1) consist of 132 locations of moss samples collected in 2000, in and around Galicia, a region in the North-Western part of Spain. One of the objectives of this survey was to establish the spatial pattern of lead concentration in Galicia so as to better identify possible sources of contamination; fore more information, see @fernandez2000.    
+
+In this case, geostatistical modelling can be used to predict the lead concentration across Galicia and allows to disentangle variation which is purely random, possibly due to measurement error, and genuine spatial variation, which is our main object of interest. 
+
+This data-set will be used in this book to show how to carry out the spatial analysis of continuously measured variables using linear geostatistical models.
+
+### River-blindness in Liberia
+
+![Figure 1.2: River-blindness data from a cross-sectional survey carried out in Liberia ](figures/liberia_ch1.png)
+
+In low-resource settings, where disease registries are typically absent, cross-sectional surveys are an essential monitoring tool that enables the estimation of the disease burden in a population of interest. The data considered in this example have been collected as part of an Africa-wide initiative called the Rapid Epidemiological Mapping of Onchocerchiasis (REMO) carried out in 2011 in 20 African countries (@zoure2014). The goal of REMO is to identify areas where river-blindness (or onchocerchiasis), a disease transmitted by black flies who breed along fast flowing rivers, is still a public health problem. In this context, it is especially of interest to identify communities with a prevalence above 20% and for treatment is urgently needed. 
+
+In this book, we will use data collected from Liberia to model nodule prevalence, which is based on a alternative and cheaper diagnostic technique for river-blindness. In the analysis of this data-set, we will illustrate how to formulate and fit Binomial geostatistical models, and how these can be used to predict prevalence within a region of interest. 
+
+### *Anopheles gambiae* mosquitoes in Southern Cameroon
+
+![Figure 1.3: Map of the collected number of *Anopheles gambiae* mosquitoes in an area of Southern Cameroon.](figures/anopheles_ch1.png)
+
+In studies of vector-borne and zoonotic diseases, understanding of the vector distribution can help to better guide the decision-making process for the implementation, monitoring and evaluation of control programmes. *Anopheles gambiae* mosquitoes are one of the main vectors for malaria transmission in sub-Saharan Africa. Their distribution over space is affected by several environmental and climatic factors, including temperature, humidity and vegetation. 
+
+The data-set considered in this example is a sub-set taken from a large database (@fossog2015) that was assembled to understand how the environment affects the distribution of different species of *Anopheles* mosquitoes in sub-Saharan Africa. We will use this data-set as an example in this book to illustrate application of Poisson geostatistical models for mapping mosquitoes abundance.
+
+
+## Geostatistical problems and geostatistical models
+The main characteristic shared by the examples described in the previous section is that, in each of those, the goal of statistical analysis is to draw inferences on an unobserved spatially continuous surface using data collected from a finite set of locations. 
+
 
 ## Workflow of a statistical analysis
+
+## Structure of the book
