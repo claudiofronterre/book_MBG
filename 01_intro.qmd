@@ -91,7 +91,7 @@ This data-set will be used in this book to show how to carry out the spatial ana
 
 ![Figure 1.2: River-blindness data from a cross-sectional survey carried out in Liberia ](figures/liberia_ch1.png)
 
-In low-resource settings, where disease registries are typically absent, cross-sectional surveys are an essential monitoring tool that enables the estimation of the disease burden in a population of interest. The data considered in this example have been collected as part of an Africa-wide initiative called the Rapid Epidemiological Mapping of Onchocerchiasis (REMO) carried out in 2011 in 20 African countries (@zoure2014). The goal of REMO is to identify areas where river-blindness (or onchocerchiasis), a disease transmitted by black flies who breed along fast flowing rivers, is still a public health problem. In this context, it is especially of interest to identify communities with a prevalence above 20% and for treatment is urgently needed. 
+In low-resource settings, where disease registries are typically absent, cross-sectional surveys are an essential monitoring tool that enables the estimation of the disease burden in a population of interest. The data considered in this example have been collected as part of an Africa-wide initiative called the Rapid Epidemiological Mapping of Onchocerchiasis (REMO) carried out in 2011 in 20 African countries [@zoure2014]. The goal of REMO is to identify areas where river-blindness (or onchocerchiasis), a disease transmitted by black flies who breed along fast flowing rivers, is still a public health problem. In this context, it is especially of interest to identify communities with a prevalence above 20% and for treatment is urgently needed. 
 
 In this book, we will use data collected from Liberia to model nodule prevalence, which is based on a alternative and cheaper diagnostic technique for river-blindness. In the analysis of this data-set, we will illustrate how to formulate and fit Binomial geostatistical models, and how these can be used to predict prevalence within a region of interest. 
 
@@ -101,13 +101,53 @@ In this book, we will use data collected from Liberia to model nodule prevalence
 
 In studies of vector-borne and zoonotic diseases, understanding of the vector distribution can help to better guide the decision-making process for the implementation, monitoring and evaluation of control programmes. *Anopheles gambiae* mosquitoes are one of the main vectors for malaria transmission in sub-Saharan Africa. Their distribution over space is affected by several environmental and climatic factors, including temperature, humidity and vegetation. 
 
-The data-set considered in this example is a sub-set taken from a large database (@fossog2015) that was assembled to understand how the environment affects the distribution of different species of *Anopheles* mosquitoes in sub-Saharan Africa. We will use this data-set as an example in this book to illustrate application of Poisson geostatistical models for mapping mosquitoes abundance.
+The data-set considered in this example is a sub-set taken from a large database [@fossog2015] that was assembled to understand how the environment affects the distribution of different species of *Anopheles* mosquitoes in sub-Saharan Africa. We will use this data-set as an example in this book to illustrate application of Poisson geostatistical models for mapping mosquitoes abundance.
 
 
 ## Geostatistical problems and geostatistical models
-The main characteristic shared by the examples described in the previous section is that, in each of those, the goal of statistical analysis is to draw inferences on an unobserved spatially continuous surface using data collected from a finite set of locations. 
+What the examples of the previous section have in common is that, in each case, the goal of statistical analysis is to draw inferences on an unobserved spatially continuous surface using data collected from a finite set of locations. The lead concentration in Galicia, the prevalence for river-blindness in Liberia and the abundance of *A. gambiae* mosquitoes in Cameroon can all be represented as spatially continuous processes that originate from the combined effects of environmental factors. We denote this class of inferential problems as *geostatistical problems* for which a solution can be found through the development and application of suitable *geostatistical models*, which are the subject of this book.
+
+As one can soon realize, geostatistical problems are not unique to global health but arise in many other fields of science, including economics, physics, biology, geology and others. It thus comes to no surprise that geostatistics was initially developed in the South African mining industry in the 1950s [@krige1951]. This was then further developed as a self-contained discipline by Georges Matheron and other researchers  at Fontainebleau, in France [@matheron1963; @chilesdelfiner2016]. In @watson1971 and @watson1972 a first connection is drawn between geostatistics and the prediction of stochastic processes. However, it is only with @ripley1981 and then @cressie1991 that geostatistics is explicitly brought into a classical statistical framework for the analysis of spatially referenced data. @diggle1998 coined the term *model-based geostastics*  and introduced this as belonging to the general class of generalized linear mixed models [@breslow1993], while emphasizing the use of likelihood-based methods of inference. As in @diggle1998, also in this book, we advocate the application of model-based geostistical models as a class of parametric statistical models on which inference can be carried out using either maximum likelihood estimation or Bayesian methods.
+
+More precisely, our attention will be directed at the class of *generalized linear geostatistical models*, or GLGM. To formally specify this, we first define the random variables $S$, a spatial stochastic process, and the random variable $Y= (Y_1, \ldots, Y_n)$ which correspond to the outcome observed at a set of locations $X = (x_1, \ldots, x_n)$. Let us use $[A]$ to denote "the distribution of the random variable $A$". To formulate a GLGM, we should then specify the joint distribution of $S$ and $Y$, which we write as
+\begin{equation}
+\label{eq:glgm_joint_ch1}
+[Y, S] = [S] [Y | S].
+\end{equation}
+On the right-hand side of the equation above, we have factorized the joint distribution of $Y$ and $S$, as the product between the marginal distribution of $S$ and the conditional distribution of $Y$ given $S$. Hence, the formulation of a GLGM can be break down into the tasks of formulating $[S]$ and $[Y | S]$. 
+
+In defining $[S]$, throughout the book, we shall assume that this is a zero-mean stationary and isotropic Gaussian process. In other words, these assumptions impose that the joint distribution of $S(X) = (S(x_1),\ldots,S(x_n))$, i.e. the process $S$ at the sampled locations $x_1, \ldots, x_n$, is invariant with respect to rations and translations of the locations $X$. In practical terms, the main implication of this is that, for any pair of locations $x_i$ and $x_j$ the correlation function $\rho(\cdot)$ between $S(x_i)$ and $S(x_j)$ is purely a function of the Euclidean distance, $u_{ij}$, between $x_i$ and $x_j$, i.e.
+\begin{equation}
+\label{eq:correlation_ch1}
+{\rm cov}\{S(x_i), S(x_j)\} = \sigma^2\rho(u_{ij}),
+\end{equation}
+where $\sigma^2$ is the variance of $S(x)$ for all $x$. In Chapter 3, we will look more closely at what type of correlation functions can be used for $\rho(\cdot)$ and how these affect our predictive inferences. Furthermore, the fact that assume the process $S$ to have mean zero is because this is process acts as a residual term in our modelling of $Y$. This aspect will be reiterated several times in the following chapters, as it as important implications for the interpretation of the other components of a geostatistical model, as well understanding the results of the analysis.
+
+Finally, we model $[Y | S]$, i.e. the distribution of $Y$ given $S$, is modeled as a set of mutually independent distributions which belong the exponential family, as defined in classical generalized linear modelling framework [@nelder1972]. It then follows that, we can write $[Y | S]$ as
+\begin{equation}
+\label{eq:glm_ch1}
+[Y | S] = \prod_{i=1}^n [Y_i | S(x_i)].
+\end{equation}
+The final step then consists of specifying a distribution for $[Y_i | S(x_i)]$. Table 1.2 gives the range, mean and variance the three specifications for $[Y_i | S(x_i)]$  which we will consider in this book. In the table, the *canonical function*, say $g(\cdot)$, denotes the natural transformation of the mean component $\mu_i$ that allows us to introduce both covariates and the spatial process $S(x_i)$ into the model so as to explain the variation in $\mu_i$ as
+\begin{equation}
+\label{eq:linear_predictor_ch1}
+g(\mu_i) = d(x_i)^\top \beta + S(x_i).
+\end{equation}
+where $d(x_i)$ is a vector of spatially referenced covariates with associated regression coefficients $\beta$. Finally, the quantity $m_i$, which appears in the formulation of the Binomial and Poisson distributions, is an offset quantity and is used to account for the number of *tests* or the population size at a given location $x_i$. 
+
+::: l-body-outset
+Table 1.2: List of type of outcomes $Y_i$ considered in the book. 
+
+| Distribution  |  Range of $Y_i$ | Mean of $[Y_i | S(x_i)]$  | Variance of $[Y_i | S(x_i)]$    | Canonical link |
+|----|------|----------|----------|----------|
+| Gaussian       | $(-\infty, +\infty)$  | $\mu_i$ |$\tau^2$ | $g(\mu_i) = \mu_i$|
+| Binomial      | $1,\dots,m_i$  | $m_i\mu_i$ |$m_i\mu_i(1-\mu_i)$ | $g(\mu_i) = \log\{ \mu_i/(1-\mu_i) \}$ |
+| Poisson     |  $1,2,\ldots,\infty$  | $m_i\mu_i$ |$m_i\mu_i$ | $g(\mu_i) = \log\{ \mu_i \}$
+:::
+
+Based on the formulation in \eqref{eq:linear_predictor_ch1}, we can see that $S(x_i)$ quantifies residual spatial effects on $\mu_i$ that have not been accounted for by the covariates $d(x_i)$. In an ideal scenario, the covariates $d(x_i)$ should explain all the spatial variation without the need for $S(x_i)$. Although this unrealistic, in practice we may be able to most of the variation in $\mu_i$ through $d(x_i)$ and, hence, reduce $S(x_i)$ to a negligible component. In Chapter 2, we will show how a thorough exploratory analysis can help to understand whether we have come close to that ideal scenario or, if instead, we need the use of GLGM to model the data. 
+
+The model described in \eqref{eq:linear_predictor_ch1} can be seen as the most basic GLGM that can be used for a geostatistical analysis. As we will see in the analysis of some of the examples and, in Chapter 6, in the case studies, some extensions of this model will be required to account for additional sources of residual variation that contribute to the intrinsic random variation of the data.
 
 
-## Workflow of a statistical analysis
-
-## Structure of the book
+## Workflow of a statistical analysis and structure of the book
