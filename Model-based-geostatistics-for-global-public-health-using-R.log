@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2023.5.30)  7 JUN 2023 14:55
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2023.5.30)  9 JUN 2023 15:04
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -211,6 +211,20 @@ LaTeX Font Info:    Redeclaring math symbol \hbar on input line 98.
 LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
 (Font)                  U/euf/m/n --> U/euf/b/n on input line 106.
 ))
+(/usr/share/texlive/texmf-dist/tex/generic/iftex/iftex.sty
+Package: iftex 2019/11/07 v1.0c TeX engine tests
+)
+(/usr/share/texlive/texmf-dist/tex/latex/base/fontenc.sty
+Package: fontenc 2020/02/11 v2.0o Standard LaTeX package
+)
+(/usr/share/texlive/texmf-dist/tex/latex/base/inputenc.sty
+Package: inputenc 2018/08/11 v1.3c Input encoding file
+\inpenc@prehook=\toks19
+\inpenc@posthook=\toks20
+)
+(/usr/share/texlive/texmf-dist/tex/latex/base/textcomp.sty
+Package: textcomp 2020/02/02 v2.0n Standard LaTeX package
+)
 (/usr/share/texmf/tex/latex/lm/lmodern.sty
 Package: lmodern 2009/10/30 v1.6 Latin Modern Fonts
 LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
@@ -245,25 +259,6 @@ LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
 (Font)                  OT1/cmr/bx/it --> OT1/lmr/bx/it on input line 37.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
 (Font)                  OT1/cmtt/m/n --> OT1/lmtt/m/n on input line 38.
-)
-(/usr/share/texlive/texmf-dist/tex/generic/iftex/iftex.sty
-Package: iftex 2019/11/07 v1.0c TeX engine tests
-)
-(/usr/share/texlive/texmf-dist/tex/latex/base/fontenc.sty
-Package: fontenc 2020/02/11 v2.0o Standard LaTeX package
-LaTeX Font Info:    Trying to load font information for T1+lmr on input line 11
-2.
-
-(/usr/share/texmf/tex/latex/lm/t1lmr.fd
-File: t1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
-))
-(/usr/share/texlive/texmf-dist/tex/latex/base/inputenc.sty
-Package: inputenc 2018/08/11 v1.3c Input encoding file
-\inpenc@prehook=\toks19
-\inpenc@posthook=\toks20
-)
-(/usr/share/texlive/texmf-dist/tex/latex/base/textcomp.sty
-Package: textcomp 2020/02/02 v2.0n Standard LaTeX package
 )
 (/usr/share/texlive/texmf-dist/tex/latex/upquote/upquote.sty
 Package: upquote 2012/04/19 v1.3 upright-quote and grave-accent glyphs in verba
@@ -860,12 +855,7 @@ Package: trimspaces 2009/09/17 v1.1 Trim spaces around a token list
 \tcb@out=\write5
 \tcb@record@out=\write6
 
-(/usr/share/texlive/texmf-dist/tex/latex/tcolorbox/tcbraster.code.tex
-Library (tcolorbox): 'tcbraster.code.tex' version '4.22'
-\c@tcbrastercolumn=\count311
-\c@tcbrasterrow=\count312
-\c@tcbraster=\count313
-) (/usr/share/texlive/texmf-dist/tex/latex/tcolorbox/tcbskins.code.tex
+(/usr/share/texlive/texmf-dist/tex/latex/tcolorbox/tcbskins.code.tex
 Library (tcolorbox): 'tcbskins.code.tex' version '4.22'
 (/usr/share/texlive/texmf-dist/tex/latex/pgf/frontendlayer/tikz.sty
 (/usr/share/texlive/texmf-dist/tex/latex/pgf/utilities/pgffor.sty
@@ -888,7 +878,7 @@ Package: tikz 2020/01/08 v3.1.5b (3.1.5b)
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/libraries/pgflibraryplothandlers
 .code.tex
 File: pgflibraryplothandlers.code.tex 2020/01/08 v3.1.5b (3.1.5b)
-\pgf@plot@mark@count=\count314
+\pgf@plot@mark@count=\count311
 \pgfplotmarksize=\dimen299
 )
 \tikz@lastx=\dimen300
@@ -903,18 +893,18 @@ File: pgflibraryplothandlers.code.tex 2020/01/08 v3.1.5b (3.1.5b)
 \tikz@figbox@bg=\box130
 \tikz@tempbox=\box131
 \tikz@tempbox@bg=\box132
-\tikztreelevel=\count315
-\tikznumberofchildren=\count316
-\tikznumberofcurrentchild=\count317
-\tikz@fig@count=\count318
+\tikztreelevel=\count312
+\tikznumberofchildren=\count313
+\tikznumberofcurrentchild=\count314
+\tikz@fig@count=\count315
 
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/modules/pgfmodulematrix.code.tex
 File: pgfmodulematrix.code.tex 2020/01/08 v3.1.5b (3.1.5b)
-\pgfmatrixcurrentrow=\count319
-\pgfmatrixcurrentcolumn=\count320
-\pgf@matrix@numberofcolumns=\count321
+\pgfmatrixcurrentrow=\count316
+\pgfmatrixcurrentcolumn=\count317
+\pgf@matrix@numberofcolumns=\count318
 )
-\tikz@expandcount=\count322
+\tikz@expandcount=\count319
 
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tik
 zlibrarytopaths.code.tex
@@ -929,77 +919,61 @@ Library (tcolorbox): 'tcbbreakable.code.tex' version '4.22'
 \tcb@testbox=\box134
 \tcb@totalupperbox=\box135
 \tcb@totallowerbox=\box136
-) (/usr/share/texlive/texmf-dist/tex/latex/tcolorbox/tcbhooks.code.tex
-Library (tcolorbox): 'tcbhooks.code.tex' version '4.22'
-) (/usr/share/texlive/texmf-dist/tex/latex/tcolorbox/tcbtheorems.code.tex
-Library (tcolorbox): 'tcbtheorems.code.tex' version '4.22'
-) (/usr/share/texlive/texmf-dist/tex/latex/tcolorbox/tcbfitting.code.tex
-Library (tcolorbox): 'tcbfitting.code.tex' version '4.22'
-\tcbfitdim=\dimen308
-\tcb@lowerfitdim=\dimen309
-\tcb@upperfitdim=\dimen310
-\tcb@cur@hbadness=\count323
-) (/usr/share/texlive/texmf-dist/tex/latex/tcolorbox/tcbxparse.code.tex
-Library (tcolorbox): 'tcbxparse.code.tex' version '4.22'
-(/usr/share/texlive/texmf-dist/tex/latex/l3packages/xparse/xparse.sty
-(/usr/share/texlive/texmf-dist/tex/latex/l3kernel/expl3.sty
-Package: expl3 2020-02-14 L3 programming layer (loader) 
+)) (/usr/share/texlive/texmf-dist/tex/latex/xurl/xurl.sty
+Package: xurl 2020/01/24 v 0.09 modify URL breaks
+)
+Package hyperref Info: Option `colorlinks' set `true' on input line 221.
 
 (/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-pdfmode.def
 File: l3backend-pdfmode.def 2020-02-03 L3 backend support: PDF mode
-\l__kernel_color_stack_int=\count324
+\l__kernel_color_stack_int=\count320
 \l__pdf_internal_box=\box137
-))
-Package: xparse 2020-02-14 L3 Experimental document command parser
-\l__xparse_current_arg_int=\count325
-\g__xparse_grabber_int=\count326
-\l__xparse_m_args_int=\count327
-\l__xparse_v_nesting_int=\count328
-)))
-(/usr/share/texlive/texmf-dist/tex/latex/xurl/xurl.sty
-Package: xurl 2020/01/24 v 0.09 modify URL breaks
 )
-Package hyperref Info: Option `colorlinks' set `true' on input line 216.
-
 (./Model-based-geostatistics-for-global-public-health-using-R.aux)
 \openout1 = `Model-based-geostatistics-for-global-public-health-using-R.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 222.
-LaTeX Font Info:    ... okay on input line 222.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 222.
-LaTeX Font Info:    ... okay on input line 222.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 222.
-LaTeX Font Info:    ... okay on input line 222.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 222.
-LaTeX Font Info:    ... okay on input line 222.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 222.
-LaTeX Font Info:    ... okay on input line 222.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 222.
-LaTeX Font Info:    ... okay on input line 222.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 222.
-LaTeX Font Info:    ... okay on input line 222.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 222.
-LaTeX Font Info:    ... okay on input line 222.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 222.
-LaTeX Font Info:    ... okay on input line 222.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 227.
+LaTeX Font Info:    ... okay on input line 227.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 227.
+LaTeX Font Info:    ... okay on input line 227.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 227.
+LaTeX Font Info:    ... okay on input line 227.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 227.
+LaTeX Font Info:    ... okay on input line 227.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 227.
+LaTeX Font Info:    ... okay on input line 227.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 227.
+LaTeX Font Info:    ... okay on input line 227.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 227.
+LaTeX Font Info:    ... okay on input line 227.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 227.
+LaTeX Font Info:    ... okay on input line 227.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 227.
+LaTeX Font Info:    ... okay on input line 227.
+LaTeX Font Info:    Trying to load font information for T1+lmr on input line 22
+7.
+
+(/usr/share/texmf/tex/latex/lm/t1lmr.fd
+File: t1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
+)
 LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 2
-22.
+27.
 
 (/usr/share/texmf/tex/latex/lm/ts1lmr.fd
 File: ts1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 (/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count329
-\scratchdimen=\dimen311
+\scratchcounter=\count321
+\scratchdimen=\dimen308
 \scratchbox=\box138
-\nofMPsegments=\count330
-\nofMParguments=\count331
+\nofMPsegments=\count322
+\nofMParguments=\count323
 \everyMPshowfont=\toks42
-\MPscratchCnt=\count332
-\MPscratchDim=\dimen312
-\MPnumerator=\count333
-\makeMPintoPDFobject=\count334
+\MPscratchCnt=\count324
+\MPscratchDim=\dimen309
+\MPnumerator=\count325
+\makeMPintoPDFobject=\count326
 \everyMPtoPDFconversion=\toks43
 ) (/usr/share/texlive/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
@@ -1010,14 +984,14 @@ Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
-LaTeX Info: Redefining \microtypecontext on input line 222.
+LaTeX Info: Redefining \microtypecontext on input line 227.
 Package microtype Info: Generating PDF output.
 Package microtype Info: Character protrusion enabled (level 2).
 Package microtype Info: Using protrusion set `basicmath'.
 Package microtype Info: Automatic font expansion enabled (level 2),
 (microtype)             stretch: 20, shrink: 20, step: 1, non-selected.
 Package microtype Info: Using default expansion set `basictext'.
-LaTeX Info: Redefining \showhyphens on input line 222.
+LaTeX Info: Redefining \showhyphens on input line 227.
 Package microtype Info: No adjustment of tracking.
 Package microtype Info: No adjustment of interword spacing.
 Package microtype Info: No adjustment of character kerning.
@@ -1027,7 +1001,7 @@ File: mt-cmr.cfg 2013/05/19 v2.2 microtype config. file: Computer Modern Roman
 (RS)
 )
 \AtBeginShipoutBox=\box139
-Package hyperref Info: Link coloring ON on input line 222.
+Package hyperref Info: Link coloring ON on input line 227.
 
 (/usr/share/texlive/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2019/09/16 v2.46 Cross-referencing by name of section
@@ -1038,11 +1012,11 @@ Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
 (/usr/share/texlive/texmf-dist/tex/generic/gettitlestring/gettitlestring.sty
 Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 )
-\c@section@level=\count335
+\c@section@level=\count327
 )
-LaTeX Info: Redefining \ref on input line 222.
-LaTeX Info: Redefining \pageref on input line 222.
-LaTeX Info: Redefining \nameref on input line 222.
+LaTeX Info: Redefining \ref on input line 227.
+LaTeX Info: Redefining \pageref on input line 227.
+LaTeX Info: Redefining \nameref on input line 227.
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: float package is loaded.
 Package caption Info: End \AtBeginDocument code.
@@ -1127,7 +1101,7 @@ Underfull \hbox (badness 10000) has occurred while \output is active
 [2
 
 ]
-Underfull \hbox (badness 10000) detected at line 230
+Underfull \hbox (badness 10000) detected at line 235
 []
  []
 
@@ -1219,43 +1193,43 @@ Underfull \hbox (badness 10000) has occurred while \output is active
 \openout7 = `Model-based-geostatistics-for-global-public-health-using-R.toc'.
 
  [4]
-Underfull \vbox (badness 10000) detected at line 235
+Underfull \vbox (badness 10000) detected at line 240
  []
 
 
-Overfull \hbox (336.25pt too wide) detected at line 235
+Overfull \hbox (336.25pt too wide) detected at line 240
 []
  []
 
 
-Underfull \vbox (badness 10000) detected at line 235
+Underfull \vbox (badness 10000) detected at line 240
  []
 
 
-Overfull \hbox (336.25pt too wide) detected at line 235
+Overfull \hbox (336.25pt too wide) detected at line 240
 []
  []
 
 
-Underfull \vbox (badness 10000) detected at line 235
+Underfull \vbox (badness 10000) detected at line 240
  []
 
 
-Overfull \hbox (336.25pt too wide) detected at line 235
+Overfull \hbox (336.25pt too wide) detected at line 240
 []
  []
 
 
-Underfull \vbox (badness 10000) detected at line 235
+Underfull \vbox (badness 10000) detected at line 240
  []
 
 
-Overfull \hbox (336.25pt too wide) detected at line 235
+Overfull \hbox (336.25pt too wide) detected at line 240
 []
  []
 
 
-Underfull \hbox (badness 10000) detected at line 235
+Underfull \hbox (badness 10000) detected at line 240
 []
  []
 
@@ -1342,44 +1316,44 @@ Underfull \hbox (badness 10000) has occurred while \output is active
 [6
 
 ]
-Underfull \vbox (badness 10000) detected at line 247
+Underfull \vbox (badness 10000) detected at line 252
  []
 
 
-Overfull \hbox (336.25pt too wide) detected at line 247
+Overfull \hbox (336.25pt too wide) detected at line 252
 []
  []
 
 
-Underfull \vbox (badness 10000) detected at line 247
+Underfull \vbox (badness 10000) detected at line 252
  []
 
 
-Overfull \hbox (336.25pt too wide) detected at line 247
+Overfull \hbox (336.25pt too wide) detected at line 252
 []
  []
 
 
-Underfull \vbox (badness 10000) detected at line 247
+Underfull \vbox (badness 10000) detected at line 252
  []
 
 
-Overfull \hbox (336.25pt too wide) detected at line 247
+Overfull \hbox (336.25pt too wide) detected at line 252
 []
  []
 
 
-Underfull \vbox (badness 10000) detected at line 247
+Underfull \vbox (badness 10000) detected at line 252
  []
 
 
-Overfull \hbox (336.25pt too wide) detected at line 247
+Overfull \hbox (336.25pt too wide) detected at line 252
 []
  []
 
 Chapter 1.
 LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 2
-50.
+55.
 (/usr/share/texmf/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
@@ -1422,87 +1396,62 @@ Underfull \hbox (badness 10000) has occurred while \output is active
 [7
 
 ] [8] [9]
-<./figures/galicia_ch1.png, id=144, 627.34375pt x 558.085pt>
+<./figures/galicia_ch1.png, id=146, 995.72pt x 762.85pt>
 File: ./figures/galicia_ch1.png Graphic file (type png)
 <use ./figures/galicia_ch1.png>
-Package pdftex.def Info: ./figures/galicia_ch1.png  used on input line 449.
-(pdftex.def)             Requested size: 336.51105pt x 299.36023pt.
-<./figures/liberia_ch1.png, id=146, 766.865pt x 782.925pt>
+Package pdftex.def Info: ./figures/galicia_ch1.png  used on input line 467.
+(pdftex.def)             Requested size: 239.20558pt x 183.26234pt.
+<./figures/liberia_ch1.png, id=149, 995.72pt x 762.85pt>
 File: ./figures/liberia_ch1.png Graphic file (type png)
 <use ./figures/liberia_ch1.png>
-Package pdftex.def Info: ./figures/liberia_ch1.png  used on input line 485.
-(pdftex.def)             Requested size: 336.49724pt x 343.5443pt.
- [10] [11 <./figures/galicia_ch1.png>] [12 <./figures/liberia_ch1.png>]
-<./figures/anopheles_ch1.png, id=166, 509.905pt x 589.20125pt>
+Package pdftex.def Info: ./figures/liberia_ch1.png  used on input line 504.
+(pdftex.def)             Requested size: 239.20558pt x 183.26234pt.
+ [10]
+<./figures/anopheles_ch1.png, id=158, 995.72pt x 762.85pt>
 File: ./figures/anopheles_ch1.png Graphic file (type png)
 <use ./figures/anopheles_ch1.png>
-Package pdftex.def Info: ./figures/anopheles_ch1.png  used on input line 520.
-(pdftex.def)             Requested size: 336.51498pt x 388.84705pt.
- [13] [14 <./figures/anopheles_ch1.png>] [15]
-Overfull \hbox (22.56055pt too wide) in paragraph at lines 653--654
-[]\T1/lmr/m/n/10 (-20) Distribution  
+Package pdftex.def Info: ./figures/anopheles_ch1.png  used on input line 539.
+(pdftex.def)             Requested size: 239.20558pt x 183.26234pt.
+ [11 <./figures/galicia_ch1.png>] [12 <./figures/liberia_ch1.png> <./figures/an
+opheles_ch1.png>] [13] [14] [15]
+<figures/workflow_diagram.png, id=206, 166.221pt x 361.35pt>
+File: figures/workflow_diagram.png Graphic file (type png)
+<use figures/workflow_diagram.png>
+Package pdftex.def Info: figures/workflow_diagram.png  used on input line 745.
+(pdftex.def)             Requested size: 166.22057pt x 361.34912pt.
+ [16 <./figures/workflow_diagram.png>]
+Underfull \vbox (badness 10000) detected at line 756
  []
 
 
-Overfull \hbox (9.1804pt too wide) in paragraph at lines 665--665
-[]|\T1/lmr/m/n/10 (-20) Gaussian|  
- []
-
-
-Overfull \hbox (2.99394pt too wide) in paragraph at lines 665--665
-[]|$\OT1/lmr/m/n/10 (-20) (\OMS/lmsy/m/n/10 ^^@1\OML/lmm/m/it/10 ; \OT1/lmr/m/n
-/10 (-20) +\OMS/lmsy/m/n/10 1\OT1/lmr/m/n/10 (-20) )$|  
- []
-
-
-Overfull \hbox (8.86682pt too wide) in paragraph at lines 667--667
-[]|\T1/lmr/m/n/10 (-20) Binomial|  
- []
-
-
-Overfull \hbox (2.43756pt too wide) in paragraph at lines 669--669
-[]|\T1/lmr/m/n/10 (-20) Poisson|  
- []
-
-
-Overfull \hbox (1.99329pt too wide) in paragraph at lines 669--669
-[]|$\OT1/lmr/m/n/10 (-20) 1\OML/lmm/m/it/10 ; \OT1/lmr/m/n/10 (-20) 2\OML/lmm/m
-/it/10 ; [] ; \OMS/lmsy/m/n/10 1$|  
- []
-
-[16]
-Underfull \vbox (badness 10000) detected at line 692
- []
-
-
-Overfull \hbox (336.25pt too wide) detected at line 692
+Overfull \hbox (336.25pt too wide) detected at line 756
 []
  []
 
 
-Underfull \vbox (badness 10000) detected at line 692
+Underfull \vbox (badness 10000) detected at line 756
  []
 
 
-Overfull \hbox (336.25pt too wide) detected at line 692
+Overfull \hbox (336.25pt too wide) detected at line 756
 []
  []
 
 
-Underfull \vbox (badness 10000) detected at line 692
+Underfull \vbox (badness 10000) detected at line 756
  []
 
 
-Overfull \hbox (336.25pt too wide) detected at line 692
+Overfull \hbox (336.25pt too wide) detected at line 756
 []
  []
 
 
-Underfull \vbox (badness 10000) detected at line 692
+Underfull \vbox (badness 10000) detected at line 756
  []
 
 
-Overfull \hbox (336.25pt too wide) detected at line 692
+Overfull \hbox (336.25pt too wide) detected at line 756
 []
  []
 
@@ -1587,38 +1536,38 @@ Underfull \hbox (badness 10000) has occurred while \output is active
 [18
 
 ]
-Underfull \vbox (badness 10000) detected at line 734
+Underfull \vbox (badness 10000) detected at line 798
  []
 
 
-Overfull \hbox (336.25pt too wide) detected at line 734
+Overfull \hbox (336.25pt too wide) detected at line 798
 []
  []
 
 
-Underfull \vbox (badness 10000) detected at line 734
+Underfull \vbox (badness 10000) detected at line 798
  []
 
 
-Overfull \hbox (336.25pt too wide) detected at line 734
+Overfull \hbox (336.25pt too wide) detected at line 798
 []
  []
 
 
-Underfull \vbox (badness 10000) detected at line 734
+Underfull \vbox (badness 10000) detected at line 798
  []
 
 
-Overfull \hbox (336.25pt too wide) detected at line 734
+Overfull \hbox (336.25pt too wide) detected at line 798
 []
  []
 
 
-Underfull \vbox (badness 10000) detected at line 734
+Underfull \vbox (badness 10000) detected at line 798
  []
 
 
-Overfull \hbox (336.25pt too wide) detected at line 734
+Overfull \hbox (336.25pt too wide) detected at line 798
 []
  []
 
@@ -1702,38 +1651,38 @@ Underfull \hbox (badness 10000) has occurred while \output is active
 [20
 
 ]
-Underfull \vbox (badness 10000) detected at line 761
+Underfull \vbox (badness 10000) detected at line 825
  []
 
 
-Overfull \hbox (336.25pt too wide) detected at line 761
+Overfull \hbox (336.25pt too wide) detected at line 825
 []
  []
 
 
-Underfull \vbox (badness 10000) detected at line 761
+Underfull \vbox (badness 10000) detected at line 825
  []
 
 
-Overfull \hbox (336.25pt too wide) detected at line 761
+Overfull \hbox (336.25pt too wide) detected at line 825
 []
  []
 
 
-Underfull \vbox (badness 10000) detected at line 761
+Underfull \vbox (badness 10000) detected at line 825
  []
 
 
-Overfull \hbox (336.25pt too wide) detected at line 761
+Overfull \hbox (336.25pt too wide) detected at line 825
 []
  []
 
 
-Underfull \vbox (badness 10000) detected at line 761
+Underfull \vbox (badness 10000) detected at line 825
  []
 
 
-Overfull \hbox (336.25pt too wide) detected at line 761
+Overfull \hbox (336.25pt too wide) detected at line 825
 []
  []
 
@@ -1817,38 +1766,38 @@ Underfull \hbox (badness 10000) has occurred while \output is active
 [22
 
 ]
-Underfull \vbox (badness 10000) detected at line 793
+Underfull \vbox (badness 10000) detected at line 857
  []
 
 
-Overfull \hbox (336.25pt too wide) detected at line 793
+Overfull \hbox (336.25pt too wide) detected at line 857
 []
  []
 
 
-Underfull \vbox (badness 10000) detected at line 793
+Underfull \vbox (badness 10000) detected at line 857
  []
 
 
-Overfull \hbox (336.25pt too wide) detected at line 793
+Overfull \hbox (336.25pt too wide) detected at line 857
 []
  []
 
 
-Underfull \vbox (badness 10000) detected at line 793
+Underfull \vbox (badness 10000) detected at line 857
  []
 
 
-Overfull \hbox (336.25pt too wide) detected at line 793
+Overfull \hbox (336.25pt too wide) detected at line 857
 []
  []
 
 
-Underfull \vbox (badness 10000) detected at line 793
+Underfull \vbox (badness 10000) detected at line 857
  []
 
 
-Overfull \hbox (336.25pt too wide) detected at line 793
+Overfull \hbox (336.25pt too wide) detected at line 857
 []
  []
 
@@ -1932,38 +1881,38 @@ Underfull \hbox (badness 10000) has occurred while \output is active
 [24
 
 ]
-Underfull \vbox (badness 10000) detected at line 825
+Underfull \vbox (badness 10000) detected at line 889
  []
 
 
-Overfull \hbox (336.25pt too wide) detected at line 825
+Overfull \hbox (336.25pt too wide) detected at line 889
 []
  []
 
 
-Underfull \vbox (badness 10000) detected at line 825
+Underfull \vbox (badness 10000) detected at line 889
  []
 
 
-Overfull \hbox (336.25pt too wide) detected at line 825
+Overfull \hbox (336.25pt too wide) detected at line 889
 []
  []
 
 
-Underfull \vbox (badness 10000) detected at line 825
+Underfull \vbox (badness 10000) detected at line 889
  []
 
 
-Overfull \hbox (336.25pt too wide) detected at line 825
+Overfull \hbox (336.25pt too wide) detected at line 889
 []
  []
 
 
-Underfull \vbox (badness 10000) detected at line 825
+Underfull \vbox (badness 10000) detected at line 889
  []
 
 
-Overfull \hbox (336.25pt too wide) detected at line 825
+Overfull \hbox (336.25pt too wide) detected at line 889
 []
  []
 
@@ -2047,43 +1996,43 @@ Underfull \hbox (badness 10000) has occurred while \output is active
 [26
 
 ]
-Underfull \vbox (badness 10000) detected at line 857
+Underfull \vbox (badness 10000) detected at line 921
  []
 
 
-Overfull \hbox (336.25pt too wide) detected at line 857
+Overfull \hbox (336.25pt too wide) detected at line 921
 []
  []
 
 
-Underfull \vbox (badness 10000) detected at line 857
+Underfull \vbox (badness 10000) detected at line 921
  []
 
 
-Overfull \hbox (336.25pt too wide) detected at line 857
+Overfull \hbox (336.25pt too wide) detected at line 921
 []
  []
 
 
-Underfull \vbox (badness 10000) detected at line 857
+Underfull \vbox (badness 10000) detected at line 921
  []
 
 
-Overfull \hbox (336.25pt too wide) detected at line 857
+Overfull \hbox (336.25pt too wide) detected at line 921
 []
  []
 
 
-Underfull \vbox (badness 10000) detected at line 857
+Underfull \vbox (badness 10000) detected at line 921
  []
 
 
-Overfull \hbox (336.25pt too wide) detected at line 857
+Overfull \hbox (336.25pt too wide) detected at line 921
 []
  []
 
 
-Underfull \hbox (badness 10000) detected at line 857
+Underfull \hbox (badness 10000) detected at line 921
 []
  []
 
@@ -2127,20 +2076,20 @@ Underfull \hbox (badness 10000) has occurred while \output is active
 [27
 
 ] [28]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 951.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 951.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1015.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 1015.
  (./Model-based-geostatistics-for-global-public-health-using-R.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 951.
-Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 951.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1015.
+Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 1015.
  ) 
 Here is how much of TeX's memory you used:
- 29764 strings out of 483140
- 565925 string characters out of 5965151
- 876000 words of memory out of 5000000
- 44016 multiletter control sequences out of 15000+600000
- 606309 words of font info for 121 fonts, out of 8000000 for 9000
+ 28662 strings out of 483140
+ 533064 string characters out of 5965151
+ 843116 words of memory out of 5000000
+ 42924 multiletter control sequences out of 15000+600000
+ 607285 words of font info for 124 fonts, out of 8000000 for 9000
  36 hyphenation exceptions out of 8191
- 59i,8n,95p,857b,894s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 59i,9n,87p,857b,895s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texmf/fonts/enc/dvips/lm/lm-mathsy.enc}{/usr/share/texmf/fonts/en
 c/dvips/lm/lm-mathex.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm-mathit.enc}{/u
 sr/share/texmf/fonts/enc/dvips/lm/lm-rm.enc}{/usr/share/texmf/fonts/enc/dvips/l
@@ -2156,10 +2105,10 @@ exmf/fonts/type1/public/lm/lmro17.pfb></usr/share/texmf/fonts/type1/public/lm/l
 msy10.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy7.pfb></usr/share/texmf/f
 onts/type1/public/lm/lmtt10.pfb>
 Output written on Model-based-geostatistics-for-global-public-health-using-R.pd
-f (28 pages, 1559627 bytes).
+f (28 pages, 912182 bytes).
 PDF statistics:
- 504 PDF objects out of 1000 (max. 8388607)
- 448 compressed objects within 5 object streams
- 130 named destinations out of 1000 (max. 500000)
- 8532 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 515 PDF objects out of 1000 (max. 8388607)
+ 458 compressed objects within 5 object streams
+ 134 named destinations out of 1000 (max. 500000)
+ 8537 words of extra memory for PDF output out of 10000 (max. 10000000)
 
