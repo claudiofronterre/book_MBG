@@ -143,6 +143,7 @@ div.csl-indent {
   }
 }</script>
 
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 </head>
 
@@ -239,8 +240,7 @@ div.csl-indent {
   <li><a href="#anopheles-gambiae-mosquitoes-in-southern-cameroon" id="toc-anopheles-gambiae-mosquitoes-in-southern-cameroon" class="nav-link" data-scroll-target="#anopheles-gambiae-mosquitoes-in-southern-cameroon"><span class="toc-section-number">1.4.3</span>  <em>Anopheles gambiae</em> mosquitoes in Southern Cameroon</a></li>
   </ul></li>
   <li><a href="#geostatistical-problems-and-geostatistical-models" id="toc-geostatistical-problems-and-geostatistical-models" class="nav-link" data-scroll-target="#geostatistical-problems-and-geostatistical-models"><span class="toc-section-number">1.5</span>  Geostatistical problems and geostatistical models</a></li>
-  <li><a href="#workflow-of-a-statistical-analysis" id="toc-workflow-of-a-statistical-analysis" class="nav-link" data-scroll-target="#workflow-of-a-statistical-analysis"><span class="toc-section-number">1.6</span>  Workflow of a statistical analysis</a></li>
-  <li><a href="#structure-of-the-book" id="toc-structure-of-the-book" class="nav-link" data-scroll-target="#structure-of-the-book"><span class="toc-section-number">1.7</span>  Structure of the book</a></li>
+  <li><a href="#workflow-of-a-statistical-analysis-and-structure-of-the-book" id="toc-workflow-of-a-statistical-analysis-and-structure-of-the-book" class="nav-link" data-scroll-target="#workflow-of-a-statistical-analysis-and-structure-of-the-book"><span class="toc-section-number">1.6</span>  Workflow of a statistical analysis and structure of the book</a></li>
   </ul>
 </nav>
     </div>
@@ -383,7 +383,7 @@ div.csl-indent {
 <p></p><figcaption class="figure-caption">Figure 1.2: River-blindness data from a cross-sectional survey carried out in Liberia</figcaption><p></p>
 </figure>
 </div>
-<p>In low-resource settings, where disease registries are typically absent, cross-sectional surveys are an essential monitoring tool that enables the estimation of the disease burden in a population of interest. The data considered in this example have been collected as part of an Africa-wide initiative called the Rapid Epidemiological Mapping of Onchocerchiasis (REMO) carried out in 2011 in 20 African countries (<span class="citation" data-cites="zoure2014">Zouré et al. (<a href="references.html#ref-zoure2014" role="doc-biblioref">2014</a>)</span>). The goal of REMO is to identify areas where river-blindness (or onchocerchiasis), a disease transmitted by black flies who breed along fast flowing rivers, is still a public health problem. In this context, it is especially of interest to identify communities with a prevalence above 20% and for treatment is urgently needed.</p>
+<p>In low-resource settings, where disease registries are typically absent, cross-sectional surveys are an essential monitoring tool that enables the estimation of the disease burden in a population of interest. The data considered in this example have been collected as part of an Africa-wide initiative called the Rapid Epidemiological Mapping of Onchocerchiasis (REMO) carried out in 2011 in 20 African countries <span class="citation" data-cites="zoure2014">(<a href="references.html#ref-zoure2014" role="doc-biblioref">Zouré et al. 2014</a>)</span>. The goal of REMO is to identify areas where river-blindness (or onchocerchiasis), a disease transmitted by black flies who breed along fast flowing rivers, is still a public health problem. In this context, it is especially of interest to identify communities with a prevalence above 20% and for treatment is urgently needed.</p>
 <p>In this book, we will use data collected from Liberia to model nodule prevalence, which is based on a alternative and cheaper diagnostic technique for river-blindness. In the analysis of this data-set, we will illustrate how to formulate and fit Binomial geostatistical models, and how these can be used to predict prevalence within a region of interest.</p>
 </section>
 <section id="anopheles-gambiae-mosquitoes-in-southern-cameroon" class="level3" data-number="1.4.3">
@@ -395,35 +395,124 @@ div.csl-indent {
 </figure>
 </div>
 <p>In studies of vector-borne and zoonotic diseases, understanding of the vector distribution can help to better guide the decision-making process for the implementation, monitoring and evaluation of control programmes. <em>Anopheles gambiae</em> mosquitoes are one of the main vectors for malaria transmission in sub-Saharan Africa. Their distribution over space is affected by several environmental and climatic factors, including temperature, humidity and vegetation.</p>
-<p>The data-set considered in this example is a sub-set taken from a large database (<span class="citation" data-cites="fossog2015">Tene Fossog et al. (<a href="references.html#ref-fossog2015" role="doc-biblioref">2015</a>)</span>) that was assembled to understand how the environment affects the distribution of different species of <em>Anopheles</em> mosquitoes in sub-Saharan Africa. We will use this data-set as an example in this book to illustrate application of Poisson geostatistical models for mapping mosquitoes abundance.</p>
+<p>The data-set considered in this example is a sub-set taken from a large database <span class="citation" data-cites="fossog2015">(<a href="references.html#ref-fossog2015" role="doc-biblioref">Tene Fossog et al. 2015</a>)</span> that was assembled to understand how the environment affects the distribution of different species of <em>Anopheles</em> mosquitoes in sub-Saharan Africa. We will use this data-set as an example in this book to illustrate application of Poisson geostatistical models for mapping mosquitoes abundance.</p>
 </section>
 </section>
 <section id="geostatistical-problems-and-geostatistical-models" class="level2" data-number="1.5">
 <h2 data-number="1.5" class="anchored" data-anchor-id="geostatistical-problems-and-geostatistical-models"><span class="header-section-number">1.5</span> Geostatistical problems and geostatistical models</h2>
-<p>The main characteristic shared by the examples described in the previous section is that, in each of those, the goal of statistical analysis is to draw inferences on an unobserved spatially continuous surface using data collected from a finite set of locations.</p>
+<p>What the examples of the previous section have in common is that, in each case, the goal of statistical analysis is to draw inferences on an unobserved spatially continuous surface using data collected from a finite set of locations. The lead concentration in Galicia, the prevalence for river-blindness in Liberia and the abundance of <em>A. gambiae</em> mosquitoes in Cameroon can all be represented as spatially continuous processes that originate from the combined effects of environmental factors. We denote this class of inferential problems as <em>geostatistical problems</em> for which a solution can be found through the development and application of suitable <em>geostatistical models</em>, which are the subject of this book.</p>
+<p>As one can soon realize, geostatistical problems are not unique to global health but arise in many other fields of science, including economics, physics, biology, geology and others. It thus comes to no surprise that geostatistics was initially developed in the South African mining industry in the 1950s <span class="citation" data-cites="krige1951">(<a href="references.html#ref-krige1951" role="doc-biblioref">Krige 1951</a>)</span>. This was then further developed as a self-contained discipline by Georges Matheron and other researchers at Fontainebleau, in France <span class="citation" data-cites="matheron1963 chilesdelfiner2016">(<a href="references.html#ref-matheron1963" role="doc-biblioref">Matheron 1963</a>; <a href="references.html#ref-chilesdelfiner2016" role="doc-biblioref">Chilès and Delfiner 2016</a>)</span>. In <span class="citation" data-cites="watson1971">Watson (<a href="references.html#ref-watson1971" role="doc-biblioref">1971</a>)</span> and <span class="citation" data-cites="watson1972">Watson (<a href="references.html#ref-watson1972" role="doc-biblioref">1972</a>)</span> a first connection is drawn between geostatistics and the prediction of stochastic processes. However, it is only with <span class="citation" data-cites="ripley1981">Ripley (<a href="references.html#ref-ripley1981" role="doc-biblioref">1981</a>)</span> and then <span class="citation" data-cites="cressie1991">Cressie (<a href="references.html#ref-cressie1991" role="doc-biblioref">1991</a>)</span> that geostatistics is explicitly brought into a classical statistical framework for the analysis of spatially referenced data. <span class="citation" data-cites="diggle1998">Diggle, Tawn, and Moyeed (<a href="references.html#ref-diggle1998" role="doc-biblioref">1998</a>)</span> coined the term <em>model-based geostastics</em> and introduced this as belonging to the general class of generalized linear mixed models <span class="citation" data-cites="breslow1993">(<a href="references.html#ref-breslow1993" role="doc-biblioref">Breslow and Clayton 1993</a>)</span>, while emphasizing the use of likelihood-based methods of inference. As in <span class="citation" data-cites="diggle1998">Diggle, Tawn, and Moyeed (<a href="references.html#ref-diggle1998" role="doc-biblioref">1998</a>)</span>, also in this book, we advocate the application of model-based geostistical models as a class of parametric statistical models on which inference can be carried out using either maximum likelihood estimation or Bayesian methods.</p>
+<p>More precisely, our attention will be directed at the class of <em>generalized linear geostatistical models</em>, or GLGM. To formally specify this, we first define the random variables <span class="math inline">\(S\)</span>, a spatial stochastic process, and the random variable <span class="math inline">\(Y= (Y_1, \ldots, Y_n)\)</span> which correspond to the outcome observed at a set of locations <span class="math inline">\(X = (x_1, \ldots, x_n)\)</span>. Let us use <span class="math inline">\([A]\)</span> to denote “the distribution of the random variable <span class="math inline">\(A\)</span>”. To formulate a GLGM, we should then specify the joint distribution of <span class="math inline">\(S\)</span> and <span class="math inline">\(Y\)</span>, which we write as <span class="math display">\[\begin{equation}
+\label{eq:glgm_joint_ch1}
+[Y, S] = [S] [Y | S].
+\end{equation}\]</span> On the right-hand side of the equation above, we have factorized the joint distribution of <span class="math inline">\(Y\)</span> and <span class="math inline">\(S\)</span>, as the product between the marginal distribution of <span class="math inline">\(S\)</span> and the conditional distribution of <span class="math inline">\(Y\)</span> given <span class="math inline">\(S\)</span>. Hence, the formulation of a GLGM can be break down into the tasks of formulating <span class="math inline">\([S]\)</span> and <span class="math inline">\([Y | S]\)</span>.</p>
+<p>In defining <span class="math inline">\([S]\)</span>, throughout the book, we shall assume that this is a zero-mean stationary and isotropic Gaussian process. In other words, these assumptions impose that the joint distribution of <span class="math inline">\(S(X) = (S(x_1),\ldots,S(x_n))\)</span>, i.e.&nbsp;the process <span class="math inline">\(S\)</span> at the sampled locations <span class="math inline">\(x_1, \ldots, x_n\)</span>, is invariant with respect to rations and translations of the locations <span class="math inline">\(X\)</span>. In practical terms, the main implication of this is that, for any pair of locations <span class="math inline">\(x_i\)</span> and <span class="math inline">\(x_j\)</span> the correlation function <span class="math inline">\(\rho(\cdot)\)</span> between <span class="math inline">\(S(x_i)\)</span> and <span class="math inline">\(S(x_j)\)</span> is purely a function of the Euclidean distance, <span class="math inline">\(u_{ij}\)</span>, between <span class="math inline">\(x_i\)</span> and <span class="math inline">\(x_j\)</span>, i.e. <span class="math display">\[\begin{equation}
+\label{eq:correlation_ch1}
+{\rm cov}\{S(x_i), S(x_j)\} = \sigma^2\rho(u_{ij}),
+\end{equation}\]</span> where <span class="math inline">\(\sigma^2\)</span> is the variance of <span class="math inline">\(S(x)\)</span> for all <span class="math inline">\(x\)</span>. In Chapter 3, we will look more closely at what type of correlation functions can be used for <span class="math inline">\(\rho(\cdot)\)</span> and how these affect our predictive inferences. Furthermore, the fact that assume the process <span class="math inline">\(S\)</span> to have mean zero is because this is process acts as a residual term in our modelling of <span class="math inline">\(Y\)</span>. This aspect will be reiterated several times in the following chapters, as it as important implications for the interpretation of the other components of a geostatistical model, as well understanding the results of the analysis.</p>
+<p>Finally, we model <span class="math inline">\([Y | S]\)</span>, i.e.&nbsp;the distribution of <span class="math inline">\(Y\)</span> given <span class="math inline">\(S\)</span>, is modeled as a set of mutually independent distributions which belong the exponential family, as defined in classical generalized linear modelling framework <span class="citation" data-cites="nelder1972">(<a href="references.html#ref-nelder1972" role="doc-biblioref">Nelder and Wedderburn 1972</a>)</span>. It then follows that, we can write <span class="math inline">\([Y | S]\)</span> as <span class="math display">\[\begin{equation}
+\label{eq:glm_ch1}
+[Y | S] = \prod_{i=1}^n [Y_i | S(x_i)].
+\end{equation}\]</span> The final step then consists of specifying a distribution for <span class="math inline">\([Y_i | S(x_i)]\)</span>. Table 1.2 gives the range, mean and variance the three specifications for <span class="math inline">\([Y_i | S(x_i)]\)</span> which we will consider in this book. In the table, the <em>canonical function</em>, say <span class="math inline">\(g(\cdot)\)</span>, denotes the natural transformation of the mean component <span class="math inline">\(\mu_i\)</span> that allows us to introduce both covariates and the spatial process <span class="math inline">\(S(x_i)\)</span> into the model so as to explain the variation in <span class="math inline">\(\mu_i\)</span> as <span class="math display">\[\begin{equation}
+\label{eq:linear_predictor_ch1}
+g(\mu_i) = d(x_i)^\top \beta + S(x_i).
+\end{equation}\]</span> where <span class="math inline">\(d(x_i)\)</span> is a vector of spatially referenced covariates with associated regression coefficients <span class="math inline">\(\beta\)</span>. Finally, the quantity <span class="math inline">\(m_i\)</span>, which appears in the formulation of the Binomial and Poisson distributions, is an offset quantity and is used to account for the number of <em>tests</em> or the population size at a given location <span class="math inline">\(x_i\)</span>.</p>
+<div class="l-body-outset">
+<p>Table 1.2: List of type of outcomes <span class="math inline">\(Y_i\)</span> considered in the book.</p>
+<table class="table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 15%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Distribution</th>
+<th>Range of <span class="math inline">\(Y_i\)</span></th>
+<th>Mean of <span class="math inline">\([Y_i | S(x_i)]\)</span></th>
+<th>Variance of <span class="math inline">\([Y_i | S(x_i)]\)</span></th>
+<th>Canonical link</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Gaussian</td>
+<td><span class="math inline">\((-\infty, +\infty)\)</span></td>
+<td><span class="math inline">\(\mu_i\)</span></td>
+<td><span class="math inline">\(\tau^2\)</span></td>
+<td><span class="math inline">\(g(\mu_i) = \mu_i\)</span></td>
+</tr>
+<tr class="even">
+<td>Binomial</td>
+<td><span class="math inline">\(1,\dots,m_i\)</span></td>
+<td><span class="math inline">\(m_i\mu_i\)</span></td>
+<td><span class="math inline">\(m_i\mu_i(1-\mu_i)\)</span></td>
+<td><span class="math inline">\(g(\mu_i) = \log\{ \mu_i/(1-\mu_i) \}\)</span></td>
+</tr>
+<tr class="odd">
+<td>Poisson</td>
+<td><span class="math inline">\(1,2,\ldots,\infty\)</span></td>
+<td><span class="math inline">\(m_i\mu_i\)</span></td>
+<td><span class="math inline">\(m_i\mu_i\)</span></td>
+<td><span class="math inline">\(g(\mu_i) = \log\{ \mu_i \}\)</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Based on the formulation in <span class="math inline">\(\eqref{eq:linear_predictor_ch1}\)</span>, we can see that <span class="math inline">\(S(x_i)\)</span> quantifies residual spatial effects on <span class="math inline">\(\mu_i\)</span> that have not been accounted for by the covariates <span class="math inline">\(d(x_i)\)</span>. In an ideal scenario, the covariates <span class="math inline">\(d(x_i)\)</span> should explain all the spatial variation without the need for <span class="math inline">\(S(x_i)\)</span>. Although this unrealistic, in practice we may be able to most of the variation in <span class="math inline">\(\mu_i\)</span> through <span class="math inline">\(d(x_i)\)</span> and, hence, reduce <span class="math inline">\(S(x_i)\)</span> to a negligible component. In Chapter 2, we will show how a thorough exploratory analysis can help to understand whether we have come close to that ideal scenario or, if instead, we need the use of GLGM to model the data.</p>
+<p>The model described in <span class="math inline">\(\eqref{eq:linear_predictor_ch1}\)</span> can be seen as the most basic GLGM that can be used for a geostatistical analysis. As we will see in the analysis of some of the examples and, in Chapter 6, in the case studies, some extensions of this model will be required to account for additional sources of residual variation that contribute to the intrinsic random variation of the data.</p>
 </section>
-<section id="workflow-of-a-statistical-analysis" class="level2" data-number="1.6">
-<h2 data-number="1.6" class="anchored" data-anchor-id="workflow-of-a-statistical-analysis"><span class="header-section-number">1.6</span> Workflow of a statistical analysis</h2>
-</section>
-<section id="structure-of-the-book" class="level2" data-number="1.7">
-<h2 data-number="1.7" class="anchored" data-anchor-id="structure-of-the-book"><span class="header-section-number">1.7</span> Structure of the book</h2>
+<section id="workflow-of-a-statistical-analysis-and-structure-of-the-book" class="level2" data-number="1.6">
+<h2 data-number="1.6" class="anchored" data-anchor-id="workflow-of-a-statistical-analysis-and-structure-of-the-book"><span class="header-section-number">1.6</span> Workflow of a statistical analysis and structure of the book</h2>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" role="doc-bibliography" style="display: none">
+<div id="ref-breslow1993" class="csl-entry" role="doc-biblioentry">
+Breslow, N. E., and D. G. Clayton. 1993. <span>“Approximate Inference in Generalized Linear Mixed Models.”</span> <em>Journal of the American Statistical Association</em> 88: 9–25.
+</div>
+<div id="ref-chilesdelfiner2016" class="csl-entry" role="doc-biblioentry">
+Chilès, J-P, and P. Delfiner. 2016. <em>Geostatistics (Second Edition)</em>. Hoboken: Wiley.
+</div>
+<div id="ref-cressie1991" class="csl-entry" role="doc-biblioentry">
+Cressie, N. A. C. 1991. <em>Statistics for Spatial Data</em>. New York: Wiley.
+</div>
+<div id="ref-diggle1998" class="csl-entry" role="doc-biblioentry">
+Diggle, P. J., J. A. Tawn, and R. A. Moyeed. 1998. <span>“Model-Based Geostatistics.”</span> <em>Journal of the Royal Statistical Society: Series C (Applied Statistics)</em> 47 (3): 299–350. <a href="https://doi.org/10.1111/1467-9876.00113">https://doi.org/10.1111/1467-9876.00113</a>.
+</div>
 <div id="ref-dobson2008" class="csl-entry" role="doc-biblioentry">
 Dobson, A. J., and A. Barnett. 2008. <em>An Introduction to Generalized Linear Models</em>. Third. Chapman; Hall/CRC.
 </div>
 <div id="ref-fernandez2000" class="csl-entry" role="doc-biblioentry">
 Fernández, J. A, A Rey, and A Carballeira. 2000. <span>“An Extended Study of Heavy Metal Deposition in Galicia (NW Spain) Based on Moss Analysis.”</span> <em>Science of The Total Environment</em> 254 (1): 31–44. <a href="https://doi.org/10.1016/S0048-9697(00)00431-9">https://doi.org/10.1016/S0048-9697(00)00431-9</a>.
 </div>
+<div id="ref-krige1951" class="csl-entry" role="doc-biblioentry">
+Krige, D. G. 1951. <span>“A Statistical Approach to Some Basic Mine Valuation Problems on the Witwatersrand.”</span> <em>Journal of the Chemical, Metallurgical and Mining Society of South Africa</em> 52: 119–39.
+</div>
+<div id="ref-matheron1963" class="csl-entry" role="doc-biblioentry">
+Matheron, G. 1963. <span>“Principles of Geostatistics.”</span> <em>Economic Geology</em> 58: 1246–66.
+</div>
+<div id="ref-nelder1972" class="csl-entry" role="doc-biblioentry">
+Nelder, J. A., and R. W. M. Wedderburn. 1972. <span>“Generalized Linear Models.”</span> <em>Journal of the Royal Statistical Society A</em> 135: 370–84.
+</div>
 <div id="ref-pawitan2001" class="csl-entry" role="doc-biblioentry">
 Pawitan, Yudi. 2001. <em>In All Likelihood : Statistical Modelling and Inference Using Likelihood</em>. Oxford ; New York: Clarendon Press : Oxford University Press.
+</div>
+<div id="ref-ripley1981" class="csl-entry" role="doc-biblioentry">
+Ripley, B. D. 1981. <em>Spatial Statistics</em>. New York: Wiley.
 </div>
 <div id="ref-ross2013" class="csl-entry" role="doc-biblioentry">
 Ross, Sheldon. 2013. <em>First Course in Probability, a.</em> 9th ed. Harlow: Pearson Education UK.
 </div>
 <div id="ref-fossog2015" class="csl-entry" role="doc-biblioentry">
 Tene Fossog, Billy, Diego Ayala, Pelayo Acevedo, Pierre Kengne, Ignacio Ngomo Abeso Mebuy, Boris Makanga, Julie Magnus, et al. 2015. <span>“Habitat Segregation and Ecological Character Displacement in Cryptic African Malaria Mosquitoes.”</span> <em>Evolutionary Applications</em> 8 (4): 326–45. <a href="https://doi.org/10.1111/eva.12242">https://doi.org/10.1111/eva.12242</a>.
+</div>
+<div id="ref-watson1971" class="csl-entry" role="doc-biblioentry">
+Watson, G. S. 1971. <span>“Trend -Surface Analysis.”</span> <em>Mathematical Geology</em> 3: 215–26.
+</div>
+<div id="ref-watson1972" class="csl-entry" role="doc-biblioentry">
+———. 1972. <span>“Trend Surface Analysis and Spatial Correlation.”</span> <em>Geological Society of America Special Paper</em> 146: 39–46.
 </div>
 <div id="ref-zoure2014" class="csl-entry" role="doc-biblioentry">
 Zouré, Honorat GM, Mounkaila Noma, Afework H Tekle, Uche V Amazigo, Peter J Diggle, Emanuele Giorgi, and Jan HF Remme. 2014. <span>“Geographic Distribution of Onchocerciasis in the 20 Participating Countries of the African Programme for Onchocerciasis Control: (2) Pre-Control Endemicity Levels and Estimated Number Infected.”</span> <em>Parasites &amp; Vectors</em> 7 (1): 326–26.
