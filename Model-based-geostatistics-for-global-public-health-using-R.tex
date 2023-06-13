@@ -226,7 +226,7 @@
 
 \begin{document}
 \maketitle
-\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[enhanced, frame hidden, breakable, interior hidden, borderline west={3pt}{0pt}{shadecolor}, sharp corners, boxrule=0pt]}{\end{tcolorbox}}\fi
+\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[sharp corners, breakable, frame hidden, boxrule=0pt, enhanced, interior hidden, borderline west={3pt}{0pt}{shadecolor}]}{\end{tcolorbox}}\fi
 
 \renewcommand*\contentsname{Table of contents}
 {
@@ -374,8 +374,8 @@ Table~\ref{tbl-packages}.
 
 \hypertarget{tbl-packages}{}
 \begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.3056}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.6944}}@{}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.3611}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.6389}}@{}}
 \caption{\label{tbl-packages}List of the R packages that will be used in
 the book with a description of their use in the data analysis. The
 packages marked by (E) are essential for the geostatistical analysis.
@@ -419,9 +419,8 @@ To install packages in R for the first time, you can use the command
 \end{Highlighting}
 \end{Shaded}
 
-\hypertarget{example-data-sets-used-in-the-book}{%
-\section{Example data-sets used in the
-book}\label{example-data-sets-used-in-the-book}}
+\hypertarget{sec-examples-ch1}{%
+\section{Example data-sets used in the book}\label{sec-examples-ch1}}
 
 The geostatistical data-sets described in this section will be used
 throughout the book to illustrate the use of the R packages mentioned in
@@ -654,13 +653,13 @@ that, we can write \([Y | S]\) as
 }\label{eq-glm-ch1}\end{equation}
 
 The final step then consists of specifying a distribution for
-\([Y_i | S(x_i)]\). Table 1.2 gives the range, mean and variance the
-three specifications for \([Y_i | S(x_i)]\) which we will consider in
-this book. In the table, the \emph{canonical function}, say
-\(g(\cdot)\), denotes the natural transformation of the mean component
-\(\mu_i\) that allows us to introduce both covariates and the spatial
-process \(S(x_i)\) into the model so as to explain the variation in
-\(\mu_i\) as
+\([Y_i | S(x_i)]\). Table~\ref{tbl-glm} gives the range, mean and
+variance the three specifications for \${[}Y\_i \textbar{}
+S(x\_i){]}\$\$ which we will consider in this book. In
+Table~\ref{tbl-glm}, the \emph{canonical function}, say \(g(\cdot)\),
+denotes the natural transformation of the mean component \(\mu_i\) that
+allows us to introduce both covariates and the spatial process
+\(S(x_i)\) into the model so as to explain the variation in \(\mu_i\) as
 
 \begin{equation}\protect\hypertarget{eq-linear-predictor-ch1}{}{
 g(\mu_i) = d(x_i)^\top \beta + S(x_i).
@@ -673,14 +672,29 @@ distributions, is an offset quantity and is used to account for the
 number of \emph{tests} or the population size at a given location
 \(x_i\).
 
-Table 1.2: List of type of outcomes \(Y_i\) considered in the book.
-
+\hypertarget{tbl-glm}{}
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
   >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
   >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
   >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
   >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}@{}}
+\caption{\label{tbl-glm}Type of outcomes \(Y_{i}\) considered in this
+book.}\tabularnewline
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Distribution
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Range of \(Y_i\)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Mean of \([Y_i | S(x_i)]\)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Variance of \([Y_i | S(x_i)]\)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Canonical link
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Distribution
@@ -742,13 +756,71 @@ book}\label{workflow-of-a-statistical-analysis-and-structure-of-the-book}}
 
 \begin{figure}
 
-{\centering \includegraphics{figures/workflow_diagram.png}
+{\centering \includegraphics{./figures/workflow_diagram.png}
 
 }
 
-\caption{Figure 1.4: The different stages of a statistical analysis.}
+\caption{\label{fig-stages}Stages of a statistical analysis}
 
 \end{figure}
+
+Figure~\ref{fig-stages} shows the different stages that will follow in
+carrying the geostatistical analysis of the examples introduced in
+Section~\ref{sec-examples-ch1}. The exploratory analysis of the data is
+an essential first step that is used to understand the empirical
+associations between risk factors and the the health outcome of
+interest. In our case, this first stage is also used to justify the use
+of geostatistical models by questioning the underlying assumptions of
+standard generalized linear models. Based on the results obtained from
+the exploration of the data, we then formulate a suitable statistical
+model and estimate its parameters using likelihood based methods of
+inference. These also allows us to obtain uncertainty measures about the
+strength of associations of regression relationships and the other model
+parameters that define the shape of the spatial correlation in the data.
+Following the estimation of the model, we then proceed to validate its
+underlying assumptions using suitable diagnostics that assess whether
+the model can later be sufficiently trusted to represent the observed
+variation in the modelled outcome. At this stage, if the diagnostics
+checks yield results that indicate the incompatibility of the model with
+the data, we then back to the stage of model formulation and address the
+issues arisen from the validation stage. If instead, we do not find any
+evidence against the fitted model we can proceed to carry out sptatial
+prediction. At this stage, it is important to define suitable predictive
+targets that can help us to better answer the original research question
+and better assist the decision making process. The final step of
+visualization of uncertainty plays an important role in geostatistical
+analysis in order to convey the main findings of the study in an
+effective and easy-to-understand way for a wider audience which also
+consists of non-experts.
+
+In the remainder of this book, each chapter focuses on a specific stage
+as shown in Figure~\ref{fig-stages}. We treat visualization of
+uncertainty together with spatial prediction in Chapter 5.
+
+Chapter 1 provides statistical methods for the exploration of
+geostatistical data-sets, especially on the detection of residual
+spatial correlation. In addition, we will also cover the handling and
+visualization of spatial data in R. The skills learned in this will also
+be useful in Chapter 5 and Chapter 6 for generating predictive maps of
+the modelled outcome.
+
+Chapter 2 focuses on the estimation of geostatistical models and will
+provide an overview of Monte Carlo based methods for maximum likelihood
+estimation.
+
+Chapter 3 illustrated the use of methods that can be used to validate
+the assumptions and calibration of statistical models.
+
+Chapter 5 shows how geostatistical models can be used to carry out
+spatial prediction of a health outcome of interest both on a spatially
+continuous and spatially aggregated scales.
+
+Finally, Chapter 6 presents the application of all the methods
+illustrated in the previous chapters to three additional data-sets. This
+chapter offers a summary of the content of book by putting together all
+the stages in the geostatistical analyses for each of the three case
+studies, and illustrates additional functionalities of the
+\texttt{RiskMap} R package not covered in the previous chapters.
 
 \bookmarksetup{startatroot}
 
