@@ -163,7 +163,7 @@ In studies of vector-borne and zoonotic diseases, understanding of the vector di
 
 The data-set on mosquitoes (@fig-anopheles-ch1) that will use in the book consists of a sub-set taken from a large database [@fossog2015]. This was assembled in order to understand how the environment affects the distribution of different species of *Anopheles* mosquitoes in sub-Saharan Africa. This example data-set will be used to illustrate the application of Poisson geostatistical models for mapping mosquitoes abundance.
 
-## Geostatistical problems and geostatistical models
+## Geostatistical problems and geostatistical models {#sec-geostat-models}
 
 What the examples of the previous section have in common is that, in each case, the goal of statistical analysis is to draw inferences on an unobserved spatially continuous surface using data collected from a finite set of locations. The lead concentration in Galicia, the prevalence for river-blindness in Liberia and the abundance of *A. gambiae* mosquitoes in Cameroon can all be represented as spatially continuous processes that originate from the combined effects of environmental factors. We denote this class of inferential problems as *geostatistical problems* for which a solution can be found through the development and application of suitable *geostatistical models*, which are the subject of this book.
 
@@ -200,12 +200,12 @@ $$ {#eq-linear-predictor-ch1}
 where $d(x_i)$ is a vector of spatially referenced covariates with associated regression coefficients $\beta$. Finally, the quantity $m_i$, which appears in the formulation of the Binomial and Poisson distributions, is an offset quantity and is used to account for the number of *tests* or the population size at a given location $x_i$.
 
 | Distribution | Range of $Y_i$       | Mean of $[Y_i | S(x_i)]$ | Variance of $[Y_i | S(x_i)]$ | Canonical link                         |
-|-------------|-------------|-------------|-------------|-------------|
+|---------------|---------------|---------------|---------------|---------------|
 | Gaussian     | $(-\infty, +\infty)$ | $\mu_i$                  | $\tau^2$                     | $g(\mu_i) = \mu_i$                     |
 | Binomial     | $1,\dots,m_i$        | $m_i\mu_i$               | $m_i\mu_i(1-\mu_i)$          | $g(\mu_i) = \log\{ \mu_i/(1-\mu_i) \}$ |
 | Poisson      | $1,2,\ldots,\infty$  | $m_i\mu_i$               | $m_i\mu_i$                   | $g(\mu_i) = \log\{ \mu_i \}$           |
 
-: Type of outcomes $Y_{i}$ considered in this book.  {#tbl-glm}
+: Type of outcomes $Y_{i}$ considered in this book. {#tbl-glm}
 
 Based on the formulation in ([-@eq-linear-predictor-ch1]), we can see that $S(x_i)$ quantifies residual spatial effects on $\mu_i$ that have not been accounted for by the covariates $d(x_i)$. In an ideal scenario, the covariates $d(x_i)$ should explain all the spatial variation without the need for $S(x_i)$. Although this unrealistic, in practice we may be able to most of the variation in $\mu_i$ through $d(x_i)$ and, hence, reduce $S(x_i)$ to a negligible component. In Chapter 2, we will show how a thorough exploratory analysis can help to understand whether we have come close to that ideal scenario or, if instead, we need the use of GLGM to model the data.
 

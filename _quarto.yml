@@ -11,7 +11,7 @@ book:
   chapters:
     - index.qmd
     - 01_intro.qmd
-    - 02_exploratory-analysis.qmd
+    - 02_handling-spatial-data.qmd
     - 03_model-fitting.qmd
     - 04_model-validation.qmd
     - 05_geostatistical-prediction.qmd
