@@ -1,6 +1,6 @@
 # Model formulation and parameter estimation
 
-## List of the main functions {.unnumbered}
+## List of the main functions used in the chapter {.unnumbered}
 
 | Function | R Package | Used for                                |
 |----------|-----------|-----------------------------------------|
@@ -18,17 +18,17 @@ In the exploratory analysis of count data, we will also look at how overdispersi
 
 Assessment of the association between the health outcome of interest and non-categorical (i.e. continuous) risk factors, can be carried through scatter plots. The graphical exploration of the empirical association between the outcome and the covariates is especially useful to identify non-linear patterns in the relationship which should then be accounted for in the model formulation.
 
-Let us first consider the example of the riverblindess data in Liberia, and examine the association between prevalence and elevation. We first generate a plot of the prevalence against the measured elevation at each of the sample locations
+Let us first consider the example of the river-blindess data in Liberia, and examine the association between prevalence and elevation. We first generate a plot of the prevalence against the measured elevation at each of the sample locations
 
 ```{r, echo=FALSE}
 library(ggplot2)
 load("data/liberia.rdata")
-
+load("data/malkenya.rdata")
 ```
 
 ```{r, collapse=TRUE}
 #| label: fig-prev-elev-liberia
-#| fig-cap: "Scatter plot of the empirical prevalence for riverblindess against elevation, measured in meters."
+#| fig-cap: "Scatter plot of the empirical prevalence for river-blindess against elevation, measured in meters."
 liberia$logit <- liberia$npos/liberia$ntest
 
 ggplot(liberia, aes(x = elevation, y = logit)) + geom_point() +
@@ -45,7 +45,7 @@ where $y_i$ are the number of individuals who tested positive for riverblindness
 
 ```{r, collapse=TRUE}
 #| label: fig-elogit-elev-liberia
-#| fig-cap: "Scatter plot of the empirical prevalence for riverblindess against elevation, measured in meters."
+#| fig-cap: "Scatter plot of the empirical prevalence for river-blindess against elevation, measured in meters."
 
 ggplot(liberia, aes(x = elevation, y = logit)) + geom_point() +
   labs(x="Elevation (meters)",y="Empirical logit") +
@@ -55,6 +55,39 @@ ggplot(liberia, aes(x = elevation, y = logit)) + geom_point() +
   stat_smooth(method = "lm", formula = y ~ log(x),
               col="green",lty="dashed",se=FALSE)
  
+
+```
+
+```{r, collapse=TRUE}
+#| label: fig-elogit-age-malkenya
+#| fig-cap: "Plot of the empirical logit against age, for males and females. The size of each solid point is rendered proportional to the number of individuals within age group, as indicated in the legend."
+
+# Grouping of ages into classes defined through "breaks"
+malkenya$Age_class <- cut(malkenya$Age, 
+                          breaks = c(0, 5, 10, 15, 30, 40, 50, 60, 100),
+                          include.lowest = TRUE)
+
+# Computation of the empirical logit by age groups and gender
+age_class_data <- aggregate(RDT ~ Age_class + Gender, 
+                                    data = malkenya, 
+                                    FUN = function(y) 
+                                    log((sum(y)+0.5)/(length(y)-sum(y)+0.5)))
+
+# Computation of the average age within each age group
+age_class_data$age_mean_point <- aggregate(Age ~ Age_class + Gender, 
+                                 data = malkenya, 
+                                 FUN = mean)$Age
+
+# Number of individuals within each age group, by gender
+age_class_data$n_obs <-  aggregate(Age ~                                                               Age_class + Gender, 
+                         data = malkenya, 
+                         FUN = length)$Age
+
+ggplot(age_class_data, aes(x = age_mean_point, y = RDT, 
+                           size = n_obs, 
+                           colour = Gender)) + 
+  geom_point() +
+  labs(x="Age (years)",y="Empirical logit")  
 
 ```
 

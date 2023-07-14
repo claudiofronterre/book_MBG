@@ -192,7 +192,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#list-of-the-main-functions" id="toc-list-of-the-main-functions" class="nav-link active" data-scroll-target="#list-of-the-main-functions">List of the main functions</a></li>
+  <li><a href="#list-of-the-main-functions-used-in-the-chapter" id="toc-list-of-the-main-functions-used-in-the-chapter" class="nav-link active" data-scroll-target="#list-of-the-main-functions-used-in-the-chapter">List of the main functions used in the chapter</a></li>
   <li><a href="#exploratory-analysis" id="toc-exploratory-analysis" class="nav-link" data-scroll-target="#exploratory-analysis"><span class="header-section-number">4</span> Exploratory analysis</a>
   <ul class="collapse">
   <li><a href="#exploring-association-with-risk-factors" id="toc-exploring-association-with-risk-factors" class="nav-link" data-scroll-target="#exploring-association-with-risk-factors"><span class="header-section-number">4.1</span> Exploring association with risk factors</a></li>
@@ -224,8 +224,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header>
 
-<section id="list-of-the-main-functions" class="level2 unnumbered">
-<h2 class="unnumbered anchored" data-anchor-id="list-of-the-main-functions">List of the main functions</h2>
+<section id="list-of-the-main-functions-used-in-the-chapter" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="list-of-the-main-functions-used-in-the-chapter">List of the main functions used in the chapter</h2>
 <table class="table">
 <thead>
 <tr class="header">
@@ -255,12 +255,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="exploratory-analysis" class="level1" data-number="4">
 <h1 data-number="4"><span class="header-section-number">4</span> Exploratory analysis</h1>
-<p>As illustrated in <a href="01_intro.html#fig-stages">Figure&nbsp;<span>1.4</span></a>, exploratory analysis is the first step that should be carried out in a statistical analysis. This stage is essential to inform how covariates should be introduced in the model and, in our case, whether the variation unexplained by those covariates exhibits spatial correlation.</p>
+<p>As illustrated in <a href="01_intro.html#fig-stages">Figure&nbsp;<span>1.5</span></a>, exploratory analysis is the first step that should be carried out in a statistical analysis. This stage is essential to inform how covariates should be introduced in the model and, in our case, whether the variation unexplained by those covariates exhibits spatial correlation.</p>
 <p>In the exploratory analysis of count data, we will also look at how overdispersion, which is a necessary, though not sufficient, condition for residual spatial correlation.</p>
 <section id="exploring-association-with-risk-factors" class="level2" data-number="4.1">
 <h2 data-number="4.1" class="anchored" data-anchor-id="exploring-association-with-risk-factors"><span class="header-section-number">4.1</span> Exploring association with risk factors</h2>
 <p>Assessment of the association between the health outcome of interest and non-categorical (i.e.&nbsp;continuous) risk factors, can be carried through scatter plots. The graphical exploration of the empirical association between the outcome and the covariates is especially useful to identify non-linear patterns in the relationship which should then be accounted for in the model formulation.</p>
-<p>Let us first consider the example of the riverblindess data in Liberia, and examine the association between prevalence and elevation. We first generate a plot of the prevalence against the measured elevation at each of the sample locations</p>
+<p>Let us first consider the example of the river-blindess data in Liberia, and examine the association between prevalence and elevation. We first generate a plot of the prevalence against the measured elevation at each of the sample locations</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>liberia<span class="sc">$</span>logit <span class="ot">&lt;-</span> liberia<span class="sc">$</span>npos<span class="sc">/</span>liberia<span class="sc">$</span>ntest</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -270,12 +270,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div id="fig-prev-elev-liberia" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
 <p><img src="03_model-fitting_files/figure-html/fig-prev-elev-liberia-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption class="figure-caption">Figure&nbsp;4.1: Scatter plot of the empirical prevalence for riverblindess against elevation, measured in meters.</figcaption>
+<figcaption class="figure-caption">Figure&nbsp;4.1: Scatter plot of the empirical prevalence for river-blindess against elevation, measured in meters.</figcaption>
 </figure>
 </div>
 </div>
 </div>
-<p>The plot shown in <a href="#fig-prev-elev-liberia">Figure&nbsp;<span>4.1</span></a> shows that, when elevation increases from 0 to around 100 meters, prevalence rapidly increases to around 0.25 and, for larger values in elevation, the relationship levels off. This begs the question of how we can account for this in a regression model. However, the plot in <a href="#fig-prev-elev-liberia">Figure&nbsp;<span>4.1</span></a> cannot be used to inform this decision because, when modelling prevalence data, regression relationships are specified on the logit-transformed prevalence (log-odds) scale; see Section <span class="quarto-unresolved-ref">?sec-geostat-models</span> . The approach we follow to explore relationships in the case of prevalence data is to the so called empirical logit, defined as</p>
+<p>The plot shown in <a href="#fig-prev-elev-liberia">Figure&nbsp;<span>4.1</span></a> shows that, when elevation increases from 0 to around 100 meters, prevalence rapidly increases to around 0.25 and, for larger values in elevation, the relationship levels off. This begs the question of how we can account for this in a regression model. However, the plot in <a href="#fig-prev-elev-liberia">Figure&nbsp;<span>4.1</span></a> cannot be used to inform this decision because, when modelling prevalence data, regression relationships are specified on the logit-transformed prevalence (log-odds) scale; see Section <a href="01_intro.html#sec-geostat-models"><span>Section&nbsp;1.5</span></a> . The approach we follow to explore relationships in the case of prevalence data is to the so called empirical logit, defined as</p>
 <p><span id="eq-empirical-logit"><span class="math display">\[
 e_{i} = \log\left\{\frac{y_i + 1/2}{n_i - y_i + 1/2}\right\}
 \tag{4.1}\]</span></span></p>
@@ -293,7 +293,44 @@ e_{i} = \log\left\{\frac{y_i + 1/2}{n_i - y_i + 1/2}\right\}
 <div id="fig-elogit-elev-liberia" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
 <p><img src="03_model-fitting_files/figure-html/fig-elogit-elev-liberia-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption class="figure-caption">Figure&nbsp;4.2: Scatter plot of the empirical prevalence for riverblindess against elevation, measured in meters.</figcaption>
+<figcaption class="figure-caption">Figure&nbsp;4.2: Scatter plot of the empirical prevalence for river-blindess against elevation, measured in meters.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Grouping of ages into classes defined through "breaks"</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>malkenya<span class="sc">$</span>Age_class <span class="ot">&lt;-</span> <span class="fu">cut</span>(malkenya<span class="sc">$</span>Age, </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>                          <span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">5</span>, <span class="dv">10</span>, <span class="dv">15</span>, <span class="dv">30</span>, <span class="dv">40</span>, <span class="dv">50</span>, <span class="dv">60</span>, <span class="dv">100</span>),</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>                          <span class="at">include.lowest =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Computation of the empirical logit by age groups and gender</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>age_class_data <span class="ot">&lt;-</span> <span class="fu">aggregate</span>(RDT <span class="sc">~</span> Age_class <span class="sc">+</span> Gender, </span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">data =</span> malkenya, </span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">FUN =</span> <span class="cf">function</span>(y) </span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>                                    <span class="fu">log</span>((<span class="fu">sum</span>(y)<span class="sc">+</span><span class="fl">0.5</span>)<span class="sc">/</span>(<span class="fu">length</span>(y)<span class="sc">-</span><span class="fu">sum</span>(y)<span class="sc">+</span><span class="fl">0.5</span>)))</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Computation of the average age within each age group</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>age_class_data<span class="sc">$</span>age_mean_point <span class="ot">&lt;-</span> <span class="fu">aggregate</span>(Age <span class="sc">~</span> Age_class <span class="sc">+</span> Gender, </span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">data =</span> malkenya, </span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">FUN =</span> mean)<span class="sc">$</span>Age</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Number of individuals within each age group, by gender</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>age_class_data<span class="sc">$</span>n_obs <span class="ot">&lt;-</span>  <span class="fu">aggregate</span>(Age <span class="sc">~</span>                                                               Age_class <span class="sc">+</span> Gender, </span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>                         <span class="at">data =</span> malkenya, </span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>                         <span class="at">FUN =</span> length)<span class="sc">$</span>Age</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(age_class_data, <span class="fu">aes</span>(<span class="at">x =</span> age_mean_point, <span class="at">y =</span> RDT, </span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>                           <span class="at">size =</span> n_obs, </span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>                           <span class="at">colour =</span> Gender)) <span class="sc">+</span> </span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Age (years)"</span>,<span class="at">y=</span><span class="st">"Empirical logit"</span>) </span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a> </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-elogit-age-malkenya" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="03_model-fitting_files/figure-html/fig-elogit-age-malkenya-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="figure-caption">Figure&nbsp;4.3: Plot of the empirical logit against age, for males and females. The size of each solid point is rendered proportional to the number of individuals within age group, as indicated in the legend.</figcaption>
 </figure>
 </div>
 </div>

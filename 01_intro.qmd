@@ -63,7 +63,7 @@ install.packages("RiskMap")
 
 The geostatistical data-sets described in this section will be used throughout the book to illustrate the use of the R packages mentioned in the previous sections.
 
-Each of the three data-sets can be loaded from the `RiskMap` package, using the command
+Each of the examples data-sets can be loaded from the `RiskMap` package, using the command
 
 ```{r eval=FALSE}
 data(galicia)
@@ -75,13 +75,16 @@ for the lead concentration data from Galicia,
 data(liberia)
 ```
 
-for the river-blindness data-set, and
-
+for the river-blindness data-set, 
+```{r eval=FALSE}
+data(malkenya)
+```
+for the malaria data in the Western Highlands of Kenya, and
 ```{r eval=FALSE}
 data(anopheles)
 ```
 
-for the Anhopheles mosquitoes data-set.
+for the Anopheles mosquitoes data-set.
 
 In the final chapter of this book, we will consider the analysis of additional data-sets to review the main statistical concepts presented in this book.
 
@@ -137,6 +140,40 @@ if(knitr::is_html_output()){
 In low-resource settings, where disease registries are typically absent, cross-sectional surveys are an essential monitoring tool that enables the estimation of the disease burden in a population of interest. The data considered in this example (@fig-liberia-ch1) have been collected as part of an Africa-wide initiative called the Rapid Epidemiological Mapping of Onchocerchiasis (REMO) carried out in 2011 in 20 African countries [@zoure2014]. The goal of REMO is to identify areas where river-blindness (or onchocerchiasis), a disease transmitted by black flies who breed along fast flowing rivers, is still a public health problem. In this context, it is especially of interest to identify communities with a prevalence above 20% and for treatment is urgently needed.
 
 In this book, we will use data collected from Liberia to model nodule prevalence, which is based on a alternative and cheaper diagnostic technique for river-blindness. In the analysis of this data-set, we will illustrate how to formulate and fit Binomial geostatistical models, and how these can be used to predict prevalence within a region of interest.
+
+### Malaria in the Western Kenyan Highlands
+```{r echo=FALSE, message=FALSE}
+#| label: fig-malkenya-ch1
+#| fig-cap: "Malaria prevalence data from a cross-sectional survey carried out in Nyanza Province, in the Western Highlands of Kenya."
+
+library(sf)
+library(mapview)
+load("data/malkenya.rdata")
+comm <- malkenya[malkenya$Survey=="community", ]
+coords <- unique(comm[,c("Long", "Lat")])
+agg <- data.frame(Long = coords[,1],
+                  Lat = coords[,2],
+                  prev = NA)
+for(i in 1:nrow(coords)) {
+  ind <- which(comm$Long==coords[i,1])
+  agg$prev[i] <- mean(comm[ind,"RDT"])
+}
+
+malkenya_sf <- st_as_sf(agg, coords = c("Long", "Lat"), 
+                       crs = 4326)
+
+map <- mapview(malkenya_sf, zcol = "prev", layer.name = "Prevalence") 
+mapview::mapshot(map, file = "./figures/malkenya_ch1.png")
+
+if(knitr::is_html_output()){
+  map
+} else {
+  knitr::include_graphics("./figures/malkenya_ch1.png")
+}
+```
+Malaria is one of deadliest diseases that affects populations living in tropical and subtropical countries. It is caused by a parasite of the genus Plasmodium which is transmitted through the infectious bite of female Anopheles mosquitoes. In the following chapters, we shall analyse a data-set from a cross-sectional community survey carried out in July 2010 in Nyanza Province, in the Western Highlands of Kenya [@stevenson2013]. 
+
+What distinguishes this from the other examples data-sets is that the data contain both individual-level and household-level information. The outcome of interest is the result from a rapid diagnostic test for malaria which. In the book, we will illustrate how to account for the the hierarchical structure of the data and the binary nature of the outcome at each of the stages of the geostatistical analysis.
 
 ### *Anopheles gambiae* mosquitoes in Southern Cameroon
 
