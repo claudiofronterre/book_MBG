@@ -1,4 +1,4 @@
-# Model validation
+# Model validation {#sec-validation}
 
 This is a book created from markdown and executable code.
 
@@ -13,4 +13,3 @@ See @knuth84 for additional discussion of literate programming.
 ## Validating the calibration of the model
 
 ## Validating the spatial correlation of the model
-

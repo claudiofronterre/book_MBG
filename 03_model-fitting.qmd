@@ -1,4 +1,4 @@
-# Model formulation and parameter estimation
+# Model formulation and parameter estimation {#sec-estimation}
 
 ## List of the main functions used in the chapter {.unnumbered}
 
@@ -14,11 +14,15 @@ As illustrated in @fig-stages, exploratory analysis is the first step that shoul
 
 In the exploratory analysis of count data, we will also look at how overdispersion, which is a necessary, though not sufficient, condition for residual spatial correlation.
 
-## Exploring association with risk factors
+## Exploring associations with risk factors
 
-Assessment of the association between the health outcome of interest and non-categorical (i.e. continuous) risk factors, can be carried through scatter plots. The graphical exploration of the empirical association between the outcome and the covariates is especially useful to identify non-linear patterns in the relationship which should then be accounted for in the model formulation.
+Assessment of the association between the health outcome of interest and non-categorical (i.e. continuous) risk factors can be carried using graphical tools, such scatter plots. The graphical inspection of the empirical association between the outcome and the covariates is especially useful to identify non-linear patterns in the relationship which should then be accounted for in the model formulation.
 
-Let us first consider the example of the river-blindess data in Liberia, and examine the association between prevalence and elevation. We first generate a plot of the prevalence against the measured elevation at each of the sample locations
+In this section, we look more closely at the case of Binomial outcomes which a require a different treatment from other type of outcomes. If you want to read more on how to carry out exploratory analysis of the data, we refer you to Chapter 1 of @weisberg2014.
+
+### When the outcome is an aggregated Binomial count
+
+Let us first consider the example of the river-blindness data in Liberia (@sec-rb-ch1), and examine the association between prevalence and elevation. We first generate a plot of the prevalence against the measured elevation at each of the sample locations
 
 ```{r, echo=FALSE}
 library(ggplot2)
@@ -29,67 +33,126 @@ load("data/malkenya.rdata")
 ```{r, collapse=TRUE}
 #| label: fig-prev-elev-liberia
 #| fig-cap: "Scatter plot of the empirical prevalence for river-blindess against elevation, measured in meters."
-liberia$logit <- liberia$npos/liberia$ntest
+liberia$prev <- liberia$npos/liberia$ntest
 
-ggplot(liberia, aes(x = elevation, y = logit)) + geom_point() +
-  labs(x="Elevation (meters)",y="Empirical logit")
+ggplot(liberia, aes(x = elevation, y = prev)) + geom_point() +
+  labs(x="Elevation (meters)",y="Prevalence")
 ```
 
-The plot shown in @fig-prev-elev-liberia shows that, when elevation increases from 0 to around 100 meters, prevalence rapidly increases to around 0.25 and, for larger values in elevation, the relationship levels off. This begs the question of how we can account for this in a regression model. However, the plot in @fig-prev-elev-liberia cannot be used to inform this decision because, when modelling prevalence data, regression relationships are specified on the logit-transformed prevalence (log-odds) scale; see Section @sec-geostat-models . The approach we follow to explore relationships in the case of prevalence data is to the so called empirical logit, defined as
+The plot shown in @fig-prev-elev-liberia shows that, as elevation increases from 0 to around 150 meters, prevalence rapidly increases to around 0.25 and, for larger values in elevation than 150 meters, the relationship levels off. This begs the question of how we can account for this in a regression model. To answer this question rigorously, however, the plot in @fig-prev-elev-liberia cannot be used. This is because, when the modelled outcome is a bounded Binomial count, regression relationships are specified on the logit-transformed prevalence (log-odds) scale; see @tbl-glm in Section @sec-geostat-models . To explore regression relationships in the case of prevalence data, it is convenient to use the so-called empirical logit in place of the empirical prevalence. The empirical logit is defined as
 
 $$
-e_{i} = \log\left\{\frac{y_i + 1/2}{n_i - y_i + 1/2}\right\}
+l_{i} = \log\left\{\frac{y_i + 1/2}{n_i - y_i + 1/2}\right\}
 $$ {#eq-empirical-logit}
 
-where $y_i$ are the number of individuals who tested positive for riverblindness and $n_i$ is the total number of people tested at a location. The reason for using the empirical logit, rather than the standard logit transformation applied directly to the empirical prevalence, is that it allows to generate finite values for empirical prevalence values of 0 and 1, for which the standard logit function is not defined.
+where $y_i$ are the number of individuals who tested positive for riverblindness and $n_i$ is the total number of people tested at a location. The reason for using the empirical logit, rather than the standard logit transformation applied directly to the empirical prevalence, is that it allows to generate finite values for empirical prevalence values of 0 and 1, for which the standard logit transformation is not defined.
 
 ```{r, collapse=TRUE}
 #| label: fig-elogit-elev-liberia
 #| fig-cap: "Scatter plot of the empirical prevalence for river-blindess against elevation, measured in meters."
 
-ggplot(liberia, aes(x = elevation, y = logit)) + geom_point() +
+# The empirical logit
+liberia$elogit <- log((liberia$npos+0.5)/
+                      (liberia$ntest-liberia$npos+0.5))
+
+ggplot(liberia, aes(x = elevation, y = elogit)) + geom_point() +
+  
+  # Adding a smoothing spline
   labs(x="Elevation (meters)",y="Empirical logit") +
   stat_smooth(method = "gam", formula = y ~ s(x),se=FALSE)+
-  stat_smooth(method = "lm", formula = y ~ x + I((x-150)*(x>150)),
-              col="red",lty="dashed",se=FALSE) +
+  
+  # Adding linear regression fit with log-transformed elevation
   stat_smooth(method = "lm", formula = y ~ log(x),
-              col="green",lty="dashed",se=FALSE)
- 
+              col="green",lty="dashed",se=FALSE) +
 
+  # Adding linear regression fit with change point in 150 meters
+  stat_smooth(method = "lm", formula = y ~ x + pmax(x-150, 0),
+              col="red",lty="dashed",se=FALSE) 
+  
 ```
 
-```{r, collapse=TRUE}
-#| label: fig-elogit-age-malkenya
-#| fig-cap: "Plot of the empirical logit against age, for males and females. The size of each solid point is rendered proportional to the number of individuals within age group, as indicated in the legend."
+@fig-elogit-elev-liberia shows the scatter plot of the empirical logit against elevation. In this plot, we have also added three lines though the `stat_smooth` from the `ggplot2` package. Using this function, we first pass the term `gam` to `method` to add a penalized smoothing spline [@hastie2001], represented by the blue solid line. The smoothing spline allows us to better discern how the type of relationship and how to best capture it using a standard regression approach. As er can see from @fig-elogit-elev-liberia, the smoothing spline corroborates our initial observation of a positive relationship up to about 150 meters, followed by a plateau.
 
+To capture this non-linear relationship, we can use the two following approaches. The first is based on a simple log-transformation of elevation and is represented in @fig-elogit-elev-liberia by the green line. If were to express this relationship using a standard Binomial regression model, this would take the form $$
+\log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_0 + \beta_1 \log\{e(x_i)\}
+$$ {#eq-log-elev-glm} where $p(x_i)$ and $e(x_i)$ are the river-blindness prevalence and elevation at sampled location $x_i$, respectively.
+
+Alternatively, the non-linear effect of elevation on prevalence could be captured using a linear spline. Put in simple terms, we want to fit a linear regression model that allows for a change in slope above 150 meters. Formally, this is expressed in a Binomial regression model as $$
+\log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_0 + \beta_1 e(x_i) + \beta_{2} \max\{e(x_i)-150, 0\}.
+$$ {#eq-lspline-elev-glm} Based on the equation above, the effect of elevation below 150 meters is quantified by the parameter $\beta_1$. Above 150 meters, instead, the effect of elevation becomes $\beta_1 + \beta_2$. Note that the function `pmax` (and not the standard base function `max`) should be used in R when the computation of the maximum between a scalar value and each of the components of a numeric vector is required.
+
+Before we move on, it is important to briefly discuss the differences between using the logarithmic transformation (@eq-log-elev-glm) and the linear spline (@eq-lspline-elev-glm). We observe that both curves provide a similar fit to the data, with larger differences observed for larger values in elevation, where the log-transformed elevation models yields larger values for the predicted prevalence. This also suggests that if we were to extrapolate the predictions beyond 600 meters in elevation the implied pattern by the model with the log-transformed elevation would predict an increasingly larger elevation, which is unrealistic, since the fly that transmits the diseases cannot breed at those altitudes. The linear spline model instead would generate predictions that would be very similar to those observed between 150 and 600 meters. From this point view, the linear spline model would thus have more scientific validity than the other model. However, which of the two approaches should be chosen to model the effect of elevation is a question that closely depends on the research question to be addressed.
+
+If the interest of the study was in better understanding the association between elevation and prevalence, the linear spline model does not only provide a more credible explanation but also its regression parameters can be more easily interpreted. In fact, for a unit increase in elevation, the multiplicative change in the odds for river-blindness is $\exp\{\beta_1\}$, if elevation is below 150 meters, and $\exp\{\beta_1+\beta_2\}$, if elevation is above 150 meters. When instead we use the log-transformed elevation, the interpretation of $\beta_1$ in @eq-log-elev-glm is slightly more complicated, as it is based on the multiplicative increase in elevation by the same amount given by the base of the algorithm, which is about $e \approx 2.718$ (Euler's number). To avoid this, one could rescale the regression coefficient as, for example, $\beta_1/\log_{2}(e)$ which would be interpreted as the multiplicative change in the odds for river-blindness for a doubling in elevation. However, a doubling in elevation is less meaningful when considering larger values of elevation.
+
+When the goal of statistical analysis is instead in developing a predictive model for the outcome of interest, the explanatory power and interpretability of the model may be of less concern. For this reason, the model with the log-transformed model could be preferred over the model with the linear spline, if it shown to yield more predictive power. We will come back to this point again in @sec-geo-prediction, where will show how to assess and compare the predictive performance of different geostatistical models.
+
+### When the outcome is an invidual-level binary indicator
+
+We now consider the malaria data from Kenya (@sec-malaria-ch1) where the main outcome is the result from a rapid diagnostic test (RDT) for malaria from individuals within households. In this case, because the outcome only takes two values, 1 for a positive RDT test result and 0 otherwise, the direct application of the empirical logit from @eq-empirical-logit would not help us to generate informative scatter plots. 
+
+To show how this issue can be overcome, let us consider the variables age and gender. To generate a plot that can help us understand between the relationship with malaria prevalence and the two risk factors, we proceed as follows. 
+
+
+```{r, collapse=TRUE}
 # Grouping of ages into classes defined through "breaks"
 malkenya$Age_class <- cut(malkenya$Age, 
-                          breaks = c(0, 5, 10, 15, 30, 40, 50, 60, 100),
+                          breaks = c(0, 5, 10, 15, 30, 40, 50, 100),
                           include.lowest = TRUE)
+
+```
+Using the `cut` function, we first split age (in years) into classes through the argument `breaks`. The classification of age into $[0,5]$, $(5, 10]$ and $(10, 15]$ is common in many malaria epidemiology studies, as children are one of the groups at highest risk malaria. The choice of the other classes of age reflects instead the need to balance the number of observations falling in each of the classes.
+
+```{r, collapse=TRUE}
 
 # Computation of the empirical logit by age groups and gender
 age_class_data <- aggregate(RDT ~ Age_class + Gender, 
                                     data = malkenya, 
                                     FUN = function(y) 
                                     log((sum(y)+0.5)/(length(y)-sum(y)+0.5)))
+```
 
+We then compute the empirical logit, using the total number of cases within age group and by gender. For a given age group and gender, which we denote as $\mathcal{C}$,  the empirical logit in @eq-empirical-logit, now takes the form
+$$
+l_\mathcal{C} = \left\{\frac{\sum_{i \in \mathcal{C}} y_{i} + 0.5}{|\mathcal{C}|- \sum_{i \in \mathcal{C}} y_{i} + 0.5}\right\}
+$$ {#eq-empirical-logit-bin}
+where $y_i$ are the individual binary outcomes and $i\in \mathcal{C}$ is used to indicate that the sum is carried out over all the individuals who belong the class $\mathcal{C}$, identified by a specific age group and gender. Finally, $|\mathcal{C}|$ is the number of individuals who fall within $\mathcal{C}$. In the code above, the empirical logit in @eq-empirical-logit-bin is computed using the `aggregate` function. An inspection of the object `age_class_data`, a data frame, shows that the empirical is found in the column named `RDT`. 
+
+```{r, collapse=TRUE}
 # Computation of the average age within each age group
 age_class_data$age_mean_point <- aggregate(Age ~ Age_class + Gender, 
                                  data = malkenya, 
                                  FUN = mean)$Age
 
+
 # Number of individuals within each age group, by gender
 age_class_data$n_obs <-  aggregate(Age ~                                                               Age_class + Gender, 
                          data = malkenya, 
                          FUN = length)$Age
+```
+In order to generate the scatter-plot, we compute the average age within each age group by gender, and use these as our values for the x-axis. Note that since we only need to obtain the average age from this output, we use `$Age` to extract this only and allocate to the column `age_mean_point`. Finally, we also compute the number of observations within each of classes and place this in `n_obs`.
+
+```{r, collapse=TRUE}
+#| label: fig-elogit-age-malkenya
+#| fig-cap: "Plot of the empirical logit against age, for males and females. The size of each solid point is rendered proportional to the number of individuals within age group, as indicated in the legend."
 
 ggplot(age_class_data, aes(x = age_mean_point, y = RDT, 
                            size = n_obs, 
                            colour = Gender)) + 
-  geom_point() +
+  geom_point() + 
   labs(x="Age (years)",y="Empirical logit")  
 
 ```
+The resulting plot in @fig-elogit-age-malkenya shows the empirical logit against age by gender, with the size of each of the points proportional to the number of observations falling within each class. The observed pattern is explained by the fact that young children do not have immunity against malaria and acquire this as the grow. Based on this plot, it is reasonable thus to assume that malaria risk reaches its peak at around 15 years of age and then constantly decreases and, after the age of around 40 years, levels off. The slight increase for the age group $[50, 100)$ is more likely to be due to sampling variation. We also observe, that the differences between males and females tend to become larger as age increases. 
+
+Let $p_{j}(x_i)$ denote the probability of a positive RDT for the $j$-th individual living in a household at location $x_i$. Based on these results, one could then use  linear splines with knots at 15 and 40 years, assuming different age effects, hence
+$$
+\begin{aligned}
+\log\left\{\frac{p_{j}(x_i)}{1-p_j(x_i)}\right\} = \beta_{0} + (\beta_{1} + \beta_{1}^*g_{ij})\times a_{ij}+(\beta_{2} + \beta_{2}^*g_{ij})\times\max\{a_{ij}-15, 0\} + \\
+(\beta_{3} + \beta_{3}^*g_{ij}) \times \max\{a_{ij}-40, 0\}
+\end{aligned}
+$$
+In the above equations $g_{ij}$ is the indicator for gender (1 corresponding to male and 0 to female) and $a_{ij}$ is the age of the individual in years. The interpretation of regression coefficients can be done by conditioning to specific age and genders. For example, the effect of age on $p_{j}(x_i)$ females between the age of 15 and 40 is given by $\beta_{1} + \beta_{2}$, whilst for a male of the same age this would become $\beta_{1} + \beta_{2} + \beta^*_{1} + \beta^*_{2}$.
 
 ## Exploring overdispersion in count data
 

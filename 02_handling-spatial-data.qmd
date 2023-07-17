@@ -1,4 +1,4 @@
-# Handling of spatial data in R
+# Handling of spatial data in R {#sec-handling-data}
 
 This is a book created from markdown and executable code.
 

@@ -1,4 +1,4 @@
-# Geostatistical prediction
+# Geostatistical prediction {#sec-geo-prediction}
 
 This is a book created from markdown and executable code.
 
@@ -13,4 +13,3 @@ See @knuth84 for additional discussion of literate programming.
 ## Area-level predictive targets
 
 ## Comparing the predictive performance of geostatistical models
-
