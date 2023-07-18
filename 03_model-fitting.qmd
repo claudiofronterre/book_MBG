@@ -8,19 +8,19 @@
 | `glmer`  | `lme4`    | Fitting generalized linear mixed models |
 | `glgm`   | `RiskMap` | Fitting generalized linear mixed models |
 
-# Exploratory analysis
+## Exploratory analysis
 
 As illustrated in @fig-stages, exploratory analysis is the first step that should be carried out in a statistical analysis. This stage is essential to inform how covariates should be introduced in the model and, in our case, whether the variation unexplained by those covariates exhibits spatial correlation.
 
 In the exploratory analysis of count data, we will also look at how overdispersion, which is a necessary, though not sufficient, condition for residual spatial correlation.
 
-## Exploring associations with risk factors
+### Exploring associations with risk factors
 
 Assessment of the association between the health outcome of interest and non-categorical (i.e. continuous) risk factors can be carried using graphical tools, such scatter plots. The graphical inspection of the empirical association between the outcome and the covariates is especially useful to identify non-linear patterns in the relationship which should then be accounted for in the model formulation.
 
 In this section, we look more closely at the case of Binomial outcomes which a require a different treatment from other type of outcomes. If you want to read more on how to carry out exploratory analysis of the data, we refer you to Chapter 1 of @weisberg2014.
 
-### When the outcome is an aggregated Binomial count
+#### When the outcome is an aggregated Binomial count
 
 Let us first consider the example of the river-blindness data in Liberia (@sec-rb-ch1), and examine the association between prevalence and elevation. We first generate a plot of the prevalence against the measured elevation at each of the sample locations
 
@@ -87,7 +87,7 @@ If the interest of the study was in better understanding the association between
 
 When the goal of statistical analysis is instead in developing a predictive model for the outcome of interest, the explanatory power and interpretability of the model may be of less concern. For this reason, the model with the log-transformed model could be preferred over the model with the linear spline, if it shown to yield more predictive power. We will come back to this point again in @sec-geo-prediction, where will show how to assess and compare the predictive performance of different geostatistical models.
 
-### When the outcome is an invidual-level binary indicator
+#### When the outcome is an invidual-level binary indicator
 
 We now consider the malaria data from Kenya (@sec-malaria-ch1) where the main outcome is the result from a rapid diagnostic test (RDT) for malaria from individuals within households. In this case, because the outcome only takes two values, 1 for a positive RDT test result and 0 otherwise, the direct application of the empirical logit from @eq-empirical-logit would not help us to generate informative scatter plots. 
 
@@ -114,7 +114,7 @@ age_class_data <- aggregate(RDT ~ Age_class + Gender,
 
 We then compute the empirical logit, using the total number of cases within age group and by gender. For a given age group and gender, which we denote as $\mathcal{C}$,  the empirical logit in @eq-empirical-logit, now takes the form
 $$
-l_\mathcal{C} = \left\{\frac{\sum_{i \in \mathcal{C}} y_{i} + 0.5}{|\mathcal{C}|- \sum_{i \in \mathcal{C}} y_{i} + 0.5}\right\}
+l_{\mathcal{C}} = \log\left\{\frac{\sum_{i \in \mathcal{C}} y_{i} + 0.5}{|\mathcal{C}|- \sum_{i \in \mathcal{C}} y_{i} + 0.5} \right\}
 $$ {#eq-empirical-logit-bin}
 where $y_i$ are the individual binary outcomes and $i\in \mathcal{C}$ is used to indicate that the sum is carried out over all the individuals who belong the class $\mathcal{C}$, identified by a specific age group and gender. Finally, $|\mathcal{C}|$ is the number of individuals who fall within $\mathcal{C}$. In the code above, the empirical logit in @eq-empirical-logit-bin is computed using the `aggregate` function. An inspection of the object `age_class_data`, a data frame, shows that the empirical is found in the column named `RDT`. 
 
@@ -143,16 +143,44 @@ ggplot(age_class_data, aes(x = age_mean_point, y = RDT,
   labs(x="Age (years)",y="Empirical logit")  
 
 ```
-The resulting plot in @fig-elogit-age-malkenya shows the empirical logit against age by gender, with the size of each of the points proportional to the number of observations falling within each class. The observed pattern is explained by the fact that young children do not have immunity against malaria and acquire this as the grow. Based on this plot, it is reasonable thus to assume that malaria risk reaches its peak at around 15 years of age and then constantly decreases and, after the age of around 40 years, levels off. The slight increase for the age group $[50, 100)$ is more likely to be due to sampling variation. We also observe, that the differences between males and females tend to become larger as age increases. 
+The resulting plot in @fig-elogit-age-malkenya shows the empirical logit against age by gender, with the size of each of the points proportional to the number of observations falling within each class. The observed patterns are explained by the fact that young children, especially those under the age of five, are particularly vulnerable to severe malaria infections. This is primarily due to their immature immune systems and lack of acquired immunity. As individuals grow older, they generally develop partial immunity to malaria through repeated exposure to the disease. This acquired immunity can provide some level of protection against severe malaria. At the same time, gender roles and activities can influence exposure to malaria-carrying mosquitoes. For example, men may spend more time outdoors for work or other activities, increasing their exposure to mosquito bites and thus their risk of infection. In addition, there are also biological factors to consider. Hormonal and genetic differences between males and females may also contribute to variations in immune responses to malaria infection. The interaction between age and gender is complex and may vary depending on the specific context and population being studied. A 2020 report from the Bill & Melinda Gates foundation provides a detailed overview of this and other aspects related to gender and malaria [@gates2020].
 
-Let $p_{j}(x_i)$ denote the probability of a positive RDT for the $j$-th individual living in a household at location $x_i$. Based on these results, one could then use  linear splines with knots at 15 and 40 years, assuming different age effects, hence
+To account for age in a model for malaria prevalence, several approaches are possible, some of which have been developed using biological models [@smith2007]. To model the patterns observed in @fig-elogit-age-malkenya, we can follow the same approach used in the previous section to model the relationship between elevation and river-blindness prevalence. First, let us consider age without the effect of gender. Let $p_{j}(x_i)$ denote the probability of a positive RDT for the $j$-th individual living in a household at location $x_i$. Assuming that malaria risk reaches its peak at 15 years of age, we can capture the non-linear relationship using a linear spline with two knots, one at 15 years and a second one at 40 years. This is expressed as
+$$
+\begin{aligned}
+\log\left\{\frac{p_{j}(x_i)}{1-p_j(x_i)}\right\} = \beta_{0} + \beta_{1}a_{ij}+\beta_{2} \times\max\{a_{ij}-15, 0\} + \beta_{3}\max\{a_{ij}-40, 0\}
+\end{aligned}
+$$ {#eq-age-only-reg}
+where $a_{ij}$ is the age, in years, for the $j$-th individual at household $i$. Based on this model the effect of age on RDT prevalence is $\beta_{1}$, for $a_{ij} < 15$,  $\beta_{1}+\beta_{2}$, for $15 < a_{ij} < 40$, and $\beta_{1}+\beta_{2}+\beta_{3}$ for $a_{ij} > 40$. 
+
+@fig-elogit-age-malkenya indicates that age may interact with gender, meaning that the effect of gender on RDT prevalence changes across age, with larger differences observed between males and females for ages above 20 years. To assess such differences using a standard Binomial regression model, the linear predictor for RDT prevalence can be formulated as
 $$
 \begin{aligned}
 \log\left\{\frac{p_{j}(x_i)}{1-p_j(x_i)}\right\} = \beta_{0} + (\beta_{1} + \beta_{1}^*g_{ij})\times a_{ij}+(\beta_{2} + \beta_{2}^*g_{ij})\times\max\{a_{ij}-15, 0\} + \\
 (\beta_{3} + \beta_{3}^*g_{ij}) \times \max\{a_{ij}-40, 0\}
 \end{aligned}
-$$
-In the above equations $g_{ij}$ is the indicator for gender (1 corresponding to male and 0 to female) and $a_{ij}$ is the age of the individual in years. The interpretation of regression coefficients can be done by conditioning to specific age and genders. For example, the effect of age on $p_{j}(x_i)$ females between the age of 15 and 40 is given by $\beta_{1} + \beta_{2}$, whilst for a male of the same age this would become $\beta_{1} + \beta_{2} + \beta^*_{1} + \beta^*_{2}$.
+$$ {#eq-age-inter-reg}
+where $g_{ij}$ is the indicator for gender, with 1 corresponding to male and 0 to female. The coefficients $\beta_{1}^*$, $\beta_{2}^*$ and  $\beta_{3}^*$ thus quantify the differences in risk between the two genders for ages below 15 years, betwee 15 and 40 years, and above 40 years, respectively. If all of those coefficients were 0, the model in @eq-age-only-reg would be recovered. 
+
+```{r, collapse = TRUE}
+glm_age_gender_interaction <- glm(RDT ~ Age + Gender:Age + 
+                                  pmax(Age-15, 0) + Gender:pmax(Age-15, 0) + 
+                                  pmax(Age-40, 0) + Gender:pmax(Age-40, 0),
+                              data = malkenya, family = binomial)
+
+summary(glm_age_gender_interaction)
+```
+The code above shows how to fit the model specified in @eq-age-inter-reg. The terms `Age`, `pmax(Age-15, 0)` and `pmax(Age-40, 0)` respectively correspond to $\beta_{1}$, $\beta_{2}$ and $\beta_{3}$, whilst the `Gender:Age`, `Gender:pmax(Age-15, 0)` and `Gender:pmax(Age-40, 0)` to $\beta_{1}^*$, $\beta_{2}^*$ and $\beta_{3}^*$, respectively. In the summary of the fitted model, we observe that the interaction coefficients are non-statistically significant. However, removing the interaction based on the fact that each of the coefficients have each p-values larger than the conventional level of 5% would be wrong. Instead we should carry out the likelihood ratio test, as shown below.
+
+```{r, collapse=TRUE}
+glm_age_gender_no_interaction <- glm(RDT ~ Age +  pmax(Age-15, 0) + pmax(Age-40, 0),
+                              data = malkenya, family = binomial)
+
+anova(glm_age_gender_no_interaction, glm_age_gender_interaction, test = "Chisq")
+```
+To carry out the likelihood ratio test to assess the null hypothesis that $\beta_{1}^*=\beta_{2}^*=\beta_{3}^*=0$, we first fit the simplified nested model under this null hypothesis. The likelihood ratio test can then be carried out using the `anova` command as shown. The p-value indicates that the we do not find evidence against the null hypothesis, hence in our analysis of the data we might favour the simplified model that does not assumes an interaction between the two genders.
+
+The approach illustrated in this section to explore the association with gender, can also be applied to explora the association with other continuous variables which could also be a property of the household and not of the individual (e.g. elevation). 
 
 ## Exploring overdispersion in count data
 

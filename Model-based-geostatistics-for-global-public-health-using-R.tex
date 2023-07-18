@@ -150,6 +150,7 @@
 %  \topsep6\p@\@plus6\p@ \trivlist
 {\par\addvspace{6pt}\normalfont {\bfseries #1}\hskip\labelsep\ignorespaces\itshape}
 {\par\addvspace{6pt}}
+\usepackage{fvextra} \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
 \makeatletter
 \makeatother
 \makeatletter
@@ -226,7 +227,7 @@
 
 \begin{document}
 \maketitle
-\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[boxrule=0pt, interior hidden, frame hidden, breakable, enhanced, sharp corners, borderline west={3pt}{0pt}{shadecolor}]}{\end{tcolorbox}}\fi
+\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[sharp corners, enhanced, borderline west={3pt}{0pt}{shadecolor}, frame hidden, interior hidden, breakable, boxrule=0pt]}{\end{tcolorbox}}\fi
 
 \renewcommand*\contentsname{Table of contents}
 {
@@ -326,10 +327,10 @@ estimates obtained using the maximum likelihood estimation methods will
 be made through the book. Recommended readings include chapters 1, 2 and
 4 of Pawitan (2001).
 
-Good knowledge of Generalized linear models (GLMs) is essential, as the
-geostatistical modelling framework builds on these as an extension.
-Before embarking on the use of this book, we thus encourage you to
-review the basic theory of GLMs and, in particular, how these are
+Good prior knowledge of Generalized linear models (GLMs) is essential,
+as the geostatistical modelling framework builds on these as an
+extension. Before embarking on the use of this book, we thus encourage
+you to review the basic theory of GLMs and, in particular, how these are
 applied and interpreted. In this book, we will cover examples that will
 model continuously measured outcomes and counts. Hence, good
 understanding of linear regression modelling and modelling of counts
@@ -426,7 +427,7 @@ The geostatistical data-sets described in this section will be used
 throughout the book to illustrate the use of the R packages mentioned in
 the previous sections.
 
-Each of the three data-sets can be loaded from the \texttt{RiskMap}
+Each of the examples data-sets can be loaded from the \texttt{RiskMap}
 package, using the command
 
 \begin{Shaded}
@@ -443,7 +444,15 @@ for the lead concentration data from Galicia,
 \end{Highlighting}
 \end{Shaded}
 
-for the river-blindness data-set, and
+for the river-blindness data-set,
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{data}\NormalTok{(malkenya)}
+\end{Highlighting}
+\end{Shaded}
+
+for the malaria data in the Western Highlands of Kenya, and
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -451,7 +460,7 @@ for the river-blindness data-set, and
 \end{Highlighting}
 \end{Shaded}
 
-for the Anhopheles mosquitoes data-set.
+for the Anopheles mosquitoes data-set.
 
 In the final chapter of this book, we will consider the analysis of
 additional data-sets to review the main statistical concepts presented
@@ -494,9 +503,8 @@ This data-set will be used in this book to show how to carry out the
 spatial analysis of continuously measured variables using linear
 geostatistical models.
 
-\hypertarget{river-blindness-in-liberia}{%
-\subsection{River-blindness in
-Liberia}\label{river-blindness-in-liberia}}
+\hypertarget{sec-rb-ch1}{%
+\subsection{River-blindness in Liberia}\label{sec-rb-ch1}}
 
 \begin{figure}
 
@@ -528,9 +536,9 @@ technique for river-blindness. In the analysis of this data-set, we will
 illustrate how to formulate and fit Binomial geostatistical models, and
 how these can be used to predict prevalence within a region of interest.
 
-\hypertarget{malaria-in-the-western-kenyan-highlands}{%
+\hypertarget{sec-malaria-ch1}{%
 \subsection{Malaria in the Western Kenyan
-Highlands}\label{malaria-in-the-western-kenyan-highlands}}
+Highlands}\label{sec-malaria-ch1}}
 
 \begin{figure}
 
@@ -538,9 +546,26 @@ Highlands}\label{malaria-in-the-western-kenyan-highlands}}
 
 }
 
-\caption{\label{fig-malkenya-ch1}\ldots{}}
+\caption{\label{fig-malkenya-ch1}Malaria prevalence data from a
+cross-sectional survey carried out in Nyanza Province, in the Western
+Highlands of Kenya.}
 
 \end{figure}
+
+Malaria is one of deadliest diseases that affects populations living in
+tropical and subtropical countries. It is caused by a parasite of the
+genus Plasmodium which is transmitted through the infectious bite of
+female Anopheles mosquitoes. In the following chapters, we shall analyse
+a data-set from a cross-sectional community survey carried out in July
+2010 in Nyanza Province, in the Western Highlands of Kenya (Stevenson
+2013).
+
+What distinguishes this from the other examples data-sets is that the
+data contain both individual-level and household-level information. The
+outcome of interest is the result from a rapid diagnostic test for
+malaria which. In the book, we will illustrate how to account for the
+the hierarchical structure of the data and the binary nature of the
+outcome at each of the stages of the geostatistical analysis.
 
 \hypertarget{anopheles-gambiae-mosquitoes-in-southern-cameroon}{%
 \subsection{\texorpdfstring{\emph{Anopheles gambiae} mosquitoes in
@@ -809,38 +834,40 @@ consists of non-experts.
 
 In the remainder of this book, each chapter focuses on a specific stage
 as shown in Figure~\ref{fig-stages}. We treat visualization of
-uncertainty together with spatial prediction in Chapter 5.
+uncertainty together with spatial prediction in
+Chapter~\ref{sec-geo-prediction}.
 
-Chapter 1 provides statistical methods for the exploration of
-geostatistical data-sets, especially on the detection of residual
-spatial correlation. In addition, we will also cover the handling and
-visualization of spatial data in R. The skills learned in this will also
-be useful in Chapter 5 and Chapter 6 for generating predictive maps of
-the modelled outcome.
+Chapter~\ref{sec-handling-data} will provide an overview of how to
+handle saptial data in R, in particular raster and shape files. The
+skills learned in this chapter will be applied throughout the book, and
+will especially be useful in Chapter~\ref{sec-geo-prediction} and
+Chapter~\ref{sec-case-studies} for generating predictive maps of the
+modelled outcome.
 
-Chapter 2 focuses on the estimation of geostatistical models and will
-provide an overview of Monte Carlo based methods for maximum likelihood
-estimation.
+Chapter~\ref{sec-estimation} focuses on the model building process and
+estimation of geostatistical models. This chapter will show how to carry
+out initial exploratory analyses of the data to inform the formulation
+of suitable geostatistical models and how these can be fitted using
+maximum likelihood estimation methods.
 
-Chapter 3 illustrated the use of methods that can be used to validate
-the assumptions and calibration of statistical models.
+Chapter~\ref{sec-validation} illustrated the use of methods that can be
+used to validate the assumptions and calibration of statistical models.
 
-Chapter 5 shows how geostatistical models can be used to carry out
-spatial prediction of a health outcome of interest both on a spatially
-continuous and spatially aggregated scales.
+Chapter~\ref{sec-geo-prediction} shows how geostatistical models can be
+used to carry out spatial prediction of a health outcome of interest
+both on a spatially continuous and spatially aggregated scales.
 
-Finally, Chapter 6 presents the application of all the methods
-illustrated in the previous chapters to three additional data-sets. This
-chapter offers a summary of the content of book by putting together all
-the stages in the geostatistical analyses for each of the three case
-studies, and illustrates additional functionalities of the
-\texttt{RiskMap} R package not covered in the previous chapters.
+Finally, Chapter~\ref{sec-case-studies} presents the application of all
+the methods illustrated in the previous chapters to three additional
+data-sets. This chapter offers a summary of the content of book by
+putting together all the stages in the geostatistical analyses for each
+of the three case studies, and illustrates additional functionalities of
+the \texttt{RiskMap} R package not covered in the previous chapters.
 
 \bookmarksetup{startatroot}
 
-\hypertarget{handling-of-spatial-data-in-r}{%
-\chapter{Handling of spatial data in
-R}\label{handling-of-spatial-data-in-r}}
+\hypertarget{sec-handling-data}{%
+\chapter{Handling of spatial data in R}\label{sec-handling-data}}
 
 This is a book created from markdown and executable code.
 
@@ -870,15 +897,17 @@ data}\label{visualizing-geostatistical-data}}
 
 \bookmarksetup{startatroot}
 
-\hypertarget{model-formulation-and-parameter-estimation}{%
+\hypertarget{sec-estimation}{%
 \chapter{Model formulation and parameter
-estimation}\label{model-formulation-and-parameter-estimation}}
+estimation}\label{sec-estimation}}
 
-\hypertarget{list-of-the-main-functions}{%
-\section*{List of the main functions}\label{list-of-the-main-functions}}
-\addcontentsline{toc}{section}{List of the main functions}
+\hypertarget{list-of-the-main-functions-used-in-the-chapter}{%
+\section*{List of the main functions used in the
+chapter}\label{list-of-the-main-functions-used-in-the-chapter}}
+\addcontentsline{toc}{section}{List of the main functions used in the
+chapter}
 
-\markright{List of the main functions}
+\markright{List of the main functions used in the chapter}
 
 \begin{longtable}[]{@{}lll@{}}
 \toprule\noalign{}
@@ -894,10 +923,8 @@ models \\
 models \\
 \end{longtable}
 
-\bookmarksetup{startatroot}
-
 \hypertarget{exploratory-analysis}{%
-\chapter{Exploratory analysis}\label{exploratory-analysis}}
+\section{Exploratory analysis}\label{exploratory-analysis}}
 
 As illustrated in Figure~\ref{fig-stages}, exploratory analysis is the
 first step that should be carried out in a statistical analysis. This
@@ -909,28 +936,37 @@ In the exploratory analysis of count data, we will also look at how
 overdispersion, which is a necessary, though not sufficient, condition
 for residual spatial correlation.
 
-\hypertarget{exploring-association-with-risk-factors}{%
-\section{Exploring association with risk
-factors}\label{exploring-association-with-risk-factors}}
+\hypertarget{exploring-associations-with-risk-factors}{%
+\subsection{Exploring associations with risk
+factors}\label{exploring-associations-with-risk-factors}}
 
 Assessment of the association between the health outcome of interest and
-non-categorical (i.e.~continuous) risk factors, can be carried through
-scatter plots. The graphical exploration of the empirical association
-between the outcome and the covariates is especially useful to identify
-non-linear patterns in the relationship which should then be accounted
-for in the model formulation.
+non-categorical (i.e.~continuous) risk factors can be carried using
+graphical tools, such scatter plots. The graphical inspection of the
+empirical association between the outcome and the covariates is
+especially useful to identify non-linear patterns in the relationship
+which should then be accounted for in the model formulation.
 
-Let us first consider the example of the river-blindess data in Liberia,
-and examine the association between prevalence and elevation. We first
-generate a plot of the prevalence against the measured elevation at each
-of the sample locations
+In this section, we look more closely at the case of Binomial outcomes
+which a require a different treatment from other type of outcomes. If
+you want to read more on how to carry out exploratory analysis of the
+data, we refer you to Chapter 1 of Weisberg (2014).
+
+\hypertarget{when-the-outcome-is-an-aggregated-binomial-count}{%
+\subsubsection{When the outcome is an aggregated Binomial
+count}\label{when-the-outcome-is-an-aggregated-binomial-count}}
+
+Let us first consider the example of the river-blindness data in Liberia
+(Section~\ref{sec-rb-ch1}), and examine the association between
+prevalence and elevation. We first generate a plot of the prevalence
+against the measured elevation at each of the sample locations
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{liberia}\SpecialCharTok{$}\NormalTok{logit }\OtherTok{\textless{}{-}}\NormalTok{ liberia}\SpecialCharTok{$}\NormalTok{npos}\SpecialCharTok{/}\NormalTok{liberia}\SpecialCharTok{$}\NormalTok{ntest}
+\NormalTok{liberia}\SpecialCharTok{$}\NormalTok{prev }\OtherTok{\textless{}{-}}\NormalTok{ liberia}\SpecialCharTok{$}\NormalTok{npos}\SpecialCharTok{/}\NormalTok{liberia}\SpecialCharTok{$}\NormalTok{ntest}
 
-\FunctionTok{ggplot}\NormalTok{(liberia, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ elevation, }\AttributeTok{y =}\NormalTok{ logit)) }\SpecialCharTok{+} \FunctionTok{geom\_point}\NormalTok{() }\SpecialCharTok{+}
-  \FunctionTok{labs}\NormalTok{(}\AttributeTok{x=}\StringTok{"Elevation (meters)"}\NormalTok{,}\AttributeTok{y=}\StringTok{"Empirical logit"}\NormalTok{)}
+\FunctionTok{ggplot}\NormalTok{(liberia, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ elevation, }\AttributeTok{y =}\NormalTok{ prev)) }\SpecialCharTok{+} \FunctionTok{geom\_point}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{x=}\StringTok{"Elevation (meters)"}\NormalTok{,}\AttributeTok{y=}\StringTok{"Prevalence"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -945,20 +981,22 @@ prevalence for river-blindess against elevation, measured in meters.}
 
 \end{figure}
 
-The plot shown in Figure~\ref{fig-prev-elev-liberia} shows that, when
-elevation increases from 0 to around 100 meters, prevalence rapidly
-increases to around 0.25 and, for larger values in elevation, the
-relationship levels off. This begs the question of how we can account
-for this in a regression model. However, the plot in
-Figure~\ref{fig-prev-elev-liberia} cannot be used to inform this
-decision because, when modelling prevalence data, regression
-relationships are specified on the logit-transformed prevalence
-(log-odds) scale; see Section Section~\ref{sec-geostat-models} . The
-approach we follow to explore relationships in the case of prevalence
-data is to the so called empirical logit, defined as
+The plot shown in Figure~\ref{fig-prev-elev-liberia} shows that, as
+elevation increases from 0 to around 150 meters, prevalence rapidly
+increases to around 0.25 and, for larger values in elevation than 150
+meters, the relationship levels off. This begs the question of how we
+can account for this in a regression model. To answer this question
+rigorously, however, the plot in Figure~\ref{fig-prev-elev-liberia}
+cannot be used. This is because, when the modelled outcome is a bounded
+Binomial count, regression relationships are specified on the
+logit-transformed prevalence (log-odds) scale; see Table~\ref{tbl-glm}
+in Section Section~\ref{sec-geostat-models} . To explore regression
+relationships in the case of prevalence data, it is convenient to use
+the so-called empirical logit in place of the empirical prevalence. The
+empirical logit is defined as
 
 \begin{equation}\protect\hypertarget{eq-empirical-logit}{}{
-e_{i} = \log\left\{\frac{y_i + 1/2}{n_i - y_i + 1/2}\right\}
+l_{i} = \log\left\{\frac{y_i + 1/2}{n_i - y_i + 1/2}\right\}
 }\label{eq-empirical-logit}\end{equation}
 
 where \(y_i\) are the number of individuals who tested positive for
@@ -966,19 +1004,29 @@ riverblindness and \(n_i\) is the total number of people tested at a
 location. The reason for using the empirical logit, rather than the
 standard logit transformation applied directly to the empirical
 prevalence, is that it allows to generate finite values for empirical
-prevalence values of 0 and 1, for which the standard logit function is
-not defined.
+prevalence values of 0 and 1, for which the standard logit
+transformation is not defined.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{ggplot}\NormalTok{(liberia, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ elevation, }\AttributeTok{y =}\NormalTok{ logit)) }\SpecialCharTok{+} \FunctionTok{geom\_point}\NormalTok{() }\SpecialCharTok{+}
+\CommentTok{\# The empirical logit}
+\NormalTok{liberia}\SpecialCharTok{$}\NormalTok{elogit }\OtherTok{\textless{}{-}} \FunctionTok{log}\NormalTok{((liberia}\SpecialCharTok{$}\NormalTok{npos}\FloatTok{+0.5}\NormalTok{)}\SpecialCharTok{/}
+\NormalTok{                      (liberia}\SpecialCharTok{$}\NormalTok{ntest}\SpecialCharTok{{-}}\NormalTok{liberia}\SpecialCharTok{$}\NormalTok{npos}\FloatTok{+0.5}\NormalTok{))}
+
+\FunctionTok{ggplot}\NormalTok{(liberia, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ elevation, }\AttributeTok{y =}\NormalTok{ elogit)) }\SpecialCharTok{+} \FunctionTok{geom\_point}\NormalTok{() }\SpecialCharTok{+}
+  
+  \CommentTok{\# Adding a smoothing spline}
   \FunctionTok{labs}\NormalTok{(}\AttributeTok{x=}\StringTok{"Elevation (meters)"}\NormalTok{,}\AttributeTok{y=}\StringTok{"Empirical logit"}\NormalTok{) }\SpecialCharTok{+}
   \FunctionTok{stat\_smooth}\NormalTok{(}\AttributeTok{method =} \StringTok{"gam"}\NormalTok{, }\AttributeTok{formula =}\NormalTok{ y }\SpecialCharTok{\textasciitilde{}} \FunctionTok{s}\NormalTok{(x),}\AttributeTok{se=}\ConstantTok{FALSE}\NormalTok{)}\SpecialCharTok{+}
-  \FunctionTok{stat\_smooth}\NormalTok{(}\AttributeTok{method =} \StringTok{"lm"}\NormalTok{, }\AttributeTok{formula =}\NormalTok{ y }\SpecialCharTok{\textasciitilde{}}\NormalTok{ x }\SpecialCharTok{+} \FunctionTok{I}\NormalTok{((x}\DecValTok{{-}150}\NormalTok{)}\SpecialCharTok{*}\NormalTok{(x}\SpecialCharTok{\textgreater{}}\DecValTok{150}\NormalTok{)),}
-              \AttributeTok{col=}\StringTok{"red"}\NormalTok{,}\AttributeTok{lty=}\StringTok{"dashed"}\NormalTok{,}\AttributeTok{se=}\ConstantTok{FALSE}\NormalTok{) }\SpecialCharTok{+}
+  
+  \CommentTok{\# Adding linear regression fit with log{-}transformed elevation}
   \FunctionTok{stat\_smooth}\NormalTok{(}\AttributeTok{method =} \StringTok{"lm"}\NormalTok{, }\AttributeTok{formula =}\NormalTok{ y }\SpecialCharTok{\textasciitilde{}} \FunctionTok{log}\NormalTok{(x),}
-              \AttributeTok{col=}\StringTok{"green"}\NormalTok{,}\AttributeTok{lty=}\StringTok{"dashed"}\NormalTok{,}\AttributeTok{se=}\ConstantTok{FALSE}\NormalTok{)}
- 
+              \AttributeTok{col=}\StringTok{"green"}\NormalTok{,}\AttributeTok{lty=}\StringTok{"dashed"}\NormalTok{,}\AttributeTok{se=}\ConstantTok{FALSE}\NormalTok{) }\SpecialCharTok{+}
+
+  \CommentTok{\# Adding linear regression fit with change point in 150 meters}
+  \FunctionTok{stat\_smooth}\NormalTok{(}\AttributeTok{method =} \StringTok{"lm"}\NormalTok{, }\AttributeTok{formula =}\NormalTok{ y }\SpecialCharTok{\textasciitilde{}}\NormalTok{ x }\SpecialCharTok{+} \FunctionTok{pmax}\NormalTok{(x}\DecValTok{{-}150}\NormalTok{, }\DecValTok{0}\NormalTok{),}
+              \AttributeTok{col=}\StringTok{"red"}\NormalTok{,}\AttributeTok{lty=}\StringTok{"dashed"}\NormalTok{,}\AttributeTok{se=}\ConstantTok{FALSE}\NormalTok{) }
+  
 \end{Highlighting}
 \end{Shaded}
 
@@ -992,6 +1040,339 @@ not defined.
 prevalence for river-blindess against elevation, measured in meters.}
 
 \end{figure}
+
+Figure~\ref{fig-elogit-elev-liberia} shows the scatter plot of the
+empirical logit against elevation. In this plot, we have also added
+three lines though the \texttt{stat\_smooth} from the \texttt{ggplot2}
+package. Using this function, we first pass the term \texttt{gam} to
+\texttt{method} to add a penalized smoothing spline (Hastie, Tibshirani,
+and Friedman 2001), represented by the blue solid line. The smoothing
+spline allows us to better discern how the type of relationship and how
+to best capture it using a standard regression approach. As er can see
+from Figure~\ref{fig-elogit-elev-liberia}, the smoothing spline
+corroborates our initial observation of a positive relationship up to
+about 150 meters, followed by a plateau.
+
+To capture this non-linear relationship, we can use the two following
+approaches. The first is based on a simple log-transformation of
+elevation and is represented in Figure~\ref{fig-elogit-elev-liberia} by
+the green line. If were to express this relationship using a standard
+Binomial regression model, this would take the form
+\begin{equation}\protect\hypertarget{eq-log-elev-glm}{}{
+\log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_0 + \beta_1 \log\{e(x_i)\}
+}\label{eq-log-elev-glm}\end{equation} where \(p(x_i)\) and \(e(x_i)\)
+are the river-blindness prevalence and elevation at sampled location
+\(x_i\), respectively.
+
+Alternatively, the non-linear effect of elevation on prevalence could be
+captured using a linear spline. Put in simple terms, we want to fit a
+linear regression model that allows for a change in slope above 150
+meters. Formally, this is expressed in a Binomial regression model as
+\begin{equation}\protect\hypertarget{eq-lspline-elev-glm}{}{
+\log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_0 + \beta_1 e(x_i) + \beta_{2} \max\{e(x_i)-150, 0\}.
+}\label{eq-lspline-elev-glm}\end{equation} Based on the equation above,
+the effect of elevation below 150 meters is quantified by the parameter
+\(\beta_1\). Above 150 meters, instead, the effect of elevation becomes
+\(\beta_1 + \beta_2\). Note that the function \texttt{pmax} (and not the
+standard base function \texttt{max}) should be used in R when the
+computation of the maximum between a scalar value and each of the
+components of a numeric vector is required.
+
+Before we move on, it is important to briefly discuss the differences
+between using the logarithmic transformation
+(Equation~\ref{eq-log-elev-glm}) and the linear spline
+(Equation~\ref{eq-lspline-elev-glm}). We observe that both curves
+provide a similar fit to the data, with larger differences observed for
+larger values in elevation, where the log-transformed elevation models
+yields larger values for the predicted prevalence. This also suggests
+that if we were to extrapolate the predictions beyond 600 meters in
+elevation the implied pattern by the model with the log-transformed
+elevation would predict an increasingly larger elevation, which is
+unrealistic, since the fly that transmits the diseases cannot breed at
+those altitudes. The linear spline model instead would generate
+predictions that would be very similar to those observed between 150 and
+600 meters. From this point view, the linear spline model would thus
+have more scientific validity than the other model. However, which of
+the two approaches should be chosen to model the effect of elevation is
+a question that closely depends on the research question to be
+addressed.
+
+If the interest of the study was in better understanding the association
+between elevation and prevalence, the linear spline model does not only
+provide a more credible explanation but also its regression parameters
+can be more easily interpreted. In fact, for a unit increase in
+elevation, the multiplicative change in the odds for river-blindness is
+\(\exp\{\beta_1\}\), if elevation is below 150 meters, and
+\(\exp\{\beta_1+\beta_2\}\), if elevation is above 150 meters. When
+instead we use the log-transformed elevation, the interpretation of
+\(\beta_1\) in Equation~\ref{eq-log-elev-glm} is slightly more
+complicated, as it is based on the multiplicative increase in elevation
+by the same amount given by the base of the algorithm, which is about
+\(e \approx 2.718\) (Euler's number). To avoid this, one could rescale
+the regression coefficient as, for example, \(\beta_1/\log_{2}(e)\)
+which would be interpreted as the multiplicative change in the odds for
+river-blindness for a doubling in elevation. However, a doubling in
+elevation is less meaningful when considering larger values of
+elevation.
+
+When the goal of statistical analysis is instead in developing a
+predictive model for the outcome of interest, the explanatory power and
+interpretability of the model may be of less concern. For this reason,
+the model with the log-transformed model could be preferred over the
+model with the linear spline, if it shown to yield more predictive
+power. We will come back to this point again in
+Chapter~\ref{sec-geo-prediction}, where will show how to assess and
+compare the predictive performance of different geostatistical models.
+
+\hypertarget{when-the-outcome-is-an-invidual-level-binary-indicator}{%
+\subsubsection{When the outcome is an invidual-level binary
+indicator}\label{when-the-outcome-is-an-invidual-level-binary-indicator}}
+
+We now consider the malaria data from Kenya
+(Section~\ref{sec-malaria-ch1}) where the main outcome is the result
+from a rapid diagnostic test (RDT) for malaria from individuals within
+households. In this case, because the outcome only takes two values, 1
+for a positive RDT test result and 0 otherwise, the direct application
+of the empirical logit from Equation~\ref{eq-empirical-logit} would not
+help us to generate informative scatter plots.
+
+To show how this issue can be overcome, let us consider the variables
+age and gender. To generate a plot that can help us understand between
+the relationship with malaria prevalence and the two risk factors, we
+proceed as follows.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Grouping of ages into classes defined through "breaks"}
+\NormalTok{malkenya}\SpecialCharTok{$}\NormalTok{Age\_class }\OtherTok{\textless{}{-}} \FunctionTok{cut}\NormalTok{(malkenya}\SpecialCharTok{$}\NormalTok{Age, }
+                          \AttributeTok{breaks =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{5}\NormalTok{, }\DecValTok{10}\NormalTok{, }\DecValTok{15}\NormalTok{, }\DecValTok{30}\NormalTok{, }\DecValTok{40}\NormalTok{, }\DecValTok{50}\NormalTok{, }\DecValTok{100}\NormalTok{),}
+                          \AttributeTok{include.lowest =} \ConstantTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+Using the \texttt{cut} function, we first split age (in years) into
+classes through the argument \texttt{breaks}. The classification of age
+into \([0,5]\), \((5, 10]\) and \((10, 15]\) is common in many malaria
+epidemiology studies, as children are one of the groups at highest risk
+malaria. The choice of the other classes of age reflects instead the
+need to balance the number of observations falling in each of the
+classes.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+
+\CommentTok{\# Computation of the empirical logit by age groups and gender}
+\NormalTok{age\_class\_data }\OtherTok{\textless{}{-}} \FunctionTok{aggregate}\NormalTok{(RDT }\SpecialCharTok{\textasciitilde{}}\NormalTok{ Age\_class }\SpecialCharTok{+}\NormalTok{ Gender, }
+                                    \AttributeTok{data =}\NormalTok{ malkenya, }
+                                    \AttributeTok{FUN =} \ControlFlowTok{function}\NormalTok{(y) }
+                                    \FunctionTok{log}\NormalTok{((}\FunctionTok{sum}\NormalTok{(y)}\SpecialCharTok{+}\FloatTok{0.5}\NormalTok{)}\SpecialCharTok{/}\NormalTok{(}\FunctionTok{length}\NormalTok{(y)}\SpecialCharTok{{-}}\FunctionTok{sum}\NormalTok{(y)}\SpecialCharTok{+}\FloatTok{0.5}\NormalTok{)))}
+\end{Highlighting}
+\end{Shaded}
+
+We then compute the empirical logit, using the total number of cases
+within age group and by gender. For a given age group and gender, which
+we denote as \(\mathcal{C}\), the empirical logit in
+Equation~\ref{eq-empirical-logit}, now takes the form
+\begin{equation}\protect\hypertarget{eq-empirical-logit-bin}{}{
+l_{\mathcal{C}} = \log\left\{\frac{\sum_{i \in \mathcal{C}} y_{i} + 0.5}{|\mathcal{C}|- \sum_{i \in \mathcal{C}} y_{i} + 0.5} \right\}
+}\label{eq-empirical-logit-bin}\end{equation} where \(y_i\) are the
+individual binary outcomes and \(i\in \mathcal{C}\) is used to indicate
+that the sum is carried out over all the individuals who belong the
+class \(\mathcal{C}\), identified by a specific age group and gender.
+Finally, \(|\mathcal{C}|\) is the number of individuals who fall within
+\(\mathcal{C}\). In the code above, the empirical logit in
+Equation~\ref{eq-empirical-logit-bin} is computed using the
+\texttt{aggregate} function. An inspection of the object
+\texttt{age\_class\_data}, a data frame, shows that the empirical is
+found in the column named \texttt{RDT}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Computation of the average age within each age group}
+\NormalTok{age\_class\_data}\SpecialCharTok{$}\NormalTok{age\_mean\_point }\OtherTok{\textless{}{-}} \FunctionTok{aggregate}\NormalTok{(Age }\SpecialCharTok{\textasciitilde{}}\NormalTok{ Age\_class }\SpecialCharTok{+}\NormalTok{ Gender, }
+                                 \AttributeTok{data =}\NormalTok{ malkenya, }
+                                 \AttributeTok{FUN =}\NormalTok{ mean)}\SpecialCharTok{$}\NormalTok{Age}
+
+
+\CommentTok{\# Number of individuals within each age group, by gender}
+\NormalTok{age\_class\_data}\SpecialCharTok{$}\NormalTok{n\_obs }\OtherTok{\textless{}{-}}  \FunctionTok{aggregate}\NormalTok{(Age }\SpecialCharTok{\textasciitilde{}}\NormalTok{                                                               Age\_class }\SpecialCharTok{+}\NormalTok{ Gender, }
+                         \AttributeTok{data =}\NormalTok{ malkenya, }
+                         \AttributeTok{FUN =}\NormalTok{ length)}\SpecialCharTok{$}\NormalTok{Age}
+\end{Highlighting}
+\end{Shaded}
+
+In order to generate the scatter-plot, we compute the average age within
+each age group by gender, and use these as our values for the x-axis.
+Note that since we only need to obtain the average age from this output,
+we use \texttt{\$Age} to extract this only and allocate to the column
+\texttt{age\_mean\_point}. Finally, we also compute the number of
+observations within each of classes and place this in \texttt{n\_obs}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(age\_class\_data, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ age\_mean\_point, }\AttributeTok{y =}\NormalTok{ RDT, }
+                           \AttributeTok{size =}\NormalTok{ n\_obs, }
+                           \AttributeTok{colour =}\NormalTok{ Gender)) }\SpecialCharTok{+} 
+  \FunctionTok{geom\_point}\NormalTok{() }\SpecialCharTok{+} 
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{x=}\StringTok{"Age (years)"}\NormalTok{,}\AttributeTok{y=}\StringTok{"Empirical logit"}\NormalTok{)  }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{03_model-fitting_files/figure-pdf/fig-elogit-age-malkenya-1.pdf}
+
+}
+
+\caption{\label{fig-elogit-age-malkenya}Plot of the empirical logit
+against age, for males and females. The size of each solid point is
+rendered proportional to the number of individuals within age group, as
+indicated in the legend.}
+
+\end{figure}
+
+The resulting plot in Figure~\ref{fig-elogit-age-malkenya} shows the
+empirical logit against age by gender, with the size of each of the
+points proportional to the number of observations falling within each
+class. The observed patterns are explained by the fact that young
+children, especially those under the age of five, are particularly
+vulnerable to severe malaria infections. This is primarily due to their
+immature immune systems and lack of acquired immunity. As individuals
+grow older, they generally develop partial immunity to malaria through
+repeated exposure to the disease. This acquired immunity can provide
+some level of protection against severe malaria. At the same time,
+gender roles and activities can influence exposure to malaria-carrying
+mosquitoes. For example, men may spend more time outdoors for work or
+other activities, increasing their exposure to mosquito bites and thus
+their risk of infection. In addition, there are also biological factors
+to consider. Hormonal and genetic differences between males and females
+may also contribute to variations in immune responses to malaria
+infection. The interaction between age and gender is complex and may
+vary depending on the specific context and population being studied. A
+2020 report from the Bill \& Melinda Gates foundation provides a
+detailed overview of this and other aspects related to gender and
+malaria (Katz and Bill \& Melinda Gates Foundation 2020).
+
+To account for age in a model for malaria prevalence, several approaches
+are possible, some of which have been developed using biological models
+(Smith et al. 2007). To model the patterns observed in
+Figure~\ref{fig-elogit-age-malkenya}, we can follow the same approach
+used in the previous section to model the relationship between elevation
+and river-blindness prevalence. First, let us consider age without the
+effect of gender. Let \(p_{j}(x_i)\) denote the probability of a
+positive RDT for the \(j\)-th individual living in a household at
+location \(x_i\). Assuming that malaria risk reaches its peak at 15
+years of age, we can capture the non-linear relationship using a linear
+spline with two knots, one at 15 years and a second one at 40 years.
+This is expressed as
+\begin{equation}\protect\hypertarget{eq-age-only-reg}{}{
+\begin{aligned}
+\log\left\{\frac{p_{j}(x_i)}{1-p_j(x_i)}\right\} = \beta_{0} + \beta_{1}a_{ij}+\beta_{2} \times\max\{a_{ij}-15, 0\} + \beta_{3}\max\{a_{ij}-40, 0\}
+\end{aligned}
+}\label{eq-age-only-reg}\end{equation} where \(a_{ij}\) is the age, in
+years, for the \(j\)-th individual at household \(i\). Based on this
+model the effect of age on RDT prevalence is \(\beta_{1}\), for
+\(a_{ij} < 15\), \(\beta_{1}+\beta_{2}\), for \(15 < a_{ij} < 40\), and
+\(\beta_{1}+\beta_{2}+\beta_{3}\) for \(a_{ij} > 40\).
+
+Figure~\ref{fig-elogit-age-malkenya} indicates that age may interact
+with gender, meaning that the effect of gender on RDT prevalence changes
+across age, with larger differences observed between males and females
+for ages above 20 years. To assess such differences using a standard
+Binomial regression model, the linear predictor for RDT prevalence can
+be formulated as
+\begin{equation}\protect\hypertarget{eq-age-inter-reg}{}{
+\begin{aligned}
+\log\left\{\frac{p_{j}(x_i)}{1-p_j(x_i)}\right\} = \beta_{0} + (\beta_{1} + \beta_{1}^*g_{ij})\times a_{ij}+(\beta_{2} + \beta_{2}^*g_{ij})\times\max\{a_{ij}-15, 0\} + \\
+(\beta_{3} + \beta_{3}^*g_{ij}) \times \max\{a_{ij}-40, 0\}
+\end{aligned}
+}\label{eq-age-inter-reg}\end{equation} where \(g_{ij}\) is the
+indicator for gender, with 1 corresponding to male and 0 to female. The
+coefficients \(\beta_{1}^*\), \(\beta_{2}^*\) and \(\beta_{3}^*\) thus
+quantify the differences in risk between the two genders for ages below
+15 years, betwee 15 and 40 years, and above 40 years, respectively. If
+all of those coefficients were 0, the model in
+Equation~\ref{eq-age-only-reg} would be recovered.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{glm\_age\_gender\_interaction }\OtherTok{\textless{}{-}} \FunctionTok{glm}\NormalTok{(RDT }\SpecialCharTok{\textasciitilde{}}\NormalTok{ Age }\SpecialCharTok{+}\NormalTok{ Gender}\SpecialCharTok{:}\NormalTok{Age }\SpecialCharTok{+} 
+                                  \FunctionTok{pmax}\NormalTok{(Age}\DecValTok{{-}15}\NormalTok{, }\DecValTok{0}\NormalTok{) }\SpecialCharTok{+}\NormalTok{ Gender}\SpecialCharTok{:}\FunctionTok{pmax}\NormalTok{(Age}\DecValTok{{-}15}\NormalTok{, }\DecValTok{0}\NormalTok{) }\SpecialCharTok{+} 
+                                  \FunctionTok{pmax}\NormalTok{(Age}\DecValTok{{-}40}\NormalTok{, }\DecValTok{0}\NormalTok{) }\SpecialCharTok{+}\NormalTok{ Gender}\SpecialCharTok{:}\FunctionTok{pmax}\NormalTok{(Age}\DecValTok{{-}40}\NormalTok{, }\DecValTok{0}\NormalTok{),}
+                              \AttributeTok{data =}\NormalTok{ malkenya, }\AttributeTok{family =}\NormalTok{ binomial)}
+
+\FunctionTok{summary}\NormalTok{(glm\_age\_gender\_interaction)}
+\DocumentationTok{\#\# }
+\DocumentationTok{\#\# Call:}
+\DocumentationTok{\#\# glm(formula = RDT \textasciitilde{} Age + Gender:Age + pmax(Age {-} 15, 0) + Gender:pmax(Age {-} }
+\DocumentationTok{\#\#     15, 0) + pmax(Age {-} 40, 0) + Gender:pmax(Age {-} 40, 0), family = binomial, }
+\DocumentationTok{\#\#     data = malkenya)}
+\DocumentationTok{\#\# }
+\DocumentationTok{\#\# Coefficients:}
+\DocumentationTok{\#\#                               Estimate Std. Error z value Pr(\textgreater{}|z|)    }
+\DocumentationTok{\#\# (Intercept)                  {-}1.135655   0.089314 {-}12.715  \textless{} 2e{-}16 ***}
+\DocumentationTok{\#\# Age                          {-}0.001674   0.008502  {-}0.197    0.844    }
+\DocumentationTok{\#\# pmax(Age {-} 15, 0)            {-}0.095720   0.016123  {-}5.937 2.91e{-}09 ***}
+\DocumentationTok{\#\# pmax(Age {-} 40, 0)             0.121917   0.022680   5.376 7.64e{-}08 ***}
+\DocumentationTok{\#\# Age:GenderMale                0.007733   0.005080   1.522    0.128    }
+\DocumentationTok{\#\# GenderMale:pmax(Age {-} 15, 0) {-}0.026943   0.022766  {-}1.183    0.237    }
+\DocumentationTok{\#\# GenderMale:pmax(Age {-} 40, 0)  0.022514   0.040543   0.555    0.579    }
+\DocumentationTok{\#\# {-}{-}{-}}
+\DocumentationTok{\#\# Signif. codes:  0 \textquotesingle{}***\textquotesingle{} 0.001 \textquotesingle{}**\textquotesingle{} 0.01 \textquotesingle{}*\textquotesingle{} 0.05 \textquotesingle{}.\textquotesingle{} 0.1 \textquotesingle{} \textquotesingle{} 1}
+\DocumentationTok{\#\# }
+\DocumentationTok{\#\# (Dispersion parameter for binomial family taken to be 1)}
+\DocumentationTok{\#\# }
+\DocumentationTok{\#\#     Null deviance: 8538.2  on 8203  degrees of freedom}
+\DocumentationTok{\#\# Residual deviance: 8224.6  on 8197  degrees of freedom}
+\DocumentationTok{\#\# AIC: 8238.6}
+\DocumentationTok{\#\# }
+\DocumentationTok{\#\# Number of Fisher Scoring iterations: 5}
+\end{Highlighting}
+\end{Shaded}
+
+The code above shows how to fit the model specified in
+Equation~\ref{eq-age-inter-reg}. The terms \texttt{Age},
+\texttt{pmax(Age-15,\ 0)} and \texttt{pmax(Age-40,\ 0)} respectively
+correspond to \(\beta_{1}\), \(\beta_{2}\) and \(\beta_{3}\), whilst the
+\texttt{Gender:Age}, \texttt{Gender:pmax(Age-15,\ 0)} and
+\texttt{Gender:pmax(Age-40,\ 0)} to \(\beta_{1}^*\), \(\beta_{2}^*\) and
+\(\beta_{3}^*\), respectively. In the summary of the fitted model, we
+observe that the interaction coefficients are non-statistically
+significant. However, removing the interaction based on the fact that
+each of the coefficients have each p-values larger than the conventional
+level of 5\% would be wrong. Instead we should carry out the likelihood
+ratio test, as shown below.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{glm\_age\_gender\_no\_interaction }\OtherTok{\textless{}{-}} \FunctionTok{glm}\NormalTok{(RDT }\SpecialCharTok{\textasciitilde{}}\NormalTok{ Age }\SpecialCharTok{+}  \FunctionTok{pmax}\NormalTok{(Age}\DecValTok{{-}15}\NormalTok{, }\DecValTok{0}\NormalTok{) }\SpecialCharTok{+} \FunctionTok{pmax}\NormalTok{(Age}\DecValTok{{-}40}\NormalTok{, }\DecValTok{0}\NormalTok{),}
+                              \AttributeTok{data =}\NormalTok{ malkenya, }\AttributeTok{family =}\NormalTok{ binomial)}
+
+\FunctionTok{anova}\NormalTok{(glm\_age\_gender\_no\_interaction, glm\_age\_gender\_interaction, }\AttributeTok{test =} \StringTok{"Chisq"}\NormalTok{)}
+\DocumentationTok{\#\# Analysis of Deviance Table}
+\DocumentationTok{\#\# }
+\DocumentationTok{\#\# Model 1: RDT \textasciitilde{} Age + pmax(Age {-} 15, 0) + pmax(Age {-} 40, 0)}
+\DocumentationTok{\#\# Model 2: RDT \textasciitilde{} Age + Gender:Age + pmax(Age {-} 15, 0) + Gender:pmax(Age {-} }
+\DocumentationTok{\#\#     15, 0) + pmax(Age {-} 40, 0) + Gender:pmax(Age {-} 40, 0)}
+\DocumentationTok{\#\#   Resid. Df Resid. Dev Df Deviance Pr(\textgreater{}Chi)}
+\DocumentationTok{\#\# 1      8200     8227.4                     }
+\DocumentationTok{\#\# 2      8197     8224.6  3   2.8706    0.412}
+\end{Highlighting}
+\end{Shaded}
+
+To carry out the likelihood ratio test to assess the null hypothesis
+that \(\beta_{1}^*=\beta_{2}^*=\beta_{3}^*=0\), we first fit the
+simplified nested model under this null hypothesis. The likelihood ratio
+test can then be carried out using the \texttt{anova} command as shown.
+The p-value indicates that the we do not find evidence against the null
+hypothesis, hence in our analysis of the data we might favour the
+simplified model that does not assumes an interaction between the two
+genders.
+
+The approach illustrated in this section to explore the association with
+gender, can also be applied to explora the association with other
+continuous variables which could also be a property of the household and
+not of the individual (e.g.~elevation).
 
 \hypertarget{exploring-overdispersion-in-count-data}{%
 \section{Exploring overdispersion in count
@@ -1014,8 +1395,8 @@ models}\label{generalized-linear-geostatistical-models}}
 
 \bookmarksetup{startatroot}
 
-\hypertarget{model-validation}{%
-\chapter{Model validation}\label{model-validation}}
+\hypertarget{sec-validation}{%
+\chapter{Model validation}\label{sec-validation}}
 
 This is a book created from markdown and executable code.
 
@@ -1046,8 +1427,8 @@ model}\label{validating-the-spatial-correlation-of-the-model}}
 
 \bookmarksetup{startatroot}
 
-\hypertarget{geostatistical-prediction}{%
-\chapter{Geostatistical prediction}\label{geostatistical-prediction}}
+\hypertarget{sec-geo-prediction}{%
+\chapter{Geostatistical prediction}\label{sec-geo-prediction}}
 
 This is a book created from markdown and executable code.
 
@@ -1078,8 +1459,8 @@ models}\label{comparing-the-predictive-performance-of-geostatistical-models}}
 
 \bookmarksetup{startatroot}
 
-\hypertarget{case-studies}{%
-\chapter{Case studies}\label{case-studies}}
+\hypertarget{sec-case-studies}{%
+\chapter{Case studies}\label{sec-case-studies}}
 
 This is a book created from markdown and executable code.
 
@@ -1152,6 +1533,16 @@ Heavy Metal Deposition in Galicia (NW Spain) Based on Moss Analysis.''}
 \emph{Science of The Total Environment} 254 (1): 31--44.
 \url{https://doi.org/10.1016/S0048-9697(00)00431-9}.
 
+\leavevmode\vadjust pre{\hypertarget{ref-hastie2001}{}}%
+Hastie, Trevor, Robert Tibshirani, and Jerome Friedman. 2001. \emph{The
+Elements of Statistical Learning}. Springer Series in Statistics. New
+York, NY, USA: Springer New York Inc.
+
+\leavevmode\vadjust pre{\hypertarget{ref-gates2020}{}}%
+Katz, Elizabeth, and Bill \& Melinda Gates Foundation. 2020. {``Gender
+and Malaria Evidence Reivew.''} Bill \& Melinda Gates Foundation.
+\url{https://www.gatesgenderequalitytoolbox.org/wp-content/uploads/BMGF_Malaria-Review_FC.pdf}.
+
 \leavevmode\vadjust pre{\hypertarget{ref-krige1951}{}}%
 Krige, D. G. 1951. {``A Statistical Approach to Some Basic Mine
 Valuation Problems on the Witwatersrand.''} \emph{Journal of the
@@ -1178,6 +1569,17 @@ Ripley, B. D. 1981. \emph{Spatial Statistics}. New York: Wiley.
 Ross, Sheldon. 2013. \emph{First Course in Probability, a.} 9th ed.
 Harlow: Pearson Education UK.
 
+\leavevmode\vadjust pre{\hypertarget{ref-smith2007}{}}%
+Smith, David L, Carlos A Guerra, Robert W Snow, and Simon I Hay. 2007.
+{``Standardizing Estimates of the Plasmodium Falciparum Parasite
+Rate.''} \emph{Malaria Journal} 6 (1): 131--31.
+
+\leavevmode\vadjust pre{\hypertarget{ref-stevenson2013}{}}%
+Stevenson, Gillian H. AND Gitonga, Jennifer C. AND Stresman. 2013.
+{``Reliability of School Surveys in Estimating Geographic Variation in
+Malaria Transmission in the Western Kenyan Highlands.''} \emph{PLOS ONE}
+8 (10). \url{https://doi.org/10.1371/journal.pone.0077641}.
+
 \leavevmode\vadjust pre{\hypertarget{ref-fossog2015}{}}%
 Tene Fossog, Billy, Diego Ayala, Pelayo Acevedo, Pierre Kengne, Ignacio
 Ngomo Abeso Mebuy, Boris Makanga, Julie Magnus, et al. 2015. {``Habitat
@@ -1192,6 +1594,10 @@ Geology} 3: 215--26.
 \leavevmode\vadjust pre{\hypertarget{ref-watson1972}{}}%
 ---------. 1972. {``Trend Surface Analysis and Spatial Correlation.''}
 \emph{Geological Society of America Special Paper} 146: 39--46.
+
+\leavevmode\vadjust pre{\hypertarget{ref-weisberg2014}{}}%
+Weisberg, Sanford. 2014. \emph{Applied Linear Regression}. Fourth.
+Hoboken {NJ}: Wiley. \url{http://z.umn.edu/alr4ed}.
 
 \leavevmode\vadjust pre{\hypertarget{ref-zoure2014}{}}%
 Zouré, Honorat GM, Mounkaila Noma, Afework H Tekle, Uche V Amazigo,
