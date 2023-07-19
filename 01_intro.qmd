@@ -175,7 +175,7 @@ Malaria is one of deadliest diseases that affects populations living in tropical
 
 What distinguishes this from the other examples data-sets is that the data contain both individual-level and household-level information. The outcome of interest is the result from a rapid diagnostic test for malaria which. In the book, we will illustrate how to account for the the hierarchical structure of the data and the binary nature of the outcome at each of the stages of the geostatistical analysis.
 
-### *Anopheles gambiae* mosquitoes in Southern Cameroon
+### *Anopheles gambiae* mosquitoes in Southern Cameroon {#sec-mosq-data-ch1}
 
 ```{r echo=FALSE, message=FALSE}
 #| label: fig-anopheles-ch1

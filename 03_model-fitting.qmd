@@ -14,13 +14,13 @@ As illustrated in @fig-stages, exploratory analysis is the first step that shoul
 
 In the exploratory analysis of count data, we will also look at how overdispersion, which is a necessary, though not sufficient, condition for residual spatial correlation.
 
-### Exploring associations with risk factors
+### Exploring associations with risk factors using count data
 
 Assessment of the association between the health outcome of interest and non-categorical (i.e. continuous) risk factors can be carried using graphical tools, such scatter plots. The graphical inspection of the empirical association between the outcome and the covariates is especially useful to identify non-linear patterns in the relationship which should then be accounted for in the model formulation.
 
-In this section, we look more closely at the case of Binomial outcomes which a require a different treatment from other type of outcomes. If you want to read more on how to carry out exploratory analysis of the data, we refer you to Chapter 1 of @weisberg2014.
+In this section, we look more closely at the case when the observed outcome is a count which requires a different treatment from continuously measured outcomes, which are generally covered by most statistics textbooks (see, for example, Chapter 1 of @weisberg2014).
 
-#### When the outcome is an aggregated Binomial count
+#### When the outcome is an aggregated count
 
 Let us first consider the example of the river-blindness data in Liberia (@sec-rb-ch1), and examine the association between prevalence and elevation. We first generate a plot of the prevalence against the measured elevation at each of the sample locations
 
@@ -28,6 +28,7 @@ Let us first consider the example of the river-blindness data in Liberia (@sec-r
 library(ggplot2)
 load("data/liberia.rdata")
 load("data/malkenya.rdata")
+load("data/anopheles.rdata")
 ```
 
 ```{r, collapse=TRUE}
@@ -83,53 +84,73 @@ $$ {#eq-lspline-elev-glm} Based on the equation above, the effect of elevation b
 
 Before we move on, it is important to briefly discuss the differences between using the logarithmic transformation (@eq-log-elev-glm) and the linear spline (@eq-lspline-elev-glm). We observe that both curves provide a similar fit to the data, with larger differences observed for larger values in elevation, where the log-transformed elevation models yields larger values for the predicted prevalence. This also suggests that if we were to extrapolate the predictions beyond 600 meters in elevation the implied pattern by the model with the log-transformed elevation would predict an increasingly larger elevation, which is unrealistic, since the fly that transmits the diseases cannot breed at those altitudes. The linear spline model instead would generate predictions that would be very similar to those observed between 150 and 600 meters. From this point view, the linear spline model would thus have more scientific validity than the other model. However, which of the two approaches should be chosen to model the effect of elevation is a question that closely depends on the research question to be addressed.
 
-If the interest of the study was in better understanding the association between elevation and prevalence, the linear spline model does not only provide a more credible explanation but also its regression parameters can be more easily interpreted. In fact, for a unit increase in elevation, the multiplicative change in the odds for river-blindness is $\exp\{\beta_1\}$, if elevation is below 150 meters, and $\exp\{\beta_1+\beta_2\}$, if elevation is above 150 meters. When instead we use the log-transformed elevation, the interpretation of $\beta_1$ in @eq-log-elev-glm is slightly more complicated, as it is based on the multiplicative increase in elevation by the same amount given by the base of the algorithm, which is about $e \approx 2.718$ (Euler's number). To avoid this, one could rescale the regression coefficient as, for example, $\beta_1/\log_{2}(e)$ which would be interpreted as the multiplicative change in the odds for river-blindness for a doubling in elevation. However, a doubling in elevation is less meaningful when considering larger values of elevation.
+If the interest of the study was in better understanding the association between elevation and prevalence, the linear spline model does not only provide a more credible explanation but also its regression parameters can be more easily interpreted. In fact, for a unit increase in elevation, the multiplicative change in the odds for river-blindness is $\exp\{\beta_1\}$, if elevation is below 150 meters, and $\exp\{\beta_1+\beta_2\}$, if elevation is above 150 meters. When instead we use the log-transformed elevation, the interpretation of $\beta_1$ in @eq-log-elev-glm is slightly more complicated, as it is based on the multiplicative increase in elevation by the same amount given by the base of the algorithm, which is about $e \approx 2.718$[^03_model-fitting-1]. To avoid this, one could rescale the regression coefficient as, for example, $\beta_1/\log_{2}(e)$ which would be interpreted as the multiplicative change in the odds for river-blindness for a doubling in elevation. However, a doubling in elevation is less meaningful when considering larger values of elevation.
+
+[^03_model-fitting-1]: The letter $e$ stands for the so called Euler's number and represents the base of the natural logarithm. In the book, we write $\log(\cdot)$ to mean the "natural logarithm of $\cdot$".
 
 When the goal of statistical analysis is instead in developing a predictive model for the outcome of interest, the explanatory power and interpretability of the model may be of less concern. For this reason, the model with the log-transformed model could be preferred over the model with the linear spline, if it shown to yield more predictive power. We will come back to this point again in @sec-geo-prediction, where will show how to assess and compare the predictive performance of different geostatistical models.
 
+The other type of aggregated count data that we consider are unbounded counts. The Anopheles mosquitoes data-set (@sec-mosq-data-ch1) is an example of this, since there is no upper limit to the number of mosquitoes that can be trapped at a location. Let us consider the covariate represented by elevation. In this case, the simplest model that can be used to analyse the data is a Poisson regression, where the linear predictor is defined on the log of the mean number of mosquitoes (@tbl-glm). Hence, exploratory plots for the association with covariates should be generated using the log transformed counts of mosquitoes. In this instance, to avoid taking the log of zero, we can add 1 to the reported counts, if required. The variable of the `An.gambiae` in the `anopheles` data-set does not contain any 0, hence we simply apply the log tranformation without adding 1.
+
+```{r, collapse=TRUE}
+#| label: fig-logcounts-elev-mosq
+#| fig-cap: "Scatter plot of the log tranformed number of *Anopheles gambiae* mosquitoes against elevation, measured in meters. The blue line is generated using the least squares fit. "
+
+anopheles$log_counts <- log(anopheles$An.gambiae)
+ggplot(anopheles, aes(x = elevation, y = log_counts)) + geom_point() +
+  
+  # Adding a smoothing spline
+  labs(x="Elevation (meters)",y="Log number of An. gambiae mosquitoes") +
+  stat_smooth(method = "lm", formula = y ~ x, se=FALSE)
+```
+
+The scatter plot of @fig-logcounts-elev-mosq shows that there is a negative, though weak, association, with the average number of mosquitoes decreasing for increasing elevation. In this instance, the assumption of a linear relationship with elevation would be a reasonable choice.
+
 #### When the outcome is an invidual-level binary indicator
 
-We now consider the malaria data from Kenya (@sec-malaria-ch1) where the main outcome is the result from a rapid diagnostic test (RDT) for malaria from individuals within households. In this case, because the outcome only takes two values, 1 for a positive RDT test result and 0 otherwise, the direct application of the empirical logit from @eq-empirical-logit would not help us to generate informative scatter plots. 
+We now consider the malaria data from Kenya (@sec-malaria-ch1) where the main outcome is the result from a rapid diagnostic test (RDT) for malaria from individuals within households. In this case, because the outcome only takes two values, 1 for a positive RDT test result and 0 otherwise, the direct application of the empirical logit from @eq-empirical-logit would not help us to generate informative scatter plots. Throughout the book, we will consider the data from the community survey only, hence we work with a subset of the data which we shall name `malkenya_comm`
 
-To show how this issue can be overcome, let us consider the variables age and gender. To generate a plot that can help us understand between the relationship with malaria prevalence and the two risk factors, we proceed as follows. 
+```{r, collapse=TRUE}
+malkenya_comm <- malkenya[malkenya$Survey=="community", ]
+```
 
+To show how this issue can be overcome, let us consider the variables age and gender. To generate a plot that can help us understand between the relationship with malaria prevalence and the two risk factors, we proceed as follows.
 
 ```{r, collapse=TRUE}
 # Grouping of ages into classes defined through "breaks"
-malkenya$Age_class <- cut(malkenya$Age, 
-                          breaks = c(0, 5, 10, 15, 30, 40, 50, 100),
-                          include.lowest = TRUE)
+malkenya_comm$Age_class <- cut(malkenya_comm$Age, 
+                            breaks = c(0, 5, 10, 15, 30, 40, 50, 100),
+                            include.lowest = TRUE)
 
 ```
+
 Using the `cut` function, we first split age (in years) into classes through the argument `breaks`. The classification of age into $[0,5]$, $(5, 10]$ and $(10, 15]$ is common in many malaria epidemiology studies, as children are one of the groups at highest risk malaria. The choice of the other classes of age reflects instead the need to balance the number of observations falling in each of the classes.
 
 ```{r, collapse=TRUE}
-
 # Computation of the empirical logit by age groups and gender
 age_class_data <- aggregate(RDT ~ Age_class + Gender, 
-                                    data = malkenya, 
+                                    data = malkenya_comm, 
                                     FUN = function(y) 
                                     log((sum(y)+0.5)/(length(y)-sum(y)+0.5)))
 ```
 
-We then compute the empirical logit, using the total number of cases within age group and by gender. For a given age group and gender, which we denote as $\mathcal{C}$,  the empirical logit in @eq-empirical-logit, now takes the form
-$$
+We then compute the empirical logit, using the total number of cases within age group and by gender. For a given age group and gender, which we denote as $\mathcal{C}$, the empirical logit in @eq-empirical-logit, now takes the form $$
 l_{\mathcal{C}} = \log\left\{\frac{\sum_{i \in \mathcal{C}} y_{i} + 0.5}{|\mathcal{C}|- \sum_{i \in \mathcal{C}} y_{i} + 0.5} \right\}
-$$ {#eq-empirical-logit-bin}
-where $y_i$ are the individual binary outcomes and $i\in \mathcal{C}$ is used to indicate that the sum is carried out over all the individuals who belong the class $\mathcal{C}$, identified by a specific age group and gender. Finally, $|\mathcal{C}|$ is the number of individuals who fall within $\mathcal{C}$. In the code above, the empirical logit in @eq-empirical-logit-bin is computed using the `aggregate` function. An inspection of the object `age_class_data`, a data frame, shows that the empirical is found in the column named `RDT`. 
+$$ {#eq-empirical-logit-bin} where $y_i$ are the individual binary outcomes and $i\in \mathcal{C}$ is used to indicate that the sum is carried out over all the individuals who belong the class $\mathcal{C}$, identified by a specific age group and gender. Finally, $|\mathcal{C}|$ is the number of individuals who fall within $\mathcal{C}$. In the code above, the empirical logit in @eq-empirical-logit-bin is computed using the `aggregate` function. An inspection of the object `age_class_data`, a data frame, shows that the empirical is found in the column named `RDT`.
 
 ```{r, collapse=TRUE}
-# Computation of the average age within each age group
+# Computation of the average age within each age group 
 age_class_data$age_mean_point <- aggregate(Age ~ Age_class + Gender, 
-                                 data = malkenya, 
+                                 data = malkenya_comm, 
                                  FUN = mean)$Age
 
 
 # Number of individuals within each age group, by gender
-age_class_data$n_obs <-  aggregate(Age ~                                                               Age_class + Gender, 
-                         data = malkenya, 
+age_class_data$n_obs <-  aggregate(Age ~ Age_class + Gender, 
+                         data = malkenya_comm, 
                          FUN = length)$Age
 ```
+
 In order to generate the scatter-plot, we compute the average age within each age group by gender, and use these as our values for the x-axis. Note that since we only need to obtain the average age from this output, we use `$Age` to extract this only and allocate to the column `age_mean_point`. Finally, we also compute the number of observations within each of classes and place this in `n_obs`.
 
 ```{r, collapse=TRUE}
@@ -143,44 +164,84 @@ ggplot(age_class_data, aes(x = age_mean_point, y = RDT,
   labs(x="Age (years)",y="Empirical logit")  
 
 ```
+
 The resulting plot in @fig-elogit-age-malkenya shows the empirical logit against age by gender, with the size of each of the points proportional to the number of observations falling within each class. The observed patterns are explained by the fact that young children, especially those under the age of five, are particularly vulnerable to severe malaria infections. This is primarily due to their immature immune systems and lack of acquired immunity. As individuals grow older, they generally develop partial immunity to malaria through repeated exposure to the disease. This acquired immunity can provide some level of protection against severe malaria. At the same time, gender roles and activities can influence exposure to malaria-carrying mosquitoes. For example, men may spend more time outdoors for work or other activities, increasing their exposure to mosquito bites and thus their risk of infection. In addition, there are also biological factors to consider. Hormonal and genetic differences between males and females may also contribute to variations in immune responses to malaria infection. The interaction between age and gender is complex and may vary depending on the specific context and population being studied. A 2020 report from the Bill & Melinda Gates foundation provides a detailed overview of this and other aspects related to gender and malaria [@gates2020].
 
-To account for age in a model for malaria prevalence, several approaches are possible, some of which have been developed using biological models [@smith2007]. To model the patterns observed in @fig-elogit-age-malkenya, we can follow the same approach used in the previous section to model the relationship between elevation and river-blindness prevalence. First, let us consider age without the effect of gender. Let $p_{j}(x_i)$ denote the probability of a positive RDT for the $j$-th individual living in a household at location $x_i$. Assuming that malaria risk reaches its peak at 15 years of age, we can capture the non-linear relationship using a linear spline with two knots, one at 15 years and a second one at 40 years. This is expressed as
-$$
+To account for age in a model for malaria prevalence, several approaches are possible, some of which have been developed using biological models [@smith2007]. To model the patterns observed in @fig-elogit-age-malkenya, we can follow the same approach used in the previous section to model the relationship between elevation and river-blindness prevalence. First, let us consider age without the effect of gender. Let $p_{j}(x_i)$ denote the probability of a positive RDT for the $j$-th individual living in a household at location $x_i$. Assuming that malaria risk reaches its peak at 15 years of age, we can capture the non-linear relationship using a linear spline with two knots, one at 15 years and a second one at 40 years. This is expressed as $$
 \begin{aligned}
 \log\left\{\frac{p_{j}(x_i)}{1-p_j(x_i)}\right\} = \beta_{0} + \beta_{1}a_{ij}+\beta_{2} \times\max\{a_{ij}-15, 0\} + \beta_{3}\max\{a_{ij}-40, 0\}
 \end{aligned}
-$$ {#eq-age-only-reg}
-where $a_{ij}$ is the age, in years, for the $j$-th individual at household $i$. Based on this model the effect of age on RDT prevalence is $\beta_{1}$, for $a_{ij} < 15$,  $\beta_{1}+\beta_{2}$, for $15 < a_{ij} < 40$, and $\beta_{1}+\beta_{2}+\beta_{3}$ for $a_{ij} > 40$. 
+$$ {#eq-age-only-reg} where $a_{ij}$ is the age, in years, for the $j$-th individual at household $i$. Based on this model the effect of age on RDT prevalence is $\beta_{1}$, for $a_{ij} < 15$, $\beta_{1}+\beta_{2}$, for $15 < a_{ij} < 40$, and $\beta_{1}+\beta_{2}+\beta_{3}$ for $a_{ij} > 40$.
 
-@fig-elogit-age-malkenya indicates that age may interact with gender, meaning that the effect of gender on RDT prevalence changes across age, with larger differences observed between males and females for ages above 20 years. To assess such differences using a standard Binomial regression model, the linear predictor for RDT prevalence can be formulated as
-$$
+@fig-elogit-age-malkenya indicates that age may interact with gender, meaning that the effect of gender on RDT prevalence changes across age, with larger differences observed between males and females for ages above 20 years. To assess such differences using a standard Binomial regression model, the linear predictor for RDT prevalence can be formulated as $$
 \begin{aligned}
 \log\left\{\frac{p_{j}(x_i)}{1-p_j(x_i)}\right\} = \beta_{0} + (\beta_{1} + \beta_{1}^*g_{ij})\times a_{ij}+(\beta_{2} + \beta_{2}^*g_{ij})\times\max\{a_{ij}-15, 0\} + \\
 (\beta_{3} + \beta_{3}^*g_{ij}) \times \max\{a_{ij}-40, 0\}
 \end{aligned}
-$$ {#eq-age-inter-reg}
-where $g_{ij}$ is the indicator for gender, with 1 corresponding to male and 0 to female. The coefficients $\beta_{1}^*$, $\beta_{2}^*$ and  $\beta_{3}^*$ thus quantify the differences in risk between the two genders for ages below 15 years, betwee 15 and 40 years, and above 40 years, respectively. If all of those coefficients were 0, the model in @eq-age-only-reg would be recovered. 
+$$ {#eq-age-inter-reg} where $g_{ij}$ is the indicator for gender, with 1 corresponding to male and 0 to female. The coefficients $\beta_{1}^*$, $\beta_{2}^*$ and $\beta_{3}^*$ thus quantify the differences in risk between the two genders for ages below 15 years, betwee 15 and 40 years, and above 40 years, respectively. If all of those coefficients were 0, the model in @eq-age-only-reg would be recovered.
 
 ```{r, collapse = TRUE}
 glm_age_gender_interaction <- glm(RDT ~ Age + Gender:Age + 
                                   pmax(Age-15, 0) + Gender:pmax(Age-15, 0) + 
                                   pmax(Age-40, 0) + Gender:pmax(Age-40, 0),
-                              data = malkenya, family = binomial)
+                              data = malkenya_comm, family = binomial)
 
 summary(glm_age_gender_interaction)
 ```
+
 The code above shows how to fit the model specified in @eq-age-inter-reg. The terms `Age`, `pmax(Age-15, 0)` and `pmax(Age-40, 0)` respectively correspond to $\beta_{1}$, $\beta_{2}$ and $\beta_{3}$, whilst the `Gender:Age`, `Gender:pmax(Age-15, 0)` and `Gender:pmax(Age-40, 0)` to $\beta_{1}^*$, $\beta_{2}^*$ and $\beta_{3}^*$, respectively. In the summary of the fitted model, we observe that the interaction coefficients are non-statistically significant. However, removing the interaction based on the fact that each of the coefficients have each p-values larger than the conventional level of 5% would be wrong. Instead we should carry out the likelihood ratio test, as shown below.
 
 ```{r, collapse=TRUE}
 glm_age_gender_no_interaction <- glm(RDT ~ Age +  pmax(Age-15, 0) + pmax(Age-40, 0),
-                              data = malkenya, family = binomial)
+                              data = malkenya_comm, family = binomial)
 
 anova(glm_age_gender_no_interaction, glm_age_gender_interaction, test = "Chisq")
 ```
+
 To carry out the likelihood ratio test to assess the null hypothesis that $\beta_{1}^*=\beta_{2}^*=\beta_{3}^*=0$, we first fit the simplified nested model under this null hypothesis. The likelihood ratio test can then be carried out using the `anova` command as shown. The p-value indicates that the we do not find evidence against the null hypothesis, hence in our analysis of the data we might favour the simplified model that does not assumes an interaction between the two genders.
 
-The approach illustrated in this section to explore the association with gender, can also be applied to explora the association with other continuous variables which could also be a property of the household and not of the individual (e.g. elevation). 
+The approach just illustrated, can also be applied to explore the association with other continuous variables that are a property of the household and not of the individual. Let us, for example, consider the variable `elevation` from the `malkenya` data-set.
+
+```{r, collapse=TRUE}
+malekenya_comm <- malkenya[malkenya$Survey=="community", ]
+
+malkenya_comm$elevation_class <- cut(malkenya_comm$elevation,
+                            breaks = quantile(malkenya_comm$elevation, seq(0, 1, by = 0.1)),
+                            include.lowest = TRUE)
+```
+
+Following the same approach used for age, we first split elevation into classes. To define these, we use the deciles of the empirical distribution of `elevation` which we calculate using the `quantile` function above. In this way we also ensure that the number of observations falling within each class of elevation is approximately the same.
+
+```{r, collapse=TRUE}
+# Computation of the empirical logit by classes of elevation
+elev_class_data <- aggregate(RDT ~ elevation_class, 
+                                    data = malkenya_comm, 
+                                    FUN = function(y) 
+                                    log((sum(y)+0.5)/(length(y)-sum(y)+0.5)))
+
+
+# Computation of the average elevation within each class of elevation
+elev_class_data$elevation_mean <- aggregate(elevation ~ elevation_class, 
+                                    data = malkenya_comm, 
+                                    FUN = mean)$elevation
+```
+
+We then compute the empirical logit and the average elevation for each class of elevation. The empirical logit is computed as already defined in @eq-empirical-logit-bin, where now the definition of $\mathcal{C}$ is given by a specific decile used to split the distribution of elevation.
+
+```{r, collapse=TRUE}
+#| label: fig-elogit-elev-malkenya
+#| fig-cap: "Plot of the empirical logit against elevation measured in meters."
+ggplot(elev_class_data, aes(x = elevation_mean, y = RDT), 
+                           size = n_obs) + 
+  geom_point() + 
+  labs(x="Elevation (meters)",y="Empirical logit")  
+```
+
+The resulting plot in @fig-elogit-elev-malkenya shows an approximately linear relationship with decreasing values of the empirical logit for increasing elevation. This is expected because the cooler environment at higher altitudes is less favourable to the development of the overall mosquito life cycle.
+
+An alternative approach to generate a scatter plot for assessing the association between elevation and the empirical logit would be to aggregate the data at household level, rather than using classes of elevation. However, this approach does not work as the one illustrated above when only one individual is sampled for each location. In the case of the `malkenya` data, the great majority of the locations only include one individual making this second approach less useful than the one illustrated.
+
+Other more sophisticated approaches for the exploration of the associations between covariates and binary outcomes are available. For example, the use of the empirical logit could be avoided by using non-parametric regression methods for Binomial outcomes [@bowman1997], also implemented in `sm` package in R. Our view is that a careful exploratory analysis based on simpler methods, as those illustrated above, can be equally effective to inform the module formulation.
 
 ## Exploring overdispersion in count data
 
