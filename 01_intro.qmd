@@ -75,11 +75,14 @@ for the lead concentration data from Galicia,
 data(liberia)
 ```
 
-for the river-blindness data-set, 
+for the river-blindness data-set,
+
 ```{r eval=FALSE}
 data(malkenya)
 ```
+
 for the malaria data in the Western Highlands of Kenya, and
+
 ```{r eval=FALSE}
 data(anopheles)
 ```
@@ -142,6 +145,7 @@ In low-resource settings, where disease registries are typically absent, cross-s
 In this book, we will use data collected from Liberia to model nodule prevalence, which is based on a alternative and cheaper diagnostic technique for river-blindness. In the analysis of this data-set, we will illustrate how to formulate and fit Binomial geostatistical models, and how these can be used to predict prevalence within a region of interest.
 
 ### Malaria in the Western Kenyan Highlands {#sec-malaria-ch1}
+
 ```{r echo=FALSE, message=FALSE}
 #| label: fig-malkenya-ch1
 #| fig-cap: "Malaria prevalence data from a cross-sectional survey carried out in Nyanza Province, in the Western Highlands of Kenya."
@@ -171,7 +175,8 @@ if(knitr::is_html_output()){
   knitr::include_graphics("./figures/malkenya_ch1.png")
 }
 ```
-Malaria is one of deadliest diseases that affects populations living in tropical and subtropical countries. It is caused by a parasite of the genus Plasmodium which is transmitted through the infectious bite of female Anopheles mosquitoes. In the following chapters, we shall analyse a data-set from a cross-sectional community survey carried out in July 2010 in Nyanza Province, in the Western Highlands of Kenya [@stevenson2013]. 
+
+Malaria is one of deadliest diseases that affects populations living in tropical and subtropical countries. It is caused by a parasite of the genus Plasmodium which is transmitted through the infectious bite of female Anopheles mosquitoes. In the following chapters, we shall analyse a data-set from a cross-sectional community survey carried out in July 2010 in Nyanza Province, in the Western Highlands of Kenya [@stevenson2013].
 
 What distinguishes this from the other examples data-sets is that the data contain both individual-level and household-level information. The outcome of interest is the result from a rapid diagnostic test for malaria which. In the book, we will illustrate how to account for the the hierarchical structure of the data and the binary nature of the outcome at each of the stages of the geostatistical analysis.
 
@@ -228,7 +233,7 @@ $$
 [Y | S] = \prod_{i=1}^n [Y_i | S(x_i)].
 $$ {#eq-glm-ch1}
 
-The final step then consists of specifying a distribution for $[Y_i | S(x_i)]$. @tbl-glm gives the range, mean and variance the three specifications for \$\[Y_i \| S(x_i)\]\$\$ which we will consider in this book. In @tbl-glm, the *canonical function*, say $g(\cdot)$, denotes the natural transformation of the mean component $\mu_i$ that allows us to introduce both covariates and the spatial process $S(x_i)$ into the model so as to explain the variation in $\mu_i$ as
+The final step then consists of specifying a distribution for $[Y_i | S(x_i)]$. @tbl-glm gives the range, mean and variance the three specifications for $[Y_i \| S(x_i)]$ which we will consider in this book. In @tbl-glm, the *canonical function*, say $g(\cdot)$, denotes the natural transformation of the mean component $\mu_i$ that allows us to introduce both covariates and the spatial process $S(x_i)$ into the model so as to explain the variation in $\mu_i$ as
 
 $$
 g(\mu_i) = d(x_i)^\top \beta + S(x_i).

@@ -150,7 +150,6 @@
 %  \topsep6\p@\@plus6\p@ \trivlist
 {\par\addvspace{6pt}\normalfont {\bfseries #1}\hskip\labelsep\ignorespaces\itshape}
 {\par\addvspace{6pt}}
-\usepackage{fvextra} \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
 \makeatletter
 \makeatother
 \makeatletter
@@ -227,7 +226,7 @@
 
 \begin{document}
 \maketitle
-\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[sharp corners, enhanced, borderline west={3pt}{0pt}{shadecolor}, frame hidden, interior hidden, breakable, boxrule=0pt]}{\end{tcolorbox}}\fi
+\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[boxrule=0pt, borderline west={3pt}{0pt}{shadecolor}, interior hidden, sharp corners, breakable, enhanced, frame hidden]}{\end{tcolorbox}}\fi
 
 \renewcommand*\contentsname{Table of contents}
 {
@@ -567,10 +566,10 @@ malaria which. In the book, we will illustrate how to account for the
 the hierarchical structure of the data and the binary nature of the
 outcome at each of the stages of the geostatistical analysis.
 
-\hypertarget{anopheles-gambiae-mosquitoes-in-southern-cameroon}{%
+\hypertarget{sec-mosq-data-ch1}{%
 \subsection{\texorpdfstring{\emph{Anopheles gambiae} mosquitoes in
 Southern
-Cameroon}{Anopheles gambiae mosquitoes in Southern Cameroon}}\label{anopheles-gambiae-mosquitoes-in-southern-cameroon}}
+Cameroon}{Anopheles gambiae mosquitoes in Southern Cameroon}}\label{sec-mosq-data-ch1}}
 
 \begin{figure}
 
@@ -693,12 +692,12 @@ that, we can write \([Y | S]\) as
 
 The final step then consists of specifying a distribution for
 \([Y_i | S(x_i)]\). Table~\ref{tbl-glm} gives the range, mean and
-variance the three specifications for \${[}Y\_i \textbar{}
-S(x\_i){]}\$\$ which we will consider in this book. In
-Table~\ref{tbl-glm}, the \emph{canonical function}, say \(g(\cdot)\),
-denotes the natural transformation of the mean component \(\mu_i\) that
-allows us to introduce both covariates and the spatial process
-\(S(x_i)\) into the model so as to explain the variation in \(\mu_i\) as
+variance the three specifications for \([Y_i \| S(x_i)]\) which we will
+consider in this book. In Table~\ref{tbl-glm}, the \emph{canonical
+function}, say \(g(\cdot)\), denotes the natural transformation of the
+mean component \(\mu_i\) that allows us to introduce both covariates and
+the spatial process \(S(x_i)\) into the model so as to explain the
+variation in \(\mu_i\) as
 
 \begin{equation}\protect\hypertarget{eq-linear-predictor-ch1}{}{
 g(\mu_i) = d(x_i)^\top \beta + S(x_i).
@@ -936,9 +935,9 @@ In the exploratory analysis of count data, we will also look at how
 overdispersion, which is a necessary, though not sufficient, condition
 for residual spatial correlation.
 
-\hypertarget{exploring-associations-with-risk-factors}{%
-\subsection{Exploring associations with risk
-factors}\label{exploring-associations-with-risk-factors}}
+\hypertarget{exploring-associations-with-risk-factors-using-count-data}{%
+\subsection{Exploring associations with risk factors using count
+data}\label{exploring-associations-with-risk-factors-using-count-data}}
 
 Assessment of the association between the health outcome of interest and
 non-categorical (i.e.~continuous) risk factors can be carried using
@@ -947,14 +946,14 @@ empirical association between the outcome and the covariates is
 especially useful to identify non-linear patterns in the relationship
 which should then be accounted for in the model formulation.
 
-In this section, we look more closely at the case of Binomial outcomes
-which a require a different treatment from other type of outcomes. If
-you want to read more on how to carry out exploratory analysis of the
-data, we refer you to Chapter 1 of Weisberg (2014).
+In this section, we look more closely at the case when the observed
+outcome is a count which requires a different treatment from
+continuously measured outcomes, which are generally covered by most
+statistics textbooks (see, for example, Chapter 1 of Weisberg (2014)).
 
-\hypertarget{when-the-outcome-is-an-aggregated-binomial-count}{%
-\subsubsection{When the outcome is an aggregated Binomial
-count}\label{when-the-outcome-is-an-aggregated-binomial-count}}
+\hypertarget{when-the-outcome-is-an-aggregated-count}{%
+\subsubsection{When the outcome is an aggregated
+count}\label{when-the-outcome-is-an-aggregated-count}}
 
 Let us first consider the example of the river-blindness data in Liberia
 (Section~\ref{sec-rb-ch1}), and examine the association between
@@ -1078,8 +1077,8 @@ standard base function \texttt{max}) should be used in R when the
 computation of the maximum between a scalar value and each of the
 components of a numeric vector is required.
 
-Before we move on, it is important to briefly discuss the differences
-between using the logarithmic transformation
+Before proceeding further, it is important to explain the differences
+between the use of the logarithmic transformation
 (Equation~\ref{eq-log-elev-glm}) and the linear spline
 (Equation~\ref{eq-lspline-elev-glm}). We observe that both curves
 provide a similar fit to the data, with larger differences observed for
@@ -1108,12 +1107,14 @@ instead we use the log-transformed elevation, the interpretation of
 \(\beta_1\) in Equation~\ref{eq-log-elev-glm} is slightly more
 complicated, as it is based on the multiplicative increase in elevation
 by the same amount given by the base of the algorithm, which is about
-\(e \approx 2.718\) (Euler's number). To avoid this, one could rescale
-the regression coefficient as, for example, \(\beta_1/\log_{2}(e)\)
-which would be interpreted as the multiplicative change in the odds for
-river-blindness for a doubling in elevation. However, a doubling in
-elevation is less meaningful when considering larger values of
-elevation.
+\(e \approx 2.718\)\footnote{The letter \(e\) stands for the so called
+  Euler's number and represents the base of the natural logarithm. In
+  the book, we write \(\log(\cdot)\) to mean the ``natural logarithm of
+  \(\cdot\)''.}. To avoid this, one could rescale the regression
+coefficient as, for example, \(\beta_1/\log_{2}(e)\) which would be
+interpreted as the multiplicative change in the odds for river-blindness
+for a doubling in elevation. However, a doubling in elevation is less
+meaningful when considering larger values of elevation.
 
 When the goal of statistical analysis is instead in developing a
 predictive model for the outcome of interest, the explanatory power and
@@ -1123,6 +1124,51 @@ model with the linear spline, if it shown to yield more predictive
 power. We will come back to this point again in
 Chapter~\ref{sec-geo-prediction}, where will show how to assess and
 compare the predictive performance of different geostatistical models.
+
+The other type of aggregated count data that we consider are unbounded
+counts. The Anopheles mosquitoes data-set
+(Section~\ref{sec-mosq-data-ch1}) is an example of this, since there is
+no upper limit to the number of mosquitoes that can be trapped at a
+location. Let us consider the covariate represented by elevation. In
+this case, the simplest model that can be used to analyse the data is a
+Poisson regression, where the linear predictor is defined on the log of
+the mean number of mosquitoes (Table~\ref{tbl-glm}). Hence, exploratory
+plots for the association with covariates should be generated using the
+log transformed counts of mosquitoes. In this instance, to avoid taking
+the log of zero, we can add 1 to the reported counts, if required. The
+variable of the \texttt{An.gambiae} in the \texttt{anopheles} data-set
+does not contain any 0, hence we simply apply the log tranformation
+without adding 1.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{anopheles}\SpecialCharTok{$}\NormalTok{log\_counts }\OtherTok{\textless{}{-}} \FunctionTok{log}\NormalTok{(anopheles}\SpecialCharTok{$}\NormalTok{An.gambiae)}
+\FunctionTok{ggplot}\NormalTok{(anopheles, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ elevation, }\AttributeTok{y =}\NormalTok{ log\_counts)) }\SpecialCharTok{+} \FunctionTok{geom\_point}\NormalTok{() }\SpecialCharTok{+}
+  
+  \CommentTok{\# Adding a smoothing spline}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{x=}\StringTok{"Elevation (meters)"}\NormalTok{,}\AttributeTok{y=}\StringTok{"Log number of An. gambiae mosquitoes"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{stat\_smooth}\NormalTok{(}\AttributeTok{method =} \StringTok{"lm"}\NormalTok{, }\AttributeTok{formula =}\NormalTok{ y }\SpecialCharTok{\textasciitilde{}}\NormalTok{ x, }\AttributeTok{se=}\ConstantTok{FALSE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{03_model-fitting_files/figure-pdf/fig-logcounts-elev-mosq-1.pdf}
+
+}
+
+\caption{\label{fig-logcounts-elev-mosq}Scatter plot of the log
+tranformed number of \emph{Anopheles gambiae} mosquitoes against
+elevation, measured in meters. The blue line is generated using the
+least squares fit.}
+
+\end{figure}
+
+The scatter plot of Figure~\ref{fig-logcounts-elev-mosq} shows that
+there is a negative, though weak, association, with the average number
+of mosquitoes decreasing for increasing elevation. In this instance, the
+assumption of a linear relationship with elevation would be a reasonable
+choice.
 
 \hypertarget{when-the-outcome-is-an-invidual-level-binary-indicator}{%
 \subsubsection{When the outcome is an invidual-level binary
@@ -1134,7 +1180,15 @@ from a rapid diagnostic test (RDT) for malaria from individuals within
 households. In this case, because the outcome only takes two values, 1
 for a positive RDT test result and 0 otherwise, the direct application
 of the empirical logit from Equation~\ref{eq-empirical-logit} would not
-help us to generate informative scatter plots.
+help us to generate informative scatter plots. Throughout the book, we
+will consider the data from the community survey only, hence we work
+with a subset of the data which we shall name \texttt{malkenya\_comm}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{malkenya\_comm }\OtherTok{\textless{}{-}}\NormalTok{ malkenya[malkenya}\SpecialCharTok{$}\NormalTok{Survey}\SpecialCharTok{==}\StringTok{"community"}\NormalTok{, ]}
+\end{Highlighting}
+\end{Shaded}
 
 To show how this issue can be overcome, let us consider the variables
 age and gender. To generate a plot that can help us understand between
@@ -1144,9 +1198,9 @@ proceed as follows.
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{\# Grouping of ages into classes defined through "breaks"}
-\NormalTok{malkenya}\SpecialCharTok{$}\NormalTok{Age\_class }\OtherTok{\textless{}{-}} \FunctionTok{cut}\NormalTok{(malkenya}\SpecialCharTok{$}\NormalTok{Age, }
-                          \AttributeTok{breaks =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{5}\NormalTok{, }\DecValTok{10}\NormalTok{, }\DecValTok{15}\NormalTok{, }\DecValTok{30}\NormalTok{, }\DecValTok{40}\NormalTok{, }\DecValTok{50}\NormalTok{, }\DecValTok{100}\NormalTok{),}
-                          \AttributeTok{include.lowest =} \ConstantTok{TRUE}\NormalTok{)}
+\NormalTok{malkenya\_comm}\SpecialCharTok{$}\NormalTok{Age\_class }\OtherTok{\textless{}{-}} \FunctionTok{cut}\NormalTok{(malkenya\_comm}\SpecialCharTok{$}\NormalTok{Age, }
+                            \AttributeTok{breaks =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{5}\NormalTok{, }\DecValTok{10}\NormalTok{, }\DecValTok{15}\NormalTok{, }\DecValTok{30}\NormalTok{, }\DecValTok{40}\NormalTok{, }\DecValTok{50}\NormalTok{, }\DecValTok{100}\NormalTok{),}
+                            \AttributeTok{include.lowest =} \ConstantTok{TRUE}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1160,10 +1214,9 @@ classes.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-
 \CommentTok{\# Computation of the empirical logit by age groups and gender}
 \NormalTok{age\_class\_data }\OtherTok{\textless{}{-}} \FunctionTok{aggregate}\NormalTok{(RDT }\SpecialCharTok{\textasciitilde{}}\NormalTok{ Age\_class }\SpecialCharTok{+}\NormalTok{ Gender, }
-                                    \AttributeTok{data =}\NormalTok{ malkenya, }
+                                    \AttributeTok{data =}\NormalTok{ malkenya\_comm, }
                                     \AttributeTok{FUN =} \ControlFlowTok{function}\NormalTok{(y) }
                                     \FunctionTok{log}\NormalTok{((}\FunctionTok{sum}\NormalTok{(y)}\SpecialCharTok{+}\FloatTok{0.5}\NormalTok{)}\SpecialCharTok{/}\NormalTok{(}\FunctionTok{length}\NormalTok{(y)}\SpecialCharTok{{-}}\FunctionTok{sum}\NormalTok{(y)}\SpecialCharTok{+}\FloatTok{0.5}\NormalTok{)))}
 \end{Highlighting}
@@ -1188,15 +1241,15 @@ found in the column named \texttt{RDT}.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{\# Computation of the average age within each age group}
+\CommentTok{\# Computation of the average age within each age group }
 \NormalTok{age\_class\_data}\SpecialCharTok{$}\NormalTok{age\_mean\_point }\OtherTok{\textless{}{-}} \FunctionTok{aggregate}\NormalTok{(Age }\SpecialCharTok{\textasciitilde{}}\NormalTok{ Age\_class }\SpecialCharTok{+}\NormalTok{ Gender, }
-                                 \AttributeTok{data =}\NormalTok{ malkenya, }
+                                 \AttributeTok{data =}\NormalTok{ malkenya\_comm, }
                                  \AttributeTok{FUN =}\NormalTok{ mean)}\SpecialCharTok{$}\NormalTok{Age}
 
 
 \CommentTok{\# Number of individuals within each age group, by gender}
-\NormalTok{age\_class\_data}\SpecialCharTok{$}\NormalTok{n\_obs }\OtherTok{\textless{}{-}}  \FunctionTok{aggregate}\NormalTok{(Age }\SpecialCharTok{\textasciitilde{}}\NormalTok{                                                               Age\_class }\SpecialCharTok{+}\NormalTok{ Gender, }
-                         \AttributeTok{data =}\NormalTok{ malkenya, }
+\NormalTok{age\_class\_data}\SpecialCharTok{$}\NormalTok{n\_obs }\OtherTok{\textless{}{-}}  \FunctionTok{aggregate}\NormalTok{(Age }\SpecialCharTok{\textasciitilde{}}\NormalTok{ Age\_class }\SpecialCharTok{+}\NormalTok{ Gender, }
+                         \AttributeTok{data =}\NormalTok{ malkenya\_comm, }
                          \AttributeTok{FUN =}\NormalTok{ length)}\SpecialCharTok{$}\NormalTok{Age}
 \end{Highlighting}
 \end{Shaded}
@@ -1299,32 +1352,36 @@ Equation~\ref{eq-age-only-reg} would be recovered.
 \NormalTok{glm\_age\_gender\_interaction }\OtherTok{\textless{}{-}} \FunctionTok{glm}\NormalTok{(RDT }\SpecialCharTok{\textasciitilde{}}\NormalTok{ Age }\SpecialCharTok{+}\NormalTok{ Gender}\SpecialCharTok{:}\NormalTok{Age }\SpecialCharTok{+} 
                                   \FunctionTok{pmax}\NormalTok{(Age}\DecValTok{{-}15}\NormalTok{, }\DecValTok{0}\NormalTok{) }\SpecialCharTok{+}\NormalTok{ Gender}\SpecialCharTok{:}\FunctionTok{pmax}\NormalTok{(Age}\DecValTok{{-}15}\NormalTok{, }\DecValTok{0}\NormalTok{) }\SpecialCharTok{+} 
                                   \FunctionTok{pmax}\NormalTok{(Age}\DecValTok{{-}40}\NormalTok{, }\DecValTok{0}\NormalTok{) }\SpecialCharTok{+}\NormalTok{ Gender}\SpecialCharTok{:}\FunctionTok{pmax}\NormalTok{(Age}\DecValTok{{-}40}\NormalTok{, }\DecValTok{0}\NormalTok{),}
-                              \AttributeTok{data =}\NormalTok{ malkenya, }\AttributeTok{family =}\NormalTok{ binomial)}
+                              \AttributeTok{data =}\NormalTok{ malkenya\_comm, }\AttributeTok{family =}\NormalTok{ binomial)}
 
 \FunctionTok{summary}\NormalTok{(glm\_age\_gender\_interaction)}
 \DocumentationTok{\#\# }
 \DocumentationTok{\#\# Call:}
 \DocumentationTok{\#\# glm(formula = RDT \textasciitilde{} Age + Gender:Age + pmax(Age {-} 15, 0) + Gender:pmax(Age {-} }
 \DocumentationTok{\#\#     15, 0) + pmax(Age {-} 40, 0) + Gender:pmax(Age {-} 40, 0), family = binomial, }
-\DocumentationTok{\#\#     data = malkenya)}
+\DocumentationTok{\#\#     data = malkenya\_comm)}
+\DocumentationTok{\#\# }
+\DocumentationTok{\#\# Deviance Residuals: }
+\DocumentationTok{\#\#     Min       1Q   Median       3Q      Max  }
+\DocumentationTok{\#\# {-}0.7681  {-}0.7051  {-}0.4940  {-}0.2734   2.7294  }
 \DocumentationTok{\#\# }
 \DocumentationTok{\#\# Coefficients:}
-\DocumentationTok{\#\#                               Estimate Std. Error z value Pr(\textgreater{}|z|)    }
-\DocumentationTok{\#\# (Intercept)                  {-}1.135655   0.089314 {-}12.715  \textless{} 2e{-}16 ***}
-\DocumentationTok{\#\# Age                          {-}0.001674   0.008502  {-}0.197    0.844    }
-\DocumentationTok{\#\# pmax(Age {-} 15, 0)            {-}0.095720   0.016123  {-}5.937 2.91e{-}09 ***}
-\DocumentationTok{\#\# pmax(Age {-} 40, 0)             0.121917   0.022680   5.376 7.64e{-}08 ***}
-\DocumentationTok{\#\# Age:GenderMale                0.007733   0.005080   1.522    0.128    }
-\DocumentationTok{\#\# GenderMale:pmax(Age {-} 15, 0) {-}0.026943   0.022766  {-}1.183    0.237    }
-\DocumentationTok{\#\# GenderMale:pmax(Age {-} 40, 0)  0.022514   0.040543   0.555    0.579    }
+\DocumentationTok{\#\#                              Estimate Std. Error z value Pr(\textgreater{}|z|)    }
+\DocumentationTok{\#\# (Intercept)                  {-}1.05835    0.10245 {-}10.331  \textless{} 2e{-}16 ***}
+\DocumentationTok{\#\# Age                          {-}0.03384    0.01310  {-}2.584  0.00978 ** }
+\DocumentationTok{\#\# pmax(Age {-} 15, 0)            {-}0.03975    0.02356  {-}1.687  0.09162 .  }
+\DocumentationTok{\#\# pmax(Age {-} 40, 0)             0.09170    0.02482   3.695  0.00022 ***}
+\DocumentationTok{\#\# Age:GenderMale                0.01428    0.01221   1.170  0.24202    }
+\DocumentationTok{\#\# GenderMale:pmax(Age {-} 15, 0) {-}0.03625    0.03145  {-}1.153  0.24908    }
+\DocumentationTok{\#\# GenderMale:pmax(Age {-} 40, 0)  0.02451    0.04320   0.567  0.57052    }
 \DocumentationTok{\#\# {-}{-}{-}}
 \DocumentationTok{\#\# Signif. codes:  0 \textquotesingle{}***\textquotesingle{} 0.001 \textquotesingle{}**\textquotesingle{} 0.01 \textquotesingle{}*\textquotesingle{} 0.05 \textquotesingle{}.\textquotesingle{} 0.1 \textquotesingle{} \textquotesingle{} 1}
 \DocumentationTok{\#\# }
 \DocumentationTok{\#\# (Dispersion parameter for binomial family taken to be 1)}
 \DocumentationTok{\#\# }
-\DocumentationTok{\#\#     Null deviance: 8538.2  on 8203  degrees of freedom}
-\DocumentationTok{\#\# Residual deviance: 8224.6  on 8197  degrees of freedom}
-\DocumentationTok{\#\# AIC: 8238.6}
+\DocumentationTok{\#\#     Null deviance: 2875.8  on 3351  degrees of freedom}
+\DocumentationTok{\#\# Residual deviance: 2673.8  on 3345  degrees of freedom}
+\DocumentationTok{\#\# AIC: 2687.8}
 \DocumentationTok{\#\# }
 \DocumentationTok{\#\# Number of Fisher Scoring iterations: 5}
 \end{Highlighting}
@@ -1346,7 +1403,7 @@ ratio test, as shown below.
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{glm\_age\_gender\_no\_interaction }\OtherTok{\textless{}{-}} \FunctionTok{glm}\NormalTok{(RDT }\SpecialCharTok{\textasciitilde{}}\NormalTok{ Age }\SpecialCharTok{+}  \FunctionTok{pmax}\NormalTok{(Age}\DecValTok{{-}15}\NormalTok{, }\DecValTok{0}\NormalTok{) }\SpecialCharTok{+} \FunctionTok{pmax}\NormalTok{(Age}\DecValTok{{-}40}\NormalTok{, }\DecValTok{0}\NormalTok{),}
-                              \AttributeTok{data =}\NormalTok{ malkenya, }\AttributeTok{family =}\NormalTok{ binomial)}
+                              \AttributeTok{data =}\NormalTok{ malkenya\_comm, }\AttributeTok{family =}\NormalTok{ binomial)}
 
 \FunctionTok{anova}\NormalTok{(glm\_age\_gender\_no\_interaction, glm\_age\_gender\_interaction, }\AttributeTok{test =} \StringTok{"Chisq"}\NormalTok{)}
 \DocumentationTok{\#\# Analysis of Deviance Table}
@@ -1355,8 +1412,8 @@ ratio test, as shown below.
 \DocumentationTok{\#\# Model 2: RDT \textasciitilde{} Age + Gender:Age + pmax(Age {-} 15, 0) + Gender:pmax(Age {-} }
 \DocumentationTok{\#\#     15, 0) + pmax(Age {-} 40, 0) + Gender:pmax(Age {-} 40, 0)}
 \DocumentationTok{\#\#   Resid. Df Resid. Dev Df Deviance Pr(\textgreater{}Chi)}
-\DocumentationTok{\#\# 1      8200     8227.4                     }
-\DocumentationTok{\#\# 2      8197     8224.6  3   2.8706    0.412}
+\DocumentationTok{\#\# 1      3348     2675.6                     }
+\DocumentationTok{\#\# 2      3345     2673.8  3   1.8051   0.6138}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1369,17 +1426,255 @@ hypothesis, hence in our analysis of the data we might favour the
 simplified model that does not assumes an interaction between the two
 genders.
 
-The approach illustrated in this section to explore the association with
-gender, can also be applied to explora the association with other
-continuous variables which could also be a property of the household and
-not of the individual (e.g.~elevation).
+The approach just illustrated, can also be applied to explore the
+association with other continuous variables that are a property of the
+household and not of the individual. Let us, for example, consider the
+variable \texttt{elevation} from the \texttt{malkenya} data-set.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{malekenya\_comm }\OtherTok{\textless{}{-}}\NormalTok{ malkenya[malkenya}\SpecialCharTok{$}\NormalTok{Survey}\SpecialCharTok{==}\StringTok{"community"}\NormalTok{, ]}
+
+\NormalTok{malkenya\_comm}\SpecialCharTok{$}\NormalTok{elevation\_class }\OtherTok{\textless{}{-}} \FunctionTok{cut}\NormalTok{(malkenya\_comm}\SpecialCharTok{$}\NormalTok{elevation,}
+                            \AttributeTok{breaks =} \FunctionTok{quantile}\NormalTok{(malkenya\_comm}\SpecialCharTok{$}\NormalTok{elevation, }\FunctionTok{seq}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{, }\AttributeTok{by =} \FloatTok{0.1}\NormalTok{)),}
+                            \AttributeTok{include.lowest =} \ConstantTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+Following the same approach used for age, we first split elevation into
+classes. To define these, we use the deciles of the empirical
+distribution of \texttt{elevation} which we calculate using the
+\texttt{quantile} function above. In this way we also ensure that the
+number of observations falling within each class of elevation is
+approximately the same.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Computation of the empirical logit by classes of elevation}
+\NormalTok{elev\_class\_data }\OtherTok{\textless{}{-}} \FunctionTok{aggregate}\NormalTok{(RDT }\SpecialCharTok{\textasciitilde{}}\NormalTok{ elevation\_class, }
+                                    \AttributeTok{data =}\NormalTok{ malkenya\_comm, }
+                                    \AttributeTok{FUN =} \ControlFlowTok{function}\NormalTok{(y) }
+                                    \FunctionTok{log}\NormalTok{((}\FunctionTok{sum}\NormalTok{(y)}\SpecialCharTok{+}\FloatTok{0.5}\NormalTok{)}\SpecialCharTok{/}\NormalTok{(}\FunctionTok{length}\NormalTok{(y)}\SpecialCharTok{{-}}\FunctionTok{sum}\NormalTok{(y)}\SpecialCharTok{+}\FloatTok{0.5}\NormalTok{)))}
+
+
+\CommentTok{\# Computation of the average elevation within each class of elevation}
+\NormalTok{elev\_class\_data}\SpecialCharTok{$}\NormalTok{elevation\_mean }\OtherTok{\textless{}{-}} \FunctionTok{aggregate}\NormalTok{(elevation }\SpecialCharTok{\textasciitilde{}}\NormalTok{ elevation\_class, }
+                                    \AttributeTok{data =}\NormalTok{ malkenya\_comm, }
+                                    \AttributeTok{FUN =}\NormalTok{ mean)}\SpecialCharTok{$}\NormalTok{elevation}
+\end{Highlighting}
+\end{Shaded}
+
+We then compute the empirical logit and the average elevation for each
+class of elevation. The empirical logit is computed as already defined
+in Equation~\ref{eq-empirical-logit-bin}, where now the definition of
+\(\mathcal{C}\) is given by a specific decile used to split the
+distribution of elevation.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(elev\_class\_data, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ elevation\_mean, }\AttributeTok{y =}\NormalTok{ RDT), }
+                           \AttributeTok{size =}\NormalTok{ n\_obs) }\SpecialCharTok{+} 
+  \FunctionTok{geom\_point}\NormalTok{() }\SpecialCharTok{+} 
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{x=}\StringTok{"Elevation (meters)"}\NormalTok{,}\AttributeTok{y=}\StringTok{"Empirical logit"}\NormalTok{)  }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{03_model-fitting_files/figure-pdf/fig-elogit-elev-malkenya-1.pdf}
+
+}
+
+\caption{\label{fig-elogit-elev-malkenya}Plot of the empirical logit
+against elevation measured in meters.}
+
+\end{figure}
+
+The resulting plot in Figure~\ref{fig-elogit-elev-malkenya} shows an
+approximately linear relationship with decreasing values of the
+empirical logit for increasing elevation. This is expected because the
+cooler environment at higher altitudes is less favourable to the
+development of the overall mosquito life cycle.
+
+An alternative approach to generate a scatter plot for assessing the
+association between elevation and the empirical logit would be to
+aggregate the data at household level, rather than using classes of
+elevation. However, this approach does not work as the one illustrated
+above when only one individual is sampled for each location. In the case
+of the \texttt{malkenya} data, the great majority of the locations only
+include one individual making this second approach less useful than the
+one illustrated.
+
+Other more sophisticated approaches for the exploration of the
+associations between covariates and binary outcomes are available. For
+example, the use of the empirical logit could be avoided by using
+non-parametric regression methods for Binomial outcomes (Bowman 1997),
+also implemented in \texttt{sm} package in R. Our view is that a careful
+exploratory analysis based on simpler methods, as those illustrated
+above, can be equally effective to inform the module formulation.
 
 \hypertarget{exploring-overdispersion-in-count-data}{%
-\section{Exploring overdispersion in count
+\subsection{Exploring overdispersion in count
 data}\label{exploring-overdispersion-in-count-data}}
 
+One of the main advantages in the use of covariates is the ability to
+attribute part of the variation of the outcome to a set of measured
+variables and, hence, reduce the uncertainty of our inferences. However,
+it almost always the case that the finite number of covariates at our
+disposal is not enough to fully explain the variation in the outcome. In
+other words, the existence of unmeasured covariates that are related to
+the modelled outcome give rise to the so called residual variation. In a
+standard linear regression model the extent to which we are able to
+account for important covariates is directly linked to the size of the
+variance of the residuals. In the case of count data, instead, this link
+is less well defined and one of the main consequences of the omission of
+covariates, which we address in this chapter, is \emph{overdispersion}.
+
+Overdispersion occurs when the variability of the data is larger than
+that implied by the generalized linear model (GLM) fitted to them. For
+example, if we consider the Binomial distribution, the presence of
+overdispersion implies that \(V(Y_i) > n_i \mu_{i}(1-\mu_i)\), where we
+recall that \(n_i\) is the Binomial denominator and \(mu_i\) is the
+probability of ``success'' for each of the \(n_i\) Bernoulli trials; for
+a Poisson distribution with \(E(Y_i) = \mu_i\), instead, overdispersion
+implies that \(V(Y_i) > \mu_{i}\).
+
+Assessment of the overdispersion for count data can be carried out in
+different ways depending on the goal of the statistical analysis. Since
+the focus of this book is to illustrate how to formulate and apply
+geostatistical models, the most natural approach to assess
+overdispersion is through the use of generalized linear mixed models
+(GLMMs). The class of GLMMs that we consider in this and the next
+section are obtained by replacing the spatial Gaussian process
+\(S(x_i)\) in introduced in Equation~\ref{eq-linear-predictor-ch1} with
+a set of mutually independent random effects, which we denote as
+\(Z_i\), and thus write
+\begin{equation}\protect\hypertarget{eq-linear-predictor-glmms-ch2}{}{
+g(\mu_i) = d(x_i)^\top \beta + Z_i.
+}\label{eq-linear-predictor-glmms-ch2}\end{equation} The model above
+accounts for the overdispersion in the data through \(Z_i\) whose
+variance can be interpreted as an indicator of the amount of
+overdispersion. To show this, we carry out a small simulation as
+follows. For simplicity, we consider the Binomial mixed model with an
+intercept only, hence
+\begin{equation}\protect\hypertarget{eq-bin-glmm-example}{}{
+\log\left\{\frac{\mu_i}{1-\mu_i}\right\} = \beta_0 + Z_i
+}\label{eq-bin-glmm-example}\end{equation} and assume that the \(Z_i\)
+follow a set of mutually independent Gaussian variables with mean 0 and
+variance \(\tau^2\). In our simulation we vary \(\beta_0\) over the set
+\(\{-3, -2, -1, 0, 1, 2, 3\}\) and set \(\tau^2=0.1\) and the binomial
+denominators to \(n_i = 100\). For a given value of \(\beta_0\), we then
+proceed through the following iterative steps.
+
+\begin{itemize}
+\item
+  Simulate 10,000 values for \(Z_i\) from a Gaussian distribution with
+  mean 0 and variance \(\tau^2\).
+\item
+  Compute the probabilities \(\mu_i\) based on
+  Equation~\ref{eq-bin-glmm-example}.
+\item
+  Simulate 10,000 values from a Binomial model with probability of
+  success \(\mu_i\) and denominator \(n_i\).
+\item
+  Compute the empirical variance of the counts \(y_i\) simulated in the
+  previous step.
+\item
+  Change the value of \(\beta_0\) and repeat the previous steps, for all
+  the values of \(\beta_0\).
+\end{itemize}
+
+The code below shows the implementation of the above steps in R.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Number of simulations}
+\NormalTok{n\_sim }\OtherTok{\textless{}{-}} \DecValTok{10000}
+
+\CommentTok{\# Variance of the Z\_i}
+\NormalTok{tau2 }\OtherTok{\textless{}{-}} \FloatTok{0.1}
+
+\CommentTok{\# Binomial denominator }
+\NormalTok{bin\_denom }\OtherTok{\textless{}{-}} \DecValTok{100}
+
+\CommentTok{\# Intercept values}
+\NormalTok{beta0 }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\SpecialCharTok{{-}}\DecValTok{3}\NormalTok{, }\SpecialCharTok{{-}}\DecValTok{2}\NormalTok{, }\SpecialCharTok{{-}}\DecValTok{1}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{2}\NormalTok{, }\DecValTok{3}\NormalTok{)}
+
+\CommentTok{\# Vector where we store the computed variance from}
+\CommentTok{\# the simulated counts from the Binomial mixed model}
+\NormalTok{var\_data }\OtherTok{\textless{}{-}} \FunctionTok{rep}\NormalTok{(}\ConstantTok{NA}\NormalTok{, }\FunctionTok{length}\NormalTok{(beta0))}
+
+
+\ControlFlowTok{for}\NormalTok{(j }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\FunctionTok{length}\NormalTok{(beta0)) \{}
+  \CommentTok{\# Simulation of the random effects Z\_i}
+\NormalTok{  Z\_i\_sim }\OtherTok{\textless{}{-}} \FunctionTok{rnorm}\NormalTok{(n\_sim, }\AttributeTok{sd =} \FunctionTok{sqrt}\NormalTok{(tau2))}
+
+  \CommentTok{\# Linear predictor of the Binomial mixed model}
+\NormalTok{  lp }\OtherTok{\textless{}{-}}\NormalTok{ beta0[j]  }\SpecialCharTok{+}\NormalTok{ Z\_i\_sim}
+  
+  \CommentTok{\# Probabilities of the Binomial distribution conditional on Z\_i}
+\NormalTok{  prob\_sim }\OtherTok{\textless{}{-}} \FunctionTok{exp}\NormalTok{(lp)}\SpecialCharTok{/}\NormalTok{(}\DecValTok{1}\SpecialCharTok{+}\FunctionTok{exp}\NormalTok{(lp))}
+  
+  \CommentTok{\# Simulation of the counts from the Binomial mixed model}
+\NormalTok{  y\_i\_sim }\OtherTok{\textless{}{-}} \FunctionTok{rbinom}\NormalTok{(n\_sim, }\AttributeTok{size =}\NormalTok{ bin\_denom, }\AttributeTok{prob =}\NormalTok{ prob\_sim)}
+  
+  \CommentTok{\# Empirical variance from the simulated counts}
+\NormalTok{  var\_data[j] }\OtherTok{\textless{}{-}} \FunctionTok{var}\NormalTok{(y\_i\_sim)}
+\NormalTok{\}}
+
+\CommentTok{\# Probabilities from the standard Binomial model (Z\_i = 0)}
+\NormalTok{probs\_binomial }\OtherTok{\textless{}{-}} \FunctionTok{exp}\NormalTok{(beta0)}\SpecialCharTok{/}\NormalTok{(}\DecValTok{1}\SpecialCharTok{+}\FunctionTok{exp}\NormalTok{(beta0))}
+
+\CommentTok{\# Variance from the standard Binomial model}
+\NormalTok{var\_bimomial }\OtherTok{\textless{}{-}}\NormalTok{ bin\_denom}\SpecialCharTok{*}\NormalTok{probs\_binomial}\SpecialCharTok{*}\NormalTok{(}\DecValTok{1}\SpecialCharTok{{-}}\NormalTok{probs\_binomial)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{matplot}\NormalTok{(beta0, }\FunctionTok{cbind}\NormalTok{(var\_data, var\_bimomial), }\AttributeTok{type =} \StringTok{"b"}\NormalTok{, }\AttributeTok{pch =} \DecValTok{20}\NormalTok{,}
+        \AttributeTok{lty =} \StringTok{"solid"}\NormalTok{, }\AttributeTok{ylab =} \StringTok{"Variance"}\NormalTok{, }\AttributeTok{xlab =} \FunctionTok{expression}\NormalTok{(beta[}\DecValTok{0}\NormalTok{]))}
+\FunctionTok{legend}\NormalTok{(}\SpecialCharTok{{-}}\DecValTok{3}\NormalTok{, }\DecValTok{80}\NormalTok{, }\FunctionTok{c}\NormalTok{(}\StringTok{"Binomial mixed model"}\NormalTok{, }\StringTok{"Standard Binomial model"}\NormalTok{),}
+       \AttributeTok{col=}\DecValTok{1}\SpecialCharTok{:}\DecValTok{2}\NormalTok{, }\AttributeTok{lty =} \StringTok{"solid"}\NormalTok{, }\AttributeTok{cex =} \FloatTok{0.75}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{03_model-fitting_files/figure-pdf/fig-var-bin-glmm-1.pdf}
+
+}
+
+\caption{\label{fig-var-bin-glmm}Plot of the variances of the standard
+Binomial model and the Binomial mixed model (see
+Equation~\ref{eq-bin-glmm-example}) against \(\beta_0\)}
+
+\end{figure}
+
+Figure~\ref{fig-var-bin-glmm} shows the results of the simulation. In
+this figure, the red line corresponds to the variance of a standard
+Binomial model, obtained by setting \(Z_i=0\) and computed as
+\(n_i \mu_i (1-\mu_i)\) with
+\(\mu_i = \exp\{\beta_0\}/(1+\exp\{\beta_0\})\). As expected, this plot
+shows that the variance of the simulated counts from the mixed model in
+Equation~\ref{eq-bin-glmm-example} exhibit a larger variance than would
+be expected under the standard Binomial model. It also indicates that
+the chosen value for the variance of \(Z_i\) of \(\tau^2 = 0.1\)
+corresponds to a significant amount of dispersion. One way to relate
+\(\tau^2\) to the amount of overdispersion is by considering that,
+following from the properties of a univariate Gaussian distribution,
+\emph{a priori} the \(Z_i\) will take values between
+\(-1.96 \sqrt{\tau^2}\) and \(+1.96 \sqrt{\tau^2}\) with approximately
+95\(\%\) probability. That implies that \(\exp\{Z_i\}\), which expresses
+the effect of the random effects on the odds ratios, will be with
+95\(\%\) probability between \(\exp\{-1.96 \sqrt{\tau^2}\}\) and
+\(\exp\{+1.96 \sqrt{\tau^2}\}\). By replacing \(\tau^2\) with the chosen
+values for the simulation, those two becomes about 0.54 and 1.86,
+meaning that with the \(Z_i\) with \(95\%\) probability will have a
+multiplicative effect on the odds ratios between \(0.54\) and \(1.86\).
+
 \hypertarget{exploring-residual-spatial-correlation}{%
-\section{Exploring residual spatial
+\subsection{Exploring residual spatial
 correlation}\label{exploring-residual-spatial-correlation}}
 
 \bookmarksetup{startatroot}
@@ -1499,6 +1794,12 @@ Cameroon}\label{mapping-mosquitoes-abundance-in-cameroon}}
 
 \hypertarget{refs}{}
 \begin{CSLReferences}{1}{0}
+\leavevmode\vadjust pre{\hypertarget{ref-bowman1997}{}}%
+Bowman, A. W. 1997. \emph{Applied Smoothing Techniques for Data Analysis
+: The Kernel Approach with s-Plus Illustrations}. Oxford Statistical
+Science Series ; 18. Oxford : New York: Clarendon Press ; Oxford
+University Press.
+
 \leavevmode\vadjust pre{\hypertarget{ref-breslow1993}{}}%
 Breslow, N. E., and D. G. Clayton. 1993. {``Approximate Inference in
 Generalized Linear Mixed Models.''} \emph{Journal of the American

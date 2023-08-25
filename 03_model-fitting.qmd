@@ -243,15 +243,87 @@ An alternative approach to generate a scatter plot for assessing the association
 
 Other more sophisticated approaches for the exploration of the associations between covariates and binary outcomes are available. For example, the use of the empirical logit could be avoided by using non-parametric regression methods for Binomial outcomes [@bowman1997], also implemented in `sm` package in R. Our view is that a careful exploratory analysis based on simpler methods, as those illustrated above, can be equally effective to inform the module formulation.
 
-## Exploring overdispersion in count data
+### Exploring overdispersion in count data
 
-One of the main advantages in the use of covariates is the ability to ascribe part of the variation of the outcome to a set of measured variables and, hence, reduce the uncertainty of our inferences. However, it almost always the case that the finite number of covariates at our disposal is not enough to fully explain the variation in the outcome. In other words, the existence of unmeasured covariates that are related to the modelled outcome contribute to the so called residual variation. In a standard linear regression model the extent to which we are able to account for important covariates is directly linked to the size of the variance of the residuals. In the case of count data, instead, this link is less well defined and one of the main consequences of the omission of covariates, which we address in this chapter, is *overdispersion*. 
+One of the main advantages in the use of covariates is the ability to attribute part of the variation of the outcome to a set of measured variables and, hence, reduce the uncertainty of our inferences. However, it almost always the case that the finite number of covariates at our disposal is not enough to fully explain the variation in the outcome. In other words, the existence of unmeasured covariates that are related to the modelled outcome give rise to the so called residual variation. In a standard linear regression model the extent to which we are able to account for important covariates is directly linked to the size of the variance of the residuals. In the case of count data, instead, this link is less well defined and one of the main consequences of the omission of covariates, which we address in this chapter, is *overdispersion*.
 
-Overdispersion occurs when the variability of the data is larger than that implied by the generalized linear model (GLM) fitted to them. For example, if we consider the Binomial distribution, the presence of overdispersion implies that $V(Y_i) > n_i \mu_{i}(1-\mu_i)$, where we recall that $n_i$ is the Binomial denominator and $mu_i$ is the probability of "success" for each of the $n_i$ Bernoulli trials; for a Poisson distribution with $E(Y_i) = \mu_i$, instead,  we have $V(Y_i) > \mu_{i}$. 
+Overdispersion occurs when the variability of the data is larger than that implied by the generalized linear model (GLM) fitted to them. For example, if we consider the Binomial distribution, the presence of overdispersion implies that $V(Y_i) > n_i \mu_{i}(1-\mu_i)$, where we recall that $n_i$ is the Binomial denominator and $mu_i$ is the probability of "success" for each of the $n_i$ Bernoulli trials; for a Poisson distribution with $E(Y_i) = \mu_i$, instead, overdispersion implies that $V(Y_i) > \mu_{i}$.
 
-Assessing the overdispersion of count data can be carried out in different ways depending on the goal of the statistical analysis. Since the focus of this book is to illustrate how to formulate and apply geostatistical models, the most natural approach to assess overdispersion is through the use of generalized linear mixed models (GLMMs). More specifically, in this section we use GLMMs that we shall use to assess overdispersion are obtained as a special case of the generalized linear geostatistical models presented in @sec-geostat-models. 
+Assessment of the overdispersion for count data can be carried out in different ways depending on the goal of the statistical analysis. Since the focus of this book is to illustrate how to formulate and apply geostatistical models, the most natural approach to assess overdispersion is through the use of generalized linear mixed models (GLMMs). The class of GLMMs that we consider in this and the next section are obtained by replacing the spatial Gaussian process $S(x_i)$ in  introduced in  @eq-linear-predictor-ch1 with a set of mutually independent random effects, which we denote as $Z_i$, and thus write
+$$
+g(\mu_i) = d(x_i)^\top \beta + Z_i.
+$$ {#eq-linear-predictor-glmms-ch2}
+The model above accounts for the overdispersion in the data through $Z_i$ whose variance can be interpreted as an indicator of the amount of overdispersion. To show this, we carry out a small simulation as follows. For simplicity, we consider the Binomial mixed model with an intercept only, hence
+$$
+\log\left\{\frac{\mu_i}{1-\mu_i}\right\} = \beta_0 + Z_i
+$$ {#eq-bin-glmm-example}
+and assume that the $Z_i$ follow a set of mutually independent Gaussian variables with mean 0 and variance $\tau^2$. In our simulation we vary $\beta_0$ over the set $\{-3, -2, -1, 0, 1, 2, 3\}$ and set $\tau^2=0.1$ and the binomial denominators to $n_i = 100$. For a given value of $\beta_0$, we then proceed through the following iterative steps. 
 
-## Exploring residual spatial correlation
+- Simulate 10,000 values for $Z_i$ from a Gaussian distribution with mean 0 and variance $\tau^2$. 
+
+- Compute the probabilities $\mu_i$ based on @eq-bin-glmm-example.
+
+- Simulate 10,000 values from a Binomial model with probability of success $\mu_i$ and denominator $n_i$.
+
+- Compute the empirical variance of the counts $y_i$ simulated in the previous step. 
+
+- Change the value of $\beta_0$ and repeat the previous steps, for all the values of $\beta_0$. 
+
+The code below shows the implementation of the above steps in R. 
+```{r}
+# Number of simulations
+n_sim <- 10000
+
+# Variance of the Z_i
+tau2 <- 0.1
+
+# Binomial denominator 
+bin_denom <- 100
+
+# Intercept values
+beta0 <- c(-3, -2, -1, 0, 1, 2, 3)
+
+# Vector where we store the computed variance from
+# the simulated counts from the Binomial mixed model
+var_data <- rep(NA, length(beta0))
+
+
+for(j in 1:length(beta0)) {
+  # Simulation of the random effects Z_i
+  Z_i_sim <- rnorm(n_sim, sd = sqrt(tau2))
+
+  # Linear predictor of the Binomial mixed model
+  lp <- beta0[j]  + Z_i_sim
+  
+  # Probabilities of the Binomial distribution conditional on Z_i
+  prob_sim <- exp(lp)/(1+exp(lp))
+  
+  # Simulation of the counts from the Binomial mixed model
+  y_i_sim <- rbinom(n_sim, size = bin_denom, prob = prob_sim)
+  
+  # Empirical variance from the simulated counts
+  var_data[j] <- var(y_i_sim)
+}
+
+# Probabilities from the standard Binomial model (Z_i = 0)
+probs_binomial <- exp(beta0)/(1+exp(beta0))
+
+# Variance from the standard Binomial model
+var_bimomial <- bin_denom*probs_binomial*(1-probs_binomial)
+```
+```{r, collapse  = TRUE}
+#| label: fig-var-bin-glmm
+#| fig-cap: "Plot of the variances of the standard Binomial model and the Binomial mixed model (see @eq-bin-glmm-example) against  $\\beta_0$"  
+
+matplot(beta0, cbind(var_data, var_bimomial), type = "b", pch = 20,
+        lty = "solid", ylab = "Variance", xlab = expression(beta[0]))
+legend(-3, 80, c("Binomial mixed model", "Standard Binomial model"),
+       col=1:2, lty = "solid", cex = 0.75)
+```
+
+@fig-var-bin-glmm shows the results of the simulation. In this figure, the red line corresponds to the variance of a standard Binomial model, obtained by setting $Z_i=0$ and computed as $n_i \mu_i (1-\mu_i)$ with $\mu_i = \exp\{\beta_0\}/(1+\exp\{\beta_0\})$. As expected, this plot shows that the variance of the simulated counts from the mixed model in @eq-bin-glmm-example exhibit a larger variance than would be expected under the standard Binomial model. It also indicates that the chosen value for the variance of $Z_i$ of $\tau^2 = 0.1$ corresponds to a significant amount of dispersion. One way to relate $\tau^2$ to the amount of overdispersion is by considering that, following from the properties of a univariate Gaussian distribution, *a priori* the $Z_i$ will take values between $-1.96 \sqrt{\tau^2}$ and $+1.96 \sqrt{\tau^2}$ with approximately 95$\%$ probability. That implies that $\exp\{Z_i\}$, which expresses the effect of the random effects on the odds ratios, will be with 95$\%$ probability between $\exp\{-1.96 \sqrt{\tau^2}\}$ and $\exp\{+1.96 \sqrt{\tau^2}\}$. By replacing $\tau^2$ with the chosen values for the simulation, those two becomes about 0.54 and 1.86, meaning that with the $Z_i$ with $95\%$ probability will have a multiplicative effect on the odds ratios between $0.54$ and $1.86$.  
+
+### Exploring residual spatial correlation
 
 # Linear Gaussian model
 
