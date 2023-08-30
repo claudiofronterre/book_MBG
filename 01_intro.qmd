@@ -233,7 +233,7 @@ $$
 [Y | S] = \prod_{i=1}^n [Y_i | S(x_i)].
 $$ {#eq-glm-ch1}
 
-The final step then consists of specifying a distribution for $[Y_i | S(x_i)]$. @tbl-glm gives the range, mean and variance the three specifications for $[Y_i \| S(x_i)]$ which we will consider in this book. In @tbl-glm, the *canonical function*, say $g(\cdot)$, denotes the natural transformation of the mean component $\mu_i$ that allows us to introduce both covariates and the spatial process $S(x_i)$ into the model so as to explain the variation in $\mu_i$ as
+The final step then consists of specifying a distribution for $[Y_i | S(x_i)]$. @tbl-glm gives the range, mean and variance the three specifications for $[Y_i \| S(x_i)]\$\$ which we will consider in this book. In @tbl-glm, the *canonical function*, say $g(\cdot)$, denotes the natural transformation of the mean component $\mu_i$ that allows us to introduce both covariates and the spatial process $S(x_i)$ into the model so as to explain the variation in $\mu_i$ as
 
 $$
 g(\mu_i) = d(x_i)^\top \beta + S(x_i).
