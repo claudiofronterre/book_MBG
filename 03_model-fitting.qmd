@@ -327,10 +327,10 @@ We encourage you to do Exercise 1 and Exercise 2 at the end of this chapter, to 
 
 #### Maximum likelihood estimation of generalized linear mixed models
 
-We now illustrate how fit a generalize linear mixed, using the `anopheles` data-set as an example. We then consider two models, an intercept-only model and one that uses elevation as a covariate. Let $\mu(x_i)$ be the number of mosquitoes captured at a location $x_i$; then the linear predictor with elevation as a covariate takes the form
+We now illustrate how to fit a generalize linear mixed, using the `anopheles` data-set as an example. We consider two models, an intercept-only model and one that uses elevation as a covariate. Let $\mu(x_i)$ be the number of mosquitoes captured at a location $x_i$; then the linear predictor with elevation as a covariate takes the form
 $$
 \log\{\mu_i\} = \beta_{0} + \beta_{1} d(x_i) + Z_i
-$$
+$${#eq-anopheles-glmm}
 where $d(x_i)$ indicates the elevation in meters at location $x_i$ and the $Z_i$ are independent and identically distributed Gaussian variables with mean 0 and variance $\tau^2$. The model with an intercept only is simply obtained by setting $\beta_1 = 0$. 
 
 ```{r echo=FALSE, message=FALSE}
@@ -338,7 +338,7 @@ library(lme4)
 load("data/anopheles.rdata")
 ```
 
-We carry out the estimation in R using the `glmer` function from the `lme4` package (see @bates2015 for a detailed tutorial). The `glmer` function implements the maximum likelihood estimation of generalized linear mixed models 
+We carry out the estimation in R using the `glmer` function from the `lme4` package (see @bates2015 for a detailed tutorial). The `glmer` function implements the maximum likelihood estimation for generalized linear mixed models. The code below shows how the `glmer` is used to carry out this step for the model in @eq-anopheles-glmm and the one withuot covariates.
 
 ```{r collapse=TRUE}
 # Create the ID of the location
@@ -349,9 +349,26 @@ fit_glmer_elev <- glmer(An.gambiae ~ scale(elevation) + (1|ID_loc), family = poi
                         data = anopheles, nAGQ = 25)
 
 # Poisson mixed model with intercept only
-fit_glmer_elev_int <- glmer(An.gambiae ~ (1|ID_loc), family = poisson, 
+fit_glmer_int <- glmer(An.gambiae ~ (1|ID_loc), family = poisson, 
                         data = anopheles, nAGQ = 25)
 ```
+To fit the model with `glmer`, we first must create a variable in our data-set that allows us to identify the location associated with each count. In this case, since every row correspond to a different location, we simply use the row number to identify the locations and save this in the `ID_loc` variable. The random effects $Z_i$ are then included in the model by adding `(1 | ID_loc)` in the formula of the `glmer` function.
+
+When introducing the variable elevation, we standardize the variable so that its mean is 0 and variance 1. This is done purely to aid the convergence of the algorithm used to fit the model and it is generally considered good practice especially when many different variables with different scales are used as covariates. However, we emphasize that standardizing a variable does not affect the fit of the model to the data. This because the model with the standardized variable is just a reparametrization of the model with the unstandardized variable. In other words, a model that uses standardized covariates only attaches a different interpretation to is regression coefficients while maintaining the same goodness of fit of the corresponding model with the unstandardized covariates.
+
+The argument `nAGQ` is used to define the precision of the approximation used for carrying out the maximum likelihood estimation. By default `nAGQ = 1` which corresponds to the Laplace approximation. Values for `nAGQ` larger than 1 are used to define the number of points of the adaptive Gaussian-Hermite quadrature. The general principle is that the larger `nAGQ` the better but it will also require additional computing time. Based on the guidelines and help pages of the `lme4` package, it is stated that a reasonable value for `nAGQ` is 25. For more technical details on this aspect, we refer the reader to @bates2015.
+
+We can now look at the summary of the fitted models.
+
+```{r collapse=TRUE}
+### Summary of the model with elevation
+summary(fit_glmer_elev)
+
+### Summary of the model with the intercept only
+summary(fit_glmer_int)
+
+```
+From the summary of the model that uses elevation, we observe the that the estimated regression coefficient $\beta_{1}$ is statistically significant different from 0. The interpretation of the estimated regression coefficient is the following: for an increase of about 100 meters in elevation, all other things being equal, the average number of mosquitoes decreases by about $100\% \times [1-\exp\{-0.19794\}] \approx 18\%$. Note that when using a standardized variable, a unit increase for this corresponds to an increase in the original unstandardized variable equal to its standard deviation, which for the `elevation` variable is about 100 meters.  
 
 
 ### Exploring residual spatial correlation
