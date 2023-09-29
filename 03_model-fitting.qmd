@@ -2,11 +2,12 @@
 
 ## List of the main functions used in the chapter {.unnumbered}
 
-| Function | R Package | Used for                                |
-|----------|-----------|-----------------------------------------|
-| `lmer`   | `lme4`    | Fitting linear mixed models             |
-| `glmer`  | `lme4`    | Fitting generalized linear mixed models |
-| `glgm`   | `RiskMap` | Fitting generalized linear mixed models |
+| Function      | R Package | Used for                                                                                     |
+|----------------|----------------|----------------------------------------|
+| `lmer`        | `lme4`    | Fitting linear mixed models                                                                  |
+| `glmer`       | `lme4`    | Fitting generalized linear mixed models                                                      |
+| `glgm`        | `RiskMap` | Fitting generalized linear mixed models                                                      |
+| `s_variogram` | `RiskMap` | Computing the empirical variogram and carrying out permutation test for spatial independence |
 
 ## Exploratory analysis
 
@@ -14,7 +15,7 @@ As illustrated in @fig-stages, exploratory analysis is the first step that shoul
 
 In the exploratory analysis of count data, we will also look at how overdispersion, which is a necessary, though not sufficient, condition for residual spatial correlation.
 
-### Exploring associations with risk factors using count data
+### Exploring associations with risk factors using count data {#sec-expl-assoc}
 
 Assessment of the association between the health outcome of interest and non-categorical (i.e. continuous) risk factors can be carried using graphical tools, such scatter plots. The graphical inspection of the empirical association between the outcome and the covariates is especially useful to identify non-linear patterns in the relationship which should then be accounted for in the model formulation.
 
@@ -26,9 +27,11 @@ Let us first consider the example of the river-blindness data in Liberia (@sec-r
 
 ```{r, echo=FALSE}
 library(ggplot2)
-load("data/liberia.rdata")
-load("data/malkenya.rdata")
-load("data/anopheles.rdata")
+library(RiskMap)
+library(sf)
+data("liberia")
+data("malkenya")
+data("anopheles")
 ```
 
 ```{r, collapse=TRUE}
@@ -249,11 +252,9 @@ One of the main advantages in the use of covariates is the ability to attribute 
 
 Overdispersion occurs when the variability of the data is larger than that implied by the generalized linear model (GLM) fitted to them. For example, if we consider the Binomial distribution, the presence of overdispersion implies that $V(Y_i) > n_i \mu_{i}(1-\mu_i)$, where we recall that $n_i$ is the Binomial denominator and $mu_i$ is the probability of "success" for each of the $n_i$ Bernoulli trials; for a Poisson distribution with $E(Y_i) = \mu_i$, instead, overdispersion implies that $V(Y_i) > \mu_{i}$.
 
-Assessment of the overdispersion for count data can be carried out in different ways depending on the goal of the statistical analysis. Since the focus of this book is to illustrate how to formulate and apply geostatistical models, the most natural approach to assess overdispersion is through the use of generalized linear mixed models (GLMMs). The class of GLMMs that we consider in this and the next section are obtained by replacing the spatial Gaussian process $S(x_i)$ in introduced in @eq-linear-predictor-ch1 with a set of mutually independent random effects, which we denote as $Z_i$, and thus write 
-$$
+Assessment of the overdispersion for count data can be carried out in different ways depending on the goal of the statistical analysis. Since the focus of this book is to illustrate how to formulate and apply geostatistical models, the most natural approach to assess overdispersion is through the use of generalized linear mixed models (GLMMs). The class of GLMMs that we consider in this and the next section are obtained by replacing the spatial Gaussian process $S(x_i)$ in introduced in @eq-linear-predictor-ch1 with a set of mutually independent random effects, which we denote as $Z_i$, and thus write $$
 g(\mu_i) = d(x_i)^\top \beta + Z_i.
-$$ {#eq-linear-predictor-glmms-ch2} 
-The model above accounts for the overdispersion in the data through $Z_i$ whose variance can be interpreted as an indicator of the amount of overdispersion. To show this, we carry out a small simulation as follows. For simplicity, we consider the Binomial mixed model with an intercept only, hence $$
+$$ {#eq-linear-predictor-glmms-ch2} The model above accounts for the overdispersion in the data through $Z_i$ whose variance can be interpreted as an indicator of the amount of overdispersion. To show this, we carry out a small simulation as follows. For simplicity, we consider the Binomial mixed model with an intercept only, hence $$
 \log\left\{\frac{\mu_i}{1-\mu_i}\right\} = \beta_0 + Z_i
 $$ {#eq-bin-glmm-example} and assume that the $Z_i$ follow a set of mutually independent Gaussian variables with mean 0 and variance $\tau^2$. In our simulation we vary $\beta_0$ over the set $\{-3, -2, -1, 0, 1, 2, 3\}$ and set $\tau^2=0.1$ and the binomial denominators to $n_i = 100$. For a given value of $\beta_0$, we then proceed through the following iterative steps.
 
@@ -323,19 +324,17 @@ legend(-3, 80, c("Binomial mixed model", "Standard Binomial model"),
 
 @fig-var-bin-glmm shows the results of the simulation. In this figure, the red line corresponds to the variance of a standard Binomial model, obtained by setting $Z_i=0$ and computed as $n_i \mu_i (1-\mu_i)$ with $\mu_i = \exp\{\beta_0\}/(1+\exp\{\beta_0\})$. As expected, this plot shows that the variance of the simulated counts from the mixed model in @eq-bin-glmm-example exhibit a larger variance than would be expected under the standard Binomial model. It also indicates that the chosen value for the variance of $Z_i$ of $\tau^2 = 0.1$ corresponds to a significant amount of dispersion. One way to relate $\tau^2$ to the amount of overdispersion is by considering that, following from the properties of a univariate Gaussian distribution, *a priori* the $Z_i$ will take values between $-1.96 \sqrt{\tau^2}$ and $+1.96 \sqrt{\tau^2}$ with approximately 95$\%$ probability. That implies that $\exp\{Z_i\}$, which expresses the effect of the random effects on the odds ratios, will be with 95$\%$ probability between $\exp\{-1.96 \sqrt{\tau^2}\}$ and $\exp\{+1.96 \sqrt{\tau^2}\}$. By replacing $\tau^2$ with the chosen values for the simulation, those two becomes about 0.54 and 1.86, meaning that with the $Z_i$ with $95\%$ probability will have a multiplicative effect on the odds ratios between $0.54$ and $1.86$.
 
-We encourage you to do Exercise 1 and Exercise 2 at the end of this chapter, to further explore how generalized linear mixed models can be used as a tool to account for overdispersion. 
+We encourage you to do Exercise 1 and Exercise 2 at the end of this chapter, to further explore how generalized linear mixed models can be used as a tool to account for overdispersion.
 
 #### Maximum likelihood estimation of generalized linear mixed models
 
-We now illustrate how to fit a generalize linear mixed, using the `anopheles` data-set as an example. We consider two models, an intercept-only model and one that uses elevation as a covariate. Let $\mu(x_i)$ be the number of mosquitoes captured at a location $x_i$; then the linear predictor with elevation as a covariate takes the form
-$$
+We now illustrate how to fit a generalize linear mixed, using the `anopheles` data-set as an example. We consider two models: an intercept-only model and one that uses elevation as a covariate. Let $\mu(x_i)$ be the number of mosquitoes captured at a location $x_i$; then the linear predictor with elevation as a covariate takes the form $$
 \log\{\mu_i\} = \beta_{0} + \beta_{1} d(x_i) + Z_i
-$${#eq-anopheles-glmm}
-where $d(x_i)$ indicates the elevation in meters at location $x_i$ and the $Z_i$ are independent and identically distributed Gaussian variables with mean 0 and variance $\tau^2$. The model with an intercept only is simply obtained by setting $\beta_1 = 0$. 
+$$ {#eq-anopheles-glmm} where $d(x_i)$ indicates the elevation in meters at location $x_i$ and the $Z_i$ are independent and identically distributed Gaussian variables with mean 0 and variance $\tau^2$. The model with an intercept only is simply obtained by setting $\beta_1 = 0$.
 
 ```{r echo=FALSE, message=FALSE}
 library(lme4)
-load("data/anopheles.rdata")
+data("anopheles")
 ```
 
 We carry out the estimation in R using the `glmer` function from the `lme4` package (see @bates2015 for a detailed tutorial). The `glmer` function implements the maximum likelihood estimation for generalized linear mixed models. The code below shows how the `glmer` is used to carry out this step for the model in @eq-anopheles-glmm and the one withuot covariates.
@@ -352,13 +351,14 @@ fit_glmer_elev <- glmer(An.gambiae ~ scale(elevation) + (1|ID_loc), family = poi
 fit_glmer_int <- glmer(An.gambiae ~ (1|ID_loc), family = poisson, 
                         data = anopheles, nAGQ = 25)
 ```
-To fit the model with `glmer`, we first must create a variable in our data-set that allows us to identify the location associated with each count. In this case, since every row correspond to a different location, we simply use the row number to identify the locations and save this in the `ID_loc` variable. The random effects $Z_i$ are then included in the model by adding `(1 | ID_loc)` in the formula of the `glmer` function.
 
-When introducing the variable elevation, we standardize the variable so that its mean is 0 and variance 1. This is done purely to aid the convergence of the algorithm used to fit the model and it is generally considered good practice especially when many different variables with different scales are used as covariates. However, we emphasize that standardizing a variable does not affect the fit of the model to the data. This because the model with the standardized variable is just a reparametrization of the model with the unstandardized variable. In other words, a model that uses standardized covariates only attaches a different interpretation to is regression coefficients while maintaining the same goodness of fit of the corresponding model with the unstandardized covariates.
+To fit the model with `glmer`, we first must create a variable in our data-set that allows us to identify the location associated with each count. In this case, since every row corresponds to a different location, we simply use the row number to identify the locations and save this in the `ID_loc` variable. The random effects $Z_i$ are then included in the model by adding `(1 | ID_loc)` in the formula of the `glmer` function.
 
-The argument `nAGQ` is used to define the precision of the approximation used for carrying out the maximum likelihood estimation. By default `nAGQ = 1` which corresponds to the Laplace approximation. Values for `nAGQ` larger than 1 are used to define the number of points of the adaptive Gaussian-Hermite quadrature. The general principle is that the larger `nAGQ` the better but it will also require additional computing time. Based on the guidelines and help pages of the `lme4` package, it is stated that a reasonable value for `nAGQ` is 25. For more technical details on this aspect, we refer the reader to @bates2015.
+When introducing the variable elevation, we standardize the variable so that its mean is 0 and its variance is 1. This is done to aid the convergence of the algorithm used to fit the model and it is generally considered good practice, especially when many variables with different scales are used as covariates. However, we emphasize that standardizing a variable does not affect the fit of the model to the data. This is because the model with the standardized variable is a reparametrization of the model with the unstandardized variable. In other words, a model that uses standardized covariates only attaches a different interpretation to its regression coefficients while maintaining the same goodness of fit of the model with that uses the covariates on their original scale.
 
-We can now look at the summary of the fitted models.
+The argument `nAGQ` is used to define the precision of the approximation of the maximum likelihood estimation algorithm. By default `nAGQ = 1`, which corresponds to the Laplace approximation. Values for `nAGQ` larger than 1 are used to define the number of points of the adaptive Gaussian-Hermite quadrature. The general principle is that the larger `nAGQ` the better, but at the expense of an increased computing time. Based on the guidelines and help pages of the `lme4` package, it is stated that a reasonable value for `nAGQ` is 25. For more technical details on this aspect, we refer the reader to @bates2015.
+
+We can now look at the summary of the fitted models to the mosquitoes data-set.
 
 ```{r collapse=TRUE}
 ### Summary of the model with elevation
@@ -368,12 +368,104 @@ summary(fit_glmer_elev)
 summary(fit_glmer_int)
 
 ```
-From the summary of the model that uses elevation, we observe the that the estimated regression coefficient $\beta_{1}$ is statistically significant different from 0. The interpretation of the estimated regression coefficient is the following: for an increase of about 100 meters in elevation, all other things being equal, the average number of mosquitoes decreases by about $100\% \times [1-\exp\{-0.19794\}] \approx 18\%$. Note that when using a standardized variable, a unit increase for this corresponds to an increase in the original unstandardized variable equal to its standard deviation, which for the `elevation` variable is about 100 meters.  
+
+From the summary of the model that uses elevation, we observe the that the estimated regression coefficient $\beta_{1}$ is statistically significant different from 0. The interpretation of the estimated regression coefficient is the following: for an increase of about 100 meters in elevation, all other things being equal, the average number of mosquitoes decreases by about $100\% \times [1-\exp\{-0.19794\}] \approx 18\%$. Note that when using a standardized variable, a unit increase for this corresponds to an increase in the original unstandardized variable equal to its standard deviation, which for the `elevation` variable is about 100 meters.
+
+From the summaries of the two models, under `Random effects:`, we obtain the estimates associates with the random effects introduced in the model. In this case, since we only have introduced $Z_i$, this part of summary provides the maximum likelihood estimate for $\tau^2$, the variance of $Z_i$, which found on the line where `ID_loc` is printed. We then observe that the estimates for $\tau^2$ for the intercept-only model is `0.761`, whilst for the model with elevation this is `0.7146`. Note that the figures reported under `Std.Dev.` are simply the square root of the value reported under `Variance`. As expected, the introduction of elevation contributes to the explanation of the residual variation captured by $Z_i$, though by a very small amount. The estimated values of $\tau^2$ thus suggest that there is extra-Binomial variation in the data that is not account for by elevation.
+
+In the next section, we will illustrate how to assess the presence of residual correlation for continuous measurements and overdispersed count data.
+
+### Exploring residual spatial correlation {#sec-expl-spatial}
+
+In its most basic form, the concept of spatial correlation can be succinctly encapsulated by @tobler1970 first law of geography, which posits that "everything is interconnected, but objects in close proximity exhibit stronger relationships than those situated farther apart." After we have identified the key variables to introduce as covariates in the model (@sec-expl-assoc) and, in the case of count data, assessed the presence of overdispersion (@sec-overdispersion), our final exploratory step consists of assessing whether the residuals of the non spatial model show evidence of spatial correlation. Hence, in geostatistical modelling, the interest is not in the spatial correlation of the data, but rather on understanding whether the variation in the outcome unexplained by the covariates exhibits spatial correlation. We call this *residual spatial correlation*, to emphasize that spatial correlation is a concept relative to the covariates that we have introduced in the model.
+
+In the context of geostatistical analysis, the tool that is generally used to assess the residual spatial correlation is the the so called *empirical variogram*. Before looking at the mathematical definition of the empirical variogram, let us consider a generalized linear mixed model as expressed in @eq-linear-predictor-glmms-ch2. Our goal is then to question the assumption of independently distributed random effects $Z_i$ by asking whether the $Z_i$ show evidence of spatial correlation. Let $Z_i$ and $Z_j$ be two random effects that are associate with two different locations $x_i$ and $x_j$, respectively, and let us take the squared difference between the two $$
+V_{ij} = (Z_i - Z_j)^2.
+$$ {#eq-squared-diff} How does the spatial correlation affect the value of $V_{ij}$? To answer this question, we can refer to the aforementioned Tobler's law of geography. When $x_i$ and $x_j$ will be closer to each other, then $Z_i$ and $Z_j$ will also tend to be more similar to each other, thus making $V_{ij}$ smaller, on average. On the contrary, when $x_i$ and $x_j$ will be further apart, then $V_{ij}$ will become larger, on average. We can then construct the empirical variogram by considering all possible pairs of locations $x_i$ and $x_j$, for which we then compute $V_{ij}$ and plot this against the distance between $x_i$ and $x_j$, which we denote as $u_{ij}$. If there is spatial correlation in the random effects $Z_i$, then this will manifest as an average increase in the $V_{ij}$ as $u_{ij}$ increases. However, there are still two issues that we have to address before we can generate and plot the empirical variogram.
+
+The first issue is that we do not observe $Z_i$ as, by definition, this is a latent variable. Hence, we require an estimate for $Z_i$ which we can then feed into $V_{ij}$. To emphasize this point, from now on, we shall replace @eq-squared-diff with $$
+\hat{V}_{ij} = (\hat{Z}_{i} - \hat{Z}_j)^2.
+$$ {#eq-hat-squared-diff} Several options are available for estimating $Z_{i}$. Our choice is to use the model of the predictive distribution of $Z_i$, that is the distribution of $Z_{i}$ conditioned to the data $y_i$. This estimator for $Z_i$ is also readily available from the output of the `lmer` and `glmer` functions of the `lme4` package, as we will illustrate later in our example in this section.
+
+The second issue is that if simply plot $\hat{V}_{ij}$ against the distances $u_{ij}$ (also knwon as *cloud variogram*), due to the high noiseness in the $\hat{V}_{ij}$, it may be quite difficult to assess the presence of an increasing trend in the $\hat{V}_{ij}$ and thus detect spatial correlation. Hence, it is general practice to group the distances $u_{ij}$ into classes, say $\mathcal{U}$, and then take average of all the $\hat{V}_{ij}$ that fall within $\mathcal{U}$.
+
+We can now write the formal definition of the empirical variogram as $$
+\hat{V}(\mathcal{U}) = \frac{1}{2 |\mathcal{U}|} \sum_{(i, j): (u_i, u_j) \in \mathcal{U}} \hat{V}_{ij}
+$$ {#eq-empirical-variogram} where $|\mathcal{U}|$ denotes the number of pairs of locations that fall within the distance class $\mathcal{U}$. The rationale behind dividing by 2 in $1/2 |\mathcal{U}|$ from the above equation, will be elucidated in @sec-linear-model, and there is no need for us to delve into this matter at this juncture. When creating the empirical variogram plot, we select the midpoint values of the distance classes $\mathcal{U}$ to represent the x-axis values.
+
+Before we can evaluate residual spatial correlation, there remains one crucial concern: relying solely on a visual inspection of the empirical variogram is susceptible to human subjectivity. Furthermore, it is worth noting that even a seemingly upward trend observed in the empirical variogram might be merely a product of random fluctuations, rather than a reliable indication of actual residual spatial correlation. To address these concerns and enhance the objectivity of the use of the empirical variogram, one approach would involve comparing the observed empirical variogram pattern with those generated in the absence of spatial correlation. Following this principle, we then use a permutation test that allows us to generate empirical variograms under the assumption of absence of spatial correlation through the following iterative steps.
+
+1.  Permute the order of the locations in the data-set while keeping everything else fixed.
+
+2.  Compute the empirical variogram $\hat{V}(\mathcal{U})$ for the permuted data-set.
+
+3.  Repeat 1 and 2 a large number of times, say 10,000.
+
+4.  Use the resulting 10,000 empirical varigorams to compute 95$\%$ confidence intervals, by taking the 0.025 and 0.975 quantiles of these for each distance class $\hat{V}(\mathcal{U})$.
+
+5.  If the observed empirical variogram falls fully within the envelope generated in the previous point, we then conclude that the data do not exhibit residual spatial correlation. If, instead, the observed empirical variogram partly falls outside the envelope we conclude that the data do exhibit residual spatial correlation.
+
+We now show an application of all the concepts introduced in this section to the Liberia data on river-blindness.
+
+#### Using the empirical variogram to assess spatial correlation for the Liberia data {#sec-empirical-variog}
+
+We consider the Binomial mixed model that uses the log-transformed elevation as a covariate to model river blindness prevalence, hence $$
+\log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_{0} + \beta_{1}\log\{e(x_i)\} + Z_i
+$$ {#eq-liberia-bin-mixed-elev} where $e(x_i)$ is the elevation in meters at location $x_i$ and the $Z_i$ are i.i.d. Gaussian variables with mean 0 and variance $\tau^2$. We first fit the model above using the `glmer` function.
+
+```{r}
+# Convert the data-set into an sf object
+liberia <- st_as_sf(liberia, coords = c("lat", "long"), crs = 4326)
 
 
-### Exploring residual spatial correlation
+# Create the ID of the location
+liberia$ID_loc <- 1:nrow(liberia)
 
-## Linear Gaussian model
+# Binomial mixed model with log-elevation
+fit_glmer_lib <- glmer(cbind(npos, ntest) ~ log(elevation) + (1|ID_loc), family = binomial,
+                        data = liberia, nAGQ = 25)
+
+summary(fit_glmer_lib)
+
+```
+
+From the output, we observe that the estimate for $\tau^2$ is about 0.003, indicating a moderate level of overdispersion in the data.
+
+```{r collapse=TRUE}
+liberia$Z_hat <- ranef(fit_glmer_lib)$ID_loc[,1]
+```
+
+Throuhg the function `ranef` when extract the estimates of the random effects $Z_i$ and save these in the data set. We then use the function `s_variogram` from the `RiskMap` package to compute the empirical varigoram for the estimated $\hat{Z}_i$.
+
+```{r collapse=TRUE}
+liberia_variog <- s_variogram(data = liberia,
+                              variable = "Z_hat",
+                              bins = c(15, 30, 40, 80, 120,
+                                       160, 200, 250, 300, 350),
+                              scale_to_km = TRUE,
+                              n_permutation = 10000)
+```
+
+Through the argument `bins` we can specify the the classes of distance, previously denoted by $\mathcal{U}$; check the help page of `s_variogram` to see how this is defined by default. The value passed to `bins` in the code above correspond to define the following classes of distance $\mathcal{U}$: $[15, 30]$, $(30, 40]$ and so forth, with the last class being $[350, +\infty)$, i.e. all pairs of locations whose distances are above 350km. The argument `n_permutation` allows the user to specify the number of permutations that are performed the generate the envelope for absence of spatial correlation previously described.
+
+```{r collapse=TRUE}
+dist_summaries(data = liberia,
+               scale_to_km = TRUE)
+```
+
+The `dist_summaries` function within the `RiskMap` package can be used for gauging the extent of the area covered by your dataset, aiding in the selection of appropriate values to be passed to the `bins` argument. In the provided output above, we can observe that for the Liberia dataset, the minimum and maximum distances span approximately 3km and 533km, respectively. While there is not a one-size-fits-all recommendation for setting `bins`, two fundamental principles should inform your decision-making. Firstly, it is advisable to avoid choosing overly large distance intervals, as the uncertainty associated with the empirical variogram tends to increase with distance due to fewer available pairs of observations for estimation. Secondly, especially when spatial correlation is not strong, it is crucial to carefully explore the behavior of the variogram at smaller distances. Consequently, it is generally advisable to experiment with different `bins` configurations and observe how they impact the pattern of the empirical variogram.
+
+```{r collapse=TRUE}
+#| label: fig-liberia-variog
+#| fig-cap: "Plot of the empirical variogram (solid line) computed using the estimated random effects from the model in @eq-liberia-bin-mixed-elev. The blue shaded area is the 95% confidence level envelope generated using the permutation procedure described in @sec-expl-spatial."  
+
+plot_s_variogram(liberia_variog,
+                 plot_envelope = TRUE)
+```
+
+Finally, the `plot_s_variogram` function enables us to visualize the empirical variogram and, through the `plot_envelope` argument, include the envelope generated by the permutation procedure. As illustrated in @fig-liberia-variog, we observe that the empirical variogram falls outside the envelope at relatively short distances, typically below 30km. However, for distances exceeding 30km, the behavior of the empirical variogram does not significantly differ from variograms generated under the assumption of spatial independence. In summary, we interpret the evidence presented in @fig-liberia-variog as indicative of residual spatial correlation within the data. Nevertheless, it is essential to exercise caution when attempting to ascertain the scale of the spatial correlation using the empirical variogram. As we will emphasize throughout this book, the empirical variogram's sensitivity to the choice of bins values renders it an unreliable tool for drawing statistical inferences. In other words, we advocate employing the empirical variogram primarily to assess the presence of residual correlation.
+
+## Linear Gaussian model {#sec-linear-model}
 
 ## Generalized linear geostatistical models
 
@@ -383,13 +475,16 @@ From the summary of the model that uses elevation, we observe the that the estim
 
 ## Exercises
 
-2.  Consider the Binomial mixed model with linear predictor as defined in @eq-linear-predictor-glmms-ch2. By editing the code for the simulation shown in @sec-overdispersion, generate a graph as in @fig-var-bin-glmm under the two following scenarios: $i$) $\tau^2 = 0.2$ and $n_i=100$; $ii$) $\tau^2 = 0.1$ and $n_i = 1$. How does the variance of $Y_i$ change under $i$) and $ii$) in comparison to @fig-var-bin-glmm? How do you explain the differences? 
+2.  Consider the Binomial mixed model with linear predictor as defined in @eq-linear-predictor-glmms-ch2. By editing the code for the simulation shown in @sec-overdispersion, generate a graph as in @fig-var-bin-glmm under the two following scenarios: $i$) $\tau^2 = 0.2$ and $n_i=100$; $ii$) $\tau^2 = 0.1$ and $n_i = 1$. How does the variance of $Y_i$ change under $i$) and $ii$) in comparison to @fig-var-bin-glmm? How do you explain the differences?
 
-3.  Similarly to the previous exercise, consider a Poisson mixed model with linear predictor 
+3.  Similarly to the previous exercise, consider a Poisson mixed model with linear predictor $$
+    \log\left\{\mu_i\right\} = \beta_0 + Z_i,
+    $$ where $Z_i$ are a set of mutually independent Gaussian variables with mean 0 and variance $\tau^2$. Using the code shown in @sec-overdispersion, carry out a simulation study to compute the variance of $Y_i$ and generate a graph similar to @fig-var-bin-glmm to compare the variance of the Poisson mixed model with that of a standard Poisson model. Generate the graph for different values of $\tau^2$ and summarize your findings. NOTE: In this simulation the offset $n_i$ can be set to 1.
+
+4. Create an R function that computes the *cloud variogram*. As explained in @sec-expl-spatial, the cloud variogram is obtained by plotting $\hat{V}_ij$ (see @eq-hat-squared-diff) against the distances $u_ij$. The function should take as input a data-set with three columns: the variable for which the cloud variogram is to be computed; and two columns corresponding to the location of the data. Then, use this function to create the cloud variogram for the model for river-blindness in @eq-liberia-bin-mixed-elev. How does this compare to empirical variogram that takes the averages within predefined distance classes, as shown in @fig-liberia-variog?
+
+5. Fit a Binomial mixed model to the Liberia data-set on river-blindness without any covariates, i.e.
 $$
-\log\left\{\mu_i\right\} = \beta_0 + Z_i,
+\log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_0 + Z_i.
 $$
-where $Z_i$ are a set of mutually independent Gaussian variables with mean 0 and variance $\tau^2$. Using the code shown in @sec-overdispersion, carry out a simulation study to compute the variance of $Y_i$ and generate a graph similar to @fig-var-bin-glmm to compare the variance of the Poisson mixed model with that of a standard Poisson model. Generate the graph for different values of $\tau^2$ and summarize your findings. NOTE: In this simulation the offset $n_i$ can be set to 1.
-
-
-
+Making use of the R code presented in @sec-empirical-variog, use the function `s_variogram` to generate the empirical variogram for this model and compare this to the empirical variogram of @fig-liberia-variog. What differences do you observe?

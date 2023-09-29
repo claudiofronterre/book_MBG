@@ -99,7 +99,8 @@ In the final chapter of this book, we will consider the analysis of additional d
 
 library(sf)
 library(mapview)
-load("data/galicia.rdata")
+library(RiskMap)
+data("galicia")
 galicia_sf <- st_as_sf(galicia, coords = c("x", "y"), 
                        crs = 32629)
 map <- mapview(galicia_sf, zcol = "lead", layer.name = "Lead conc.") 
@@ -126,7 +127,8 @@ This data-set will be used in this book to show how to carry out the spatial ana
 
 library(sf)
 library(mapview)
-load("data/liberia.rdata")
+library(RiskMap)
+data("liberia")
 liberia_sf <- st_as_sf(liberia, coords = c("long", "lat"), 
                        crs = 4326)
 liberia_sf$prev <- liberia_sf$npos/liberia_sf$ntest
@@ -152,7 +154,8 @@ In this book, we will use data collected from Liberia to model nodule prevalence
 
 library(sf)
 library(mapview)
-load("data/malkenya.rdata")
+library(RiskMap)
+data("malkenya")
 comm <- malkenya[malkenya$Survey=="community", ]
 coords <- unique(comm[,c("Long", "Lat")])
 agg <- data.frame(Long = coords[,1],
@@ -188,7 +191,8 @@ What distinguishes this from the other examples data-sets is that the data conta
 
 library(sf)
 library(mapview)
-load("data/anopheles.rdata")
+library(RiskMap)
+data("anopheles")
 anopheles_sf <- st_as_sf(anopheles, coords = c("web_x", "web_y"), 
                        crs = 3857)
 map <- mapview(anopheles_sf, zcol = "An.gambiae", layer.name = "An. gambiae") 

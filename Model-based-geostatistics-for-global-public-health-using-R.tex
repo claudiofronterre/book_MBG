@@ -226,7 +226,7 @@
 
 \begin{document}
 \maketitle
-\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[sharp corners, boxrule=0pt, enhanced, frame hidden, interior hidden, borderline west={3pt}{0pt}{shadecolor}, breakable]}{\end{tcolorbox}}\fi
+\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[breakable, sharp corners, boxrule=0pt, enhanced, frame hidden, interior hidden, borderline west={3pt}{0pt}{shadecolor}]}{\end{tcolorbox}}\fi
 
 \renewcommand*\contentsname{Table of contents}
 {
@@ -908,9 +908,18 @@ chapter}
 
 \markright{List of the main functions used in the chapter}
 
-\begin{longtable}[]{@{}lll@{}}
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2222}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2222}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.5556}}@{}}
 \toprule\noalign{}
-Function & R Package & Used for \\
+\begin{minipage}[b]{\linewidth}\raggedright
+Function
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+R Package
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Used for
+\end{minipage} \\
 \midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
@@ -920,6 +929,8 @@ Function & R Package & Used for \\
 models \\
 \texttt{glgm} & \texttt{RiskMap} & Fitting generalized linear mixed
 models \\
+\texttt{s\_variogram} & \texttt{RiskMap} & Computing the empirical
+variogram and carrying out permutation test for spatial independence \\
 \end{longtable}
 
 \hypertarget{exploratory-analysis}{%
@@ -935,9 +946,9 @@ In the exploratory analysis of count data, we will also look at how
 overdispersion, which is a necessary, though not sufficient, condition
 for residual spatial correlation.
 
-\hypertarget{exploring-associations-with-risk-factors-using-count-data}{%
+\hypertarget{sec-expl-assoc}{%
 \subsection{Exploring associations with risk factors using count
-data}\label{exploring-associations-with-risk-factors-using-count-data}}
+data}\label{sec-expl-assoc}}
 
 Assessment of the association between the health outcome of interest and
 non-categorical (i.e.~continuous) risk factors can be carried using
@@ -959,6 +970,10 @@ Let us first consider the example of the river-blindness data in Liberia
 (Section~\ref{sec-rb-ch1}), and examine the association between
 prevalence and elevation. We first generate a plot of the prevalence
 against the measured elevation at each of the sample locations
+
+\begin{verbatim}
+Linking to GEOS 3.10.2, GDAL 3.4.3, PROJ 8.2.1; sf_use_s2() is TRUE
+\end{verbatim}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1682,7 +1697,7 @@ used as a tool to account for overdispersion.
 models}\label{maximum-likelihood-estimation-of-generalized-linear-mixed-models}}
 
 We now illustrate how to fit a generalize linear mixed, using the
-\texttt{anopheles} data-set as an example. We consider two models, an
+\texttt{anopheles} data-set as an example. We consider two models: an
 intercept-only model and one that uses elevation as a covariate. Let
 \(\mu(x_i)\) be the number of mosquitoes captured at a location \(x_i\);
 then the linear predictor with elevation as a covariate takes the form
@@ -1718,7 +1733,7 @@ Equation~\ref{eq-anopheles-glmm} and the one withuot covariates.
 
 To fit the model with \texttt{glmer}, we first must create a variable in
 our data-set that allows us to identify the location associated with
-each count. In this case, since every row correspond to a different
+each count. In this case, since every row corresponds to a different
 location, we simply use the row number to identify the locations and
 save this in the \texttt{ID\_loc} variable. The random effects \(Z_i\)
 are then included in the model by adding
@@ -1726,30 +1741,31 @@ are then included in the model by adding
 function.
 
 When introducing the variable elevation, we standardize the variable so
-that its mean is 0 and variance 1. This is done purely to aid the
+that its mean is 0 and its variance is 1. This is done to aid the
 convergence of the algorithm used to fit the model and it is generally
-considered good practice especially when many different variables with
-different scales are used as covariates. However, we emphasize that
-standardizing a variable does not affect the fit of the model to the
-data. This because the model with the standardized variable is just a
-reparametrization of the model with the unstandardized variable. In
-other words, a model that uses standardized covariates only attaches a
-different interpretation to is regression coefficients while maintaining
-the same goodness of fit of the corresponding model with the
-unstandardized covariates.
+considered good practice, especially when many variables with different
+scales are used as covariates. However, we emphasize that standardizing
+a variable does not affect the fit of the model to the data. This is
+because the model with the standardized variable is a reparametrization
+of the model with the unstandardized variable. In other words, a model
+that uses standardized covariates only attaches a different
+interpretation to its regression coefficients while maintaining the same
+goodness of fit of the model with that uses the covariates on their
+original scale.
 
 The argument \texttt{nAGQ} is used to define the precision of the
-approximation used for carrying out the maximum likelihood estimation.
-By default \texttt{nAGQ\ =\ 1} which corresponds to the Laplace
-approximation. Values for \texttt{nAGQ} larger than 1 are used to define
-the number of points of the adaptive Gaussian-Hermite quadrature. The
-general principle is that the larger \texttt{nAGQ} the better but it
-will also require additional computing time. Based on the guidelines and
-help pages of the \texttt{lme4} package, it is stated that a reasonable
-value for \texttt{nAGQ} is 25. For more technical details on this
-aspect, we refer the reader to Bates et al. (2015).
+approximation of the maximum likelihood estimation algorithm. By default
+\texttt{nAGQ\ =\ 1}, which corresponds to the Laplace approximation.
+Values for \texttt{nAGQ} larger than 1 are used to define the number of
+points of the adaptive Gaussian-Hermite quadrature. The general
+principle is that the larger \texttt{nAGQ} the better, but at the
+expense of an increased computing time. Based on the guidelines and help
+pages of the \texttt{lme4} package, it is stated that a reasonable value
+for \texttt{nAGQ} is 25. For more technical details on this aspect, we
+refer the reader to Bates et al. (2015).
 
-We can now look at the summary of the fitted models.
+We can now look at the summary of the fitted models to the mosquitoes
+data-set.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1824,12 +1840,321 @@ increase in the original unstandardized variable equal to its standard
 deviation, which for the \texttt{elevation} variable is about 100
 meters.
 
-\hypertarget{exploring-residual-spatial-correlation}{%
-\subsection{Exploring residual spatial
-correlation}\label{exploring-residual-spatial-correlation}}
+From the summaries of the two models, under \texttt{Random\ effects:},
+we obtain the estimates associates with the random effects introduced in
+the model. In this case, since we only have introduced \(Z_i\), this
+part of summary provides the maximum likelihood estimate for \(\tau^2\),
+the variance of \(Z_i\), which found on the line where \texttt{ID\_loc}
+is printed. We then observe that the estimates for \(\tau^2\) for the
+intercept-only model is \texttt{0.761}, whilst for the model with
+elevation this is \texttt{0.7146}. Note that the figures reported under
+\texttt{Std.Dev.} are simply the square root of the value reported under
+\texttt{Variance}. As expected, the introduction of elevation
+contributes to the explanation of the residual variation captured by
+\(Z_i\), though by a very small amount. The estimated values of
+\(\tau^2\) thus suggest that there is extra-Binomial variation in the
+data that is not account for by elevation.
 
-\hypertarget{linear-gaussian-model}{%
-\section{Linear Gaussian model}\label{linear-gaussian-model}}
+In the next section, we will illustrate how to assess the presence of
+residual correlation for continuous measurements and overdispersed count
+data.
+
+\hypertarget{sec-expl-spatial}{%
+\subsection{Exploring residual spatial
+correlation}\label{sec-expl-spatial}}
+
+In its most basic form, the concept of spatial correlation can be
+succinctly encapsulated by Tobler (1970) first law of geography, which
+posits that ``everything is interconnected, but objects in close
+proximity exhibit stronger relationships than those situated farther
+apart.'' After we have identified the key variables to introduce as
+covariates in the model (Section~\ref{sec-expl-assoc}) and, in the case
+of count data, assessed the presence of overdispersion
+(Section~\ref{sec-overdispersion}), our final exploratory step consists
+of assessing whether the residuals of the non spatial model show
+evidence of spatial correlation. Hence, in geostatistical modelling, the
+interest is not in the spatial correlation of the data, but rather on
+understanding whether the variation in the outcome unexplained by the
+covariates exhibits spatial correlation. We call this \emph{residual
+spatial correlation}, to emphasize that spatial correlation is a concept
+relative to the covariates that we have introduced in the model.
+
+In the context of geostatistical analysis, the tool that is generally
+used to assess the residual spatial correlation is the the so called
+\emph{empirical variogram}. Before looking at the mathematical
+definition of the empirical variogram, let us consider a generalized
+linear mixed model as expressed in
+Equation~\ref{eq-linear-predictor-glmms-ch2}. Our goal is then to
+question the assumption of independently distributed random effects
+\(Z_i\) by asking whether the \(Z_i\) show evidence of spatial
+correlation. Let \(Z_i\) and \(Z_j\) be two random effects that are
+associate with two different locations \(x_i\) and \(x_j\),
+respectively, and let us take the squared difference between the two
+\begin{equation}\protect\hypertarget{eq-squared-diff}{}{
+V_{ij} = (Z_i - Z_j)^2.
+}\label{eq-squared-diff}\end{equation} How does the spatial correlation
+affect the value of \(V_{ij}\)? To answer this question, we can refer to
+the aforementioned Tobler's law of geography. When \(x_i\) and \(x_j\)
+will be closer to each other, then \(Z_i\) and \(Z_j\) will also tend to
+be more similar to each other, thus making \(V_{ij}\) smaller, on
+average. On the contrary, when \(x_i\) and \(x_j\) will be further
+apart, then \(V_{ij}\) will become larger, on average. We can then
+construct the empirical variogram by considering all possible pairs of
+locations \(x_i\) and \(x_j\), for which we then compute \(V_{ij}\) and
+plot this against the distance between \(x_i\) and \(x_j\), which we
+denote as \(u_{ij}\). If there is spatial correlation in the random
+effects \(Z_i\), then this will manifest as an average increase in the
+\(V_{ij}\) as \(u_{ij}\) increases. However, there are still two issues
+that we have to address before we can generate and plot the empirical
+variogram.
+
+The first issue is that we do not observe \(Z_i\) as, by definition,
+this is a latent variable. Hence, we require an estimate for \(Z_i\)
+which we can then feed into \(V_{ij}\). To emphasize this point, from
+now on, we shall replace Equation~\ref{eq-squared-diff} with
+\begin{equation}\protect\hypertarget{eq-hat-squared-diff}{}{
+\hat{V}_{ij} = (\hat{Z}_{i} - \hat{Z}_j)^2.
+}\label{eq-hat-squared-diff}\end{equation} Several options are available
+for estimating \(Z_{i}\). Our choice is to use the model of the
+predictive distribution of \(Z_i\), that is the distribution of
+\(Z_{i}\) conditioned to the data \(y_i\). This estimator for \(Z_i\) is
+also readily available from the output of the \texttt{lmer} and
+\texttt{glmer} functions of the \texttt{lme4} package, as we will
+illustrate later in our example in this section.
+
+The second issue is that if simply plot \(\hat{V}_{ij}\) against the
+distances \(u_{ij}\) (also knwon as \emph{cloud variogram}), due to the
+high noiseness in the \(\hat{V}_{ij}\), it may be quite difficult to
+assess the presence of an increasing trend in the \(\hat{V}_{ij}\) and
+thus detect spatial correlation. Hence, it is general practice to group
+the distances \(u_{ij}\) into classes, say \(\mathcal{U}\), and then
+take average of all the \(\hat{V}_{ij}\) that fall within
+\(\mathcal{U}\).
+
+We can now write the formal definition of the empirical variogram as
+\begin{equation}\protect\hypertarget{eq-empirical-variogram}{}{
+\hat{V}(\mathcal{U}) = \frac{1}{2 |\mathcal{U}|} \sum_{(i, j): (u_i, u_j) \in \mathcal{U}} \hat{V}_{ij}
+}\label{eq-empirical-variogram}\end{equation} where \(|\mathcal{U}|\)
+denotes the number of pairs of locations that fall within the distance
+class \(\mathcal{U}\). The rationale behind dividing by 2 in
+\(1/2 |\mathcal{U}|\) from the above equation, will be elucidated in
+Section~\ref{sec-linear-model}, and there is no need for us to delve
+into this matter at this juncture. When creating the empirical variogram
+plot, we select the midpoint values of the distance classes
+\(\mathcal{U}\) to represent the x-axis values.
+
+Before we can evaluate residual spatial correlation, there remains one
+crucial concern: relying solely on a visual inspection of the empirical
+variogram is susceptible to human subjectivity. Furthermore, it is worth
+noting that even a seemingly upward trend observed in the empirical
+variogram might be merely a product of random fluctuations, rather than
+a reliable indication of actual residual spatial correlation. To address
+these concerns and enhance the objectivity of the use of the empirical
+variogram, one approach would involve comparing the observed empirical
+variogram pattern with those generated in the absence of spatial
+correlation. Following this principle, we then use a permutation test
+that allows us to generate empirical variograms under the assumption of
+absence of spatial correlation through the following iterative steps.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  Permute the order of the locations in the data-set while keeping
+  everything else fixed.
+\item
+  Compute the empirical variogram \(\hat{V}(\mathcal{U})\) for the
+  permuted data-set.
+\item
+  Repeat 1 and 2 a large number of times, say 10,000.
+\item
+  Use the resulting 10,000 empirical varigorams to compute 95\(\%\)
+  confidence intervals, by taking the 0.025 and 0.975 quantiles of these
+  for each distance class \(\hat{V}(\mathcal{U})\).
+\item
+  If the observed empirical variogram falls fully within the envelope
+  generated in the previous point, we then conclude that the data do not
+  exhibit residual spatial correlation. If, instead, the observed
+  empirical variogram partly falls outside the envelope we conclude that
+  the data do exhibit residual spatial correlation.
+\end{enumerate}
+
+We now show an application of all the concepts introduced in this
+section to the Liberia data on river-blindness.
+
+\hypertarget{sec-empirical-variog}{%
+\subsubsection{Using the empirical variogram to assess spatial
+correlation for the Liberia data}\label{sec-empirical-variog}}
+
+We consider the Binomial mixed model that uses the log-transformed
+elevation as a covariate to model river blindness prevalence, hence
+\begin{equation}\protect\hypertarget{eq-liberia-bin-mixed-elev}{}{
+\log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_{0} + \beta_{1}\log\{e(x_i)\} + Z_i
+}\label{eq-liberia-bin-mixed-elev}\end{equation} where \(e(x_i)\) is the
+elevation in meters at location \(x_i\) and the \(Z_i\) are i.i.d.
+Gaussian variables with mean 0 and variance \(\tau^2\). We first fit the
+model above using the \texttt{glmer} function.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Convert the data{-}set into an sf object}
+\NormalTok{liberia }\OtherTok{\textless{}{-}} \FunctionTok{st\_as\_sf}\NormalTok{(liberia, }\AttributeTok{coords =} \FunctionTok{c}\NormalTok{(}\StringTok{"lat"}\NormalTok{, }\StringTok{"long"}\NormalTok{), }\AttributeTok{crs =} \DecValTok{4326}\NormalTok{)}
+
+
+\CommentTok{\# Create the ID of the location}
+\NormalTok{liberia}\SpecialCharTok{$}\NormalTok{ID\_loc }\OtherTok{\textless{}{-}} \DecValTok{1}\SpecialCharTok{:}\FunctionTok{nrow}\NormalTok{(liberia)}
+
+\CommentTok{\# Binomial mixed model with log{-}elevation}
+\NormalTok{fit\_glmer\_lib }\OtherTok{\textless{}{-}} \FunctionTok{glmer}\NormalTok{(}\FunctionTok{cbind}\NormalTok{(npos, ntest) }\SpecialCharTok{\textasciitilde{}} \FunctionTok{log}\NormalTok{(elevation) }\SpecialCharTok{+}\NormalTok{ (}\DecValTok{1}\SpecialCharTok{|}\NormalTok{ID\_loc), }\AttributeTok{family =}\NormalTok{ binomial,}
+                        \AttributeTok{data =}\NormalTok{ liberia, }\AttributeTok{nAGQ =} \DecValTok{25}\NormalTok{)}
+
+\FunctionTok{summary}\NormalTok{(fit\_glmer\_lib)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+Generalized linear mixed model fit by maximum likelihood (Adaptive
+  Gauss-Hermite Quadrature, nAGQ = 25) [glmerMod]
+ Family: binomial  ( logit )
+Formula: cbind(npos, ntest) ~ log(elevation) + (1 | ID_loc)
+   Data: liberia
+
+     AIC      BIC   logLik deviance df.resid 
+   127.9    135.4    -61.0    121.9       87 
+
+Scaled residuals: 
+     Min       1Q   Median       3Q      Max 
+-2.46033 -0.63341 -0.07633  0.61995  3.12732 
+
+Random effects:
+ Groups Name        Variance Std.Dev.
+ ID_loc (Intercept) 0.003097 0.05565 
+Number of obs: 90, groups:  ID_loc, 90
+
+Fixed effects:
+               Estimate Std. Error z value Pr(>|z|)    
+(Intercept)    -2.96292    0.21184 -13.987  < 2e-16 ***
+log(elevation)  0.26143    0.04071   6.422 1.35e-10 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Correlation of Fixed Effects:
+            (Intr)
+log(elevtn) -0.981
+\end{verbatim}
+
+From the output, we observe that the estimate for \(\tau^2\) is about
+0.003, indicating a moderate level of overdispersion in the data.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{liberia}\SpecialCharTok{$}\NormalTok{Z\_hat }\OtherTok{\textless{}{-}} \FunctionTok{ranef}\NormalTok{(fit\_glmer\_lib)}\SpecialCharTok{$}\NormalTok{ID\_loc[,}\DecValTok{1}\NormalTok{]}
+\end{Highlighting}
+\end{Shaded}
+
+Throuhg the function \texttt{ranef} when extract the estimates of the
+random effects \(Z_i\) and save these in the data set. We then use the
+function \texttt{s\_variogram} from the \texttt{RiskMap} package to
+compute the empirical varigoram for the estimated \(\hat{Z}_i\).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{liberia\_variog }\OtherTok{\textless{}{-}} \FunctionTok{s\_variogram}\NormalTok{(}\AttributeTok{data =}\NormalTok{ liberia,}
+                              \AttributeTok{variable =} \StringTok{"Z\_hat"}\NormalTok{,}
+                              \AttributeTok{bins =} \FunctionTok{c}\NormalTok{(}\DecValTok{15}\NormalTok{, }\DecValTok{30}\NormalTok{, }\DecValTok{40}\NormalTok{, }\DecValTok{80}\NormalTok{, }\DecValTok{120}\NormalTok{,}
+                                       \DecValTok{160}\NormalTok{, }\DecValTok{200}\NormalTok{, }\DecValTok{250}\NormalTok{, }\DecValTok{300}\NormalTok{, }\DecValTok{350}\NormalTok{),}
+                              \AttributeTok{scale\_to\_km =} \ConstantTok{TRUE}\NormalTok{,}
+                              \AttributeTok{n\_permutation =} \DecValTok{10000}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+Through the argument \texttt{bins} we can specify the the classes of
+distance, previously denoted by \(\mathcal{U}\); check the help page of
+\texttt{s\_variogram} to see how this is defined by default. The value
+passed to \texttt{bins} in the code above correspond to define the
+following classes of distance \(\mathcal{U}\): \([15, 30]\),
+\((30, 40]\) and so forth, with the last class being \([350, +\infty)\),
+i.e.~all pairs of locations whose distances are above 350km. The
+argument \texttt{n\_permutation} allows the user to specify the number
+of permutations that are performed the generate the envelope for absence
+of spatial correlation previously described.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{dist\_summaries}\NormalTok{(}\AttributeTok{data =}\NormalTok{ liberia,}
+               \AttributeTok{scale\_to\_km =} \ConstantTok{TRUE}\NormalTok{)}
+\DocumentationTok{\#\# $min}
+\DocumentationTok{\#\# [1] 3.34536}
+\DocumentationTok{\#\# }
+\DocumentationTok{\#\# $max}
+\DocumentationTok{\#\# [1] 533.0733}
+\DocumentationTok{\#\# }
+\DocumentationTok{\#\# $mean}
+\DocumentationTok{\#\# [1] 206.7424}
+\DocumentationTok{\#\# }
+\DocumentationTok{\#\# $median}
+\DocumentationTok{\#\# [1] 192.6496}
+\end{Highlighting}
+\end{Shaded}
+
+The \texttt{dist\_summaries} function within the \texttt{RiskMap}
+package can be used for gauging the extent of the area covered by your
+dataset, aiding in the selection of appropriate values to be passed to
+the \texttt{bins} argument. In the provided output above, we can observe
+that for the Liberia dataset, the minimum and maximum distances span
+approximately 3km and 533km, respectively. While there is not a
+one-size-fits-all recommendation for setting \texttt{bins}, two
+fundamental principles should inform your decision-making. Firstly, it
+is advisable to avoid choosing overly large distance intervals, as the
+uncertainty associated with the empirical variogram tends to increase
+with distance due to fewer available pairs of observations for
+estimation. Secondly, especially when spatial correlation is not strong,
+it is crucial to carefully explore the behavior of the variogram at
+smaller distances. Consequently, it is generally advisable to experiment
+with different \texttt{bins} configurations and observe how they impact
+the pattern of the empirical variogram.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{plot\_s\_variogram}\NormalTok{(liberia\_variog,}
+                 \AttributeTok{plot\_envelope =} \ConstantTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{03_model-fitting_files/figure-pdf/fig-liberia-variog-1.pdf}
+
+}
+
+\caption{\label{fig-liberia-variog}Plot of the empirical variogram
+(solid line) computed using the estimated random effects from the model
+in Equation~\ref{eq-liberia-bin-mixed-elev}. The blue shaded area is the
+95\% confidence level envelope generated using the permutation procedure
+described in Section~\ref{sec-expl-spatial}.}
+
+\end{figure}
+
+Finally, the \texttt{plot\_s\_variogram} function enables us to
+visualize the empirical variogram and, through the
+\texttt{plot\_envelope} argument, include the envelope generated by the
+permutation procedure. As illustrated in
+Figure~\ref{fig-liberia-variog}, we observe that the empirical variogram
+falls outside the envelope at relatively short distances, typically
+below 30km. However, for distances exceeding 30km, the behavior of the
+empirical variogram does not significantly differ from variograms
+generated under the assumption of spatial independence. In summary, we
+interpret the evidence presented in Figure~\ref{fig-liberia-variog} as
+indicative of residual spatial correlation within the data.
+Nevertheless, it is essential to exercise caution when attempting to
+ascertain the scale of the spatial correlation using the empirical
+variogram. As we will emphasize throughout this book, the empirical
+variogram's sensitivity to the choice of bins values renders it an
+unreliable tool for drawing statistical inferences. In other words, we
+advocate employing the empirical variogram primarily to assess the
+presence of residual correlation.
+
+\hypertarget{sec-linear-model}{%
+\section{Linear Gaussian model}\label{sec-linear-model}}
 
 \hypertarget{generalized-linear-geostatistical-models}{%
 \section{Generalized linear geostatistical
@@ -1869,6 +2194,28 @@ model}\label{the-likelihood-function-of-a-genearlized-linear-mixed-model}}
   mixed model with that of a standard Poisson model. Generate the graph
   for different values of \(\tau^2\) and summarize your findings. NOTE:
   In this simulation the offset \(n_i\) can be set to 1.
+\item
+  Create an R function that computes the \emph{cloud variogram}. As
+  explained in Section~\ref{sec-expl-spatial}, the cloud variogram is
+  obtained by plotting \(\hat{V}_ij\) (see
+  Equation~\ref{eq-hat-squared-diff}) against the distances \(u_ij\).
+  The function should take as input a data-set with three columns: the
+  variable for which the cloud variogram is to be computed; and two
+  columns corresponding to the location of the data. Then, use this
+  function to create the cloud variogram for the model for
+  river-blindness in Equation~\ref{eq-liberia-bin-mixed-elev}. How does
+  this compare to empirical variogram that takes the averages within
+  predefined distance classes, as shown in
+  Figure~\ref{fig-liberia-variog}?
+\item
+  Fit a Binomial mixed model to the Liberia data-set on river-blindness
+  without any covariates, i.e. \[
+  \log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_0 + Z_i.
+  \] Making use of the R code presented in
+  Section~\ref{sec-empirical-variog}, use the function
+  \texttt{s\_variogram} to generate the empirical variogram for this
+  model and compare this to the empirical variogram of
+  Figure~\ref{fig-liberia-variog}. What differences do you observe?
 \end{enumerate}
 
 \bookmarksetup{startatroot}
@@ -2076,6 +2423,10 @@ Ngomo Abeso Mebuy, Boris Makanga, Julie Magnus, et al. 2015. {``Habitat
 Segregation and Ecological Character Displacement in Cryptic African
 Malaria Mosquitoes.''} \emph{Evolutionary Applications} 8 (4): 326--45.
 \url{https://doi.org/10.1111/eva.12242}.
+
+\leavevmode\vadjust pre{\hypertarget{ref-tobler1970}{}}%
+Tobler, W. R. 1970. {``A Computer Movie Simulating Urban Growth in the
+Detroit Region.''} \emph{Economic Geography} 46: 234--40.
 
 \leavevmode\vadjust pre{\hypertarget{ref-watson1971}{}}%
 Watson, G. S. 1971. {``Trend -Surface Analysis.''} \emph{Mathematical
