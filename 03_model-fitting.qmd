@@ -3,7 +3,7 @@
 ## List of the main functions used in the chapter {.unnumbered}
 
 | Function      | R Package | Used for                                                                                     |
-|----------------|----------------|----------------------------------------|
+|------------------|------------------|-------------------------------------|
 | `lmer`        | `lme4`    | Fitting linear mixed models                                                                  |
 | `glmer`       | `lme4`    | Fitting generalized linear mixed models                                                      |
 | `glgm`        | `RiskMap` | Fitting generalized linear mixed models                                                      |
@@ -467,6 +467,12 @@ Finally, the `plot_s_variogram` function enables us to visualize the empirical v
 
 ## Linear Gaussian model {#sec-linear-model}
 
+In this section, we consider spatially referenced outcomes $Y_i$ that are continuous. For simplicity, we consider the case of a single measurement $Y_i$ at each location $x_i$. Recalling the class of generalized linear models introduced in @sec-geostat-models, the linear predictor takes the form 
+$$
+\mu_{i} = d(x_i)^\top \beta + S(x_i).
+$$ {#eq-linear-geostat-model-lp}
+Hence, in this case, we interpret $\beta$ as the effect on $\mu_i$ for a unit increase in $d(x_i)$.  
+
 ## Generalized linear geostatistical models
 
 ## Theory
@@ -481,10 +487,8 @@ Finally, the `plot_s_variogram` function enables us to visualize the empirical v
     \log\left\{\mu_i\right\} = \beta_0 + Z_i,
     $$ where $Z_i$ are a set of mutually independent Gaussian variables with mean 0 and variance $\tau^2$. Using the code shown in @sec-overdispersion, carry out a simulation study to compute the variance of $Y_i$ and generate a graph similar to @fig-var-bin-glmm to compare the variance of the Poisson mixed model with that of a standard Poisson model. Generate the graph for different values of $\tau^2$ and summarize your findings. NOTE: In this simulation the offset $n_i$ can be set to 1.
 
-4. Create an R function that computes the *cloud variogram*. As explained in @sec-expl-spatial, the cloud variogram is obtained by plotting $\hat{V}_ij$ (see @eq-hat-squared-diff) against the distances $u_ij$. The function should take as input a data-set with three columns: the variable for which the cloud variogram is to be computed; and two columns corresponding to the location of the data. Then, use this function to create the cloud variogram for the model for river-blindness in @eq-liberia-bin-mixed-elev. How does this compare to empirical variogram that takes the averages within predefined distance classes, as shown in @fig-liberia-variog?
+4.  Create an R function that computes the *cloud variogram*. As explained in @sec-expl-spatial, the cloud variogram is obtained by plotting $\hat{V}_ij$ (see @eq-hat-squared-diff) against the distances $u_ij$. The function should take as input a data-set with three columns: the variable for which the cloud variogram is to be computed; and two columns corresponding to the location of the data. Then, use this function to create the cloud variogram for the model for river-blindness in @eq-liberia-bin-mixed-elev. How does this compare to empirical variogram that takes the averages within predefined distance classes, as shown in @fig-liberia-variog?
 
-5. Fit a Binomial mixed model to the Liberia data-set on river-blindness without any covariates, i.e.
-$$
-\log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_0 + Z_i.
-$$
-Making use of the R code presented in @sec-empirical-variog, use the function `s_variogram` to generate the empirical variogram for this model and compare this to the empirical variogram of @fig-liberia-variog. What differences do you observe?
+5.  Fit a Binomial mixed model to the Liberia data-set on river-blindness without any covariates, i.e. $$
+    \log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_0 + Z_i.
+    $$ Making use of the R code presented in @sec-empirical-variog, use the function `s_variogram` to generate the empirical variogram for this model and compare this to the empirical variogram of @fig-liberia-variog. What differences do you observe?

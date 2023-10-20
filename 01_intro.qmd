@@ -224,12 +224,11 @@ $$ {#eq-glgm-joint-ch1}
 On the right-hand side of the equation above, we have factorized the joint distribution of $Y$ and $S$, as the product between the marginal distribution of $S$ and the conditional distribution of $Y$ given $S$. Hence, the formulation of a GLGM can be break down into the tasks of formulating $[S]$ and $[Y | S]$.
 
 In defining $[S]$, throughout the book, we shall assume that this is a zero-mean stationary and isotropic Gaussian process. In other words, these assumptions impose that the joint distribution of $S(X) = (S(x_1),\ldots,S(x_n))$, i.e. the process $S$ at the sampled locations $x_1, \ldots, x_n$, is invariant with respect to rations and translations of the locations $X$. In practical terms, the main implication of this is that, for any pair of locations $x_i$ and $x_j$ the correlation function $\rho(\cdot)$ between $S(x_i)$ and $S(x_j)$ is purely a function of the Euclidean distance, $u_{ij}$, between $x_i$ and $x_j$, i.e.
-
 $$
 {\rm cov}\{S(x_i), S(x_j)\} = \sigma^2\rho(u_{ij}),
 $$ {#eq-correlation-ch1}
 
-where $\sigma^2$ is the variance of $S(x)$ for all $x$. In Chapter 3, we will look more closely at what type of correlation functions can be used for $\rho(\cdot)$ and how these affect our predictive inferences. Furthermore, the fact that assume the process $S$ to have mean zero is because this is process acts as a residual term in our modelling of $Y$. This aspect will be reiterated several times in the following chapters, as it as important implications for the interpretation of the other components of a geostatistical model, as well understanding the results of the analysis.
+where $\sigma^2$ is the variance of $S(x)$ for all $x$. Below we provide more details on the type of covoriance functions that we consider in this book. Furthermore, the fact that we assume the process $S$ to have mean zero is because this is process acts as a residual term in our modelling of $Y$. This aspect will be reiterated several times in the following chapters, as it as important implications for the interpretation of the other components of a geostatistical model, as well understanding the results of the analysis.
 
 Finally, we model $[Y | S]$, i.e. the distribution of $Y$ given $S$, is modeled as a set of mutually independent distributions which belong the exponential family, as defined in classical generalized linear modelling framework [@nelder1972]. It then follows that, we can write $[Y | S]$ as
 
@@ -237,7 +236,7 @@ $$
 [Y | S] = \prod_{i=1}^n [Y_i | S(x_i)].
 $$ {#eq-glm-ch1}
 
-The final step then consists of specifying a distribution for $[Y_i | S(x_i)]$. @tbl-glm gives the range, mean and variance the three specifications for $[Y_i \| S(x_i)]\$\$ which we will consider in this book. In @tbl-glm, the *canonical function*, say $g(\cdot)$, denotes the natural transformation of the mean component $\mu_i$ that allows us to introduce both covariates and the spatial process $S(x_i)$ into the model so as to explain the variation in $\mu_i$ as
+The final step then consists of specifying a distribution for $[Y_i | S(x_i)]$. @tbl-glm gives the range, mean and variance the three specifications for \$\[Y_i \| S(x_i)\]\$\$ which we will consider in this book. In @tbl-glm, the *canonical function*, say $g(\cdot)$, denotes the natural transformation of the mean component $\mu_i$ that allows us to introduce both covariates and the spatial process $S(x_i)$ into the model so as to explain the variation in $\mu_i$ as
 
 $$
 g(\mu_i) = d(x_i)^\top \beta + S(x_i).
@@ -258,6 +257,17 @@ Based on the formulation in ([-@eq-linear-predictor-ch1]), we can see that $S(x_
 The model described in ([-@eq-linear-predictor-ch1]) can be seen as the most basic GLGM that can be used for a geostatistical analysis. As we will see in the analysis of some of the examples and, in Chapter 6, for the case studies, extensions of this model will be required to accommodate the intrinsic non-spatial random variation of the data which is not captured by the covariates.
 
 The types of problems that statistical models are applied to can be distinguished into three main categories: prediction problems; explanatory problems; problems of hypothesis testing. Most of the times, geostatistical problems tend to fall under the first category, where the goal is make predictive inferences on the process $S(x)$ at location $x$, which is usually outside of the set of sampled locations. However, as will illustrate in the later chapters, geostatistical models play an important also in the other two types of problems. In particular, we will show that spatial correlation can have a substantial impact on the point estimates and standard errors for $\beta$. Hence, if the goal of the analysis is explain the relationship between a covariate $d(x)$ with the mean component $\mu$.
+
+### The Matern family of covariance function
+
+Throughout the book, we shall consider the @matern2013 family of covariance functions to model the spatial correlation of the Gaussian process $S(x)$. This defined as 
+$$
+\rho(u;\phi,\kappa) =\{2^{\kappa-1} \Gamma(\kappa)\}^{-1} (u/\phi)^\kappa K_\kappa(u/\phi),
+$$ {#eq-matern}
+where $\phi>0$ and $\kappa>0$ are parameters and $K_\kappa(\cdot)$ is the modified Bessel function of the third kind of order $\kappa$. 
+
+
+
 
 ## Workflow of a statistical analysis and structure of the book
 
