@@ -226,7 +226,7 @@
 
 \begin{document}
 \maketitle
-\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[breakable, sharp corners, boxrule=0pt, enhanced, frame hidden, interior hidden, borderline west={3pt}{0pt}{shadecolor}]}{\end{tcolorbox}}\fi
+\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[frame hidden, sharp corners, boxrule=0pt, breakable, borderline west={3pt}{0pt}{shadecolor}, enhanced, interior hidden]}{\end{tcolorbox}}\fi
 
 \renewcommand*\contentsname{Table of contents}
 {
@@ -431,39 +431,56 @@ package, using the command
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{data}\NormalTok{(galicia)}
+\FunctionTok{data}\NormalTok{(NAME\_OF\_THE\_DATASET)}
 \end{Highlighting}
 \end{Shaded}
 
-for the lead concentration data from Galicia,
+where in place of \texttt{NAME\_OF\_THE\_DATASET} you should type of the
+name of one of the data-sets listed in Table~\ref{tbl-data-sets}.
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\FunctionTok{data}\NormalTok{(liberia)}
-\end{Highlighting}
-\end{Shaded}
-
-for the river-blindness data-set,
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\FunctionTok{data}\NormalTok{(malkenya)}
-\end{Highlighting}
-\end{Shaded}
-
-for the malaria data in the Western Highlands of Kenya, and
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\FunctionTok{data}\NormalTok{(anopheles)}
-\end{Highlighting}
-\end{Shaded}
-
-for the Anopheles mosquitoes data-set.
-
-In the final chapter of this book, we will consider the analysis of
-additional data-sets to review the main statistical concepts presented
-in this book.
+\hypertarget{tbl-data-sets}{}
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2535}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.4930}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2535}}@{}}
+\caption{\label{tbl-data-sets}List of data-sets available from the
+\texttt{RiskMap} package. Data-sets listed as ``Example'' are used
+throughout the book to illustrate the use of R functions. Data-sets
+listed as ``Case study'' are analysed in
+Chapter~\ref{sec-case-studies}.}\tabularnewline
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Names of the data-set
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Short description
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Used in this book as
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Names of the data-set
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Short description
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Used in this book as
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\texttt{galicia} & Lead concentration m from moss samples collected in
+Galicia, Northern Spain & Example \\
+\texttt{liberia} & Prevalence data on river-blindness from Libera &
+Example \\
+\texttt{malkenya} & Malaria prevalence data from a community and school
+survey conducted in Western Kenya & Example \\
+\texttt{italy\_sim} & Simulated geostatistical data-set within the
+Italian national boundaries & Example \\
+\texttt{malnutrition} & Data on stunting among children in Ghana & Case
+study \\
+\end{longtable}
 
 \hypertarget{lead-concentration-in-galicia}{%
 \subsection{Lead concentration in
@@ -598,6 +615,32 @@ environment affects the distribution of different species of
 will be used to illustrate the application of Poisson geostatistical
 models for mapping mosquitoes abundance.
 
+\hypertarget{sec-italy-sim-data-ch1}{%
+\subsection{Simulated-dataset}\label{sec-italy-sim-data-ch1}}
+
+\begin{figure}
+
+{\centering \includegraphics[width=3.31in,height=\textheight]{./figures/italy_sim_ch1.png}
+
+}
+
+\caption{\label{fig-italy-sim-ch1}Map of the locations of the simulated
+data-set generated over Italy for a continuous outcome.}
+
+\end{figure}
+
+This data-set was generated using a geostatistical model, with the
+addition of unstructured random effects at provincial and regional
+level. More details on how this data-set was generated will be provided
+in Section~\ref{sec-linear-model}. Whilst this data-set does not have
+any scientific relevance like the other data-sets used in this book, it
+will serve us to illustrate some of the more advanced features of the
+package that enable the inclusion of random effects, in addition to the
+latent Gaussian process that is common to all geostatistical models. The
+skills you will aquire through the analysis of this data-set will be
+useful for the analysis of data-sets presented as case studies in
+Chapter~\ref{sec-case-studies}.
+
 \hypertarget{sec-geostat-models}{%
 \section{Geostatistical problems and geostatistical
 models}\label{sec-geostat-models}}
@@ -664,19 +707,17 @@ translations of the locations \(X\). In practical terms, the main
 implication of this is that, for any pair of locations \(x_i\) and
 \(x_j\) the correlation function \(\rho(\cdot)\) between \(S(x_i)\) and
 \(S(x_j)\) is purely a function of the Euclidean distance, \(u_{ij}\),
-between \(x_i\) and \(x_j\), i.e.
-
-\begin{equation}\protect\hypertarget{eq-correlation-ch1}{}{
+between \(x_i\) and \(x_j\),
+i.e.~\begin{equation}\protect\hypertarget{eq-correlation-ch1}{}{
 {\rm cov}\{S(x_i), S(x_j)\} = \sigma^2\rho(u_{ij}),
 }\label{eq-correlation-ch1}\end{equation}
 
-where \(\sigma^2\) is the variance of \(S(x)\) for all \(x\). In Chapter
-3, we will look more closely at what type of correlation functions can
-be used for \(\rho(\cdot)\) and how these affect our predictive
-inferences. Furthermore, the fact that assume the process \(S\) to have
-mean zero is because this is process acts as a residual term in our
-modelling of \(Y\). This aspect will be reiterated several times in the
-following chapters, as it as important implications for the
+where \(\sigma^2\) is the variance of \(S(x)\) for all \(x\). Below we
+provide more details on the type of covoriance functions that we
+consider in this book. Furthermore, the fact that we assume the process
+\(S\) to have mean zero is because this is process acts as a residual
+term in our modelling of \(Y\). This aspect will be reiterated several
+times in the following chapters, as it as important implications for the
 interpretation of the other components of a geostatistical model, as
 well understanding the results of the analysis.
 
@@ -787,6 +828,19 @@ particular, we will show that spatial correlation can have a substantial
 impact on the point estimates and standard errors for \(\beta\). Hence,
 if the goal of the analysis is explain the relationship between a
 covariate \(d(x)\) with the mean component \(\mu\).
+
+\hypertarget{the-matern-family-of-covariance-function}{%
+\subsection{The Matern family of covariance
+function}\label{the-matern-family-of-covariance-function}}
+
+Throughout the book, we shall consider the Matern (2013) family of
+covariance functions to model the spatial correlation of the Gaussian
+process \(S(x)\). This defined as
+\begin{equation}\protect\hypertarget{eq-matern}{}{
+\rho(u;\phi,\kappa) =\{2^{\kappa-1} \Gamma(\kappa)\}^{-1} (u/\phi)^\kappa K_\kappa(u/\phi),
+}\label{eq-matern}\end{equation} where \(\phi>0\) and \(\kappa>0\) are
+parameters and \(K_\kappa(\cdot)\) is the modified Bessel function of
+the third kind of order \(\kappa\).
 
 \hypertarget{workflow-of-a-statistical-analysis-and-structure-of-the-book}{%
 \section{Workflow of a statistical analysis and structure of the
@@ -909,9 +963,9 @@ chapter}
 \markright{List of the main functions used in the chapter}
 
 \begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2222}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2222}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.5556}}@{}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.1667}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.1667}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.6667}}@{}}
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Function
@@ -972,7 +1026,7 @@ prevalence and elevation. We first generate a plot of the prevalence
 against the measured elevation at each of the sample locations
 
 \begin{verbatim}
-Linking to GEOS 3.10.2, GDAL 3.4.3, PROJ 8.2.1; sf_use_s2() is TRUE
+## Linking to GEOS 3.10.2, GDAL 3.4.3, PROJ 8.2.1; sf_use_s2() is TRUE
 \end{verbatim}
 
 \begin{Shaded}
@@ -1448,8 +1502,6 @@ variable \texttt{elevation} from the \texttt{malkenya} data-set.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{malekenya\_comm }\OtherTok{\textless{}{-}}\NormalTok{ malkenya[malkenya}\SpecialCharTok{$}\NormalTok{Survey}\SpecialCharTok{==}\StringTok{"community"}\NormalTok{, ]}
-
 \NormalTok{malkenya\_comm}\SpecialCharTok{$}\NormalTok{elevation\_class }\OtherTok{\textless{}{-}} \FunctionTok{cut}\NormalTok{(malkenya\_comm}\SpecialCharTok{$}\NormalTok{elevation,}
                             \AttributeTok{breaks =} \FunctionTok{quantile}\NormalTok{(malkenya\_comm}\SpecialCharTok{$}\NormalTok{elevation, }\FunctionTok{seq}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{, }\AttributeTok{by =} \FloatTok{0.1}\NormalTok{)),}
                             \AttributeTok{include.lowest =} \ConstantTok{TRUE}\NormalTok{)}
@@ -2156,6 +2208,17 @@ presence of residual correlation.
 \hypertarget{sec-linear-model}{%
 \section{Linear Gaussian model}\label{sec-linear-model}}
 
+In this section, we consider spatially referenced outcomes \(Y_i\) that
+are continuous. For simplicity, we consider the case of a single
+measurement \(Y_i\) at each location \(x_i\). Recalling the class of
+generalized linear models introduced in
+Section~\ref{sec-geostat-models}, the linear predictor takes the form
+\begin{equation}\protect\hypertarget{eq-linear-geostat-model-lp}{}{
+\mu_{i} = d(x_i)^\top \beta + S(x_i).
+}\label{eq-linear-geostat-model-lp}\end{equation} Hence, in this case,
+we interpret \(\beta\) as the effect on \(\mu_i\) for a unit increase in
+\(d(x_i)\).
+
 \hypertarget{generalized-linear-geostatistical-models}{%
 \section{Generalized linear geostatistical
 models}\label{generalized-linear-geostatistical-models}}
@@ -2209,7 +2272,7 @@ model}\label{the-likelihood-function-of-a-genearlized-linear-mixed-model}}
   Figure~\ref{fig-liberia-variog}?
 \item
   Fit a Binomial mixed model to the Liberia data-set on river-blindness
-  without any covariates, i.e. \[
+  without any covariates, i.e.~\[
   \log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_0 + Z_i.
   \] Making use of the R code presented in
   Section~\ref{sec-empirical-variog}, use the function
@@ -2384,6 +2447,11 @@ and Malaria Evidence Reivew.''} Bill \& Melinda Gates Foundation.
 Krige, D. G. 1951. {``A Statistical Approach to Some Basic Mine
 Valuation Problems on the Witwatersrand.''} \emph{Journal of the
 Chemical, Metallurgical and Mining Society of South Africa} 52: 119--39.
+
+\leavevmode\vadjust pre{\hypertarget{ref-matern2013}{}}%
+Matern, B. 2013. \emph{Spatial Variation}. Lecture Notes in Statistics.
+Springer New York.
+\url{https://books.google.co.uk/books?id=HrbSBwAAQBAJ}.
 
 \leavevmode\vadjust pre{\hypertarget{ref-matheron1963}{}}%
 Matheron, G. 1963. {``Principles of Geostatistics.''} \emph{Economic

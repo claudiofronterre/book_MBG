@@ -3,7 +3,7 @@
 ## List of the main functions used in the chapter {.unnumbered}
 
 | Function      | R Package | Used for                                                                                     |
-|------------------|------------------|-------------------------------------|
+|------------|------------|------------------------------------------------|
 | `lmer`        | `lme4`    | Fitting linear mixed models                                                                  |
 | `glmer`       | `lme4`    | Fitting generalized linear mixed models                                                      |
 | `glgm`        | `RiskMap` | Fitting generalized linear mixed models                                                      |
@@ -25,7 +25,7 @@ In this section, we look more closely at the case when the observed outcome is a
 
 Let us first consider the example of the river-blindness data in Liberia (@sec-rb-ch1), and examine the association between prevalence and elevation. We first generate a plot of the prevalence against the measured elevation at each of the sample locations
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, collapse=TRUE}
 library(ggplot2)
 library(RiskMap)
 library(sf)
@@ -206,8 +206,6 @@ To carry out the likelihood ratio test to assess the null hypothesis that $\beta
 The approach just illustrated, can also be applied to explore the association with other continuous variables that are a property of the household and not of the individual. Let us, for example, consider the variable `elevation` from the `malkenya` data-set.
 
 ```{r, collapse=TRUE}
-malekenya_comm <- malkenya[malkenya$Survey=="community", ]
-
 malkenya_comm$elevation_class <- cut(malkenya_comm$elevation,
                             breaks = quantile(malkenya_comm$elevation, seq(0, 1, by = 0.1)),
                             include.lowest = TRUE)
@@ -467,11 +465,9 @@ Finally, the `plot_s_variogram` function enables us to visualize the empirical v
 
 ## Linear Gaussian model {#sec-linear-model}
 
-In this section, we consider spatially referenced outcomes $Y_i$ that are continuous. For simplicity, we consider the case of a single measurement $Y_i$ at each location $x_i$. Recalling the class of generalized linear models introduced in @sec-geostat-models, the linear predictor takes the form 
-$$
+In this section, we consider spatially referenced outcomes $Y_i$ that are continuous. For simplicity, we consider the case of a single measurement $Y_i$ at each location $x_i$. Recalling the class of generalized linear models introduced in @sec-geostat-models, the linear predictor takes the form $$
 \mu_{i} = d(x_i)^\top \beta + S(x_i).
-$$ {#eq-linear-geostat-model-lp}
-Hence, in this case, we interpret $\beta$ as the effect on $\mu_i$ for a unit increase in $d(x_i)$.  
+$$ {#eq-linear-geostat-model-lp} Hence, in this case, we interpret $\beta$ as the effect on $\mu_i$ for a unit increase in $d(x_i)$.
 
 ## Generalized linear geostatistical models
 

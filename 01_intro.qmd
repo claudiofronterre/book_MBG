@@ -66,30 +66,20 @@ The geostatistical data-sets described in this section will be used throughout t
 Each of the examples data-sets can be loaded from the `RiskMap` package, using the command
 
 ```{r eval=FALSE}
-data(galicia)
+data(NAME_OF_THE_DATASET)
 ```
 
-for the lead concentration data from Galicia,
+where in place of `NAME_OF_THE_DATASET` you should type of the name of one of the data-sets listed in @tbl-data-sets.
 
-```{r eval=FALSE}
-data(liberia)
-```
+| Names of the data-set | Short description                                                                     | Used in this book as |
+|------------------|-----------------------------------|------------------|
+| `galicia`             | Lead concentration m from moss samples collected in Galicia, Northern Spain           | Example              |
+| `liberia`             | Prevalence data on river-blindness from Libera                                        | Example              |
+| `malkenya`            | Malaria prevalence data from a community and school survey conducted in Western Kenya | Example              |
+| `italy_sim`           | Simulated geostatistical data-set within the Italian national boundaries              | Example              |
+| `malnutrition`        | Data on stunting among children in Ghana                                              | Case study           |
 
-for the river-blindness data-set,
-
-```{r eval=FALSE}
-data(malkenya)
-```
-
-for the malaria data in the Western Highlands of Kenya, and
-
-```{r eval=FALSE}
-data(anopheles)
-```
-
-for the Anopheles mosquitoes data-set.
-
-In the final chapter of this book, we will consider the analysis of additional data-sets to review the main statistical concepts presented in this book.
+: List of data-sets available from the `RiskMap` package. Data-sets listed as "Example" are used throughout the book to illustrate the use of R functions. Data-sets listed as "Case study" are analysed in @sec-case-studies. {#tbl-data-sets}
 
 ### Lead concentration in Galicia
 
@@ -209,6 +199,30 @@ In studies of vector-borne and zoonotic diseases, understanding of the vector di
 
 The data-set on mosquitoes (@fig-anopheles-ch1) that will use in the book consists of a sub-set taken from a large database [@fossog2015]. This was assembled in order to understand how the environment affects the distribution of different species of *Anopheles* mosquitoes in sub-Saharan Africa. This example data-set will be used to illustrate the application of Poisson geostatistical models for mapping mosquitoes abundance.
 
+### Simulated-dataset  {#sec-italy-sim-data-ch1}
+
+```{r echo=FALSE, message=FALSE}
+#| label: fig-italy-sim-ch1
+#| fig-cap: "Map of the locations of the simulated data-set generated over Italy for a continuous outcome."
+
+library(sf)
+library(mapview)
+library(RiskMap)
+data(italy_sim)
+italy_sim_sf <- st_as_sf(italy_sim, coords = c("x1", "x2"), 
+                       crs = 32634)
+map <- mapview(italy_sim_sf, zcol = "y", layer.name = "Outcome") 
+mapview::mapshot(map, file = "./figures/italy_sim_ch1.png")
+
+if(knitr::is_html_output()){
+  map
+} else {
+  knitr::include_graphics("./figures/italy_sim_ch1.png")
+}
+```
+
+This data-set was generated using a geostatistical model, with the addition of unstructured random effects at provincial and regional level. More details on how this data-set was generated will be provided in @sec-linear-model. Whilst this data-set does not have any scientific relevance like the other data-sets used in this book, it will serve us to illustrate some of the more advanced features of the package that enable the inclusion of random effects, in addition to the latent Gaussian process that is common to all geostatistical models. The skills you will aquire through the analysis of this data-set will be useful for the analysis of data-sets presented as case studies in @sec-case-studies.
+
 ## Geostatistical problems and geostatistical models {#sec-geostat-models}
 
 What the examples of the previous section have in common is that, in each case, the goal of statistical analysis is to draw inferences on an unobserved spatially continuous surface using data collected from a finite set of locations. The lead concentration in Galicia, the prevalence for river-blindness in Liberia and the abundance of *A. gambiae* mosquitoes in Cameroon can all be represented as spatially continuous processes that originate from the combined effects of environmental factors. We denote this class of inferential problems as *geostatistical problems* for which a solution can be found through the development and application of suitable *geostatistical models*, which are the subject of this book.
@@ -223,8 +237,7 @@ $$ {#eq-glgm-joint-ch1}
 
 On the right-hand side of the equation above, we have factorized the joint distribution of $Y$ and $S$, as the product between the marginal distribution of $S$ and the conditional distribution of $Y$ given $S$. Hence, the formulation of a GLGM can be break down into the tasks of formulating $[S]$ and $[Y | S]$.
 
-In defining $[S]$, throughout the book, we shall assume that this is a zero-mean stationary and isotropic Gaussian process. In other words, these assumptions impose that the joint distribution of $S(X) = (S(x_1),\ldots,S(x_n))$, i.e. the process $S$ at the sampled locations $x_1, \ldots, x_n$, is invariant with respect to rations and translations of the locations $X$. In practical terms, the main implication of this is that, for any pair of locations $x_i$ and $x_j$ the correlation function $\rho(\cdot)$ between $S(x_i)$ and $S(x_j)$ is purely a function of the Euclidean distance, $u_{ij}$, between $x_i$ and $x_j$, i.e.
-$$
+In defining $[S]$, throughout the book, we shall assume that this is a zero-mean stationary and isotropic Gaussian process. In other words, these assumptions impose that the joint distribution of $S(X) = (S(x_1),\ldots,S(x_n))$, i.e. the process $S$ at the sampled locations $x_1, \ldots, x_n$, is invariant with respect to rations and translations of the locations $X$. In practical terms, the main implication of this is that, for any pair of locations $x_i$ and $x_j$ the correlation function $\rho(\cdot)$ between $S(x_i)$ and $S(x_j)$ is purely a function of the Euclidean distance, $u_{ij}$, between $x_i$ and $x_j$, i.e. $$
 {\rm cov}\{S(x_i), S(x_j)\} = \sigma^2\rho(u_{ij}),
 $$ {#eq-correlation-ch1}
 
@@ -260,14 +273,54 @@ The types of problems that statistical models are applied to can be distinguishe
 
 ### The Matern family of covariance function
 
-Throughout the book, we shall consider the @matern2013 family of covariance functions to model the spatial correlation of the Gaussian process $S(x)$. This defined as 
-$$
+Throughout the book, we shall consider the @matern2013 family of covariance functions to model the spatial correlation of the Gaussian process $S(x)$. This defined as $$
 \rho(u;\phi,\kappa) =\{2^{\kappa-1} \Gamma(\kappa)\}^{-1} (u/\phi)^\kappa K_\kappa(u/\phi),
-$$ {#eq-matern}
-where $\phi>0$ and $\kappa>0$ are parameters and $K_\kappa(\cdot)$ is the modified Bessel function of the third kind of order $\kappa$. 
+$$ {#eq-matern} where $\phi>0$ and $\kappa>0$ are parameters and $K_\kappa(\cdot)$ is the modified Bessel function of the third kind of order $\kappa$.
 
+```{r, echo=FALSE}
+#| label: fig-matern-func
+#| fig-cap: "Plots of three satationary and isotropic correlation functions of the Matern family, with shape and scale parameters as indicated in the legend. The scale of the spatial correlation is choses so that each of the three functions reaches 0.05 at distance 0.3 (as also shown by the dahsed black segments). "
+phi_0.5 <- uniroot(function(x) matern_cor(0.3, x, 0.5) - 0.05,
+                   lower=0.01, upper = 1)$root
 
+phi_1.5 <- uniroot(function(x) matern_cor(0.3, x, 1.5) - 0.05,
+                   lower=0.01, upper = 1)$root
 
+phi_2.5 <- uniroot(function(x) matern_cor(0.3, x, 2.5) - 0.05,
+                   lower=0.01, upper = 1)$root
+
+u <- seq(0,0.5,length=1000)
+m0.5 <- sapply(u, function(x) matern_cor(x, phi_0.5, kappa = 0.5))
+m1.5 <- sapply(u, function(x) matern_cor(x, phi_1.5, kappa = 1.5))
+m2.5 <- sapply(u, function(x) matern_cor(x, phi_2.5, kappa = 2.5))
+
+matplot(u, cbind(m0.5,m1.5,m2.5), type="l",
+        lty=c("solid", "dotted", "dashed"), col=1:3, lwd=2,
+        ylab="Spatial correlation", xlab="Distance between locations",
+        main = "Matern correlation functions example")
+segments(0,0.05,0.3,0.05,lty="dashed")
+segments(0.3,0,0.3,0.05,lty="dashed")
+
+legend(0.2,0.8,c(expression(varphi~"="~0.100 ~", " ~ kappa ~"= 0.5"),
+                 expression(varphi~"="~0.063~", " ~ kappa ~"= 1.5"),
+                 expression(varphi~"="~0.051~", " ~ kappa ~"= 2.5")),
+       lty=c("solid", "dotted", "dashed"), col=1:3, lwd=2) 
+```
+
+```{r, echo=FALSE}
+#| label: fig-matern-sim
+#| fig-cap: "Simulates spatial surface using the three correltion functions shown in @fig-matern-func: (a) $\\phi = 0.1$ and $\\kappa=0.5$; (b) $\\phi=0.063$ and $\\kappa=1.5$; (c) $\\phi=0.051$ and $\\kappa=2.5$."
+
+library(terra)
+r_05 <- rast("data/sim_matern_05.tif")
+r_15 <- rast("data/sim_matern_15.tif")
+r_25 <- rast("data/sim_matern_25.tif")
+
+par(mfrow=c(1,3))
+plot(r_05, main="(a)")
+plot(r_15, main="(b)")
+plot(r_25, main="(c)")
+```
 
 ## Workflow of a statistical analysis and structure of the book
 
