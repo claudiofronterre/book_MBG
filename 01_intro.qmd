@@ -44,7 +44,7 @@ It is advised that you obtain the latest 64-bit version of R in order to run the
 The list of the R packages used in this book is provided in @tbl-packages.
 
 | R packages      | Used for                                                   |
-|-------------------|-----------------------------------------------------|
+|--------------------|----------------------------------------------------|
 | `RiskMap` (E)   | Estimating of geostatistical models and spatial prediction |
 | `sf` (E)        | Handling of spatial data in R                              |
 | `terra` (E)     | Handling of raster files in R                              |
@@ -72,7 +72,7 @@ data(NAME_OF_THE_DATASET)
 where in place of `NAME_OF_THE_DATASET` you should type of the name of one of the data-sets listed in @tbl-data-sets.
 
 | Names of the data-set | Short description                                                                     | Used in this book as |
-|----------------|----------------------------------------|----------------|
+|-----------------|--------------------------------------|-----------------|
 | `galicia`             | Lead concentration m from moss samples collected in Galicia, Northern Spain           | Example              |
 | `liberia`             | Prevalence data on river-blindness from Liberia                                       | Example              |
 | `malkenya`            | Malaria prevalence data from a community and school survey conducted in Western Kenya | Example              |
@@ -341,7 +341,7 @@ legend(0.2,0.8,c(expression(varphi~"="~0.100 ~", " ~ kappa ~"= 0.5"),
 
 @fig-matern-func shows six different Matern correlation functions. In panel (a), we have kept $\kappa$ fixed to 0.5 and varied $\phi$ over the values 0.05, 0.1 and 0.2. As expected, for larger values of $\phi$ the correlation function has a slower decay to zero. Panels (a) to (c), in @fig-matern-sim, show three realizations of a Gaussian process from each of these correlation functions. The mean of the Gaussian process was set to zero and variance to 1. We can observe that spatial correlations with larger scales are associated with longer spatial trends, whilst smaller scales exhibit a patchier pattern. This is because, as $\phi$ takes values that are closer to zero, the spatial surface will tend to show a less structured pattern and will revert towards its zero mean more rapidly.
 
-Finally, let us consider the correlation functions, shown in the panel (b) of @fig-matern-func. Here, we have varied $\kappa$ over the values 0.5, 1.5 and 2.5, whilst $\phi$ has been fixed in order to force all three correlation functions to reach 0.05 for distance 0.3. In this way, we can better observe the effect of different values $\kappa$ on the spatial surface for process that have approximately the same range for the spatial correlation. In @fig-matern-sim, we observe three realizations from these correlation functions. We observe that the differences between the different surface are determined by the small spatial scale behaviour; $\kappa = 0.5$ correspond to a rougher and less regular spatial pattern, whilst $\kappa=2.5$ shows a smoothest surface of the three processes considered. These properties of the spatial surface are related to the so called differentiability of the the Guassian process, which determines its local behaviour. If you are interested in delving these theoretical aspects, we suggest reading Chapter 2 of @stein1999. 
+Finally, let us consider the correlation functions, shown in the panel (b) of @fig-matern-func. Here, we have varied $\kappa$ over the values 0.5, 1.5 and 2.5, whilst $\phi$ has been fixed in order to force all three correlation functions to reach 0.05 for distance 0.3. In this way, we can better observe the effect of different values $\kappa$ on the spatial surface for process that have approximately the same range for the spatial correlation. In @fig-matern-sim, we observe three realizations from these correlation functions. We observe that the differences between the different surface are determined by the small spatial scale behaviour; $\kappa = 0.5$ correspond to a rougher and less regular spatial pattern, whilst $\kappa=2.5$ shows a smoothest surface of the three processes considered. These properties of the spatial surface are related to the so called differentiability of the the Guassian process, which determines its local behaviour. If you are interested in delving these theoretical aspects, we suggest reading Chapter 2 of @stein1999.
 
 ```{r, echo=FALSE, message=FALSE}
 #| label: fig-matern-sim
