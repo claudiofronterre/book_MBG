@@ -219,7 +219,7 @@ div.csl-indent {
   <li><a href="#sec-overdispersion" id="toc-sec-overdispersion" class="nav-link" data-scroll-target="#sec-overdispersion"><span class="header-section-number">3.1.2</span> Exploring overdispersion in count data</a></li>
   <li><a href="#sec-expl-spatial" id="toc-sec-expl-spatial" class="nav-link" data-scroll-target="#sec-expl-spatial"><span class="header-section-number">3.1.3</span> Exploring residual spatial correlation</a></li>
   </ul></li>
-  <li><a href="#sec-linear-model" id="toc-sec-linear-model" class="nav-link" data-scroll-target="#sec-linear-model"><span class="header-section-number">3.2</span> Linear Gaussian model</a>
+  <li><a href="#sec-linear-model" id="toc-sec-linear-model" class="nav-link" data-scroll-target="#sec-linear-model"><span class="header-section-number">3.2</span> Parameter estimation: the linear geostatistical model</a>
   <ul class="collapse">
   <li><a href="#a-pragmatic-approach-to-deal-with-the-smothness-parameter-kappa" id="toc-a-pragmatic-approach-to-deal-with-the-smothness-parameter-kappa" class="nav-link" data-scroll-target="#a-pragmatic-approach-to-deal-with-the-smothness-parameter-kappa"><span class="header-section-number">3.2.1</span> A pragmatic approach to deal with the smothness parameter <span class="math inline">\(\kappa\)</span></a></li>
   </ul></li>
@@ -611,8 +611,8 @@ g(\mu_i) = d(x_i)^\top \beta + Z_i.
 </div>
 <p><a href="#fig-var-bin-glmm">Figure&nbsp;<span>3.6</span></a> shows the results of the simulation. In this figure, the red line corresponds to the variance of a standard Binomial model, obtained by setting <span class="math inline">\(Z_i=0\)</span> and computed as <span class="math inline">\(n_i \mu_i (1-\mu_i)\)</span> with <span class="math inline">\(\mu_i = \exp\{\beta_0\}/(1+\exp\{\beta_0\})\)</span>. As expected, this plot shows that the variance of the simulated counts from the mixed model in <a href="#eq-bin-glmm-example">Equation&nbsp;<span>3.8</span></a> exhibit a larger variance than would be expected under the standard Binomial model. It also indicates that the chosen value for the variance of <span class="math inline">\(Z_i\)</span> of <span class="math inline">\(\tau^2 = 0.1\)</span> corresponds to a significant amount of dispersion. One way to relate <span class="math inline">\(\tau^2\)</span> to the amount of overdispersion is by considering that, following from the properties of a univariate Gaussian distribution, <em>a priori</em> the <span class="math inline">\(Z_i\)</span> will take values between <span class="math inline">\(-1.96 \sqrt{\tau^2}\)</span> and <span class="math inline">\(+1.96 \sqrt{\tau^2}\)</span> with approximately 95<span class="math inline">\(\%\)</span> probability. That implies that <span class="math inline">\(\exp\{Z_i\}\)</span>, which expresses the effect of the random effects on the odds ratios, will be with 95<span class="math inline">\(\%\)</span> probability between <span class="math inline">\(\exp\{-1.96 \sqrt{\tau^2}\}\)</span> and <span class="math inline">\(\exp\{+1.96 \sqrt{\tau^2}\}\)</span>. By replacing <span class="math inline">\(\tau^2\)</span> with the chosen values for the simulation, those two becomes about 0.54 and 1.86, meaning that with the <span class="math inline">\(Z_i\)</span> with <span class="math inline">\(95\%\)</span> probability will have a multiplicative effect on the odds ratios between <span class="math inline">\(0.54\)</span> and <span class="math inline">\(1.86\)</span>.</p>
 <p>We encourage you to do Exercise 1 and Exercise 2 at the end of this chapter, to further explore how generalized linear mixed models can be used as a tool to account for overdispersion.</p>
-<section id="maximum-likelihood-estimation-of-generalized-linear-mixed-models" class="level4" data-number="3.1.2.1">
-<h4 data-number="3.1.2.1" class="anchored" data-anchor-id="maximum-likelihood-estimation-of-generalized-linear-mixed-models"><span class="header-section-number">3.1.2.1</span> Maximum likelihood estimation of generalized linear mixed models</h4>
+<section id="maximum-likelihood-estimation-of-generalized-linear-mixed-models-for-count-data" class="level4" data-number="3.1.2.1">
+<h4 data-number="3.1.2.1" class="anchored" data-anchor-id="maximum-likelihood-estimation-of-generalized-linear-mixed-models-for-count-data"><span class="header-section-number">3.1.2.1</span> Maximum likelihood estimation of generalized linear mixed models for count data</h4>
 <p>We now illustrate how to fit a generalize linear mixed, using the <code>anopheles</code> data-set as an example. We consider two models: an intercept-only model and one that uses elevation as a covariate. Let <span class="math inline">\(\mu(x_i)\)</span> be the number of mosquitoes captured at a location <span class="math inline">\(x_i\)</span>; then the linear predictor with elevation as a covariate takes the form <span id="eq-anopheles-glmm"><span class="math display">\[
 \log\{\mu_i\} = \beta_{0} + \beta_{1} d(x_i) + Z_i
 \tag{3.9}\]</span></span> where <span class="math inline">\(d(x_i)\)</span> indicates the elevation in meters at location <span class="math inline">\(x_i\)</span> and the <span class="math inline">\(Z_i\)</span> are independent and identically distributed Gaussian variables with mean 0 and variance <span class="math inline">\(\tau^2\)</span>. The model with an intercept only is simply obtained by setting <span class="math inline">\(\beta_1 = 0\)</span>.</p>
@@ -718,8 +718,8 @@ V_{ij} = (Z_i - Z_j)^2.
 <li><p>If the observed empirical variogram falls fully within the envelope generated in the previous point, we then conclude that the data do not exhibit residual spatial correlation. If, instead, the observed empirical variogram partly falls outside the envelope we conclude that the data do exhibit residual spatial correlation.</p></li>
 </ol>
 <p>We now show an application of all the concepts introduced in this section to the Liberia data on river-blindness.</p>
-<section id="sec-empirical-variog" class="level4" data-number="3.1.3.1">
-<h4 data-number="3.1.3.1" class="anchored" data-anchor-id="sec-empirical-variog"><span class="header-section-number">3.1.3.1</span> Using the empirical variogram to assess spatial correlation for the Liberia data</h4>
+<section id="sec-empirical-variog-bin" class="level4" data-number="3.1.3.1">
+<h4 data-number="3.1.3.1" class="anchored" data-anchor-id="sec-empirical-variog-bin"><span class="header-section-number">3.1.3.1</span> Binomial data: assessing spatial correlation for the Liberia data</h4>
 <p>We consider the Binomial mixed model that uses the log-transformed elevation as a covariate to model river blindness prevalence, hence <span id="eq-liberia-bin-mixed-elev"><span class="math display">\[
 \log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_{0} + \beta_{1}\log\{e(x_i)\} + Z_i
 \tag{3.13}\]</span></span> where <span class="math inline">\(e(x_i)\)</span> is the elevation in meters at location <span class="math inline">\(x_i\)</span> and the <span class="math inline">\(Z_i\)</span> are i.i.d. Gaussian variables with mean 0 and variance <span class="math inline">\(\tau^2\)</span>. We first fit the model above using the <code>glmer</code> function.</p>
@@ -811,18 +811,119 @@ log(elevtn) -0.981</code></pre>
 </div>
 <p>Finally, the <code>plot_s_variogram</code> function enables us to visualize the empirical variogram and, through the <code>plot_envelope</code> argument, include the envelope generated by the permutation procedure. As illustrated in <a href="#fig-liberia-variog">Figure&nbsp;<span>3.7</span></a>, we observe that the empirical variogram falls outside the envelope at relatively short distances, typically below 30km. However, for distances exceeding 30km, the behavior of the empirical variogram does not significantly differ from variograms generated under the assumption of spatial independence. In summary, we interpret the evidence presented in <a href="#fig-liberia-variog">Figure&nbsp;<span>3.7</span></a> as indicative of residual spatial correlation within the data. Nevertheless, it is essential to exercise caution when attempting to ascertain the scale of the spatial correlation using the empirical variogram. As we will emphasize throughout this book, the empirical variogram’s sensitivity to the choice of bins values renders it an unreliable tool for drawing statistical inferences. In other words, we advocate employing the empirical variogram primarily to assess the presence of residual correlation.</p>
 </section>
-<section id="exploring-residual-spatial-correlatoion-with-linear-guassian-models" class="level4" data-number="3.1.3.2">
-<h4 data-number="3.1.3.2" class="anchored" data-anchor-id="exploring-residual-spatial-correlatoion-with-linear-guassian-models"><span class="header-section-number">3.1.3.2</span> Exploring residual spatial correlatoion with linear Guassian models</h4>
+<section id="sec-empirical-variog-lm" class="level4" data-number="3.1.3.2">
+<h4 data-number="3.1.3.2" class="anchored" data-anchor-id="sec-empirical-variog-lm"><span class="header-section-number">3.1.3.2</span> Exploring residual spatial correlation with linear Guassian models</h4>
+<p>When using a linear model to assess spatial correlation, it is important to distinguish two cases: 1) when the data contain only one location per location; 2) when more than one observation per location is available. We now consider each of these two scenarios separately.</p>
+<section id="one-observation-per-location" class="level5" data-number="3.1.3.2.1">
+<h5 data-number="3.1.3.2.1" class="anchored" data-anchor-id="one-observation-per-location"><span class="header-section-number">3.1.3.2.1</span> One observation per location</h5>
+<p>To illustrate the use of the variogram under this scenario, we shall use the Gailicia data on lead concentration in moss samples. The simplest possible model for the data is a standard linear model without covariates which assumes independence among the observations, hence <span id="eq-std-lm-galicia"><span class="math display">\[
+Y_i = \beta_0 + U_i
+\tag{3.14}\]</span></span> where the <span class="math inline">\(U_i\)</span> are i.i.d. Gaussian variables with mean zero and variance <span class="math inline">\(\omega^2\)</span>. At this stage, our goal is then to assess whether the assumption of independence for the <span class="math inline">\(Z_i\)</span> is supported by the data or whether there is evidence of spatial correlation. However, the measurement error of the device may be present as part of the natural random variation in <span class="math inline">\(Z_i\)</span> which might mask the detection of spatial correlation using the residuals <span class="math inline">\(Z_i\)</span> challenging, especially is the measurement error dominates the spatial variation of the data. One would be tempted to introduce an additional, location-specific random effect, say <span class="math inline">\(Z_i\)</span> with mean zero and variance <span class="math inline">\(\tau^2\)</span> and fit the model <span id="eq-std-lm2-galicia"><span class="math display">\[
+Y_i = \beta_0 + Z_i + U_i,
+\tag{3.15}\]</span></span> where we interpret <span class="math inline">\(U_i\)</span> as random variation due to the measurement device and <span class="math inline">\(Z_i\)</span> as a random effect accounting for unmeasured covariates that contribute to the variation between locations in lead concentration. However, the model in <a href="#eq-std-lm2-galicia">Equation&nbsp;<span>3.15</span></a> is not identifiable because we cannot disentangle the separate contributions of <span class="math inline">\(Z_i\)</span> and <span class="math inline">\(U_i\)</span> from the variation of the data, unless: a) we know the precision of the measurement device, <span class="math inline">\(\omega\)</span> (recall that <span class="math inline">\(\omega^2\)</span> is the variance of <span class="math inline">\(U_i\)</span>); b) or, if we do not know <span class="math inline">\(\omega\)</span>, we can then separate the two sources of variation only if we have multiple observations per location (the scenario which we shall consider in the next section).</p>
+<p>For the Galicia data, for we do not know the measurement device precision and we only have one observation per location. However, this does not prevent us from using the variogram based on the residuals from <a href="#eq-std-lm-galicia">Equation&nbsp;<span>3.14</span></a>, while keeping in mind the limitations and uncertainty that are inherent to this exploratory tool as remarked at the end of the last paragraph.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fitting of the linear model and extraction of the residuals  </span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>lm_fit <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="fu">log</span>(lead) <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> galicia)</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>galicia<span class="sc">$</span>residuals <span class="ot">&lt;-</span> lm_fit<span class="sc">$</span>residuals</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert the galicia data frame into an "sf" object</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>galicia_sf <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(galicia, <span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"x"</span>, <span class="st">"y"</span>), <span class="at">crs =</span> <span class="dv">32629</span>)</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute the variogram, using the residuals from the linear model fit,</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a><span class="co"># and the 95% confidence level envelope for spatial independence</span></span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>galicia_variog <span class="ot">&lt;-</span> <span class="fu">s_variogram</span>(galicia_sf, <span class="at">variable =</span> <span class="st">"residuals"</span>,</span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>                              <span class="at">scale_to_km =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>                              <span class="at">bins =</span> <span class="fu">seq</span>(<span class="dv">10</span>, <span class="dv">140</span>, <span class="at">length =</span> <span class="dv">15</span>),</span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>                              <span class="at">n_permutation =</span> <span class="dv">10000</span>)</span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Plotting the results</span></span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_s_variogram</span>(galicia_variog, <span class="at">plot_envelope =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-galicia-variog" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="03_model-fitting_files/figure-html/fig-galicia-variog-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="figure-caption">Figure&nbsp;3.8: Plot of the empirical variogram (solid line) computed using the estimated residuals from the model in <a href="#eq-std-lm-galicia">Equation&nbsp;<span>3.14</span></a>. The blue shaded area is the 95% confidence level envelope generated using the permutation procedure described in <a href="#sec-expl-spatial"><span>Section&nbsp;3.1.3</span></a>.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>In the code above, we first fit the linear model in <a href="#eq-std-lm-galicia">Equation&nbsp;<span>3.14</span></a> and then extract the residuals from this. Note that for this simple model, the residuals of the model are obtained by simply centering the outcome to zero by subtracting its mean. However, for more complex linear models that use covariates the computation of the residuals is more involved and can be carried out through a simple extension of the code above by specifying an appropriate <code>formula</code> in the <code>lm</code> function.</p>
+<p><a href="#fig-galicia-variog">Figure&nbsp;<span>3.8</span></a> shows the empirical variogram and the 95% envelope for spatial independence. This clearly shows that the measurement of lead concentration are spatially correlated.</p>
+</section>
+<section id="more-than-one-observation-per-location" class="level5" data-number="3.1.3.2.2">
+<h5 data-number="3.1.3.2.2" class="anchored" data-anchor-id="more-than-one-observation-per-location"><span class="header-section-number">3.1.3.2.2</span> More than one observation per location</h5>
+<p>For the case of more than one observation per location, we shall consider the <code>italy_sim</code> data-set. This data-set contains 10 observations per location, for a total of 200 locations. The variable <code>ID_loc</code> is a numeric indicator that can be used to identify the location each observation belong to. For this data-set, we use the population density, named <code>pop_dens</code>, as a log-transformed covariate; we leave you as an exercise to assess that is a reasonable modelling choice.</p>
+<p>To specify a non-spatial mixed model for the outcome, we then use two subscripts: <span class="math inline">\(i\)</span> to identify a given location; <span class="math inline">\(j\)</span> to identify the <span class="math inline">\(j\)</span>-th observation for a given location <span class="math inline">\(i\)</span>. We denote as <span class="math inline">\(Z_i\)</span> the location-specific random effect ans as <span class="math inline">\(U_{ij}\)</span> the random variation due to the measurement error inherent to each observation. Hence, we write <span id="eq-italy-sim-lmm"><span class="math display">\[
+Y_{ij} = \beta_0 + \beta_1 \log\{d(x_i)\} + Z_i + U_{ij},
+\tag{3.16}\]</span></span> where <span class="math inline">\(d(x_i)\)</span> is the population density at location <span class="math inline">\(x_i\)</span>; as before, we use <span class="math inline">\(\tau^2\)</span> and <span class="math inline">\(\omega^2\)</span> to denote the variances of <span class="math inline">\(Z_i\)</span> and <span class="math inline">\(U_{ij}\)</span>, respectively. To fit this model to the data we use the <code>lmer</code> function from the <code>lme4</code> package.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fitting a linear mixed model to the italy_sim data-set</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="co"># See main text for model specification</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>lmer_fit <span class="ot">&lt;-</span> <span class="fu">lmer</span>(y <span class="sc">~</span> <span class="fu">log</span>(pop_dens) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>ID_loc), <span class="at">data =</span> italy_sim)</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lmer_fit)</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="do">## Linear mixed model fit by REML ['lmerMod']</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="do">## Formula: y ~ log(pop_dens) + (1 | ID_loc)</span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a><span class="do">##    Data: italy_sim</span></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a><span class="do">## REML criterion at convergence: 3390.9</span></span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a><span class="do">## Scaled residuals: </span></span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a><span class="do">##      Min       1Q   Median       3Q      Max </span></span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a><span class="do">## -2.85209 -0.64198 -0.01832  0.66014  3.01870 </span></span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a><span class="do">## Random effects:</span></span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a><span class="do">##  Groups   Name        Variance Std.Dev.</span></span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a><span class="do">##  ID_loc   (Intercept) 2.5006   1.5813  </span></span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a><span class="do">##  Residual             0.1959   0.4426  </span></span>
+<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a><span class="do">## Number of obs: 2000, groups:  ID_loc, 200</span></span>
+<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a><span class="do">## Fixed effects:</span></span>
+<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a><span class="do">##               Estimate Std. Error t value</span></span>
+<span id="cb25-24"><a href="#cb25-24" aria-hidden="true" tabindex="-1"></a><span class="do">## (Intercept)   -0.40448    0.57613  -0.702</span></span>
+<span id="cb25-25"><a href="#cb25-25" aria-hidden="true" tabindex="-1"></a><span class="do">## log(pop_dens)  1.33798    0.07643  17.506</span></span>
+<span id="cb25-26"><a href="#cb25-26" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb25-27"><a href="#cb25-27" aria-hidden="true" tabindex="-1"></a><span class="do">## Correlation of Fixed Effects:</span></span>
+<span id="cb25-28"><a href="#cb25-28" aria-hidden="true" tabindex="-1"></a><span class="do">##             (Intr)</span></span>
+<span id="cb25-29"><a href="#cb25-29" aria-hidden="true" tabindex="-1"></a><span class="do">## log(pp_dns) -0.981</span></span>
+<span id="cb25-30"><a href="#cb25-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-31"><a href="#cb25-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Incorporating the estimated random effects into the data</span></span>
+<span id="cb25-32"><a href="#cb25-32" aria-hidden="true" tabindex="-1"></a>italy_sim<span class="sc">$</span>rand_eff <span class="ot">&lt;-</span><span class="fu">ranef</span>(lmer_fit)<span class="sc">$</span>ID_loc[italy_sim<span class="sc">$</span>ID_loc,<span class="dv">1</span>]</span>
+<span id="cb25-33"><a href="#cb25-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-34"><a href="#cb25-34" aria-hidden="true" tabindex="-1"></a><span class="co"># Converting the italy_sim data frame into an "sf" object </span></span>
+<span id="cb25-35"><a href="#cb25-35" aria-hidden="true" tabindex="-1"></a>italy_sim_sf <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(italy_sim, <span class="at">coords=</span><span class="fu">c</span>(<span class="st">"x1"</span>, <span class="st">"x2"</span>), <span class="at">crs =</span> <span class="dv">32634</span>)</span>
+<span id="cb25-36"><a href="#cb25-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-37"><a href="#cb25-37" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute the variogram, using the random effects from the linear mixed model fit,</span></span>
+<span id="cb25-38"><a href="#cb25-38" aria-hidden="true" tabindex="-1"></a><span class="co"># and the 95% confidence level envelope for spatial independence</span></span>
+<span id="cb25-39"><a href="#cb25-39" aria-hidden="true" tabindex="-1"></a>italy_sim_variog <span class="ot">&lt;-</span> <span class="fu">s_variogram</span>(italy_sim_sf, <span class="at">variable =</span> <span class="st">"rand_eff"</span>, </span>
+<span id="cb25-40"><a href="#cb25-40" aria-hidden="true" tabindex="-1"></a>                                <span class="at">scale_to_km =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb25-41"><a href="#cb25-41" aria-hidden="true" tabindex="-1"></a>                                <span class="at">n_permutation =</span> <span class="dv">200</span>)</span>
+<span id="cb25-42"><a href="#cb25-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-43"><a href="#cb25-43" aria-hidden="true" tabindex="-1"></a><span class="co"># Plotting the results</span></span>
+<span id="cb25-44"><a href="#cb25-44" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_s_variogram</span>(italy_sim_variog, <span class="at">plot_envelope =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-italy-sim-variog" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="03_model-fitting_files/figure-html/fig-italy-sim-variog-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="figure-caption">Figure&nbsp;3.9: Plot of the empirical variogram (solid line) computed using the estimated random effects from the model in <a href="#eq-italy-sim-lmm">Equation&nbsp;<span>3.16</span></a>. The blue shaded area is the 95% confidence level envelope generated using the permutation procedure described in <a href="#sec-expl-spatial"><span>Section&nbsp;3.1.3</span></a>.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>In the code above, the introduction of the <span class="math inline">\(Z_i\)</span> random effect is specified in the <code>lmer</code> function though <code>(1|ID_loc)</code> in the formula; recall that <code>ID_loc</code> is the numerical indicator that identifies each location. From the summary of the model, we obtain both the estimates of the regression coefficients <span class="math inline">\(\beta_{0}\)</span> and <span class="math inline">\(\beta_{1}\)</span>, as well for the variances <span class="math inline">\(\tau^2\)</span> listed under <code>Random effects:</code>. The estimate of <span class="math inline">\(\sigma^2\)</span> is found on the line of printed output starting with <code>ID_loc</code>, whilst that for $^2 is next to <code>Residual</code>.</p>
+<p>The application of the empirical variogram, whose results are shown in <a href="#fig-italy-sim-variog">Figure&nbsp;<span>3.9</span></a>, indicate the presence of residual correlation. This is because we observe that the solid line representing the empirical variogram falls outside of the 95% envelope for spatial independence.</p>
+</section>
 </section>
 </section>
 </section>
 <section id="sec-linear-model" class="level2" data-number="3.2">
-<h2 data-number="3.2" class="anchored" data-anchor-id="sec-linear-model"><span class="header-section-number">3.2</span> Linear Gaussian model</h2>
+<h2 data-number="3.2" class="anchored" data-anchor-id="sec-linear-model"><span class="header-section-number">3.2</span> Parameter estimation: the linear geostatistical model</h2>
 <p>In this section, we consider spatially referenced outcomes <span class="math inline">\(Y_i\)</span> that are continuous. We first consider the simpler case of a single measurement <span class="math inline">\(Y_i\)</span> per location <span class="math inline">\(x_i\)</span>. Recalling the class of generalized linear models introduced in <a href="01_intro.html#sec-geostat-models"><span>Section&nbsp;1.5</span></a>, the linear predictor takes the form <span id="eq-linear-geostat-model-lp"><span class="math display">\[
 \mu_{i} = d(x_i)^\top \beta + S(x_i).
-\tag{3.14}\]</span></span> Hence, in this case, we interpret <span class="math inline">\(\beta\)</span> as the effect on <span class="math inline">\(\mu_i\)</span> for a unit increase in <span class="math inline">\(d(x_i)\)</span>. Let <span class="math inline">\(U_i\)</span> denote i.i.d. random variables representing the measurement error associated with <span class="math inline">\(Y_i\)</span>, each having mean zero and variance <span class="math inline">\(\omega^2\)</span>. Thanks to the linear properties of Gaussian random variables, we can also express the linear model in a compact expression, as <span id="eq-linear-geostat-model"><span class="math display">\[
+\tag{3.17}\]</span></span> Hence, in this case, we interpret <span class="math inline">\(\beta\)</span> as the effect on <span class="math inline">\(\mu_i\)</span> for a unit increase in <span class="math inline">\(d(x_i)\)</span>. Let <span class="math inline">\(U_i\)</span> denote i.i.d. random variables representing the measurement error associated with <span class="math inline">\(Y_i\)</span>, each having mean zero and variance <span class="math inline">\(\omega^2\)</span>. Thanks to the linear properties of Gaussian random variables, we can also express the linear model in a compact expression, as <span id="eq-linear-geostat-model"><span class="math display">\[
 Y_i = \mu_i + U_i = d(x_i)^\top \beta + S(x_i) + U_i.
-\tag{3.15}\]</span></span> To fully specify a geostatistical model for our dataset, we must address two critical aspects.</p>
+\tag{3.18}\]</span></span> To fully specify a geostatistical model for our dataset, we must address two critical aspects.</p>
 <ol type="1">
 <li>Defining the relationship between each covariate and the mean value <span class="math inline">\(\mu_i\)</span>.</li>
 <li>Selecting an appropriate correlation function for <span class="math inline">\(S(x)\)</span>.</li>
@@ -831,70 +932,70 @@ Y_i = \mu_i + U_i = d(x_i)^\top \beta + S(x_i) + U_i.
 <section id="a-pragmatic-approach-to-deal-with-the-smothness-parameter-kappa" class="level3" data-number="3.2.1">
 <h3 data-number="3.2.1" class="anchored" data-anchor-id="a-pragmatic-approach-to-deal-with-the-smothness-parameter-kappa"><span class="header-section-number">3.2.1</span> A pragmatic approach to deal with the smothness parameter <span class="math inline">\(\kappa\)</span></h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>fit_galicia <span class="ot">&lt;-</span> </span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="fu">glgpm</span>(<span class="fu">log</span>(lead) <span class="sc">~</span> <span class="fu">gp</span>(x, y, <span class="at">kappa =</span> <span class="fl">1.5</span>), <span class="at">data=</span>galicia, <span class="at">family =</span> <span class="st">"gaussian"</span>,</span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>      <span class="at">crs =</span> <span class="dv">32629</span>, <span class="at">scale_to_km =</span> <span class="cn">TRUE</span>, <span class="at">messages =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_galicia)</span>
-<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="do">## Geostatistical linear model </span></span>
-<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="do">## 'Lower limit' and 'Upper limit' are the limits of the95% confidence level intervals </span></span>
-<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
-<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  Regression coefficients </span></span>
-<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a><span class="do">##             Estimate Lower limit Upper limit   StdErr z.value   p.value    </span></span>
-<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a><span class="do">## (Intercept) 0.707418    0.552762    0.862075 0.078908  8.9651 &lt; 2.2e-16 ***</span></span>
-<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a><span class="do">## ---</span></span>
-<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a><span class="do">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
-<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
-<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a><span class="do">##                           Estimate Lower limit Upper limit</span></span>
-<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a><span class="do">## Measuremment error var. 0.0154636   0.0051797      0.0462</span></span>
-<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
-<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a><span class="do">##  Spatial Guassian process </span></span>
-<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a><span class="do">## Matern covariance parameters (kappa=1.5) </span></span>
-<span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a><span class="do">##                      Estimate Lower limit Upper limit</span></span>
-<span id="cb24-22"><a href="#cb24-22" aria-hidden="true" tabindex="-1"></a><span class="do">## Spatial process var.  0.17127     0.13303      0.2205</span></span>
-<span id="cb24-23"><a href="#cb24-23" aria-hidden="true" tabindex="-1"></a><span class="do">## Spatial corr. scale   9.02085     7.59521     10.7141</span></span>
-<span id="cb24-24"><a href="#cb24-24" aria-hidden="true" tabindex="-1"></a><span class="do">## Variance of the nugget effect fixed at 0 </span></span>
-<span id="cb24-25"><a href="#cb24-25" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
-<span id="cb24-26"><a href="#cb24-26" aria-hidden="true" tabindex="-1"></a><span class="do">##  Log-likelihood: 69.03029</span></span>
-<span id="cb24-27"><a href="#cb24-27" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
-<span id="cb24-28"><a href="#cb24-28" aria-hidden="true" tabindex="-1"></a><span class="do">##  AIC: -138.0606</span></span>
-<span id="cb24-29"><a href="#cb24-29" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>fit_galicia <span class="ot">&lt;-</span> </span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="fu">glgpm</span>(<span class="fu">log</span>(lead) <span class="sc">~</span> <span class="fu">gp</span>(x, y, <span class="at">kappa =</span> <span class="fl">1.5</span>), <span class="at">data=</span>galicia, <span class="at">family =</span> <span class="st">"gaussian"</span>,</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>      <span class="at">crs =</span> <span class="dv">32629</span>, <span class="at">scale_to_km =</span> <span class="cn">TRUE</span>, <span class="at">messages =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_galicia)</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="do">## Geostatistical linear model </span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="do">## 'Lower limit' and 'Upper limit' are the limits of the95% confidence level intervals </span></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  Regression coefficients </span></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a><span class="do">##             Estimate Lower limit Upper limit   StdErr z.value   p.value    </span></span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a><span class="do">## (Intercept) 0.707418    0.552762    0.862075 0.078908  8.9651 &lt; 2.2e-16 ***</span></span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a><span class="do">## ---</span></span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a><span class="do">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a><span class="do">##                           Estimate Lower limit Upper limit</span></span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a><span class="do">## Measuremment error var. 0.0154636   0.0051797      0.0462</span></span>
+<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a><span class="do">##  Spatial Guassian process </span></span>
+<span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a><span class="do">## Matern covariance parameters (kappa=1.5) </span></span>
+<span id="cb26-21"><a href="#cb26-21" aria-hidden="true" tabindex="-1"></a><span class="do">##                      Estimate Lower limit Upper limit</span></span>
+<span id="cb26-22"><a href="#cb26-22" aria-hidden="true" tabindex="-1"></a><span class="do">## Spatial process var.  0.17127     0.13303      0.2205</span></span>
+<span id="cb26-23"><a href="#cb26-23" aria-hidden="true" tabindex="-1"></a><span class="do">## Spatial corr. scale   9.02085     7.59521     10.7141</span></span>
+<span id="cb26-24"><a href="#cb26-24" aria-hidden="true" tabindex="-1"></a><span class="do">## Variance of the nugget effect fixed at 0 </span></span>
+<span id="cb26-25"><a href="#cb26-25" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb26-26"><a href="#cb26-26" aria-hidden="true" tabindex="-1"></a><span class="do">##  Log-likelihood: 69.03029</span></span>
+<span id="cb26-27"><a href="#cb26-27" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb26-28"><a href="#cb26-28" aria-hidden="true" tabindex="-1"></a><span class="do">##  AIC: -138.0606</span></span>
+<span id="cb26-29"><a href="#cb26-29" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Number of the values chosen for kappa</span></span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>n_kappa <span class="ot">&lt;-</span> <span class="dv">10</span></span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Set of values for kappa</span></span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>kappa_values <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fl">0.5</span>, <span class="fl">3.5</span>, <span class="at">length =</span> n_kappa)</span>
-<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Vector that will store the values of the likelihood function </span></span>
-<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="co"># evaluated at the maximum likelihood estimate</span></span>
-<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>llik_values <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="cn">NA</span>, <span class="at">length =</span> n_kappa)</span>
-<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Vector that will store the maximum likelihood estimates</span></span>
-<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a><span class="co"># of the variance of the measurment error</span></span>
-<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>sigma2_me_hat <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="cn">NA</span>, <span class="at">length =</span> n_kappa)</span>
-<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a><span class="co"># List that will contain all the geostatistical models fitted for </span></span>
-<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a><span class="co"># the different values of kappa specified in kappa_values</span></span>
-<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a>fit_galicia_list <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
-<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_kappa) {</span>
-<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a>  fit_galicia_list[[i]] <span class="ot">&lt;-</span> <span class="fu">glgpm</span>(<span class="fu">log</span>(lead) <span class="sc">~</span> <span class="fu">gp</span>(x, y, <span class="at">kappa =</span> kappa_values[i]), </span>
-<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">data=</span>galicia, <span class="at">family =</span> <span class="st">"gaussian"</span>,</span>
-<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">crs =</span> <span class="dv">32629</span>, <span class="at">scale_to_km =</span> <span class="cn">TRUE</span>, <span class="at">messages =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb25-24"><a href="#cb25-24" aria-hidden="true" tabindex="-1"></a>  llik_values[i] <span class="ot">&lt;-</span>  fit_galicia_list[[i]]<span class="sc">$</span>log.lik</span>
-<span id="cb25-25"><a href="#cb25-25" aria-hidden="true" tabindex="-1"></a>  sigma2_me_hat[i] <span class="ot">&lt;-</span>  <span class="fu">coef</span>(fit_galicia_list[[i]])[<span class="st">"sigma2_me"</span>]</span>
-<span id="cb25-26"><a href="#cb25-26" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Number of the values chosen for kappa</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>n_kappa <span class="ot">&lt;-</span> <span class="dv">10</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Set of values for kappa</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>kappa_values <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fl">0.5</span>, <span class="fl">3.5</span>, <span class="at">length =</span> n_kappa)</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Vector that will store the values of the likelihood function </span></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a><span class="co"># evaluated at the maximum likelihood estimate</span></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>llik_values <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="cn">NA</span>, <span class="at">length =</span> n_kappa)</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Vector that will store the maximum likelihood estimates</span></span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a><span class="co"># of the variance of the measurment error</span></span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>sigma2_me_hat <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="cn">NA</span>, <span class="at">length =</span> n_kappa)</span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a><span class="co"># List that will contain all the geostatistical models fitted for </span></span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a><span class="co"># the different values of kappa specified in kappa_values</span></span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>fit_galicia_list <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_kappa) {</span>
+<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a>  fit_galicia_list[[i]] <span class="ot">&lt;-</span> <span class="fu">glgpm</span>(<span class="fu">log</span>(lead) <span class="sc">~</span> <span class="fu">gp</span>(x, y, <span class="at">kappa =</span> kappa_values[i]), </span>
+<span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">data=</span>galicia, <span class="at">family =</span> <span class="st">"gaussian"</span>,</span>
+<span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">crs =</span> <span class="dv">32629</span>, <span class="at">scale_to_km =</span> <span class="cn">TRUE</span>, <span class="at">messages =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb27-24"><a href="#cb27-24" aria-hidden="true" tabindex="-1"></a>  llik_values[i] <span class="ot">&lt;-</span>  fit_galicia_list[[i]]<span class="sc">$</span>log.lik</span>
+<span id="cb27-25"><a href="#cb27-25" aria-hidden="true" tabindex="-1"></a>  sigma2_me_hat[i] <span class="ot">&lt;-</span>  <span class="fu">coef</span>(fit_galicia_list[[i]])[<span class="st">"sigma2_me"</span>]</span>
+<span id="cb27-26"><a href="#cb27-26" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div id="fig-galicia-matern" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
 <p><img src="03_model-fitting_files/figure-html/fig-galicia-matern-1.png" class="img-fluid figure-img" style="width:8.5in"></p>
-<figcaption class="figure-caption">Figure&nbsp;3.8: (a) profile likeihood for <span class="math inline">\(\kappa\)</span> with the horizontal dashed line corresponding to the (approximate) threshold for constructing a 95% confidence interval based on a <span class="math inline">\(\chi^2\)</span> with one degree of freedom; (b) plot of the maximum likelihood estimate for the variance of the measurement error <span class="math inline">\(U_i\)</span>, denoted in the text as <span class="math inline">\(\omega^2\)</span>, against the chosen fixed value for <span class="math inline">\(\kappa\)</span>.</figcaption>
+<figcaption class="figure-caption">Figure&nbsp;3.10: (a) profile likeihood for <span class="math inline">\(\kappa\)</span> with the horizontal dashed line corresponding to the (approximate) threshold for constructing a 95% confidence interval based on a <span class="math inline">\(\chi^2\)</span> with one degree of freedom; (b) plot of the maximum likelihood estimate for the variance of the measurement error <span class="math inline">\(U_i\)</span>, denoted in the text as <span class="math inline">\(\omega^2\)</span>, against the chosen fixed value for <span class="math inline">\(\kappa\)</span>.</figcaption>
 </figure>
 </div>
 </div>
@@ -923,10 +1024,13 @@ Y_i = \mu_i + U_i = d(x_i)^\top \beta + S(x_i) + U_i.
 <li><p>Similarly to the previous exercise, consider a Poisson mixed model with linear predictor <span class="math display">\[
 \log\left\{\mu_i\right\} = \beta_0 + Z_i,
 \]</span> where <span class="math inline">\(Z_i\)</span> are a set of mutually independent Gaussian variables with mean 0 and variance <span class="math inline">\(\tau^2\)</span>. Using the code shown in <a href="#sec-overdispersion"><span>Section&nbsp;3.1.2</span></a>, carry out a simulation study to compute the variance of <span class="math inline">\(Y_i\)</span> and generate a graph similar to <a href="#fig-var-bin-glmm">Figure&nbsp;<span>3.6</span></a> to compare the variance of the Poisson mixed model with that of a standard Poisson model. Generate the graph for different values of <span class="math inline">\(\tau^2\)</span> and summarize your findings. NOTE: In this simulation the offset <span class="math inline">\(n_i\)</span> can be set to 1.</p></li>
-<li><p>Create an R function that computes the <em>cloud variogram</em>. As explained in <a href="#sec-expl-spatial"><span>Section&nbsp;3.1.3</span></a>, the cloud variogram is obtained by plotting <span class="math inline">\(\hat{V}_ij\)</span> (see <a href="#eq-hat-squared-diff">Equation&nbsp;<span>3.11</span></a>) against the distances <span class="math inline">\(u_ij\)</span>. The function should take as input a data-set with three columns: the variable for which the cloud variogram is to be computed; and two columns corresponding to the location of the data. Then, use this function to create the cloud variogram for the model for river-blindness in <a href="#eq-liberia-bin-mixed-elev">Equation&nbsp;<span>3.13</span></a>. How does this compare to empirical variogram that takes the averages within predefined distance classes, as shown in <a href="#fig-liberia-variog">Figure&nbsp;<span>3.7</span></a>?</p></li>
+<li><p>Create an R function that computes the <em>cloud variogram</em>. As explained in <a href="#sec-expl-spatial"><span>Section&nbsp;3.1.3</span></a>, the cloud variogram is obtained by plotting <span class="math inline">\(\hat{V}_{ij}\)</span> (see <a href="#eq-hat-squared-diff">Equation&nbsp;<span>3.11</span></a>) against the distances <span class="math inline">\(u_{ij}\)</span>. The function should take as input a data-set with three columns: the variable for which the cloud variogram is to be computed; and two columns corresponding to the location of the data. Then, use this function to create the cloud variogram for the model for river-blindness in <a href="#eq-liberia-bin-mixed-elev">Equation&nbsp;<span>3.13</span></a>. How does this compare to empirical variogram that takes the averages within predefined distance classes, as shown in <a href="#fig-liberia-variog">Figure&nbsp;<span>3.7</span></a>?</p></li>
 <li><p>Fit a Binomial mixed model to the Liberia data-set on river-blindness without any covariates, i.e.&nbsp;<span class="math display">\[
 \log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_0 + Z_i.
-\]</span> Making use of the R code presented in <a href="#sec-empirical-variog"><span>Section&nbsp;3.1.3.1</span></a>, use the function <code>s_variogram</code> to generate the empirical variogram for this model and compare this to the empirical variogram of <a href="#fig-liberia-variog">Figure&nbsp;<span>3.7</span></a>. What differences do you observe?</p></li>
+\]</span> Making use of the R code presented in <a href="#sec-empirical-variog-bin"><span>Section&nbsp;3.1.3.1</span></a>, use the function <code>s_variogram</code> to generate the empirical variogram for this model and compare this to the empirical variogram of <a href="#fig-liberia-variog">Figure&nbsp;<span>3.7</span></a>. What differences do you observe?</p></li>
+<li><p>Fit a Poisson mixed model to the anopheles mosquito data using elevation as a covariate, i.e. <span class="math display">\[
+\log\{\mu(x_i)\} = \beta_{0} + \beta_{1} d(x_i) + Z_i
+\]</span> where <span class="math inline">\(d(x_i)\)</span> is the measured elevation at location <span class="math inline">\(x_i\)</span>. How strong is the overdispersion in the data? After fitting the model, extract the estimates of the random effects <span class="math inline">\(Z_i\)</span> and compute the empirical variogram with the 95% envelope for spatial independence. Repeat this for different classes of distances by changing the input passed to <code>bins</code> in the <code>s_variogram</code> function. How do the different specifications of <code>bins</code> affect the results?</p></li>
 </ol>
 
 
