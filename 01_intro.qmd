@@ -1,56 +1,57 @@
 # Introduction
+
 The book provides shows how to carry out model-based geostatistical analysis of public health data using the `RiskMap` R package. In this introductory chapter, we explain what are the pre-requisites for using this book and its learning objectives. We also explain what software should be installed and how. Finally, we give a brief overview of the class of models covered in this book, and the examples that will be used to illustrate the methods and use of software.
 
-
 ## Objectives of this book
-The overall aim of this book is to provide you with the skills to perform a geostatistical analysis of a data-set using the R software environment. 
-As you work your way through the book, you will learn to:
 
- * explore geostatistical data-sets using graphical procedures and summary statistics;
- * formulate and fit geostatistical models using the maximum likelihood estimation method;
- * carry out prediction of health outcomes at different spatial scales;
- * visualize and interpret the results from geostatistical models;
- * model the relationships between spatially referenced risk factors and the health outcome of interest;
- * validate the assumptions of geostatistical models and assess their predictive performance.
+The overall aim of this book is to provide you with the skills to perform a geostatistical analysis of a data-set using the R software environment. As you work your way through the book, you will learn to:
+
+-   explore geostatistical data-sets using graphical procedures and summary statistics;
+-   formulate and fit geostatistical models using the maximum likelihood estimation method;
+-   carry out prediction of health outcomes at different spatial scales;
+-   visualize and interpret the results from geostatistical models;
+-   model the relationships between spatially referenced risk factors and the health outcome of interest;
+-   validate the assumptions of geostatistical models and assess their predictive performance.
 
 Although the focus of this book is on public health, the statistical ideas, as well as the software used, can also be applied for the analysis of geostatistical data-sets arising from other scientific fields.
 
 ## Pre-requisites for using this book
 
-To effectively understand and use the material presented in this book, it is expected that you should possess prior knowledge of basic probability theory,  foundational topics in statistical modelling and R programming. Below we provide a more detailed explanation of the pre-requisites for each of these three fields.
+To effectively understand and use the material presented in this book, it is expected that you should possess prior knowledge of basic probability theory, foundational topics in statistical modelling and R programming. Below we provide a more detailed explanation of the pre-requisites for each of these three fields.
 
 ### Topics in probability
+
 Basics probability theory is important to fully understand the content of this book. In particular, you should have knowledge of: the general definition and properties of continuous and discrete distribution; how the describe the properties of probability distributions through their mean, variance and skeweness; the concepts of stochastic dependence and correaltion; the distinction between marginal and conditional distributions; the basic properties of the Gaussian, Binomial and Poisson distributions; the definition and properties of the multivariate Gaussian distribution. The redear can find an extensive explanation and illustrations with examples of all these topics in @ross2013.
 
 ### Topics in statistics
-Likelihood-based inference (whether frequensist or Bayesian) provides the theoretical bedrock for the estimation of almost any statistical model.  In this book will focus on maximum likelihood estimation methods of inference. Extensive use of the notions of point and interval estimates obtained using the maximum likelihood estimation methods will be made through the book. Recommended readings include chapters 1, 2 and 4 of @pawitan2001.
 
-Good knowledge of Generalized linear models (GLMs) is essential, as the geostatistical modelling framework builds on these as an extension. Before embarking on the use of this book, we thus encourage you to review the basic theory of GLMs and, in particular, how these are applied and interpreted. In this book, we will cover examples that will model continuously measured outcomes and counts. Hence, good understanding of linear regression modelling and modelling of counts data using Binomial and Poisson regression should be the main focus of the review. For comprehensive overview of GLMs and their implementation in R, we refer you to @dobson2008.
+Likelihood-based inference (whether frequensist or Bayesian) provides the theoretical bedrock for the estimation of almost any statistical model. In this book will focus on maximum likelihood estimation methods of inference. Extensive use of the notions of point and interval estimates obtained using the maximum likelihood estimation methods will be made through the book. Recommended readings include chapters 1, 2 and 4 of @pawitan2001.
 
+Good prior knowledge of Generalized linear models (GLMs) is essential, as the geostatistical modelling framework builds on these as an extension. Before embarking on the use of this book, we thus encourage you to review the basic theory of GLMs and, in particular, how these are applied and interpreted. In this book, we will cover examples that will model continuously measured outcomes and counts. Hence, good understanding of linear regression modelling and modelling of counts data using Binomial and Poisson regression should be the main focus of the review. For comprehensive overview of GLMs and their implementation in R, we refer you to @dobson2008.
 
 ### Topics in R programming
+
 Although this book does not require to possess advanced skills in R programming, it is important you have good knowledge in the following topics: creation and manipulation of vectors and matrices; logical vectors; character vectors; handling of lists and data frame objects; reading data into R; graphical procedures. A very large amount of freely available material covering these topics can be found online. Our recommendation is to start from the manual "An introduction to R" of the Comprehensive R Archive Network available at this link, available at [R manual](https://cran.r-project.org/manuals.html).
 
 ## Obtaining and running the R packages
+
 It is advised that you obtain the latest 64-bit version of R in order to run the R code of this book. To install R, go to the R website, where you can download the installer packages for Windows and Mac, and find instructions for Linux, using binary files.
 
-* [Windows](https://cran.r-project.org/bin/windows/base/)
-* [Mac](https://cran.r-project.org/bin/macosx)
-* [Linux](https://cran.r-project.org/bin/linux)
+-   [Windows](https://cran.r-project.org/bin/windows/base/)
+-   [Mac](https://cran.r-project.org/bin/macosx)
+-   [Linux](https://cran.r-project.org/bin/linux)
 
-The list of the R packages used in this book is provided in the Table 1.1.
+The list of the R packages used in this book is provided in @tbl-packages.
 
-::: l-body-outset
-Table 1.1: List of the R packages that will be used in the book with a description of their use in the data analysis.
+| R packages      | Used for                                                   |
+|--------------------|----------------------------------------------------|
+| `RiskMap` (E)   | Estimating of geostatistical models and spatial prediction |
+| `sf` (E)        | Handling of spatial data in R                              |
+| `terra` (E)     | Handling of raster files in R                              |
+| `ggplot2` (E)   | Creating maps and exploratory plots                        |
+| `crsuggest` (R) | Guessing a coordinate reference systems when unknown       |
 
-| R package        | Used for                                    |
-|------------------|------------------------------------------------|
-| `RiskMap`        | Estimating of geostatistical models and spatial prediction                |
-| `sf`             | Handling of spatial data in R  |
-| `raster`         | Handling of raster files in R |
-| `ggplot2`        | Creating maps and exploratory plots  |
-| `crsuggest`      | Guessing a coordinate reference systems when unknown |
-:::
+: List of the R packages that will be used in the book with a description of their use in the data analysis. The packages marked by (E) are essential for the geostatistical analysis. Those instead marked by (R) are recommended and can be helpful to overcome issues as described under the column "Used for". {#tbl-packages}
 
 To install packages in R for the first time, you can use the command `install.packages` in the R console, as shown below for the `RiskMap` package.
 
@@ -58,96 +59,328 @@ To install packages in R for the first time, you can use the command `install.pa
 install.packages("RiskMap")
 ```
 
-## Example data-sets used in the book
-The geostatistical data-sets described in this section will be used throughout the book to illustrate the use of the R packages mentioned in the previous sections. 
+## Data-sets used in the book {#sec-examples-ch1}
 
-Each of the three data-sets can be loaded from the `RiskMap` package, using the command
-```{r eval=FALSE}
-data(galicia)
-```
-for the lead concentration data from Galicia,
-```{r eval=FALSE}
-data(liberia)
-```
-for the river-blindness data-set, and
-```{r eval=FALSE}
-data(anopheles)
-```
-for the Anhopheles mosquitoes data-set.
+The geostatistical data-sets described in this section will be used throughout the book to illustrate the use of the R packages mentioned in the previous sections.
 
-In the final chapter of this book, we will consider the analysis of additional data-sets to review the main statistical concepts presented in this book. 
+Each of the examples data-sets can be loaded from the `RiskMap` package, using the command
+
+```{r eval=FALSE}
+data(NAME_OF_THE_DATASET)
+```
+
+where in place of `NAME_OF_THE_DATASET` you should type of the name of one of the data-sets listed in @tbl-data-sets.
+
+| Names of the data-set | Short description                                                                     | Used in this book as |
+|-----------------|--------------------------------------|-----------------|
+| `galicia`             | Lead concentration m from moss samples collected in Galicia, Northern Spain           | Example              |
+| `liberia`             | Prevalence data on river-blindness from Liberia                                       | Example              |
+| `malkenya`            | Malaria prevalence data from a community and school survey conducted in Western Kenya | Example              |
+| `italy_sim`           | Simulated geostatistical data-set within the Italian national boundaries              | Example              |
+| `malnutrition`        | Data on stunting among children in Ghana                                              | Case study           |
+
+: List of data-sets available from the `RiskMap` package. Data-sets listed as "Example" are used throughout the book to illustrate the use of R functions. Data-sets listed as "Case study" are analysed in @sec-case-studies. {#tbl-data-sets}
 
 ### Lead concentration in Galicia
 
-![Figure 1.1: Data on the meausred lead concentration (in micrograms per gram dry weight) in moss samples collected in Galicia, North-West of Spain.](figures/galicia_ch1.png)
+```{r echo=FALSE, message=FALSE}
+#| label: fig-galicia-ch1
+#| fig-cap: "Data on the meausred lead concentration (in micrograms per gram dry weight) in moss samples collected in Galicia, North-West of Spain."
 
-Lead is a heavy metal which, in high concentrations, can cause chronic damage to living organisms over a long period of time. For this reason its spread and source must be regularly monitored. To assess the extent of the contamination in an area, measurements of lead are often taken from plants. The data here considered (Figure 1.1) consist of 132 locations of moss samples collected in 2000, in and around Galicia, a region in the North-Western part of Spain. One of the objectives of this survey was to establish the spatial pattern of lead concentration in Galicia so as to better identify possible sources of contamination; fore more information, see @fernandez2000.    
+library(sf)
+library(mapview)
+library(RiskMap)
+Sys.setenv(OPENSSL_CONF="/dev/null")
 
-In this case, geostatistical modelling can be used to predict the lead concentration across Galicia and allows to disentangle variation which is purely random, possibly due to measurement error, and genuine spatial variation, which is our main object of interest. 
+data("galicia")
+galicia_sf <- st_as_sf(galicia, coords = c("x", "y"), 
+                       crs = 32629)
+map <- mapview(galicia_sf, zcol = "lead", layer.name = "Lead conc.") 
+mapview::mapshot(map, file = "./figures/galicia_ch1.png")
+
+if(knitr::is_html_output()){
+  map
+} else {
+  knitr::include_graphics("./figures/galicia_ch1.png")
+}
+```
+
+Lead is a heavy metal which, in high concentrations, can cause chronic damage to living organisms over a long period of time. For this reason its spread and source must be regularly monitored. To assess the extent of the contamination in an area, measurements of lead are often taken from plants. The data here considered (@fig-galicia-ch1) consist of 132 locations of moss samples collected in 2000, in and around Galicia, a region in the North-Western part of Spain. One of the objectives of this survey was to establish the spatial pattern of lead concentration in Galicia so as to better identify possible sources of contamination; fore more information, see @fernandez2000.
+
+In this case, geostatistical modelling can be used to predict the lead concentration across Galicia and allows to disentangle variation which is purely random, possibly due to measurement error, and genuine spatial variation, which is our main object of interest.
 
 This data-set will be used in this book to show how to carry out the spatial analysis of continuously measured variables using linear geostatistical models.
 
-### River-blindness in Liberia
+### River-blindness in Liberia {#sec-rb-ch1}
 
-![Figure 1.2: River-blindness data from a cross-sectional survey carried out in Liberia ](figures/liberia_ch1.png)
+```{r echo=FALSE, message=FALSE}
+#| label: fig-liberia-ch1
+#| fig-cap: "River-blindness data from a cross-sectional survey carried out in Liberia."
 
-In low-resource settings, where disease registries are typically absent, cross-sectional surveys are an essential monitoring tool that enables the estimation of the disease burden in a population of interest. The data considered in this example have been collected as part of an Africa-wide initiative called the Rapid Epidemiological Mapping of Onchocerchiasis (REMO) carried out in 2011 in 20 African countries [@zoure2014]. The goal of REMO is to identify areas where river-blindness (or onchocerchiasis), a disease transmitted by black flies who breed along fast flowing rivers, is still a public health problem. In this context, it is especially of interest to identify communities with a prevalence above 20% and for treatment is urgently needed. 
+library(sf)
+library(mapview)
+library(RiskMap)
+data("liberia")
+liberia_sf <- st_as_sf(liberia, coords = c("long", "lat"), 
+                       crs = 4326)
+liberia_sf$prev <- liberia_sf$npos/liberia_sf$ntest
+map <- mapview(liberia_sf, zcol = "prev", layer.name = "Prevalence") 
+mapview::mapshot(map, file = "./figures/liberia_ch1.png")
 
-In this book, we will use data collected from Liberia to model nodule prevalence, which is based on a alternative and cheaper diagnostic technique for river-blindness. In the analysis of this data-set, we will illustrate how to formulate and fit Binomial geostatistical models, and how these can be used to predict prevalence within a region of interest. 
+if(knitr::is_html_output()){
+  map
+} else {
+  knitr::include_graphics("./figures/liberia_ch1.png")
+}
+```
 
-### *Anopheles gambiae* mosquitoes in Southern Cameroon
+In low-resource settings, where disease registries are typically absent, cross-sectional surveys are an essential monitoring tool that enables the estimation of the disease burden in a population of interest. The data considered in this example (@fig-liberia-ch1) have been collected as part of an Africa-wide initiative called the Rapid Epidemiological Mapping of Onchocerchiasis (REMO) carried out in 2011 in 20 African countries [@zoure2014]. The goal of REMO is to identify areas where river-blindness (or onchocerchiasis), a disease transmitted by black flies who breed along fast flowing rivers, is still a public health problem. In this context, it is especially of interest to identify communities with a prevalence above 20% and for treatment is urgently needed.
 
-![Figure 1.3: Map of the collected number of *Anopheles gambiae* mosquitoes in an area of Southern Cameroon.](figures/anopheles_ch1.png)
+In this book, we will use data collected from Liberia to model nodule prevalence, which is based on a alternative and cheaper diagnostic technique for river-blindness. In the analysis of this data-set, we will illustrate how to formulate and fit Binomial geostatistical models, and how these can be used to predict prevalence within a region of interest.
 
-In studies of vector-borne and zoonotic diseases, understanding of the vector distribution can help to better guide the decision-making process for the implementation, monitoring and evaluation of control programmes. *Anopheles gambiae* mosquitoes are one of the main vectors for malaria transmission in sub-Saharan Africa. Their distribution over space is affected by several environmental and climatic factors, including temperature, humidity and vegetation. 
+### Malaria in the Western Kenyan Highlands {#sec-malaria-ch1}
 
-The data-set considered in this example is a sub-set taken from a large database [@fossog2015] that was assembled to understand how the environment affects the distribution of different species of *Anopheles* mosquitoes in sub-Saharan Africa. We will use this data-set as an example in this book to illustrate application of Poisson geostatistical models for mapping mosquitoes abundance.
+```{r echo=FALSE, message=FALSE}
+#| label: fig-malkenya-ch1
+#| fig-cap: "Malaria prevalence data from a cross-sectional survey carried out in Nyanza Province, in the Western Highlands of Kenya."
 
+library(sf)
+library(mapview)
+library(RiskMap)
+data("malkenya")
+comm <- malkenya[malkenya$Survey=="community", ]
+coords <- unique(comm[,c("Long", "Lat")])
+agg <- data.frame(Long = coords[,1],
+                  Lat = coords[,2],
+                  prev = NA)
+for(i in 1:nrow(coords)) {
+  ind <- which(comm$Long==coords[i,1])
+  agg$prev[i] <- mean(comm[ind,"RDT"])
+}
 
-## Geostatistical problems and geostatistical models
+malkenya_sf <- st_as_sf(agg, coords = c("Long", "Lat"), 
+                       crs = 4326)
+
+map <- mapview(malkenya_sf, zcol = "prev", layer.name = "Prevalence") 
+mapview::mapshot(map, file = "./figures/malkenya_ch1.png")
+
+if(knitr::is_html_output()){
+  map
+} else {
+  knitr::include_graphics("./figures/malkenya_ch1.png")
+}
+```
+
+Malaria is one of deadliest diseases that affects populations living in tropical and subtropical countries. It is caused by a parasite of the genus Plasmodium which is transmitted through the infectious bite of female Anopheles mosquitoes. In the following chapters, we shall analyse a data-set from a cross-sectional community survey carried out in July 2010 in Nyanza Province, in the Western Highlands of Kenya [@stevenson2013].
+
+What distinguishes this from the other examples data-sets is that the data contain both individual-level and household-level information. The outcome of interest is the result from a rapid diagnostic test for malaria which. In the book, we will illustrate how to account for the the hierarchical structure of the data and the binary nature of the outcome at each of the stages of the geostatistical analysis.
+
+### *Anopheles gambiae* mosquitoes in Southern Cameroon {#sec-mosq-data-ch1}
+
+```{r echo=FALSE, message=FALSE}
+#| label: fig-anopheles-ch1
+#| fig-cap: "Map of the collected number of *Anopheles gambiae* mosquitoes in an area of Southern Cameroon."
+
+library(sf)
+library(mapview)
+library(RiskMap)
+data("anopheles")
+anopheles_sf <- st_as_sf(anopheles, coords = c("web_x", "web_y"), 
+                       crs = 3857)
+map <- mapview(anopheles_sf, zcol = "An.gambiae", layer.name = "An. gambiae") 
+mapview::mapshot(map, file = "./figures/anopheles_ch1.png")
+
+if(knitr::is_html_output()){
+  map
+} else {
+  knitr::include_graphics("./figures/anopheles_ch1.png")
+}
+```
+
+In studies of vector-borne and zoonotic diseases, understanding of the vector distribution can help to better guide the decision-making process for the implementation, monitoring and evaluation of control programmes. *Anopheles gambiae* mosquitoes are one of the main vectors for malaria transmission in sub-Saharan Africa. Their distribution over space is affected by several environmental and climatic factors, including temperature, humidity and vegetation.
+
+The data-set on mosquitoes (@fig-anopheles-ch1) that will use in the book consists of a sub-set taken from a large database [@fossog2015]. This was assembled in order to understand how the environment affects the distribution of different species of *Anopheles* mosquitoes in sub-Saharan Africa. This example data-set will be used to illustrate the application of Poisson geostatistical models for mapping mosquitoes abundance.
+
+### Simulated-dataset {#sec-italy-sim-data-ch1}
+
+```{r echo=FALSE, message=FALSE}
+#| label: fig-italy-sim-ch1
+#| fig-cap: "Map of the locations of the simulated data-set generated over Italy for a continuous outcome."
+
+library(sf)
+library(mapview)
+library(RiskMap)
+data(italy_sim)
+italy_sim_sf <- st_as_sf(italy_sim, coords = c("x1", "x2"), 
+                       crs = 32634)
+map <- mapview(italy_sim_sf, zcol = "y", layer.name = "Outcome") 
+mapview::mapshot(map, file = "./figures/italy_sim_ch1.png")
+
+if(knitr::is_html_output()){
+  map
+} else {
+  knitr::include_graphics("./figures/italy_sim_ch1.png")
+}
+```
+
+This data-set was generated using a geostatistical model, with the addition of unstructured random effects at provincial and regional level. More details on how this data-set was generated will be provided in @sec-linear-model. Whilst this data-set does not have any scientific relevance like the other data-sets used in this book, it will serve us to illustrate some of the more advanced features of the package that enable the inclusion of random effects, in addition to the latent Gaussian process that is common to all geostatistical models. The skills you will aquire through the analysis of this data-set will be useful for the analysis of data-sets presented as case studies in @sec-case-studies.
+
+## Geostatistical problems and geostatistical models {#sec-geostat-models}
+
 What the examples of the previous section have in common is that, in each case, the goal of statistical analysis is to draw inferences on an unobserved spatially continuous surface using data collected from a finite set of locations. The lead concentration in Galicia, the prevalence for river-blindness in Liberia and the abundance of *A. gambiae* mosquitoes in Cameroon can all be represented as spatially continuous processes that originate from the combined effects of environmental factors. We denote this class of inferential problems as *geostatistical problems* for which a solution can be found through the development and application of suitable *geostatistical models*, which are the subject of this book.
 
-As one can soon realize, geostatistical problems are not unique to global health but arise in many other fields of science, including economics, physics, biology, geology and others. It thus comes to no surprise that geostatistics was initially developed in the South African mining industry in the 1950s [@krige1951]. This was then further developed as a self-contained discipline by Georges Matheron and other researchers  at Fontainebleau, in France [@matheron1963; @chilesdelfiner2016]. In @watson1971 and @watson1972 a first connection is drawn between geostatistics and the prediction of stochastic processes. However, it is only with @ripley1981 and then @cressie1991 that geostatistics is explicitly brought into a classical statistical framework for the analysis of spatially referenced data. @diggle1998 coined the term *model-based geostastics*  and introduced this as belonging to the general class of generalized linear mixed models [@breslow1993], while emphasizing the use of likelihood-based methods of inference. As in @diggle1998, also in this book, we advocate the application of model-based geostistical models as a class of parametric statistical models on which inference can be carried out using either maximum likelihood estimation or Bayesian methods.
+As one can soon realize, geostatistical problems are not unique to global health but arise in many other fields of science, including economics, physics, biology, geology and others. It thus comes to no surprise that geostatistics was initially developed in the South African mining industry in the 1950s [@krige1951]. This was then further developed as a self-contained discipline by Georges Matheron and other researchers at Fontainebleau, in France [@matheron1963; @chilesdelfiner2016]. In @watson1971 and @watson1972 a first connection is drawn between geostatistics and the prediction of stochastic processes. However, it is only with @ripley1981 and then @cressie1991 that geostatistics is explicitly brought into a classical statistical framework for the analysis of spatially referenced data. @diggle1998 coined the term *model-based geostastics* and introduced this as belonging to the general class of generalized linear mixed models [@breslow1993], while emphasizing the use of likelihood-based methods of inference. As in @diggle1998, also in this book, we advocate the application of model-based geostistical models as a class of parametric statistical models on which inference can be carried out using either maximum likelihood estimation or Bayesian methods.
 
 More precisely, our attention will be directed at the class of *generalized linear geostatistical models*, or GLGM. To formally specify this, we first define the random variables $S$, a spatial stochastic process, and the random variable $Y= (Y_1, \ldots, Y_n)$ which correspond to the outcome observed at a set of locations $X = (x_1, \ldots, x_n)$. Let us use $[A]$ to denote "the distribution of the random variable $A$". To formulate a GLGM, we should then specify the joint distribution of $S$ and $Y$, which we write as
-\begin{equation}
-\label{eq:glgm_joint_ch1}
-[Y, S] = [S] [Y | S].
-\end{equation}
-On the right-hand side of the equation above, we have factorized the joint distribution of $Y$ and $S$, as the product between the marginal distribution of $S$ and the conditional distribution of $Y$ given $S$. Hence, the formulation of a GLGM can be break down into the tasks of formulating $[S]$ and $[Y | S]$. 
 
-In defining $[S]$, throughout the book, we shall assume that this is a zero-mean stationary and isotropic Gaussian process. In other words, these assumptions impose that the joint distribution of $S(X) = (S(x_1),\ldots,S(x_n))$, i.e. the process $S$ at the sampled locations $x_1, \ldots, x_n$, is invariant with respect to rations and translations of the locations $X$. In practical terms, the main implication of this is that, for any pair of locations $x_i$ and $x_j$ the correlation function $\rho(\cdot)$ between $S(x_i)$ and $S(x_j)$ is purely a function of the Euclidean distance, $u_{ij}$, between $x_i$ and $x_j$, i.e.
-\begin{equation}
-\label{eq:correlation_ch1}
+$$
+[Y, S] = [S] [Y | S].
+$$ {#eq-glgm-joint-ch1}
+
+On the right-hand side of the equation above, we have factorized the joint distribution of $Y$ and $S$, as the product between the marginal distribution of $S$ and the conditional distribution of $Y$ given $S$. Hence, the formulation of a GLGM can be break down into the tasks of formulating $[S]$ and $[Y | S]$.
+
+In defining $[S]$, throughout the book, we shall assume that this is a zero-mean stationary and isotropic Gaussian process. In other words, these assumptions impose that the joint distribution of $S(X) = (S(x_1),\ldots,S(x_n))$, i.e. the process $S$ at the sampled locations $x_1, \ldots, x_n$, is invariant with respect to rations and translations of the locations $X$. In practical terms, the main implication of this is that, for any pair of locations $x_i$ and $x_j$ the correlation function $\rho(\cdot)$ between $S(x_i)$ and $S(x_j)$ is purely a function of the Euclidean distance, $u_{ij}$, between $x_i$ and $x_j$, i.e. $$
 {\rm cov}\{S(x_i), S(x_j)\} = \sigma^2\rho(u_{ij}),
-\end{equation}
-where $\sigma^2$ is the variance of $S(x)$ for all $x$. In Chapter 3, we will look more closely at what type of correlation functions can be used for $\rho(\cdot)$ and how these affect our predictive inferences. Furthermore, the fact that assume the process $S$ to have mean zero is because this is process acts as a residual term in our modelling of $Y$. This aspect will be reiterated several times in the following chapters, as it as important implications for the interpretation of the other components of a geostatistical model, as well understanding the results of the analysis.
+$$ {#eq-correlation-ch1}
+
+where $\sigma^2$ is the variance of $S(x)$ for all $x$. Below we provide more details on the type of covoriance functions that we consider in this book. Furthermore, the fact that we assume the process $S$ to have mean zero is because this is process acts as a residual term in our modelling of $Y$. This aspect will be reiterated several times in the following chapters, as it as important implications for the interpretation of the other components of a geostatistical model, as well understanding the results of the analysis.
 
 Finally, we model $[Y | S]$, i.e. the distribution of $Y$ given $S$, is modeled as a set of mutually independent distributions which belong the exponential family, as defined in classical generalized linear modelling framework [@nelder1972]. It then follows that, we can write $[Y | S]$ as
-\begin{equation}
-\label{eq:glm_ch1}
+
+$$
 [Y | S] = \prod_{i=1}^n [Y_i | S(x_i)].
-\end{equation}
-The final step then consists of specifying a distribution for $[Y_i | S(x_i)]$. Table 1.2 gives the range, mean and variance the three specifications for $[Y_i | S(x_i)]$  which we will consider in this book. In the table, the *canonical function*, say $g(\cdot)$, denotes the natural transformation of the mean component $\mu_i$ that allows us to introduce both covariates and the spatial process $S(x_i)$ into the model so as to explain the variation in $\mu_i$ as
-\begin{equation}
-\label{eq:linear_predictor_ch1}
+$$ {#eq-glm-ch1}
+
+The final step then consists of specifying a distribution for $[Y_i | S(x_i)]$. @tbl-glm gives the range, mean and variance the three specifications for \$\[Y_i \| S(x_i)\]\$\$ which we will consider in this book. In @tbl-glm, the *canonical function*, say $g(\cdot)$, denotes the natural transformation of the mean component $\mu_i$ that allows us to introduce both covariates and the spatial process $S(x_i)$ into the model so as to explain the variation in $\mu_i$ as
+
+$$
 g(\mu_i) = d(x_i)^\top \beta + S(x_i).
-\end{equation}
-where $d(x_i)$ is a vector of spatially referenced covariates with associated regression coefficients $\beta$. Finally, the quantity $m_i$, which appears in the formulation of the Binomial and Poisson distributions, is an offset quantity and is used to account for the number of *tests* or the population size at a given location $x_i$. 
+$$ {#eq-linear-predictor-ch1}
 
-::: l-body-outset
-Table 1.2: List of type of outcomes $Y_i$ considered in the book. 
+where $d(x_i)$ is a vector of spatially referenced covariates with associated regression coefficients $\beta$. Finally, the quantity $m_i$, which appears in the formulation of the Binomial and Poisson distributions, is an offset quantity and is used to account for the number of *tests* or the population size at a given location $x_i$.
 
-| Distribution  |  Range of $Y_i$ | Mean of $[Y_i | S(x_i)]$  | Variance of $[Y_i | S(x_i)]$    | Canonical link |
-|----|------|----------|----------|----------|
-| Gaussian       | $(-\infty, +\infty)$  | $\mu_i$ |$\tau^2$ | $g(\mu_i) = \mu_i$|
-| Binomial      | $1,\dots,m_i$  | $m_i\mu_i$ |$m_i\mu_i(1-\mu_i)$ | $g(\mu_i) = \log\{ \mu_i/(1-\mu_i) \}$ |
-| Poisson     |  $1,2,\ldots,\infty$  | $m_i\mu_i$ |$m_i\mu_i$ | $g(\mu_i) = \log\{ \mu_i \}$
-:::
+| Distribution | Range of $Y_i$       | Mean of $[Y_i | S(x_i)]$ | Variance of $[Y_i | S(x_i)]$ | Canonical link                         |
+|---------------|---------------|---------------|---------------|---------------|
+| Gaussian     | $(-\infty, +\infty)$ | $\mu_i$                  | $\tau^2$                     | $g(\mu_i) = \mu_i$                     |
+| Binomial     | $1,\dots,m_i$        | $m_i\mu_i$               | $m_i\mu_i(1-\mu_i)$          | $g(\mu_i) = \log\{ \mu_i/(1-\mu_i) \}$ |
+| Poisson      | $1,2,\ldots,\infty$  | $m_i\mu_i$               | $m_i\mu_i$                   | $g(\mu_i) = \log\{ \mu_i \}$           |
 
-Based on the formulation in \eqref{eq:linear_predictor_ch1}, we can see that $S(x_i)$ quantifies residual spatial effects on $\mu_i$ that have not been accounted for by the covariates $d(x_i)$. In an ideal scenario, the covariates $d(x_i)$ should explain all the spatial variation without the need for $S(x_i)$. Although this unrealistic, in practice we may be able to most of the variation in $\mu_i$ through $d(x_i)$ and, hence, reduce $S(x_i)$ to a negligible component. In Chapter 2, we will show how a thorough exploratory analysis can help to understand whether we have come close to that ideal scenario or, if instead, we need the use of GLGM to model the data. 
+: Type of outcomes $Y_{i}$ considered in this book. {#tbl-glm}
 
-The model described in \eqref{eq:linear_predictor_ch1} can be seen as the most basic GLGM that can be used for a geostatistical analysis. As we will see in the analysis of some of the examples and, in Chapter 6, in the case studies, some extensions of this model will be required to account for additional sources of residual variation that contribute to the intrinsic random variation of the data.
+Based on the formulation in ([-@eq-linear-predictor-ch1]), we can see that $S(x_i)$ quantifies residual spatial effects on $\mu_i$ that have not been accounted for by the covariates $d(x_i)$. In an ideal scenario, the covariates $d(x_i)$ should explain all the spatial variation without the need for $S(x_i)$. Although this unrealistic, in practice we may be able to most of the variation in $\mu_i$ through $d(x_i)$ and, hence, reduce $S(x_i)$ to a negligible component. In Chapter 2, we will show how a thorough exploratory analysis can help to understand whether we have come close to that ideal scenario or, if instead, we need the use of GLGM to model the data.
 
+The model described in ([-@eq-linear-predictor-ch1]) can be seen as the most basic GLGM that can be used for a geostatistical analysis. As we will see in the analysis of some of the examples and, in Chapter 6, for the case studies, extensions of this model will be required to accommodate the intrinsic non-spatial random variation of the data which is not captured by the covariates.
+
+The types of problems that statistical models are applied to can be distinguished into three main categories: prediction problems; explanatory problems; problems of hypothesis testing. Most of the times, geostatistical problems tend to fall under the first category, where the goal is make predictive inferences on the process $S(x)$ at location $x$, which is usually outside of the set of sampled locations. However, as will illustrate in the later chapters, geostatistical models play an important also in the other two types of problems. In particular, we will show that spatial correlation can have a substantial impact on the point estimates and standard errors for $\beta$. Hence, if the goal of the analysis is explain the relationship between a covariate $d(x)$ with the mean component $\mu$.
+
+### The Matern family of correlation functions
+
+Throughout the book, we shall consider the @matern2013 family of correlation functions to model the spatial correlation of the Gaussian process $S(x)$. This defined as $$
+\rho(u;\phi,\kappa) =\{2^{\kappa-1} \Gamma(\kappa)\}^{-1} (u/\phi)^\kappa K_\kappa(u/\phi),
+$$ {#eq-matern} where $\phi>0$ and $\kappa>0$ are parameters and $K_\kappa(\cdot)$ is the modified Bessel function of the third kind of order $\kappa$. The parameters $\phi$ and $\kappa$ regulate how fast the spatial correlation decays to zero for increasing distance and the smoothness of the process, respectively. A special case of Matern family of correlation functions, which is obtained when $\kappa=0.5$, will be of particular relevance to the application considered in this book. This is the expeonential correlation function which we write as $$
+\rho(u;\phi) = \exp\{-u/\phi\}.
+$$ {#eq-exp}
+
+Another special case, which we dot consider in this book but has often been used in machine learning applications, is the Gaussian correlation function obtain as a limiting case for $\kappa \to +\infty$ the possible smoothest process arising from the Matern family.
+
+To better understand how $\phi$ and $\kappa$ affect the spatial correlation and the pattern of the spatial of the spatial surface, we now consider some examples.
+
+```{r, echo=FALSE, fig.align = "center", fig.height = 8, fig.width = 12,out.width = "8.5in"}
+#| label: fig-matern-func
+#| fig-cap: "Examples of stationary and isotropic Matern correlation functions. Panel (a) shows three different correlations functions that have the same smothness parameter of $\\kappa=0.5$, while varying the scale parameter $\\phi$ over ${0.05, 0.1, 0.2}$. In panel (b) the scale of the spatial correlation $\\phi$ is chosen so that each of the three functions reaches 0.05 at distance 0.3 (as also shown by the horizontal and vertical black dashed segments). "
+
+phi_1 <- 0.05
+
+phi_2 <- 0.1
+
+phi_3 <- 0.2
+
+u <- seq(0,0.5,length=1000)
+m1 <- sapply(u, function(x) matern_cor(x, phi_1, kappa = 0.5))
+m2 <- sapply(u, function(x) matern_cor(x, phi_2, kappa = 0.5))
+m3 <- sapply(u, function(x) matern_cor(x, phi_3, kappa = 0.5))
+
+par(mfrow=c(1,2))
+matplot(u, cbind(m1,m2,m3), type="l",
+        lty=c("solid", "dotted", "dashed"), col=1:3, lwd=2,
+        ylab="Spatial correlation", xlab="Distance between locations",
+        main = "(a)")
+
+
+legend(0.2,0.8,c(expression(varphi~"="~0.05 ~", " ~ kappa ~"= 0.5"),
+                 expression(varphi~"="~0.1~", " ~ kappa ~"= 0.5"),
+                 expression(varphi~"="~0.2~", " ~ kappa ~"= 0.5")),
+       lty=c("solid", "dotted", "dashed"), col=1:3, lwd=2) 
+
+phi_0.5 <- uniroot(function(x) matern_cor(0.3, x, 0.5) - 0.05,
+                   lower=0.01, upper = 1)$root
+
+phi_1.5 <- uniroot(function(x) matern_cor(0.3, x, 1.5) - 0.05,
+                   lower=0.01, upper = 1)$root
+
+phi_2.5 <- uniroot(function(x) matern_cor(0.3, x, 2.5) - 0.05,
+                   lower=0.01, upper = 1)$root
+
+u <- seq(0,0.5,length=1000)
+m0.5 <- sapply(u, function(x) matern_cor(x, phi_0.5, kappa = 0.5))
+m1.5 <- sapply(u, function(x) matern_cor(x, phi_1.5, kappa = 1.5))
+m2.5 <- sapply(u, function(x) matern_cor(x, phi_2.5, kappa = 2.5))
+
+matplot(u, cbind(m0.5,m1.5,m2.5), type="l",
+        lty=c("solid", "dotted", "dashed"), col=1:3, lwd=2,
+        ylab="Spatial correlation", xlab="Distance between locations",
+        main = "(b)")
+segments(0,0.05,0.3,0.05,lty="dashed")
+segments(0.3,0,0.3,0.05,lty="dashed")
+
+legend(0.2,0.8,c(expression(varphi~"="~0.100 ~", " ~ kappa ~"= 0.5"),
+                 expression(varphi~"="~0.063~", " ~ kappa ~"= 1.5"),
+                 expression(varphi~"="~0.051~", " ~ kappa ~"= 2.5")),
+       lty=c("solid", "dotted", "dashed"), col=1:3, lwd=2) 
+```
+
+@fig-matern-func shows six different Matern correlation functions. In panel (a), we have kept $\kappa$ fixed to 0.5 and varied $\phi$ over the values 0.05, 0.1 and 0.2. As expected, for larger values of $\phi$ the correlation function has a slower decay to zero. Panels (a) to (c), in @fig-matern-sim, show three realizations of a Gaussian process from each of these correlation functions. The mean of the Gaussian process was set to zero and variance to 1. We can observe that spatial correlations with larger scales are associated with longer spatial trends, whilst smaller scales exhibit a patchier pattern. This is because, as $\phi$ takes values that are closer to zero, the spatial surface will tend to show a less structured pattern and will revert towards its zero mean more rapidly.
+
+Finally, let us consider the correlation functions, shown in the panel (b) of @fig-matern-func. Here, we have varied $\kappa$ over the values 0.5, 1.5 and 2.5, whilst $\phi$ has been fixed in order to force all three correlation functions to reach 0.05 for distance 0.3. In this way, we can better observe the effect of different values $\kappa$ on the spatial surface for process that have approximately the same range for the spatial correlation. In @fig-matern-sim, we observe three realizations from these correlation functions. We observe that the differences between the different surface are determined by the small spatial scale behaviour; $\kappa = 0.5$ correspond to a rougher and less regular spatial pattern, whilst $\kappa=2.5$ shows a smoothest surface of the three processes considered. These properties of the spatial surface are related to the so called differentiability of the the Guassian process, which determines its local behaviour. If you are interested in delving these theoretical aspects, we suggest reading Chapter 2 of @stein1999.
+
+```{r, echo=FALSE, message=FALSE}
+#| label: fig-matern-sim
+#| fig-cap: "Simulated spatial surface using the three correltion functions shown in @fig-matern-func. Panels (a), (b) and (c) correspond to the correlation functions from panel (a) in @fig-matern-func and in order these are: $\\phi = 0.05$ and $\\kappa=0.5$; (b) $\\phi=0.1$ and $\\kappa=0.5$; (c) $\\phi=0.2$ and $\\kappa=0.5$. Panels (c), (d) and (e) correspond to the correlation functions from panel (b) in @fig-matern-func and in order these are: $\\phi = 0.1$ and $\\kappa=0.5$; (b) $\\phi=0.063$ and $\\kappa=1.5$; (c) $\\phi=0.051$ and $\\kappa=2.5$."
+
+library(terra)
+r_1 <- rast("data/sim_matern_1.tif")
+r_2 <- rast("data/sim_matern_2.tif")
+r_3 <- rast("data/sim_matern_3.tif")
+
+r_05 <- rast("data/sim_matern_05.tif")
+r_15 <- rast("data/sim_matern_15.tif")
+r_25 <- rast("data/sim_matern_25.tif")
+
+par(mfrow=c(2,3))
+plot(r_1, main="(a)")
+plot(r_2, main="(b)")
+plot(r_3, main="(c)")
+plot(r_05, main="(d)")
+plot(r_15, main="(e)")
+plot(r_25, main="(f)")
+```
+
+The flexibility provided by the Matern correlation function in capturing different forms of spatial correlations has made one of, if not the most widely used correlation function in model-based geostatistics [@stein1999]. For this reason, in this book we will consider the Matern correlation function. We will consider estimation issues related to the Matern correlation in @sec-estimation.
 
 ## Workflow of a statistical analysis and structure of the book
+
+![Stages of a statistical analysis](./figures/workflow_diagram.png){#fig-stages fig-align="center"}
+
+@fig-stages shows the different stages that will follow in carrying the geostatistical analysis of the examples introduced in @sec-examples-ch1. The exploratory analysis of the data is an essential first step that is used to understand the empirical associations between risk factors and the the health outcome of interest. In our case, this first stage is also used to justify the use of geostatistical models by questioning the underlying assumptions of standard generalized linear models. Based on the results obtained from the exploration of the data, we then formulate a suitable statistical model and estimate its parameters using likelihood based methods of inference. These also allows us to obtain uncertainty measures about the strength of associations of regression relationships and the other model parameters that define the shape of the spatial correlation in the data. Following the estimation of the model, we then proceed to validate its underlying assumptions using suitable diagnostics that assess whether the model can later be sufficiently trusted to represent the observed variation in the modelled outcome. At this stage, if the diagnostics checks yield results that indicate the incompatibility of the model with the data, we then back to the stage of model formulation and address the issues arisen from the validation stage. If instead, we do not find any evidence against the fitted model we can proceed to carry out sptatial prediction. At this stage, it is important to define suitable predictive targets that can help us to better answer the original research question and better assist the decision making process. The final step of visualization of uncertainty plays an important role in geostatistical analysis in order to convey the main findings of the study in an effective and easy-to-understand way for a wider audience which also consists of non-experts.
+
+In the remainder of this book, each chapter focuses on a specific stage as shown in @fig-stages. We treat visualization of uncertainty together with spatial prediction in @sec-geo-prediction.
+
+@sec-handling-data will provide an overview of how to handle saptial data in R, in particular raster and shape files. The skills learned in this chapter will be applied throughout the book, and will especially be useful in @sec-geo-prediction and @sec-case-studies for generating predictive maps of the modelled outcome.
+
+@sec-estimation focuses on the model building process and estimation of geostatistical models. This chapter will show how to carry out initial exploratory analyses of the data to inform the formulation of suitable geostatistical models and how these can be fitted using maximum likelihood estimation methods.
+
+@sec-validation illustrated the use of methods that can be used to validate the assumptions and calibration of statistical models.
+
+@sec-geo-prediction shows how geostatistical models can be used to carry out spatial prediction of a health outcome of interest both on a spatially continuous and spatially aggregated scales.
+
+Finally, @sec-case-studies presents the application of all the methods illustrated in the previous chapters to three additional data-sets. This chapter offers a summary of the content of book by putting together all the stages in the geostatistical analyses for each of the three case studies, and illustrates additional functionalities of the `RiskMap` R package not covered in the previous chapters.

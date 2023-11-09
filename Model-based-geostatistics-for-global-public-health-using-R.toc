@@ -9,8 +9,8 @@
 \contentsline {section}{\numberline {1.3}Obtaining and running the R packages}{9}{section.1.3}%
 \contentsline {section}{\numberline {1.4}Example data-sets used in the book}{10}{section.1.4}%
 \contentsline {subsection}{\numberline {1.4.1}Lead concentration in Galicia}{10}{subsection.1.4.1}%
-\contentsline {subsection}{\numberline {1.4.2}River-blindness in Liberia}{12}{subsection.1.4.2}%
-\contentsline {subsection}{\numberline {1.4.3}\emph {Anopheles gambiae} mosquitoes in Southern Cameroon}{13}{subsection.1.4.3}%
+\contentsline {subsection}{\numberline {1.4.2}River-blindness in Liberia}{11}{subsection.1.4.2}%
+\contentsline {subsection}{\numberline {1.4.3}\emph {Anopheles gambiae} mosquitoes in Southern Cameroon}{11}{subsection.1.4.3}%
 \contentsline {section}{\numberline {1.5}Geostatistical problems and geostatistical models}{13}{section.1.5}%
 \contentsline {section}{\numberline {1.6}Workflow of a statistical analysis and structure of the book}{16}{section.1.6}%
 \contentsline {chapter}{\numberline {2}Exploratory analysis}{17}{chapter.2}%
@@ -35,5 +35,5 @@
 \contentsline {section}{\numberline {6.1}Mapping stunting risk in Ghan}{25}{section.6.1}%
 \contentsline {section}{\numberline {6.2}Mapping river blindness in Malawi}{25}{section.6.2}%
 \contentsline {section}{\numberline {6.3}Mapping mosquitoes abundance in Cameroon}{25}{section.6.3}%
-\contentsline {fm}{References}{27}{chapter*.5}%
-\contentsline {chapter}{References}{27}{chapter*.5}%
+\contentsline {fm}{References}{27}{chapter*.6}%
+\contentsline {chapter}{References}{27}{chapter*.6}%

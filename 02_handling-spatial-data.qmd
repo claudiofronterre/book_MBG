@@ -1,4 +1,4 @@
-# Exploratory analysis
+# Handling of spatial data in R {#sec-handling-data}
 
 This is a book created from markdown and executable code.
 
@@ -12,11 +12,4 @@ See @knuth84 for additional discussion of literate programming.
 
 ## Visualizing geostatistical data
 
-## Exploring associations
-
-## Analysis of the residuals
-
-### Diagnostics for overdispersion
-
-### Diagnostics for residual spatial variation
-
+## 

@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.2.475">
+<meta name="generator" content="quarto-1.3.450">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Model-based geostatistics for global public health using R - 3&nbsp; Model fitting</title>
+<title>Model-based geostatistics for global public health using R - 3&nbsp; Model formulation and parameter estimation</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -17,9 +17,10 @@ div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
   width: 0.8em;
-  margin: 0 0.8em 0.2em -1.6em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
@@ -46,44 +47,33 @@ pre.numberSource code > span > a:first-child::before
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
     padding: 0 4px; width: 4em;
-    color: #aaaaaa;
   }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
 div.sourceCode
   {   }
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { color: #008000; } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { color: #008000; font-weight: bold; } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -94,7 +84,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
 <link href="./04_model-validation.html" rel="next">
-<link href="./02_exploratory-analysis.html" rel="prev">
+<link href="./02_handling-spatial-data.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -120,10 +110,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
     "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit"
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
   }
 }</script>
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 </head>
 
@@ -131,11 +124,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
-  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
-    <div class="container-fluid d-flex justify-content-between">
-      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Model fitting</span></h1>
-      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
-        <i class="bi bi-chevron-right"></i>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./03_model-fitting.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Model formulation and parameter estimation</span></a></li></ol></nav>
+      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+      </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
       </button>
     </div>
   </nav>
@@ -143,70 +141,96 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="./">Model-based geostatistics for global public health using R</a> 
     </div>
       </div>
-      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="mt-2 flex-shrink-0 align-items-center">
         <div class="sidebar-search">
         <div id="quarto-search" class="" title="Search"></div>
         </div>
-      </div>
+        </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./index.html" class="sidebar-item-text sidebar-link">Preface</a>
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./01_intro.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></a>
+  <a href="./01_intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./02_exploratory-analysis.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Exploratory analysis</span></a>
+  <a href="./02_handling-spatial-data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Handling of spatial data in R</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./03_model-fitting.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Model fitting</span></a>
+  <a href="./03_model-fitting.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Model formulation and parameter estimation</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./04_model-validation.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Model validation</span></a>
+  <a href="./04_model-validation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Model validation</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./05_geostatistical-prediction.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Geostatistical prediction</span></a>
+  <a href="./05_geostatistical-prediction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Geostatistical prediction</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./06_case-studies.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Case studies</span></a>
+  <a href="./06_case-studies.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Case studies</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./references.html" class="sidebar-item-text sidebar-link">References</a>
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
   </div>
 </li>
     </ul>
     </div>
 </nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#linear-gaussian-model" id="toc-linear-gaussian-model" class="nav-link active" data-scroll-target="#linear-gaussian-model"><span class="toc-section-number">3.1</span>  Linear Gaussian model</a></li>
-  <li><a href="#generalized-linear-geostatistical-models" id="toc-generalized-linear-geostatistical-models" class="nav-link" data-scroll-target="#generalized-linear-geostatistical-models"><span class="toc-section-number">3.2</span>  Generalized linear geostatistical models</a></li>
+  <li><a href="#list-of-the-main-functions-used-in-the-chapter" id="toc-list-of-the-main-functions-used-in-the-chapter" class="nav-link active" data-scroll-target="#list-of-the-main-functions-used-in-the-chapter">List of the main functions used in the chapter</a></li>
+  <li><a href="#exploratory-analysis" id="toc-exploratory-analysis" class="nav-link" data-scroll-target="#exploratory-analysis"><span class="header-section-number">3.1</span> Exploratory analysis</a>
+  <ul class="collapse">
+  <li><a href="#sec-expl-assoc" id="toc-sec-expl-assoc" class="nav-link" data-scroll-target="#sec-expl-assoc"><span class="header-section-number">3.1.1</span> Exploring associations with risk factors using count data</a></li>
+  <li><a href="#sec-overdispersion" id="toc-sec-overdispersion" class="nav-link" data-scroll-target="#sec-overdispersion"><span class="header-section-number">3.1.2</span> Exploring overdispersion in count data</a></li>
+  <li><a href="#sec-expl-spatial" id="toc-sec-expl-spatial" class="nav-link" data-scroll-target="#sec-expl-spatial"><span class="header-section-number">3.1.3</span> Exploring residual spatial correlation</a></li>
+  </ul></li>
+  <li><a href="#sec-linear-model" id="toc-sec-linear-model" class="nav-link" data-scroll-target="#sec-linear-model"><span class="header-section-number">3.2</span> Parameter estimation: the linear geostatistical model</a>
+  <ul class="collapse">
+  <li><a href="#a-pragmatic-approach-to-deal-with-the-smothness-parameter-kappa" id="toc-a-pragmatic-approach-to-deal-with-the-smothness-parameter-kappa" class="nav-link" data-scroll-target="#a-pragmatic-approach-to-deal-with-the-smothness-parameter-kappa"><span class="header-section-number">3.2.1</span> A pragmatic approach to deal with the smothness parameter <span class="math inline">\(\kappa\)</span></a></li>
+  </ul></li>
+  <li><a href="#generalized-linear-geostatistical-models" id="toc-generalized-linear-geostatistical-models" class="nav-link" data-scroll-target="#generalized-linear-geostatistical-models"><span class="header-section-number">3.3</span> Generalized linear geostatistical models</a></li>
+  <li><a href="#theory" id="toc-theory" class="nav-link" data-scroll-target="#theory"><span class="header-section-number">3.4</span> Theory</a>
+  <ul class="collapse">
+  <li><a href="#the-likelihood-function-of-a-genearlized-linear-mixed-model" id="toc-the-likelihood-function-of-a-genearlized-linear-mixed-model" class="nav-link" data-scroll-target="#the-likelihood-function-of-a-genearlized-linear-mixed-model"><span class="header-section-number">3.4.1</span> The likelihood function of a genearlized linear mixed model</a></li>
+  <li><a href="#the-likelihood-function-of-a-genearlized-linear-geostatistical-model" id="toc-the-likelihood-function-of-a-genearlized-linear-geostatistical-model" class="nav-link" data-scroll-target="#the-likelihood-function-of-a-genearlized-linear-geostatistical-model"><span class="header-section-number">3.4.2</span> The likelihood function of a genearlized linear geostatistical model</a></li>
+  <li><a href="#monte-carlo-maximum-likelihood" id="toc-monte-carlo-maximum-likelihood" class="nav-link" data-scroll-target="#monte-carlo-maximum-likelihood"><span class="header-section-number">3.4.3</span> Monte Carlo maximum likelihood</a></li>
+  </ul></li>
+  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">3.5</span> Exercises</a></li>
   </ul>
 </nav>
     </div>
@@ -215,7 +239,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title d-none d-lg-block"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Model fitting</span></h1>
+<h1 class="title"><span id="sec-estimation" class="quarto-section-identifier"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Model formulation and parameter estimation</span></span></h1>
 </div>
 
 
@@ -230,21 +254,815 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 </header>
 
-<p>This is a book created from markdown and executable code.</p>
-<p>See <span class="citation" data-cites="knuth84">(<a href="references.html#ref-knuth84" role="doc-biblioref"><strong>knuth84?</strong></a>)</span> for additional discussion of literate programming.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span> <span class="sc">+</span> <span class="dv">1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 2</code></pre>
-</div>
-</div>
-<section id="linear-gaussian-model" class="level2" data-number="3.1">
-<h2 data-number="3.1" class="anchored" data-anchor-id="linear-gaussian-model"><span class="header-section-number">3.1</span> Linear Gaussian model</h2>
+<section id="list-of-the-main-functions-used-in-the-chapter" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="list-of-the-main-functions-used-in-the-chapter">List of the main functions used in the chapter</h2>
+<table class="table">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 66%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Function</th>
+<th>R Package</th>
+<th>Used for</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>lmer</code></td>
+<td><code>lme4</code></td>
+<td>Fitting linear mixed models</td>
+</tr>
+<tr class="even">
+<td><code>glmer</code></td>
+<td><code>lme4</code></td>
+<td>Fitting generalized linear mixed models</td>
+</tr>
+<tr class="odd">
+<td><code>glgm</code></td>
+<td><code>RiskMap</code></td>
+<td>Fitting generalized linear mixed models</td>
+</tr>
+<tr class="even">
+<td><code>s_variogram</code></td>
+<td><code>RiskMap</code></td>
+<td>Computing the empirical variogram and carrying out permutation test for spatial independence</td>
+</tr>
+</tbody>
+</table>
 </section>
-<section id="generalized-linear-geostatistical-models" class="level2" data-number="3.2">
-<h2 data-number="3.2" class="anchored" data-anchor-id="generalized-linear-geostatistical-models"><span class="header-section-number">3.2</span> Generalized linear geostatistical models</h2>
+<section id="exploratory-analysis" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="exploratory-analysis"><span class="header-section-number">3.1</span> Exploratory analysis</h2>
+<p>As illustrated in <a href="01_intro.html#fig-stages">Figure&nbsp;<span>1.8</span></a>, exploratory analysis is the first step that should be carried out in a statistical analysis. This stage is essential to inform how covariates should be introduced in the model and, in our case, whether the variation unexplained by those covariates exhibits spatial correlation.</p>
+<p>In the exploratory analysis of count data, we will also look at how overdispersion, which is a necessary, though not sufficient, condition for residual spatial correlation.</p>
+<section id="sec-expl-assoc" class="level3" data-number="3.1.1">
+<h3 data-number="3.1.1" class="anchored" data-anchor-id="sec-expl-assoc"><span class="header-section-number">3.1.1</span> Exploring associations with risk factors using count data</h3>
+<p>Assessment of the association between the health outcome of interest and non-categorical (i.e.&nbsp;continuous) risk factors can be carried using graphical tools, such scatter plots. The graphical inspection of the empirical association between the outcome and the covariates is especially useful to identify non-linear patterns in the relationship which should then be accounted for in the model formulation.</p>
+<p>In this section, we look more closely at the case when the observed outcome is a count which requires a different treatment from continuously measured outcomes, which are generally covered by most statistics textbooks (see, for example, Chapter 1 of <span class="citation" data-cites="weisberg2014">Weisberg (<a href="references.html#ref-weisberg2014" role="doc-biblioref">2014</a>)</span>).</p>
+<section id="when-the-outcome-is-an-aggregated-count" class="level4" data-number="3.1.1.1">
+<h4 data-number="3.1.1.1" class="anchored" data-anchor-id="when-the-outcome-is-an-aggregated-count"><span class="header-section-number">3.1.1.1</span> When the outcome is an aggregated count</h4>
+<p>Let us first consider the example of the river-blindness data in Liberia (<a href="01_intro.html#sec-rb-ch1"><span>Section&nbsp;1.4.2</span></a>), and examine the association between prevalence and elevation. We first generate a plot of the prevalence against the measured elevation at each of the sample locations</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>liberia<span class="sc">$</span>prev <span class="ot">&lt;-</span> liberia<span class="sc">$</span>npos<span class="sc">/</span>liberia<span class="sc">$</span>ntest</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(liberia, <span class="fu">aes</span>(<span class="at">x =</span> elevation, <span class="at">y =</span> prev)) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Elevation (meters)"</span>,<span class="at">y=</span><span class="st">"Prevalence"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-prev-elev-liberia" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="03_model-fitting_files/figure-html/fig-prev-elev-liberia-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="figure-caption">Figure&nbsp;3.1: Scatter plot of the empirical prevalence for river-blindess against elevation, measured in meters.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The plot shown in <a href="#fig-prev-elev-liberia">Figure&nbsp;<span>3.1</span></a> shows that, as elevation increases from 0 to around 150 meters, prevalence rapidly increases to around 0.25 and, for larger values in elevation than 150 meters, the relationship levels off. This begs the question of how we can account for this in a regression model. To answer this question rigorously, however, the plot in <a href="#fig-prev-elev-liberia">Figure&nbsp;<span>3.1</span></a> cannot be used. This is because, when the modelled outcome is a bounded Binomial count, regression relationships are specified on the logit-transformed prevalence (log-odds) scale; see <a href="01_intro.html#tbl-glm">Table&nbsp;<span>1.3</span></a> in Section <a href="01_intro.html#sec-geostat-models"><span>Section&nbsp;1.5</span></a> . To explore regression relationships in the case of prevalence data, it is convenient to use the so-called empirical logit in place of the empirical prevalence. The empirical logit is defined as</p>
+<p><span id="eq-empirical-logit"><span class="math display">\[
+l_{i} = \log\left\{\frac{y_i + 1/2}{n_i - y_i + 1/2}\right\}
+\tag{3.1}\]</span></span></p>
+<p>where <span class="math inline">\(y_i\)</span> are the number of individuals who tested positive for riverblindness and <span class="math inline">\(n_i\)</span> is the total number of people tested at a location. The reason for using the empirical logit, rather than the standard logit transformation applied directly to the empirical prevalence, is that it allows to generate finite values for empirical prevalence values of 0 and 1, for which the standard logit transformation is not defined.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># The empirical logit</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>liberia<span class="sc">$</span>elogit <span class="ot">&lt;-</span> <span class="fu">log</span>((liberia<span class="sc">$</span>npos<span class="fl">+0.5</span>)<span class="sc">/</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>                      (liberia<span class="sc">$</span>ntest<span class="sc">-</span>liberia<span class="sc">$</span>npos<span class="fl">+0.5</span>))</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(liberia, <span class="fu">aes</span>(<span class="at">x =</span> elevation, <span class="at">y =</span> elogit)) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Adding a smoothing spline</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Elevation (meters)"</span>,<span class="at">y=</span><span class="st">"Empirical logit"</span>) <span class="sc">+</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_smooth</span>(<span class="at">method =</span> <span class="st">"gam"</span>, <span class="at">formula =</span> y <span class="sc">~</span> <span class="fu">s</span>(x),<span class="at">se=</span><span class="cn">FALSE</span>)<span class="sc">+</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Adding linear regression fit with log-transformed elevation</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">formula =</span> y <span class="sc">~</span> <span class="fu">log</span>(x),</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>              <span class="at">col=</span><span class="st">"green"</span>,<span class="at">lty=</span><span class="st">"dashed"</span>,<span class="at">se=</span><span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Adding linear regression fit with change point in 150 meters</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">formula =</span> y <span class="sc">~</span> x <span class="sc">+</span> <span class="fu">pmax</span>(x<span class="dv">-150</span>, <span class="dv">0</span>),</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>              <span class="at">col=</span><span class="st">"red"</span>,<span class="at">lty=</span><span class="st">"dashed"</span>,<span class="at">se=</span><span class="cn">FALSE</span>) </span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-elogit-elev-liberia" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="03_model-fitting_files/figure-html/fig-elogit-elev-liberia-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="figure-caption">Figure&nbsp;3.2: Scatter plot of the empirical prevalence for river-blindess against elevation, measured in meters.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><a href="#fig-elogit-elev-liberia">Figure&nbsp;<span>3.2</span></a> shows the scatter plot of the empirical logit against elevation. In this plot, we have also added three lines though the <code>stat_smooth</code> from the <code>ggplot2</code> package. Using this function, we first pass the term <code>gam</code> to <code>method</code> to add a penalized smoothing spline <span class="citation" data-cites="hastie2001">(<a href="references.html#ref-hastie2001" role="doc-biblioref">Hastie, Tibshirani, and Friedman 2001</a>)</span>, represented by the blue solid line. The smoothing spline allows us to better discern how the type of relationship and how to best capture it using a standard regression approach. As er can see from <a href="#fig-elogit-elev-liberia">Figure&nbsp;<span>3.2</span></a>, the smoothing spline corroborates our initial observation of a positive relationship up to about 150 meters, followed by a plateau.</p>
+<p>To capture this non-linear relationship, we can use the two following approaches. The first is based on a simple log-transformation of elevation and is represented in <a href="#fig-elogit-elev-liberia">Figure&nbsp;<span>3.2</span></a> by the green line. If were to express this relationship using a standard Binomial regression model, this would take the form <span id="eq-log-elev-glm"><span class="math display">\[
+\log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_0 + \beta_1 \log\{e(x_i)\}
+\tag{3.2}\]</span></span> where <span class="math inline">\(p(x_i)\)</span> and <span class="math inline">\(e(x_i)\)</span> are the river-blindness prevalence and elevation at sampled location <span class="math inline">\(x_i\)</span>, respectively.</p>
+<p>Alternatively, the non-linear effect of elevation on prevalence could be captured using a linear spline. Put in simple terms, we want to fit a linear regression model that allows for a change in slope above 150 meters. Formally, this is expressed in a Binomial regression model as <span id="eq-lspline-elev-glm"><span class="math display">\[
+\log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_0 + \beta_1 e(x_i) + \beta_{2} \max\{e(x_i)-150, 0\}.
+\tag{3.3}\]</span></span> Based on the equation above, the effect of elevation below 150 meters is quantified by the parameter <span class="math inline">\(\beta_1\)</span>. Above 150 meters, instead, the effect of elevation becomes <span class="math inline">\(\beta_1 + \beta_2\)</span>. Note that the function <code>pmax</code> (and not the standard base function <code>max</code>) should be used in R when the computation of the maximum between a scalar value and each of the components of a numeric vector is required.</p>
+<p>Before proceeding further, it is important to explain the differences between the use of the logarithmic transformation (<a href="#eq-log-elev-glm">Equation&nbsp;<span>3.2</span></a>) and the linear spline (<a href="#eq-lspline-elev-glm">Equation&nbsp;<span>3.3</span></a>). We observe that both curves provide a similar fit to the data, with larger differences observed for larger values in elevation, where the log-transformed elevation models yields larger values for the predicted prevalence. This also suggests that if we were to extrapolate the predictions beyond 600 meters in elevation the implied pattern by the model with the log-transformed elevation would predict an increasingly larger elevation, which is unrealistic, since the fly that transmits the diseases cannot breed at those altitudes. The linear spline model instead would generate predictions that would be very similar to those observed between 150 and 600 meters. From this point view, the linear spline model would thus have more scientific validity than the other model. However, which of the two approaches should be chosen to model the effect of elevation is a question that closely depends on the research question to be addressed.</p>
+<p>If the interest of the study was in better understanding the association between elevation and prevalence, the linear spline model does not only provide a more credible explanation but also its regression parameters can be more easily interpreted. In fact, for a unit increase in elevation, the multiplicative change in the odds for river-blindness is <span class="math inline">\(\exp\{\beta_1\}\)</span>, if elevation is below 150 meters, and <span class="math inline">\(\exp\{\beta_1+\beta_2\}\)</span>, if elevation is above 150 meters. When instead we use the log-transformed elevation, the interpretation of <span class="math inline">\(\beta_1\)</span> in <a href="#eq-log-elev-glm">Equation&nbsp;<span>3.2</span></a> is slightly more complicated, as it is based on the multiplicative increase in elevation by the same amount given by the base of the algorithm, which is about <span class="math inline">\(e \approx 2.718\)</span><a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>. To avoid this, one could rescale the regression coefficient as, for example, <span class="math inline">\(\beta_1/\log_{2}(e)\)</span> which would be interpreted as the multiplicative change in the odds for river-blindness for a doubling in elevation. However, a doubling in elevation is less meaningful when considering larger values of elevation.</p>
+<p>When the goal of statistical analysis is instead in developing a predictive model for the outcome of interest, the explanatory power and interpretability of the model may be of less concern. For this reason, the model with the log-transformed model could be preferred over the model with the linear spline, if it shown to yield more predictive power. We will come back to this point again in <a href="05_geostatistical-prediction.html"><span>Chapter&nbsp;5</span></a>, where will show how to assess and compare the predictive performance of different geostatistical models.</p>
+<p>The other type of aggregated count data that we consider are unbounded counts. The Anopheles mosquitoes data-set (<a href="01_intro.html#sec-mosq-data-ch1"><span>Section&nbsp;1.4.4</span></a>) is an example of this, since there is no upper limit to the number of mosquitoes that can be trapped at a location. Let us consider the covariate represented by elevation. In this case, the simplest model that can be used to analyse the data is a Poisson regression, where the linear predictor is defined on the log of the mean number of mosquitoes (<a href="01_intro.html#tbl-glm">Table&nbsp;<span>1.3</span></a>). Hence, exploratory plots for the association with covariates should be generated using the log transformed counts of mosquitoes. In this instance, to avoid taking the log of zero, we can add 1 to the reported counts, if required. The variable of the <code>An.gambiae</code> in the <code>anopheles</code> data-set does not contain any 0, hence we simply apply the log tranformation without adding 1.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>anopheles<span class="sc">$</span>log_counts <span class="ot">&lt;-</span> <span class="fu">log</span>(anopheles<span class="sc">$</span>An.gambiae)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(anopheles, <span class="fu">aes</span>(<span class="at">x =</span> elevation, <span class="at">y =</span> log_counts)) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Adding a smoothing spline</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Elevation (meters)"</span>,<span class="at">y=</span><span class="st">"Log number of An. gambiae mosquitoes"</span>) <span class="sc">+</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">formula =</span> y <span class="sc">~</span> x, <span class="at">se=</span><span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-logcounts-elev-mosq" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="03_model-fitting_files/figure-html/fig-logcounts-elev-mosq-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="figure-caption">Figure&nbsp;3.3: Scatter plot of the log tranformed number of <em>Anopheles gambiae</em> mosquitoes against elevation, measured in meters. The blue line is generated using the least squares fit.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The scatter plot of <a href="#fig-logcounts-elev-mosq">Figure&nbsp;<span>3.3</span></a> shows that there is a negative, though weak, association, with the average number of mosquitoes decreasing for increasing elevation. In this instance, the assumption of a linear relationship with elevation would be a reasonable choice.</p>
+</section>
+<section id="when-the-outcome-is-an-invidual-level-binary-indicator" class="level4" data-number="3.1.1.2">
+<h4 data-number="3.1.1.2" class="anchored" data-anchor-id="when-the-outcome-is-an-invidual-level-binary-indicator"><span class="header-section-number">3.1.1.2</span> When the outcome is an invidual-level binary indicator</h4>
+<p>We now consider the malaria data from Kenya (<a href="01_intro.html#sec-malaria-ch1"><span>Section&nbsp;1.4.3</span></a>) where the main outcome is the result from a rapid diagnostic test (RDT) for malaria from individuals within households. In this case, because the outcome only takes two values, 1 for a positive RDT test result and 0 otherwise, the direct application of the empirical logit from <a href="#eq-empirical-logit">Equation&nbsp;<span>3.1</span></a> would not help us to generate informative scatter plots. Throughout the book, we will consider the data from the community survey only, hence we work with a subset of the data which we shall name <code>malkenya_comm</code></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>malkenya_comm <span class="ot">&lt;-</span> malkenya[malkenya<span class="sc">$</span>Survey<span class="sc">==</span><span class="st">"community"</span>, ]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>To show how this issue can be overcome, let us consider the variables age and gender. To generate a plot that can help us understand between the relationship with malaria prevalence and the two risk factors, we proceed as follows.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Grouping of ages into classes defined through "breaks"</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>malkenya_comm<span class="sc">$</span>Age_class <span class="ot">&lt;-</span> <span class="fu">cut</span>(malkenya_comm<span class="sc">$</span>Age, </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>                            <span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">5</span>, <span class="dv">10</span>, <span class="dv">15</span>, <span class="dv">30</span>, <span class="dv">40</span>, <span class="dv">50</span>, <span class="dv">100</span>),</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>                            <span class="at">include.lowest =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Using the <code>cut</code> function, we first split age (in years) into classes through the argument <code>breaks</code>. The classification of age into <span class="math inline">\([0,5]\)</span>, <span class="math inline">\((5, 10]\)</span> and <span class="math inline">\((10, 15]\)</span> is common in many malaria epidemiology studies, as children are one of the groups at highest risk malaria. The choice of the other classes of age reflects instead the need to balance the number of observations falling in each of the classes.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Computation of the empirical logit by age groups and gender</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>age_class_data <span class="ot">&lt;-</span> <span class="fu">aggregate</span>(RDT <span class="sc">~</span> Age_class <span class="sc">+</span> Gender, </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">data =</span> malkenya_comm, </span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">FUN =</span> <span class="cf">function</span>(y) </span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>                                    <span class="fu">log</span>((<span class="fu">sum</span>(y)<span class="sc">+</span><span class="fl">0.5</span>)<span class="sc">/</span>(<span class="fu">length</span>(y)<span class="sc">-</span><span class="fu">sum</span>(y)<span class="sc">+</span><span class="fl">0.5</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We then compute the empirical logit, using the total number of cases within age group and by gender. For a given age group and gender, which we denote as <span class="math inline">\(\mathcal{C}\)</span>, the empirical logit in <a href="#eq-empirical-logit">Equation&nbsp;<span>3.1</span></a>, now takes the form <span id="eq-empirical-logit-bin"><span class="math display">\[
+l_{\mathcal{C}} = \log\left\{\frac{\sum_{i \in \mathcal{C}} y_{i} + 0.5}{|\mathcal{C}|- \sum_{i \in \mathcal{C}} y_{i} + 0.5} \right\}
+\tag{3.4}\]</span></span> where <span class="math inline">\(y_i\)</span> are the individual binary outcomes and <span class="math inline">\(i\in \mathcal{C}\)</span> is used to indicate that the sum is carried out over all the individuals who belong the class <span class="math inline">\(\mathcal{C}\)</span>, identified by a specific age group and gender. Finally, <span class="math inline">\(|\mathcal{C}|\)</span> is the number of individuals who fall within <span class="math inline">\(\mathcal{C}\)</span>. In the code above, the empirical logit in <a href="#eq-empirical-logit-bin">Equation&nbsp;<span>3.4</span></a> is computed using the <code>aggregate</code> function. An inspection of the object <code>age_class_data</code>, a data frame, shows that the empirical is found in the column named <code>RDT</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Computation of the average age within each age group </span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>age_class_data<span class="sc">$</span>age_mean_point <span class="ot">&lt;-</span> <span class="fu">aggregate</span>(Age <span class="sc">~</span> Age_class <span class="sc">+</span> Gender, </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">data =</span> malkenya_comm, </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">FUN =</span> mean)<span class="sc">$</span>Age</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Number of individuals within each age group, by gender</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>age_class_data<span class="sc">$</span>n_obs <span class="ot">&lt;-</span>  <span class="fu">aggregate</span>(Age <span class="sc">~</span> Age_class <span class="sc">+</span> Gender, </span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>                         <span class="at">data =</span> malkenya_comm, </span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>                         <span class="at">FUN =</span> length)<span class="sc">$</span>Age</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>In order to generate the scatter-plot, we compute the average age within each age group by gender, and use these as our values for the x-axis. Note that since we only need to obtain the average age from this output, we use <code>$Age</code> to extract this only and allocate to the column <code>age_mean_point</code>. Finally, we also compute the number of observations within each of classes and place this in <code>n_obs</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(age_class_data, <span class="fu">aes</span>(<span class="at">x =</span> age_mean_point, <span class="at">y =</span> RDT, </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>                           <span class="at">size =</span> n_obs, </span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>                           <span class="at">colour =</span> Gender)) <span class="sc">+</span> </span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Age (years)"</span>,<span class="at">y=</span><span class="st">"Empirical logit"</span>)  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-elogit-age-malkenya" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="03_model-fitting_files/figure-html/fig-elogit-age-malkenya-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="figure-caption">Figure&nbsp;3.4: Plot of the empirical logit against age, for males and females. The size of each solid point is rendered proportional to the number of individuals within age group, as indicated in the legend.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The resulting plot in <a href="#fig-elogit-age-malkenya">Figure&nbsp;<span>3.4</span></a> shows the empirical logit against age by gender, with the size of each of the points proportional to the number of observations falling within each class. The observed patterns are explained by the fact that young children, especially those under the age of five, are particularly vulnerable to severe malaria infections. This is primarily due to their immature immune systems and lack of acquired immunity. As individuals grow older, they generally develop partial immunity to malaria through repeated exposure to the disease. This acquired immunity can provide some level of protection against severe malaria. At the same time, gender roles and activities can influence exposure to malaria-carrying mosquitoes. For example, men may spend more time outdoors for work or other activities, increasing their exposure to mosquito bites and thus their risk of infection. In addition, there are also biological factors to consider. Hormonal and genetic differences between males and females may also contribute to variations in immune responses to malaria infection. The interaction between age and gender is complex and may vary depending on the specific context and population being studied. A 2020 report from the Bill &amp; Melinda Gates foundation provides a detailed overview of this and other aspects related to gender and malaria <span class="citation" data-cites="gates2020">(<a href="references.html#ref-gates2020" role="doc-biblioref">Katz and Bill &amp; Melinda Gates Foundation 2020</a>)</span>.</p>
+<p>To account for age in a model for malaria prevalence, several approaches are possible, some of which have been developed using biological models <span class="citation" data-cites="smith2007">(<a href="references.html#ref-smith2007" role="doc-biblioref">Smith et al. 2007</a>)</span>. To model the patterns observed in <a href="#fig-elogit-age-malkenya">Figure&nbsp;<span>3.4</span></a>, we can follow the same approach used in the previous section to model the relationship between elevation and river-blindness prevalence. First, let us consider age without the effect of gender. Let <span class="math inline">\(p_{j}(x_i)\)</span> denote the probability of a positive RDT for the <span class="math inline">\(j\)</span>-th individual living in a household at location <span class="math inline">\(x_i\)</span>. Assuming that malaria risk reaches its peak at 15 years of age, we can capture the non-linear relationship using a linear spline with two knots, one at 15 years and a second one at 40 years. This is expressed as <span id="eq-age-only-reg"><span class="math display">\[
+\begin{aligned}
+\log\left\{\frac{p_{j}(x_i)}{1-p_j(x_i)}\right\} = \beta_{0} + \beta_{1}a_{ij}+\beta_{2} \times\max\{a_{ij}-15, 0\} + \beta_{3}\max\{a_{ij}-40, 0\}
+\end{aligned}
+\tag{3.5}\]</span></span> where <span class="math inline">\(a_{ij}\)</span> is the age, in years, for the <span class="math inline">\(j\)</span>-th individual at household <span class="math inline">\(i\)</span>. Based on this model the effect of age on RDT prevalence is <span class="math inline">\(\beta_{1}\)</span>, for <span class="math inline">\(a_{ij} &lt; 15\)</span>, <span class="math inline">\(\beta_{1}+\beta_{2}\)</span>, for <span class="math inline">\(15 &lt; a_{ij} &lt; 40\)</span>, and <span class="math inline">\(\beta_{1}+\beta_{2}+\beta_{3}\)</span> for <span class="math inline">\(a_{ij} &gt; 40\)</span>.</p>
+<p><a href="#fig-elogit-age-malkenya">Figure&nbsp;<span>3.4</span></a> indicates that age may interact with gender, meaning that the effect of gender on RDT prevalence changes across age, with larger differences observed between males and females for ages above 20 years. To assess such differences using a standard Binomial regression model, the linear predictor for RDT prevalence can be formulated as <span id="eq-age-inter-reg"><span class="math display">\[
+\begin{aligned}
+\log\left\{\frac{p_{j}(x_i)}{1-p_j(x_i)}\right\} = \beta_{0} + (\beta_{1} + \beta_{1}^*g_{ij})\times a_{ij}+(\beta_{2} + \beta_{2}^*g_{ij})\times\max\{a_{ij}-15, 0\} + \\
+(\beta_{3} + \beta_{3}^*g_{ij}) \times \max\{a_{ij}-40, 0\}
+\end{aligned}
+\tag{3.6}\]</span></span> where <span class="math inline">\(g_{ij}\)</span> is the indicator for gender, with 1 corresponding to male and 0 to female. The coefficients <span class="math inline">\(\beta_{1}^*\)</span>, <span class="math inline">\(\beta_{2}^*\)</span> and <span class="math inline">\(\beta_{3}^*\)</span> thus quantify the differences in risk between the two genders for ages below 15 years, betwee 15 and 40 years, and above 40 years, respectively. If all of those coefficients were 0, the model in <a href="#eq-age-only-reg">Equation&nbsp;<span>3.5</span></a> would be recovered.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>glm_age_gender_interaction <span class="ot">&lt;-</span> <span class="fu">glm</span>(RDT <span class="sc">~</span> Age <span class="sc">+</span> Gender<span class="sc">:</span>Age <span class="sc">+</span> </span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>                                  <span class="fu">pmax</span>(Age<span class="dv">-15</span>, <span class="dv">0</span>) <span class="sc">+</span> Gender<span class="sc">:</span><span class="fu">pmax</span>(Age<span class="dv">-15</span>, <span class="dv">0</span>) <span class="sc">+</span> </span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>                                  <span class="fu">pmax</span>(Age<span class="dv">-40</span>, <span class="dv">0</span>) <span class="sc">+</span> Gender<span class="sc">:</span><span class="fu">pmax</span>(Age<span class="dv">-40</span>, <span class="dv">0</span>),</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>                              <span class="at">data =</span> malkenya_comm, <span class="at">family =</span> binomial)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(glm_age_gender_interaction)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="do">## Call:</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="do">## glm(formula = RDT ~ Age + Gender:Age + pmax(Age - 15, 0) + Gender:pmax(Age - </span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="do">##     15, 0) + pmax(Age - 40, 0) + Gender:pmax(Age - 40, 0), family = binomial, </span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="do">##     data = malkenya_comm)</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="do">## Deviance Residuals: </span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="do">##     Min       1Q   Median       3Q      Max  </span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="do">## -0.7681  -0.7051  -0.4940  -0.2734   2.7294  </span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="do">## Coefficients:</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="do">##                              Estimate Std. Error z value Pr(&gt;|z|)    </span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a><span class="do">## (Intercept)                  -1.05835    0.10245 -10.331  &lt; 2e-16 ***</span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a><span class="do">## Age                          -0.03384    0.01310  -2.584  0.00978 ** </span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a><span class="do">## pmax(Age - 15, 0)            -0.03975    0.02356  -1.687  0.09162 .  </span></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a><span class="do">## pmax(Age - 40, 0)             0.09170    0.02482   3.695  0.00022 ***</span></span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a><span class="do">## Age:GenderMale                0.01428    0.01221   1.170  0.24202    </span></span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a><span class="do">## GenderMale:pmax(Age - 15, 0) -0.03625    0.03145  -1.153  0.24908    </span></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a><span class="do">## GenderMale:pmax(Age - 40, 0)  0.02451    0.04320   0.567  0.57052    </span></span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a><span class="do">## ---</span></span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a><span class="do">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a><span class="do">## (Dispersion parameter for binomial family taken to be 1)</span></span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a><span class="do">##     Null deviance: 2875.8  on 3351  degrees of freedom</span></span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a><span class="do">## Residual deviance: 2673.8  on 3345  degrees of freedom</span></span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a><span class="do">## AIC: 2687.8</span></span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a><span class="do">## Number of Fisher Scoring iterations: 5</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The code above shows how to fit the model specified in <a href="#eq-age-inter-reg">Equation&nbsp;<span>3.6</span></a>. The terms <code>Age</code>, <code>pmax(Age-15, 0)</code> and <code>pmax(Age-40, 0)</code> respectively correspond to <span class="math inline">\(\beta_{1}\)</span>, <span class="math inline">\(\beta_{2}\)</span> and <span class="math inline">\(\beta_{3}\)</span>, whilst the <code>Gender:Age</code>, <code>Gender:pmax(Age-15, 0)</code> and <code>Gender:pmax(Age-40, 0)</code> to <span class="math inline">\(\beta_{1}^*\)</span>, <span class="math inline">\(\beta_{2}^*\)</span> and <span class="math inline">\(\beta_{3}^*\)</span>, respectively. In the summary of the fitted model, we observe that the interaction coefficients are non-statistically significant. However, removing the interaction based on the fact that each of the coefficients have each p-values larger than the conventional level of 5% would be wrong. Instead we should carry out the likelihood ratio test, as shown below.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>glm_age_gender_no_interaction <span class="ot">&lt;-</span> <span class="fu">glm</span>(RDT <span class="sc">~</span> Age <span class="sc">+</span>  <span class="fu">pmax</span>(Age<span class="dv">-15</span>, <span class="dv">0</span>) <span class="sc">+</span> <span class="fu">pmax</span>(Age<span class="dv">-40</span>, <span class="dv">0</span>),</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>                              <span class="at">data =</span> malkenya_comm, <span class="at">family =</span> binomial)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(glm_age_gender_no_interaction, glm_age_gender_interaction, <span class="at">test =</span> <span class="st">"Chisq"</span>)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="do">## Analysis of Deviance Table</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="do">## Model 1: RDT ~ Age + pmax(Age - 15, 0) + pmax(Age - 40, 0)</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="do">## Model 2: RDT ~ Age + Gender:Age + pmax(Age - 15, 0) + Gender:pmax(Age - </span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="do">##     15, 0) + pmax(Age - 40, 0) + Gender:pmax(Age - 40, 0)</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="do">##   Resid. Df Resid. Dev Df Deviance Pr(&gt;Chi)</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="do">## 1      3348     2675.6                     </span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="do">## 2      3345     2673.8  3   1.8051   0.6138</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>To carry out the likelihood ratio test to assess the null hypothesis that <span class="math inline">\(\beta_{1}^*=\beta_{2}^*=\beta_{3}^*=0\)</span>, we first fit the simplified nested model under this null hypothesis. The likelihood ratio test can then be carried out using the <code>anova</code> command as shown. The p-value indicates that the we do not find evidence against the null hypothesis, hence in our analysis of the data we might favour the simplified model that does not assumes an interaction between the two genders.</p>
+<p>The approach just illustrated, can also be applied to explore the association with other continuous variables that are a property of the household and not of the individual. Let us, for example, consider the variable <code>elevation</code> from the <code>malkenya</code> data-set.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>malkenya_comm<span class="sc">$</span>elevation_class <span class="ot">&lt;-</span> <span class="fu">cut</span>(malkenya_comm<span class="sc">$</span>elevation,</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>                            <span class="at">breaks =</span> <span class="fu">quantile</span>(malkenya_comm<span class="sc">$</span>elevation, <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="at">by =</span> <span class="fl">0.1</span>)),</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>                            <span class="at">include.lowest =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Following the same approach used for age, we first split elevation into classes. To define these, we use the deciles of the empirical distribution of <code>elevation</code> which we calculate using the <code>quantile</code> function above. In this way we also ensure that the number of observations falling within each class of elevation is approximately the same.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Computation of the empirical logit by classes of elevation</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>elev_class_data <span class="ot">&lt;-</span> <span class="fu">aggregate</span>(RDT <span class="sc">~</span> elevation_class, </span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">data =</span> malkenya_comm, </span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">FUN =</span> <span class="cf">function</span>(y) </span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>                                    <span class="fu">log</span>((<span class="fu">sum</span>(y)<span class="sc">+</span><span class="fl">0.5</span>)<span class="sc">/</span>(<span class="fu">length</span>(y)<span class="sc">-</span><span class="fu">sum</span>(y)<span class="sc">+</span><span class="fl">0.5</span>)))</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Computation of the average elevation within each class of elevation</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>elev_class_data<span class="sc">$</span>elevation_mean <span class="ot">&lt;-</span> <span class="fu">aggregate</span>(elevation <span class="sc">~</span> elevation_class, </span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">data =</span> malkenya_comm, </span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">FUN =</span> mean)<span class="sc">$</span>elevation</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We then compute the empirical logit and the average elevation for each class of elevation. The empirical logit is computed as already defined in <a href="#eq-empirical-logit-bin">Equation&nbsp;<span>3.4</span></a>, where now the definition of <span class="math inline">\(\mathcal{C}\)</span> is given by a specific decile used to split the distribution of elevation.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(elev_class_data, <span class="fu">aes</span>(<span class="at">x =</span> elevation_mean, <span class="at">y =</span> RDT), </span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>                           <span class="at">size =</span> n_obs) <span class="sc">+</span> </span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Elevation (meters)"</span>,<span class="at">y=</span><span class="st">"Empirical logit"</span>)  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-elogit-elev-malkenya" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="03_model-fitting_files/figure-html/fig-elogit-elev-malkenya-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="figure-caption">Figure&nbsp;3.5: Plot of the empirical logit against elevation measured in meters.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The resulting plot in <a href="#fig-elogit-elev-malkenya">Figure&nbsp;<span>3.5</span></a> shows an approximately linear relationship with decreasing values of the empirical logit for increasing elevation. This is expected because the cooler environment at higher altitudes is less favourable to the development of the overall mosquito life cycle.</p>
+<p>An alternative approach to generate a scatter plot for assessing the association between elevation and the empirical logit would be to aggregate the data at household level, rather than using classes of elevation. However, this approach does not work as the one illustrated above when only one individual is sampled for each location. In the case of the <code>malkenya</code> data, the great majority of the locations only include one individual making this second approach less useful than the one illustrated.</p>
+<p>Other more sophisticated approaches for the exploration of the associations between covariates and binary outcomes are available. For example, the use of the empirical logit could be avoided by using non-parametric regression methods for Binomial outcomes <span class="citation" data-cites="bowman1997">(<a href="references.html#ref-bowman1997" role="doc-biblioref">Bowman 1997</a>)</span>, also implemented in <code>sm</code> package in R. Our view is that a careful exploratory analysis based on simpler methods, as those illustrated above, can be equally effective to inform the module formulation.</p>
+</section>
+</section>
+<section id="sec-overdispersion" class="level3" data-number="3.1.2">
+<h3 data-number="3.1.2" class="anchored" data-anchor-id="sec-overdispersion"><span class="header-section-number">3.1.2</span> Exploring overdispersion in count data</h3>
+<p>One of the main advantages in the use of covariates is the ability to attribute part of the variation of the outcome to a set of measured variables and, hence, reduce the uncertainty of our inferences. However, it almost always the case that the finite number of covariates at our disposal is not enough to fully explain the variation in the outcome. In other words, the existence of unmeasured covariates that are related to the modelled outcome give rise to the so called residual variation. In a standard linear regression model the extent to which we are able to account for important covariates is directly linked to the size of the variance of the residuals. In the case of count data, instead, this link is less well defined and one of the main consequences of the omission of covariates, which we address in this chapter, is <em>overdispersion</em>.</p>
+<p>Overdispersion occurs when the variability of the data is larger than that implied by the generalized linear model (GLM) fitted to them. For example, if we consider the Binomial distribution, the presence of overdispersion implies that <span class="math inline">\(V(Y_i) &gt; n_i \mu_{i}(1-\mu_i)\)</span>, where we recall that <span class="math inline">\(n_i\)</span> is the Binomial denominator and <span class="math inline">\(mu_i\)</span> is the probability of “success” for each of the <span class="math inline">\(n_i\)</span> Bernoulli trials; for a Poisson distribution with <span class="math inline">\(E(Y_i) = \mu_i\)</span>, instead, overdispersion implies that <span class="math inline">\(V(Y_i) &gt; \mu_{i}\)</span>.</p>
+<p>Assessment of the overdispersion for count data can be carried out in different ways depending on the goal of the statistical analysis. Since the focus of this book is to illustrate how to formulate and apply geostatistical models, the most natural approach to assess overdispersion is through the use of generalized linear mixed models (GLMMs). The class of GLMMs that we consider in this and the next section are obtained by replacing the spatial Gaussian process <span class="math inline">\(S(x_i)\)</span> in introduced in <a href="01_intro.html#eq-linear-predictor-ch1">Equation&nbsp;<span>1.4</span></a> with a set of mutually independent random effects, which we denote as <span class="math inline">\(Z_i\)</span>, and thus write <span id="eq-linear-predictor-glmms-ch2"><span class="math display">\[
+g(\mu_i) = d(x_i)^\top \beta + Z_i.
+\tag{3.7}\]</span></span> The model above accounts for the overdispersion in the data through <span class="math inline">\(Z_i\)</span> whose variance can be interpreted as an indicator of the amount of overdispersion. To show this, we carry out a small simulation as follows. For simplicity, we consider the Binomial mixed model with an intercept only, hence <span id="eq-bin-glmm-example"><span class="math display">\[
+\log\left\{\frac{\mu_i}{1-\mu_i}\right\} = \beta_0 + Z_i
+\tag{3.8}\]</span></span> and assume that the <span class="math inline">\(Z_i\)</span> follow a set of mutually independent Gaussian variables with mean 0 and variance <span class="math inline">\(\tau^2\)</span>. In our simulation we vary <span class="math inline">\(\beta_0\)</span> over the set <span class="math inline">\(\{-3, -2, -1, 0, 1, 2, 3\}\)</span> and set <span class="math inline">\(\tau^2=0.1\)</span> and the binomial denominators to <span class="math inline">\(n_i = 100\)</span>. For a given value of <span class="math inline">\(\beta_0\)</span>, we then proceed through the following iterative steps.</p>
+<ul>
+<li><p>Simulate 10,000 values for <span class="math inline">\(Z_i\)</span> from a Gaussian distribution with mean 0 and variance <span class="math inline">\(\tau^2\)</span>.</p></li>
+<li><p>Compute the probabilities <span class="math inline">\(\mu_i\)</span> based on <a href="#eq-bin-glmm-example">Equation&nbsp;<span>3.8</span></a>.</p></li>
+<li><p>Simulate 10,000 values from a Binomial model with probability of success <span class="math inline">\(\mu_i\)</span> and denominator <span class="math inline">\(n_i\)</span>.</p></li>
+<li><p>Compute the empirical variance of the counts <span class="math inline">\(y_i\)</span> simulated in the previous step.</p></li>
+<li><p>Change the value of <span class="math inline">\(\beta_0\)</span> and repeat the previous steps, for all the values of <span class="math inline">\(\beta_0\)</span>.</p></li>
+</ul>
+<p>The code below shows the implementation of the above steps in R.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Number of simulations</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>n_sim <span class="ot">&lt;-</span> <span class="dv">10000</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Variance of the Z_i</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>tau2 <span class="ot">&lt;-</span> <span class="fl">0.1</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Binomial denominator </span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>bin_denom <span class="ot">&lt;-</span> <span class="dv">100</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Intercept values</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>beta0 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">3</span>, <span class="sc">-</span><span class="dv">2</span>, <span class="sc">-</span><span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>)</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Vector where we store the computed variance from</span></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a><span class="co"># the simulated counts from the Binomial mixed model</span></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>var_data <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="cn">NA</span>, <span class="fu">length</span>(beta0))</span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(beta0)) {</span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Simulation of the random effects Z_i</span></span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>  Z_i_sim <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n_sim, <span class="at">sd =</span> <span class="fu">sqrt</span>(tau2))</span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Linear predictor of the Binomial mixed model</span></span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>  lp <span class="ot">&lt;-</span> beta0[j]  <span class="sc">+</span> Z_i_sim</span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Probabilities of the Binomial distribution conditional on Z_i</span></span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a>  prob_sim <span class="ot">&lt;-</span> <span class="fu">exp</span>(lp)<span class="sc">/</span>(<span class="dv">1</span><span class="sc">+</span><span class="fu">exp</span>(lp))</span>
+<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Simulation of the counts from the Binomial mixed model</span></span>
+<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a>  y_i_sim <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n_sim, <span class="at">size =</span> bin_denom, <span class="at">prob =</span> prob_sim)</span>
+<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Empirical variance from the simulated counts</span></span>
+<span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a>  var_data[j] <span class="ot">&lt;-</span> <span class="fu">var</span>(y_i_sim)</span>
+<span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-35"><a href="#cb14-35" aria-hidden="true" tabindex="-1"></a><span class="co"># Probabilities from the standard Binomial model (Z_i = 0)</span></span>
+<span id="cb14-36"><a href="#cb14-36" aria-hidden="true" tabindex="-1"></a>probs_binomial <span class="ot">&lt;-</span> <span class="fu">exp</span>(beta0)<span class="sc">/</span>(<span class="dv">1</span><span class="sc">+</span><span class="fu">exp</span>(beta0))</span>
+<span id="cb14-37"><a href="#cb14-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-38"><a href="#cb14-38" aria-hidden="true" tabindex="-1"></a><span class="co"># Variance from the standard Binomial model</span></span>
+<span id="cb14-39"><a href="#cb14-39" aria-hidden="true" tabindex="-1"></a>var_bimomial <span class="ot">&lt;-</span> bin_denom<span class="sc">*</span>probs_binomial<span class="sc">*</span>(<span class="dv">1</span><span class="sc">-</span>probs_binomial)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">matplot</span>(beta0, <span class="fu">cbind</span>(var_data, var_bimomial), <span class="at">type =</span> <span class="st">"b"</span>, <span class="at">pch =</span> <span class="dv">20</span>,</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>        <span class="at">lty =</span> <span class="st">"solid"</span>, <span class="at">ylab =</span> <span class="st">"Variance"</span>, <span class="at">xlab =</span> <span class="fu">expression</span>(beta[<span class="dv">0</span>]))</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="sc">-</span><span class="dv">3</span>, <span class="dv">80</span>, <span class="fu">c</span>(<span class="st">"Binomial mixed model"</span>, <span class="st">"Standard Binomial model"</span>),</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">col=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="at">lty =</span> <span class="st">"solid"</span>, <span class="at">cex =</span> <span class="fl">0.75</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-var-bin-glmm" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="03_model-fitting_files/figure-html/fig-var-bin-glmm-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="figure-caption">Figure&nbsp;3.6: Plot of the variances of the standard Binomial model and the Binomial mixed model (see <a href="#eq-bin-glmm-example">Equation&nbsp;<span>3.8</span></a>) against <span class="math inline">\(\beta_0\)</span></figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><a href="#fig-var-bin-glmm">Figure&nbsp;<span>3.6</span></a> shows the results of the simulation. In this figure, the red line corresponds to the variance of a standard Binomial model, obtained by setting <span class="math inline">\(Z_i=0\)</span> and computed as <span class="math inline">\(n_i \mu_i (1-\mu_i)\)</span> with <span class="math inline">\(\mu_i = \exp\{\beta_0\}/(1+\exp\{\beta_0\})\)</span>. As expected, this plot shows that the variance of the simulated counts from the mixed model in <a href="#eq-bin-glmm-example">Equation&nbsp;<span>3.8</span></a> exhibit a larger variance than would be expected under the standard Binomial model. It also indicates that the chosen value for the variance of <span class="math inline">\(Z_i\)</span> of <span class="math inline">\(\tau^2 = 0.1\)</span> corresponds to a significant amount of dispersion. One way to relate <span class="math inline">\(\tau^2\)</span> to the amount of overdispersion is by considering that, following from the properties of a univariate Gaussian distribution, <em>a priori</em> the <span class="math inline">\(Z_i\)</span> will take values between <span class="math inline">\(-1.96 \sqrt{\tau^2}\)</span> and <span class="math inline">\(+1.96 \sqrt{\tau^2}\)</span> with approximately 95<span class="math inline">\(\%\)</span> probability. That implies that <span class="math inline">\(\exp\{Z_i\}\)</span>, which expresses the effect of the random effects on the odds ratios, will be with 95<span class="math inline">\(\%\)</span> probability between <span class="math inline">\(\exp\{-1.96 \sqrt{\tau^2}\}\)</span> and <span class="math inline">\(\exp\{+1.96 \sqrt{\tau^2}\}\)</span>. By replacing <span class="math inline">\(\tau^2\)</span> with the chosen values for the simulation, those two becomes about 0.54 and 1.86, meaning that with the <span class="math inline">\(Z_i\)</span> with <span class="math inline">\(95\%\)</span> probability will have a multiplicative effect on the odds ratios between <span class="math inline">\(0.54\)</span> and <span class="math inline">\(1.86\)</span>.</p>
+<p>We encourage you to do Exercise 1 and Exercise 2 at the end of this chapter, to further explore how generalized linear mixed models can be used as a tool to account for overdispersion.</p>
+<section id="maximum-likelihood-estimation-of-generalized-linear-mixed-models-for-count-data" class="level4" data-number="3.1.2.1">
+<h4 data-number="3.1.2.1" class="anchored" data-anchor-id="maximum-likelihood-estimation-of-generalized-linear-mixed-models-for-count-data"><span class="header-section-number">3.1.2.1</span> Maximum likelihood estimation of generalized linear mixed models for count data</h4>
+<p>We now illustrate how to fit a generalize linear mixed, using the <code>anopheles</code> data-set as an example. We consider two models: an intercept-only model and one that uses elevation as a covariate. Let <span class="math inline">\(\mu(x_i)\)</span> be the number of mosquitoes captured at a location <span class="math inline">\(x_i\)</span>; then the linear predictor with elevation as a covariate takes the form <span id="eq-anopheles-glmm"><span class="math display">\[
+\log\{\mu_i\} = \beta_{0} + \beta_{1} d(x_i) + Z_i
+\tag{3.9}\]</span></span> where <span class="math inline">\(d(x_i)\)</span> indicates the elevation in meters at location <span class="math inline">\(x_i\)</span> and the <span class="math inline">\(Z_i\)</span> are independent and identically distributed Gaussian variables with mean 0 and variance <span class="math inline">\(\tau^2\)</span>. The model with an intercept only is simply obtained by setting <span class="math inline">\(\beta_1 = 0\)</span>.</p>
+<p>We carry out the estimation in R using the <code>glmer</code> function from the <code>lme4</code> package (see <span class="citation" data-cites="bates2015">Bates et al. (<a href="references.html#ref-bates2015" role="doc-biblioref">2015</a>)</span> for a detailed tutorial). The <code>glmer</code> function implements the maximum likelihood estimation for generalized linear mixed models. The code below shows how the <code>glmer</code> is used to carry out this step for the model in <a href="#eq-anopheles-glmm">Equation&nbsp;<span>3.9</span></a> and the one withuot covariates.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the ID of the location</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>anopheles<span class="sc">$</span>ID_loc <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(anopheles)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Poisson mixed model with elevation</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>fit_glmer_elev <span class="ot">&lt;-</span> <span class="fu">glmer</span>(An.gambiae <span class="sc">~</span> <span class="fu">scale</span>(elevation) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>ID_loc), <span class="at">family =</span> poisson, </span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>                        <span class="at">data =</span> anopheles, <span class="at">nAGQ =</span> <span class="dv">25</span>)</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Poisson mixed model with intercept only</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>fit_glmer_int <span class="ot">&lt;-</span> <span class="fu">glmer</span>(An.gambiae <span class="sc">~</span> (<span class="dv">1</span><span class="sc">|</span>ID_loc), <span class="at">family =</span> poisson, </span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>                        <span class="at">data =</span> anopheles, <span class="at">nAGQ =</span> <span class="dv">25</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>To fit the model with <code>glmer</code>, we first must create a variable in our data-set that allows us to identify the location associated with each count. In this case, since every row corresponds to a different location, we simply use the row number to identify the locations and save this in the <code>ID_loc</code> variable. The random effects <span class="math inline">\(Z_i\)</span> are then included in the model by adding <code>(1 | ID_loc)</code> in the formula of the <code>glmer</code> function.</p>
+<p>When introducing the variable elevation, we standardize the variable so that its mean is 0 and its variance is 1. This is done to aid the convergence of the algorithm used to fit the model and it is generally considered good practice, especially when many variables with different scales are used as covariates. However, we emphasize that standardizing a variable does not affect the fit of the model to the data. This is because the model with the standardized variable is a reparametrization of the model with the unstandardized variable. In other words, a model that uses standardized covariates only attaches a different interpretation to its regression coefficients while maintaining the same goodness of fit of the model with that uses the covariates on their original scale.</p>
+<p>The argument <code>nAGQ</code> is used to define the precision of the approximation of the maximum likelihood estimation algorithm. By default <code>nAGQ = 1</code>, which corresponds to the Laplace approximation. Values for <code>nAGQ</code> larger than 1 are used to define the number of points of the adaptive Gaussian-Hermite quadrature. The general principle is that the larger <code>nAGQ</code> the better, but at the expense of an increased computing time. Based on the guidelines and help pages of the <code>lme4</code> package, it is stated that a reasonable value for <code>nAGQ</code> is 25. For more technical details on this aspect, we refer the reader to <span class="citation" data-cites="bates2015">Bates et al. (<a href="references.html#ref-bates2015" role="doc-biblioref">2015</a>)</span>.</p>
+<p>We can now look at the summary of the fitted models to the mosquitoes data-set.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="do">### Summary of the model with elevation</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_glmer_elev)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="do">## Generalized linear mixed model fit by maximum likelihood (Adaptive</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="do">##   Gauss-Hermite Quadrature, nAGQ = 25) [glmerMod]</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="do">##  Family: poisson  ( log )</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="do">## Formula: An.gambiae ~ scale(elevation) + (1 | ID_loc)</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="do">##    Data: anopheles</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="do">##      AIC      BIC   logLik deviance df.resid </span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="do">##    291.8    300.1   -142.9    285.8      113 </span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a><span class="do">## Scaled residuals: </span></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a><span class="do">##      Min       1Q   Median       3Q      Max </span></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a><span class="do">## -0.89574 -0.42469 -0.09483  0.29445  0.53352 </span></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a><span class="do">## Random effects:</span></span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a><span class="do">##  Groups Name        Variance Std.Dev.</span></span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a><span class="do">##  ID_loc (Intercept) 0.7146   0.8453  </span></span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a><span class="do">## Number of obs: 116, groups:  ID_loc, 116</span></span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a><span class="do">## Fixed effects:</span></span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a><span class="do">##                  Estimate Std. Error z value Pr(&gt;|z|)    </span></span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a><span class="do">## (Intercept)       1.53042    0.09365  16.342   &lt;2e-16 ***</span></span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a><span class="do">## scale(elevation) -0.19794    0.08950  -2.212    0.027 *  </span></span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a><span class="do">## ---</span></span>
+<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a><span class="do">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
+<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a><span class="do">## Correlation of Fixed Effects:</span></span>
+<span id="cb17-29"><a href="#cb17-29" aria-hidden="true" tabindex="-1"></a><span class="do">##             (Intr)</span></span>
+<span id="cb17-30"><a href="#cb17-30" aria-hidden="true" tabindex="-1"></a><span class="do">## scale(lvtn) 0.036</span></span>
+<span id="cb17-31"><a href="#cb17-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-32"><a href="#cb17-32" aria-hidden="true" tabindex="-1"></a><span class="do">### Summary of the model with the intercept only</span></span>
+<span id="cb17-33"><a href="#cb17-33" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_glmer_int)</span>
+<span id="cb17-34"><a href="#cb17-34" aria-hidden="true" tabindex="-1"></a><span class="do">## Generalized linear mixed model fit by maximum likelihood (Adaptive</span></span>
+<span id="cb17-35"><a href="#cb17-35" aria-hidden="true" tabindex="-1"></a><span class="do">##   Gauss-Hermite Quadrature, nAGQ = 25) [glmerMod]</span></span>
+<span id="cb17-36"><a href="#cb17-36" aria-hidden="true" tabindex="-1"></a><span class="do">##  Family: poisson  ( log )</span></span>
+<span id="cb17-37"><a href="#cb17-37" aria-hidden="true" tabindex="-1"></a><span class="do">## Formula: An.gambiae ~ (1 | ID_loc)</span></span>
+<span id="cb17-38"><a href="#cb17-38" aria-hidden="true" tabindex="-1"></a><span class="do">##    Data: anopheles</span></span>
+<span id="cb17-39"><a href="#cb17-39" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb17-40"><a href="#cb17-40" aria-hidden="true" tabindex="-1"></a><span class="do">##      AIC      BIC   logLik deviance df.resid </span></span>
+<span id="cb17-41"><a href="#cb17-41" aria-hidden="true" tabindex="-1"></a><span class="do">##    294.6    300.1   -145.3    290.6      114 </span></span>
+<span id="cb17-42"><a href="#cb17-42" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb17-43"><a href="#cb17-43" aria-hidden="true" tabindex="-1"></a><span class="do">## Scaled residuals: </span></span>
+<span id="cb17-44"><a href="#cb17-44" aria-hidden="true" tabindex="-1"></a><span class="do">##      Min       1Q   Median       3Q      Max </span></span>
+<span id="cb17-45"><a href="#cb17-45" aria-hidden="true" tabindex="-1"></a><span class="do">## -0.73816 -0.42718 -0.06941  0.26564  0.45022 </span></span>
+<span id="cb17-46"><a href="#cb17-46" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb17-47"><a href="#cb17-47" aria-hidden="true" tabindex="-1"></a><span class="do">## Random effects:</span></span>
+<span id="cb17-48"><a href="#cb17-48" aria-hidden="true" tabindex="-1"></a><span class="do">##  Groups Name        Variance Std.Dev.</span></span>
+<span id="cb17-49"><a href="#cb17-49" aria-hidden="true" tabindex="-1"></a><span class="do">##  ID_loc (Intercept) 0.761    0.8724  </span></span>
+<span id="cb17-50"><a href="#cb17-50" aria-hidden="true" tabindex="-1"></a><span class="do">## Number of obs: 116, groups:  ID_loc, 116</span></span>
+<span id="cb17-51"><a href="#cb17-51" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb17-52"><a href="#cb17-52" aria-hidden="true" tabindex="-1"></a><span class="do">## Fixed effects:</span></span>
+<span id="cb17-53"><a href="#cb17-53" aria-hidden="true" tabindex="-1"></a><span class="do">##             Estimate Std. Error z value Pr(&gt;|z|)    </span></span>
+<span id="cb17-54"><a href="#cb17-54" aria-hidden="true" tabindex="-1"></a><span class="do">## (Intercept)  1.52849    0.09584   15.95   &lt;2e-16 ***</span></span>
+<span id="cb17-55"><a href="#cb17-55" aria-hidden="true" tabindex="-1"></a><span class="do">## ---</span></span>
+<span id="cb17-56"><a href="#cb17-56" aria-hidden="true" tabindex="-1"></a><span class="do">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>From the summary of the model that uses elevation, we observe the that the estimated regression coefficient <span class="math inline">\(\beta_{1}\)</span> is statistically significant different from 0. The interpretation of the estimated regression coefficient is the following: for an increase of about 100 meters in elevation, all other things being equal, the average number of mosquitoes decreases by about <span class="math inline">\(100\% \times [1-\exp\{-0.19794\}] \approx 18\%\)</span>. Note that when using a standardized variable, a unit increase for this corresponds to an increase in the original unstandardized variable equal to its standard deviation, which for the <code>elevation</code> variable is about 100 meters.</p>
+<p>From the summaries of the two models, under <code>Random effects:</code>, we obtain the estimates associates with the random effects introduced in the model. In this case, since we only have introduced <span class="math inline">\(Z_i\)</span>, this part of summary provides the maximum likelihood estimate for <span class="math inline">\(\tau^2\)</span>, the variance of <span class="math inline">\(Z_i\)</span>, which found on the line where <code>ID_loc</code> is printed. We then observe that the estimates for <span class="math inline">\(\tau^2\)</span> for the intercept-only model is <code>0.761</code>, whilst for the model with elevation this is <code>0.7146</code>. Note that the figures reported under <code>Std.Dev.</code> are simply the square root of the value reported under <code>Variance</code>. As expected, the introduction of elevation contributes to the explanation of the residual variation captured by <span class="math inline">\(Z_i\)</span>, though by a very small amount. The estimated values of <span class="math inline">\(\tau^2\)</span> thus suggest that there is extra-Binomial variation in the data that is not account for by elevation.</p>
+<p>In the next section, we will illustrate how to assess the presence of residual correlation for continuous measurements and overdispersed count data.</p>
+</section>
+</section>
+<section id="sec-expl-spatial" class="level3" data-number="3.1.3">
+<h3 data-number="3.1.3" class="anchored" data-anchor-id="sec-expl-spatial"><span class="header-section-number">3.1.3</span> Exploring residual spatial correlation</h3>
+<p>In its most basic form, the concept of spatial correlation can be succinctly encapsulated by <span class="citation" data-cites="tobler1970">Tobler (<a href="references.html#ref-tobler1970" role="doc-biblioref">1970</a>)</span> first law of geography, which posits that “everything is interconnected, but objects in close proximity exhibit stronger relationships than those situated farther apart.” After we have identified the key variables to introduce as covariates in the model (<a href="#sec-expl-assoc"><span>Section&nbsp;3.1.1</span></a>) and, in the case of count data, assessed the presence of overdispersion (<a href="#sec-overdispersion"><span>Section&nbsp;3.1.2</span></a>), our final exploratory step consists of assessing whether the residuals of the non spatial model show evidence of spatial correlation. Hence, in geostatistical modelling, the interest is not in the spatial correlation of the data, but rather on understanding whether the variation in the outcome unexplained by the covariates exhibits spatial correlation. We call this <em>residual spatial correlation</em>, to emphasize that spatial correlation is a concept relative to the covariates that we have introduced in the model.</p>
+<p>In the context of geostatistical analysis, the tool that is generally used to assess the residual spatial correlation is the the so called <em>empirical variogram</em>. Before looking at the mathematical definition of the empirical variogram, let us consider a generalized linear mixed model as expressed in <a href="#eq-linear-predictor-glmms-ch2">Equation&nbsp;<span>3.7</span></a>. Our goal is then to question the assumption of independently distributed random effects <span class="math inline">\(Z_i\)</span> by asking whether the <span class="math inline">\(Z_i\)</span> show evidence of spatial correlation. Let <span class="math inline">\(Z_i\)</span> and <span class="math inline">\(Z_j\)</span> be two random effects that are associate with two different locations <span class="math inline">\(x_i\)</span> and <span class="math inline">\(x_j\)</span>, respectively, and let us take the squared difference between the two <span id="eq-squared-diff"><span class="math display">\[
+V_{ij} = (Z_i - Z_j)^2.
+\tag{3.10}\]</span></span> How does the spatial correlation affect the value of <span class="math inline">\(V_{ij}\)</span>? To answer this question, we can refer to the aforementioned Tobler’s law of geography. When <span class="math inline">\(x_i\)</span> and <span class="math inline">\(x_j\)</span> will be closer to each other, then <span class="math inline">\(Z_i\)</span> and <span class="math inline">\(Z_j\)</span> will also tend to be more similar to each other, thus making <span class="math inline">\(V_{ij}\)</span> smaller, on average. On the contrary, when <span class="math inline">\(x_i\)</span> and <span class="math inline">\(x_j\)</span> will be further apart, then <span class="math inline">\(V_{ij}\)</span> will become larger, on average. We can then construct the empirical variogram by considering all possible pairs of locations <span class="math inline">\(x_i\)</span> and <span class="math inline">\(x_j\)</span>, for which we then compute <span class="math inline">\(V_{ij}\)</span> and plot this against the distance between <span class="math inline">\(x_i\)</span> and <span class="math inline">\(x_j\)</span>, which we denote as <span class="math inline">\(u_{ij}\)</span>. If there is spatial correlation in the random effects <span class="math inline">\(Z_i\)</span>, then this will manifest as an average increase in the <span class="math inline">\(V_{ij}\)</span> as <span class="math inline">\(u_{ij}\)</span> increases. However, there are still two issues that we have to address before we can generate and plot the empirical variogram.</p>
+<p>The first issue is that we do not observe <span class="math inline">\(Z_i\)</span> as, by definition, this is a latent variable. Hence, we require an estimate for <span class="math inline">\(Z_i\)</span> which we can then feed into <span class="math inline">\(V_{ij}\)</span>. To emphasize this point, from now on, we shall replace <a href="#eq-squared-diff">Equation&nbsp;<span>3.10</span></a> with <span id="eq-hat-squared-diff"><span class="math display">\[
+\hat{V}_{ij} = (\hat{Z}_{i} - \hat{Z}_j)^2.
+\tag{3.11}\]</span></span> Several options are available for estimating <span class="math inline">\(Z_{i}\)</span>. Our choice is to use the model of the predictive distribution of <span class="math inline">\(Z_i\)</span>, that is the distribution of <span class="math inline">\(Z_{i}\)</span> conditioned to the data <span class="math inline">\(y_i\)</span>. This estimator for <span class="math inline">\(Z_i\)</span> is also readily available from the output of the <code>lmer</code> and <code>glmer</code> functions of the <code>lme4</code> package, as we will illustrate later in our example in this section.</p>
+<p>The second issue is that if simply plot <span class="math inline">\(\hat{V}_{ij}\)</span> against the distances <span class="math inline">\(u_{ij}\)</span> (also knwon as <em>cloud variogram</em>), due to the high noiseness in the <span class="math inline">\(\hat{V}_{ij}\)</span>, it may be quite difficult to assess the presence of an increasing trend in the <span class="math inline">\(\hat{V}_{ij}\)</span> and thus detect spatial correlation. Hence, it is general practice to group the distances <span class="math inline">\(u_{ij}\)</span> into classes, say <span class="math inline">\(\mathcal{U}\)</span>, and then take average of all the <span class="math inline">\(\hat{V}_{ij}\)</span> that fall within <span class="math inline">\(\mathcal{U}\)</span>.</p>
+<p>We can now write the formal definition of the empirical variogram as <span id="eq-empirical-variogram"><span class="math display">\[
+\hat{V}(\mathcal{U}) = \frac{1}{2 |\mathcal{U}|} \sum_{(i, j): (u_i, u_j) \in \mathcal{U}} \hat{V}_{ij}
+\tag{3.12}\]</span></span> where <span class="math inline">\(|\mathcal{U}|\)</span> denotes the number of pairs of locations that fall within the distance class <span class="math inline">\(\mathcal{U}\)</span>. The rationale behind dividing by 2 in <span class="math inline">\(1/2 |\mathcal{U}|\)</span> from the above equation, will be elucidated in <a href="#sec-linear-model"><span>Section&nbsp;3.2</span></a>, and there is no need for us to delve into this matter at this juncture. When creating the empirical variogram plot, we select the midpoint values of the distance classes <span class="math inline">\(\mathcal{U}\)</span> to represent the x-axis values.</p>
+<p>Before we can evaluate residual spatial correlation, there remains one crucial concern: relying solely on a visual inspection of the empirical variogram is susceptible to human subjectivity. Furthermore, it is worth noting that even a seemingly upward trend observed in the empirical variogram might be merely a product of random fluctuations, rather than a reliable indication of actual residual spatial correlation. To address these concerns and enhance the objectivity of the use of the empirical variogram, one approach would involve comparing the observed empirical variogram pattern with those generated in the absence of spatial correlation. Following this principle, we then use a permutation test that allows us to generate empirical variograms under the assumption of absence of spatial correlation through the following iterative steps.</p>
+<ol type="1">
+<li><p>Permute the order of the locations in the data-set while keeping everything else fixed.</p></li>
+<li><p>Compute the empirical variogram <span class="math inline">\(\hat{V}(\mathcal{U})\)</span> for the permuted data-set.</p></li>
+<li><p>Repeat 1 and 2 a large number of times, say 10,000.</p></li>
+<li><p>Use the resulting 10,000 empirical varigorams to compute 95<span class="math inline">\(\%\)</span> confidence intervals, by taking the 0.025 and 0.975 quantiles of these for each distance class <span class="math inline">\(\hat{V}(\mathcal{U})\)</span>.</p></li>
+<li><p>If the observed empirical variogram falls fully within the envelope generated in the previous point, we then conclude that the data do not exhibit residual spatial correlation. If, instead, the observed empirical variogram partly falls outside the envelope we conclude that the data do exhibit residual spatial correlation.</p></li>
+</ol>
+<p>We now show an application of all the concepts introduced in this section to the Liberia data on river-blindness.</p>
+<section id="sec-empirical-variog-bin" class="level4" data-number="3.1.3.1">
+<h4 data-number="3.1.3.1" class="anchored" data-anchor-id="sec-empirical-variog-bin"><span class="header-section-number">3.1.3.1</span> Binomial data: assessing spatial correlation for the Liberia data</h4>
+<p>We consider the Binomial mixed model that uses the log-transformed elevation as a covariate to model river blindness prevalence, hence <span id="eq-liberia-bin-mixed-elev"><span class="math display">\[
+\log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_{0} + \beta_{1}\log\{e(x_i)\} + Z_i
+\tag{3.13}\]</span></span> where <span class="math inline">\(e(x_i)\)</span> is the elevation in meters at location <span class="math inline">\(x_i\)</span> and the <span class="math inline">\(Z_i\)</span> are i.i.d. Gaussian variables with mean 0 and variance <span class="math inline">\(\tau^2\)</span>. We first fit the model above using the <code>glmer</code> function.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert the data-set into an sf object</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>liberia <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(liberia, <span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"lat"</span>, <span class="st">"long"</span>), <span class="at">crs =</span> <span class="dv">4326</span>)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the ID of the location</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>liberia<span class="sc">$</span>ID_loc <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(liberia)</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Binomial mixed model with log-elevation</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>fit_glmer_lib <span class="ot">&lt;-</span> <span class="fu">glmer</span>(<span class="fu">cbind</span>(npos, ntest) <span class="sc">~</span> <span class="fu">log</span>(elevation) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>ID_loc), <span class="at">family =</span> binomial,</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>                        <span class="at">data =</span> liberia, <span class="at">nAGQ =</span> <span class="dv">25</span>)</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_glmer_lib)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Generalized linear mixed model fit by maximum likelihood (Adaptive
+  Gauss-Hermite Quadrature, nAGQ = 25) [glmerMod]
+ Family: binomial  ( logit )
+Formula: cbind(npos, ntest) ~ log(elevation) + (1 | ID_loc)
+   Data: liberia
+
+     AIC      BIC   logLik deviance df.resid 
+   127.9    135.4    -61.0    121.9       87 
+
+Scaled residuals: 
+     Min       1Q   Median       3Q      Max 
+-2.46033 -0.63341 -0.07633  0.61995  3.12732 
+
+Random effects:
+ Groups Name        Variance Std.Dev.
+ ID_loc (Intercept) 0.003097 0.05565 
+Number of obs: 90, groups:  ID_loc, 90
+
+Fixed effects:
+               Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)    -2.96292    0.21184 -13.987  &lt; 2e-16 ***
+log(elevation)  0.26143    0.04071   6.422 1.35e-10 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Correlation of Fixed Effects:
+            (Intr)
+log(elevtn) -0.981</code></pre>
+</div>
+</div>
+<p>From the output, we observe that the estimate for <span class="math inline">\(\tau^2\)</span> is about 0.003, indicating a moderate level of overdispersion in the data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>liberia<span class="sc">$</span>Z_hat <span class="ot">&lt;-</span> <span class="fu">ranef</span>(fit_glmer_lib)<span class="sc">$</span>ID_loc[,<span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Throuhg the function <code>ranef</code> when extract the estimates of the random effects <span class="math inline">\(Z_i\)</span> and save these in the data set. We then use the function <code>s_variogram</code> from the <code>RiskMap</code> package to compute the empirical varigoram for the estimated <span class="math inline">\(\hat{Z}_i\)</span>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>liberia_variog <span class="ot">&lt;-</span> <span class="fu">s_variogram</span>(<span class="at">data =</span> liberia,</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>                              <span class="at">variable =</span> <span class="st">"Z_hat"</span>,</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>                              <span class="at">bins =</span> <span class="fu">c</span>(<span class="dv">15</span>, <span class="dv">30</span>, <span class="dv">40</span>, <span class="dv">80</span>, <span class="dv">120</span>,</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>                                       <span class="dv">160</span>, <span class="dv">200</span>, <span class="dv">250</span>, <span class="dv">300</span>, <span class="dv">350</span>),</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>                              <span class="at">scale_to_km =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>                              <span class="at">n_permutation =</span> <span class="dv">10000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Through the argument <code>bins</code> we can specify the the classes of distance, previously denoted by <span class="math inline">\(\mathcal{U}\)</span>; check the help page of <code>s_variogram</code> to see how this is defined by default. The value passed to <code>bins</code> in the code above correspond to define the following classes of distance <span class="math inline">\(\mathcal{U}\)</span>: <span class="math inline">\([15, 30]\)</span>, <span class="math inline">\((30, 40]\)</span> and so forth, with the last class being <span class="math inline">\([350, +\infty)\)</span>, i.e.&nbsp;all pairs of locations whose distances are above 350km. The argument <code>n_permutation</code> allows the user to specify the number of permutations that are performed the generate the envelope for absence of spatial correlation previously described.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dist_summaries</span>(<span class="at">data =</span> liberia,</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>               <span class="at">scale_to_km =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="do">## $min</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 3.34536</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="do">## $max</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 533.0733</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="do">## $mean</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 206.7424</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a><span class="do">## $median</span></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 192.6496</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The <code>dist_summaries</code> function within the <code>RiskMap</code> package can be used for gauging the extent of the area covered by your dataset, aiding in the selection of appropriate values to be passed to the <code>bins</code> argument. In the provided output above, we can observe that for the Liberia dataset, the minimum and maximum distances span approximately 3km and 533km, respectively. While there is not a one-size-fits-all recommendation for setting <code>bins</code>, two fundamental principles should inform your decision-making. Firstly, it is advisable to avoid choosing overly large distance intervals, as the uncertainty associated with the empirical variogram tends to increase with distance due to fewer available pairs of observations for estimation. Secondly, especially when spatial correlation is not strong, it is crucial to carefully explore the behavior of the variogram at smaller distances. Consequently, it is generally advisable to experiment with different <code>bins</code> configurations and observe how they impact the pattern of the empirical variogram.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_s_variogram</span>(liberia_variog,</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">plot_envelope =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-liberia-variog" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="03_model-fitting_files/figure-html/fig-liberia-variog-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="figure-caption">Figure&nbsp;3.7: Plot of the empirical variogram (solid line) computed using the estimated random effects from the model in <a href="#eq-liberia-bin-mixed-elev">Equation&nbsp;<span>3.13</span></a>. The blue shaded area is the 95% confidence level envelope generated using the permutation procedure described in <a href="#sec-expl-spatial"><span>Section&nbsp;3.1.3</span></a>.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Finally, the <code>plot_s_variogram</code> function enables us to visualize the empirical variogram and, through the <code>plot_envelope</code> argument, include the envelope generated by the permutation procedure. As illustrated in <a href="#fig-liberia-variog">Figure&nbsp;<span>3.7</span></a>, we observe that the empirical variogram falls outside the envelope at relatively short distances, typically below 30km. However, for distances exceeding 30km, the behavior of the empirical variogram does not significantly differ from variograms generated under the assumption of spatial independence. In summary, we interpret the evidence presented in <a href="#fig-liberia-variog">Figure&nbsp;<span>3.7</span></a> as indicative of residual spatial correlation within the data. Nevertheless, it is essential to exercise caution when attempting to ascertain the scale of the spatial correlation using the empirical variogram. As we will emphasize throughout this book, the empirical variogram’s sensitivity to the choice of bins values renders it an unreliable tool for drawing statistical inferences. In other words, we advocate employing the empirical variogram primarily to assess the presence of residual correlation.</p>
+</section>
+<section id="sec-empirical-variog-lm" class="level4" data-number="3.1.3.2">
+<h4 data-number="3.1.3.2" class="anchored" data-anchor-id="sec-empirical-variog-lm"><span class="header-section-number">3.1.3.2</span> Exploring residual spatial correlation with linear Guassian models</h4>
+<p>When using a linear model to assess spatial correlation, it is important to distinguish two cases: 1) when the data contain only one location per location; 2) when more than one observation per location is available. We now consider each of these two scenarios separately.</p>
+<section id="one-observation-per-location" class="level5" data-number="3.1.3.2.1">
+<h5 data-number="3.1.3.2.1" class="anchored" data-anchor-id="one-observation-per-location"><span class="header-section-number">3.1.3.2.1</span> One observation per location</h5>
+<p>To illustrate the use of the variogram under this scenario, we shall use the Gailicia data on lead concentration in moss samples. The simplest possible model for the data is a standard linear model without covariates which assumes independence among the observations, hence <span id="eq-std-lm-galicia"><span class="math display">\[
+Y_i = \beta_0 + U_i
+\tag{3.14}\]</span></span> where the <span class="math inline">\(U_i\)</span> are i.i.d. Gaussian variables with mean zero and variance <span class="math inline">\(\omega^2\)</span>. At this stage, our goal is then to assess whether the assumption of independence for the <span class="math inline">\(Z_i\)</span> is supported by the data or whether there is evidence of spatial correlation. However, the measurement error of the device may be present as part of the natural random variation in <span class="math inline">\(Z_i\)</span> which might mask the detection of spatial correlation using the residuals <span class="math inline">\(Z_i\)</span> challenging, especially is the measurement error dominates the spatial variation of the data. One would be tempted to introduce an additional, location-specific random effect, say <span class="math inline">\(Z_i\)</span> with mean zero and variance <span class="math inline">\(\tau^2\)</span> and fit the model <span id="eq-std-lm2-galicia"><span class="math display">\[
+Y_i = \beta_0 + Z_i + U_i,
+\tag{3.15}\]</span></span> where we interpret <span class="math inline">\(U_i\)</span> as random variation due to the measurement device and <span class="math inline">\(Z_i\)</span> as a random effect accounting for unmeasured covariates that contribute to the variation between locations in lead concentration. However, the model in <a href="#eq-std-lm2-galicia">Equation&nbsp;<span>3.15</span></a> is not identifiable because we cannot disentangle the separate contributions of <span class="math inline">\(Z_i\)</span> and <span class="math inline">\(U_i\)</span> from the variation of the data, unless: a) we know the precision of the measurement device, <span class="math inline">\(\omega\)</span> (recall that <span class="math inline">\(\omega^2\)</span> is the variance of <span class="math inline">\(U_i\)</span>); b) or, if we do not know <span class="math inline">\(\omega\)</span>, we can then separate the two sources of variation only if we have multiple observations per location (the scenario which we shall consider in the next section).</p>
+<p>For the Galicia data, for we do not know the measurement device precision and we only have one observation per location. However, this does not prevent us from using the variogram based on the residuals from <a href="#eq-std-lm-galicia">Equation&nbsp;<span>3.14</span></a>, while keeping in mind the limitations and uncertainty that are inherent to this exploratory tool as remarked at the end of the last paragraph.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fitting of the linear model and extraction of the residuals  </span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>lm_fit <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="fu">log</span>(lead) <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> galicia)</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>galicia<span class="sc">$</span>residuals <span class="ot">&lt;-</span> lm_fit<span class="sc">$</span>residuals</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert the galicia data frame into an "sf" object</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>galicia_sf <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(galicia, <span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"x"</span>, <span class="st">"y"</span>), <span class="at">crs =</span> <span class="dv">32629</span>)</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute the variogram, using the residuals from the linear model fit,</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a><span class="co"># and the 95% confidence level envelope for spatial independence</span></span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>galicia_variog <span class="ot">&lt;-</span> <span class="fu">s_variogram</span>(galicia_sf, <span class="at">variable =</span> <span class="st">"residuals"</span>,</span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>                              <span class="at">scale_to_km =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>                              <span class="at">bins =</span> <span class="fu">seq</span>(<span class="dv">10</span>, <span class="dv">140</span>, <span class="at">length =</span> <span class="dv">15</span>),</span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>                              <span class="at">n_permutation =</span> <span class="dv">10000</span>)</span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Plotting the results</span></span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_s_variogram</span>(galicia_variog, <span class="at">plot_envelope =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-galicia-variog" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="03_model-fitting_files/figure-html/fig-galicia-variog-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="figure-caption">Figure&nbsp;3.8: Plot of the empirical variogram (solid line) computed using the estimated residuals from the model in <a href="#eq-std-lm-galicia">Equation&nbsp;<span>3.14</span></a>. The blue shaded area is the 95% confidence level envelope generated using the permutation procedure described in <a href="#sec-expl-spatial"><span>Section&nbsp;3.1.3</span></a>.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>In the code above, we first fit the linear model in <a href="#eq-std-lm-galicia">Equation&nbsp;<span>3.14</span></a> and then extract the residuals from this. Note that for this simple model, the residuals of the model are obtained by simply centering the outcome to zero by subtracting its mean. However, for more complex linear models that use covariates the computation of the residuals is more involved and can be carried out through a simple extension of the code above by specifying an appropriate <code>formula</code> in the <code>lm</code> function.</p>
+<p><a href="#fig-galicia-variog">Figure&nbsp;<span>3.8</span></a> shows the empirical variogram and the 95% envelope for spatial independence. This clearly shows that the measurement of lead concentration are spatially correlated.</p>
+</section>
+<section id="more-than-one-observation-per-location" class="level5" data-number="3.1.3.2.2">
+<h5 data-number="3.1.3.2.2" class="anchored" data-anchor-id="more-than-one-observation-per-location"><span class="header-section-number">3.1.3.2.2</span> More than one observation per location</h5>
+<p>For the case of more than one observation per location, we shall consider the <code>italy_sim</code> data-set. This data-set contains 10 observations per location, for a total of 200 locations. The variable <code>ID_loc</code> is a numeric indicator that can be used to identify the location each observation belong to. For this data-set, we use the population density, named <code>pop_dens</code>, as a log-transformed covariate; we leave you as an exercise to assess that is a reasonable modelling choice.</p>
+<p>To specify a non-spatial mixed model for the outcome, we then use two subscripts: <span class="math inline">\(i\)</span> to identify a given location; <span class="math inline">\(j\)</span> to identify the <span class="math inline">\(j\)</span>-th observation for a given location <span class="math inline">\(i\)</span>. We denote as <span class="math inline">\(Z_i\)</span> the location-specific random effect ans as <span class="math inline">\(U_{ij}\)</span> the random variation due to the measurement error inherent to each observation. Hence, we write <span id="eq-italy-sim-lmm"><span class="math display">\[
+Y_{ij} = \beta_0 + \beta_1 \log\{d(x_i)\} + Z_i + U_{ij},
+\tag{3.16}\]</span></span> where <span class="math inline">\(d(x_i)\)</span> is the population density at location <span class="math inline">\(x_i\)</span>; as before, we use <span class="math inline">\(\tau^2\)</span> and <span class="math inline">\(\omega^2\)</span> to denote the variances of <span class="math inline">\(Z_i\)</span> and <span class="math inline">\(U_{ij}\)</span>, respectively. To fit this model to the data we use the <code>lmer</code> function from the <code>lme4</code> package.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fitting a linear mixed model to the italy_sim data-set</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="co"># See main text for model specification</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>lmer_fit <span class="ot">&lt;-</span> <span class="fu">lmer</span>(y <span class="sc">~</span> <span class="fu">log</span>(pop_dens) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>ID_loc), <span class="at">data =</span> italy_sim)</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lmer_fit)</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="do">## Linear mixed model fit by REML ['lmerMod']</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="do">## Formula: y ~ log(pop_dens) + (1 | ID_loc)</span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a><span class="do">##    Data: italy_sim</span></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a><span class="do">## REML criterion at convergence: 3390.9</span></span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a><span class="do">## Scaled residuals: </span></span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a><span class="do">##      Min       1Q   Median       3Q      Max </span></span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a><span class="do">## -2.85209 -0.64198 -0.01832  0.66014  3.01870 </span></span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a><span class="do">## Random effects:</span></span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a><span class="do">##  Groups   Name        Variance Std.Dev.</span></span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a><span class="do">##  ID_loc   (Intercept) 2.5006   1.5813  </span></span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a><span class="do">##  Residual             0.1959   0.4426  </span></span>
+<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a><span class="do">## Number of obs: 2000, groups:  ID_loc, 200</span></span>
+<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a><span class="do">## Fixed effects:</span></span>
+<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a><span class="do">##               Estimate Std. Error t value</span></span>
+<span id="cb25-24"><a href="#cb25-24" aria-hidden="true" tabindex="-1"></a><span class="do">## (Intercept)   -0.40448    0.57613  -0.702</span></span>
+<span id="cb25-25"><a href="#cb25-25" aria-hidden="true" tabindex="-1"></a><span class="do">## log(pop_dens)  1.33798    0.07643  17.506</span></span>
+<span id="cb25-26"><a href="#cb25-26" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb25-27"><a href="#cb25-27" aria-hidden="true" tabindex="-1"></a><span class="do">## Correlation of Fixed Effects:</span></span>
+<span id="cb25-28"><a href="#cb25-28" aria-hidden="true" tabindex="-1"></a><span class="do">##             (Intr)</span></span>
+<span id="cb25-29"><a href="#cb25-29" aria-hidden="true" tabindex="-1"></a><span class="do">## log(pp_dns) -0.981</span></span>
+<span id="cb25-30"><a href="#cb25-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-31"><a href="#cb25-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Incorporating the estimated random effects into the data</span></span>
+<span id="cb25-32"><a href="#cb25-32" aria-hidden="true" tabindex="-1"></a>italy_sim<span class="sc">$</span>rand_eff <span class="ot">&lt;-</span><span class="fu">ranef</span>(lmer_fit)<span class="sc">$</span>ID_loc[italy_sim<span class="sc">$</span>ID_loc,<span class="dv">1</span>]</span>
+<span id="cb25-33"><a href="#cb25-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-34"><a href="#cb25-34" aria-hidden="true" tabindex="-1"></a><span class="co"># Converting the italy_sim data frame into an "sf" object </span></span>
+<span id="cb25-35"><a href="#cb25-35" aria-hidden="true" tabindex="-1"></a>italy_sim_sf <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(italy_sim, <span class="at">coords=</span><span class="fu">c</span>(<span class="st">"x1"</span>, <span class="st">"x2"</span>), <span class="at">crs =</span> <span class="dv">32634</span>)</span>
+<span id="cb25-36"><a href="#cb25-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-37"><a href="#cb25-37" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute the variogram, using the random effects from the linear mixed model fit,</span></span>
+<span id="cb25-38"><a href="#cb25-38" aria-hidden="true" tabindex="-1"></a><span class="co"># and the 95% confidence level envelope for spatial independence</span></span>
+<span id="cb25-39"><a href="#cb25-39" aria-hidden="true" tabindex="-1"></a>italy_sim_variog <span class="ot">&lt;-</span> <span class="fu">s_variogram</span>(italy_sim_sf, <span class="at">variable =</span> <span class="st">"rand_eff"</span>, </span>
+<span id="cb25-40"><a href="#cb25-40" aria-hidden="true" tabindex="-1"></a>                                <span class="at">scale_to_km =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb25-41"><a href="#cb25-41" aria-hidden="true" tabindex="-1"></a>                                <span class="at">n_permutation =</span> <span class="dv">200</span>)</span>
+<span id="cb25-42"><a href="#cb25-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-43"><a href="#cb25-43" aria-hidden="true" tabindex="-1"></a><span class="co"># Plotting the results</span></span>
+<span id="cb25-44"><a href="#cb25-44" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_s_variogram</span>(italy_sim_variog, <span class="at">plot_envelope =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-italy-sim-variog" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="03_model-fitting_files/figure-html/fig-italy-sim-variog-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="figure-caption">Figure&nbsp;3.9: Plot of the empirical variogram (solid line) computed using the estimated random effects from the model in <a href="#eq-italy-sim-lmm">Equation&nbsp;<span>3.16</span></a>. The blue shaded area is the 95% confidence level envelope generated using the permutation procedure described in <a href="#sec-expl-spatial"><span>Section&nbsp;3.1.3</span></a>.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>In the code above, the introduction of the <span class="math inline">\(Z_i\)</span> random effect is specified in the <code>lmer</code> function though <code>(1|ID_loc)</code> in the formula; recall that <code>ID_loc</code> is the numerical indicator that identifies each location. From the summary of the model, we obtain both the estimates of the regression coefficients <span class="math inline">\(\beta_{0}\)</span> and <span class="math inline">\(\beta_{1}\)</span>, as well for the variances <span class="math inline">\(\tau^2\)</span> listed under <code>Random effects:</code>. The estimate of <span class="math inline">\(\sigma^2\)</span> is found on the line of printed output starting with <code>ID_loc</code>, whilst that for $^2 is next to <code>Residual</code>.</p>
+<p>The application of the empirical variogram, whose results are shown in <a href="#fig-italy-sim-variog">Figure&nbsp;<span>3.9</span></a>, indicate the presence of residual correlation. This is because we observe that the solid line representing the empirical variogram falls outside of the 95% envelope for spatial independence.</p>
+</section>
+</section>
+</section>
+</section>
+<section id="sec-linear-model" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="sec-linear-model"><span class="header-section-number">3.2</span> Parameter estimation: the linear geostatistical model</h2>
+<p>In this section, we consider spatially referenced outcomes <span class="math inline">\(Y_i\)</span> that are continuous. We first consider the simpler case of a single measurement <span class="math inline">\(Y_i\)</span> per location <span class="math inline">\(x_i\)</span>. Recalling the class of generalized linear models introduced in <a href="01_intro.html#sec-geostat-models"><span>Section&nbsp;1.5</span></a>, the linear predictor takes the form <span id="eq-linear-geostat-model-lp"><span class="math display">\[
+\mu_{i} = d(x_i)^\top \beta + S(x_i).
+\tag{3.17}\]</span></span> Hence, in this case, we interpret <span class="math inline">\(\beta\)</span> as the effect on <span class="math inline">\(\mu_i\)</span> for a unit increase in <span class="math inline">\(d(x_i)\)</span>. Let <span class="math inline">\(U_i\)</span> denote i.i.d. random variables representing the measurement error associated with <span class="math inline">\(Y_i\)</span>, each having mean zero and variance <span class="math inline">\(\omega^2\)</span>. Thanks to the linear properties of Gaussian random variables, we can also express the linear model in a compact expression, as <span id="eq-linear-geostat-model"><span class="math display">\[
+Y_i = \mu_i + U_i = d(x_i)^\top \beta + S(x_i) + U_i.
+\tag{3.18}\]</span></span> To fully specify a geostatistical model for our dataset, we must address two critical aspects.</p>
+<ol type="1">
+<li>Defining the relationship between each covariate and the mean value <span class="math inline">\(\mu_i\)</span>.</li>
+<li>Selecting an appropriate correlation function for <span class="math inline">\(S(x)\)</span>.</li>
+</ol>
+<p>As illustrated in the previous sections, the initial step of exploratory analysis allows us to handle the first aspect, where we determine the regression relationship between covariates and the mean value <span class="math inline">\(\mu_i\)</span>. However, based on existing methods of exploratory analysis, it is difficult to understand what is a suitable correlation function at this stage. A commonly recommended starting point is the Matern correlation function (see <a href="01_intro.html#eq-matern">Equation&nbsp;<span>1.5</span></a>), which offers considerable flexibility in capturing a wide range of correlation structures, under the assumption stationarity and isotropy. As we shall illustrate in the next example, even estimating a Matern correlation function, is a task that poses many inferential challenges due to the poor identifiability of its parameters, especially the smothness parameter <span class="math inline">\(\kappa\)</span>.</p>
+<section id="a-pragmatic-approach-to-deal-with-the-smothness-parameter-kappa" class="level3" data-number="3.2.1">
+<h3 data-number="3.2.1" class="anchored" data-anchor-id="a-pragmatic-approach-to-deal-with-the-smothness-parameter-kappa"><span class="header-section-number">3.2.1</span> A pragmatic approach to deal with the smothness parameter <span class="math inline">\(\kappa\)</span></h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>fit_galicia <span class="ot">&lt;-</span> </span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="fu">glgpm</span>(<span class="fu">log</span>(lead) <span class="sc">~</span> <span class="fu">gp</span>(x, y, <span class="at">kappa =</span> <span class="fl">1.5</span>), <span class="at">data=</span>galicia, <span class="at">family =</span> <span class="st">"gaussian"</span>,</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>      <span class="at">crs =</span> <span class="dv">32629</span>, <span class="at">scale_to_km =</span> <span class="cn">TRUE</span>, <span class="at">messages =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_galicia)</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="do">## Geostatistical linear model </span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="do">## 'Lower limit' and 'Upper limit' are the limits of the95% confidence level intervals </span></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  Regression coefficients </span></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a><span class="do">##             Estimate Lower limit Upper limit   StdErr z.value   p.value    </span></span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a><span class="do">## (Intercept) 0.707418    0.552762    0.862075 0.078908  8.9651 &lt; 2.2e-16 ***</span></span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a><span class="do">## ---</span></span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a><span class="do">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a><span class="do">##                           Estimate Lower limit Upper limit</span></span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a><span class="do">## Measuremment error var. 0.0154636   0.0051797      0.0462</span></span>
+<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a><span class="do">##  Spatial Guassian process </span></span>
+<span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a><span class="do">## Matern covariance parameters (kappa=1.5) </span></span>
+<span id="cb26-21"><a href="#cb26-21" aria-hidden="true" tabindex="-1"></a><span class="do">##                      Estimate Lower limit Upper limit</span></span>
+<span id="cb26-22"><a href="#cb26-22" aria-hidden="true" tabindex="-1"></a><span class="do">## Spatial process var.  0.17127     0.13303      0.2205</span></span>
+<span id="cb26-23"><a href="#cb26-23" aria-hidden="true" tabindex="-1"></a><span class="do">## Spatial corr. scale   9.02085     7.59521     10.7141</span></span>
+<span id="cb26-24"><a href="#cb26-24" aria-hidden="true" tabindex="-1"></a><span class="do">## Variance of the nugget effect fixed at 0 </span></span>
+<span id="cb26-25"><a href="#cb26-25" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb26-26"><a href="#cb26-26" aria-hidden="true" tabindex="-1"></a><span class="do">##  Log-likelihood: 69.03029</span></span>
+<span id="cb26-27"><a href="#cb26-27" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb26-28"><a href="#cb26-28" aria-hidden="true" tabindex="-1"></a><span class="do">##  AIC: -138.0606</span></span>
+<span id="cb26-29"><a href="#cb26-29" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Number of the values chosen for kappa</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>n_kappa <span class="ot">&lt;-</span> <span class="dv">10</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Set of values for kappa</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>kappa_values <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fl">0.5</span>, <span class="fl">3.5</span>, <span class="at">length =</span> n_kappa)</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Vector that will store the values of the likelihood function </span></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a><span class="co"># evaluated at the maximum likelihood estimate</span></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>llik_values <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="cn">NA</span>, <span class="at">length =</span> n_kappa)</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Vector that will store the maximum likelihood estimates</span></span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a><span class="co"># of the variance of the measurment error</span></span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>sigma2_me_hat <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="cn">NA</span>, <span class="at">length =</span> n_kappa)</span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a><span class="co"># List that will contain all the geostatistical models fitted for </span></span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a><span class="co"># the different values of kappa specified in kappa_values</span></span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>fit_galicia_list <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_kappa) {</span>
+<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a>  fit_galicia_list[[i]] <span class="ot">&lt;-</span> <span class="fu">glgpm</span>(<span class="fu">log</span>(lead) <span class="sc">~</span> <span class="fu">gp</span>(x, y, <span class="at">kappa =</span> kappa_values[i]), </span>
+<span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">data=</span>galicia, <span class="at">family =</span> <span class="st">"gaussian"</span>,</span>
+<span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">crs =</span> <span class="dv">32629</span>, <span class="at">scale_to_km =</span> <span class="cn">TRUE</span>, <span class="at">messages =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb27-24"><a href="#cb27-24" aria-hidden="true" tabindex="-1"></a>  llik_values[i] <span class="ot">&lt;-</span>  fit_galicia_list[[i]]<span class="sc">$</span>log.lik</span>
+<span id="cb27-25"><a href="#cb27-25" aria-hidden="true" tabindex="-1"></a>  sigma2_me_hat[i] <span class="ot">&lt;-</span>  <span class="fu">coef</span>(fit_galicia_list[[i]])[<span class="st">"sigma2_me"</span>]</span>
+<span id="cb27-26"><a href="#cb27-26" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-galicia-matern" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="03_model-fitting_files/figure-html/fig-galicia-matern-1.png" class="img-fluid figure-img" style="width:8.5in"></p>
+<figcaption class="figure-caption">Figure&nbsp;3.10: (a) profile likeihood for <span class="math inline">\(\kappa\)</span> with the horizontal dashed line corresponding to the (approximate) threshold for constructing a 95% confidence interval based on a <span class="math inline">\(\chi^2\)</span> with one degree of freedom; (b) plot of the maximum likelihood estimate for the variance of the measurement error <span class="math inline">\(U_i\)</span>, denoted in the text as <span class="math inline">\(\omega^2\)</span>, against the chosen fixed value for <span class="math inline">\(\kappa\)</span>.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="generalized-linear-geostatistical-models" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="generalized-linear-geostatistical-models"><span class="header-section-number">3.3</span> Generalized linear geostatistical models</h2>
+</section>
+<section id="theory" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="theory"><span class="header-section-number">3.4</span> Theory</h2>
+<section id="the-likelihood-function-of-a-genearlized-linear-mixed-model" class="level3" data-number="3.4.1">
+<h3 data-number="3.4.1" class="anchored" data-anchor-id="the-likelihood-function-of-a-genearlized-linear-mixed-model"><span class="header-section-number">3.4.1</span> The likelihood function of a genearlized linear mixed model</h3>
+</section>
+<section id="the-likelihood-function-of-a-genearlized-linear-geostatistical-model" class="level3" data-number="3.4.2">
+<h3 data-number="3.4.2" class="anchored" data-anchor-id="the-likelihood-function-of-a-genearlized-linear-geostatistical-model"><span class="header-section-number">3.4.2</span> The likelihood function of a genearlized linear geostatistical model</h3>
+</section>
+<section id="monte-carlo-maximum-likelihood" class="level3" data-number="3.4.3">
+<h3 data-number="3.4.3" class="anchored" data-anchor-id="monte-carlo-maximum-likelihood"><span class="header-section-number">3.4.3</span> Monte Carlo maximum likelihood</h3>
+</section>
+</section>
+<section id="exercises" class="level2" data-number="3.5">
+<h2 data-number="3.5" class="anchored" data-anchor-id="exercises"><span class="header-section-number">3.5</span> Exercises</h2>
+<ol start="2" type="1">
+<li><p>Consider the Binomial mixed model with linear predictor as defined in <a href="#eq-linear-predictor-glmms-ch2">Equation&nbsp;<span>3.7</span></a>. By editing the code for the simulation shown in <a href="#sec-overdispersion"><span>Section&nbsp;3.1.2</span></a>, generate a graph as in <a href="#fig-var-bin-glmm">Figure&nbsp;<span>3.6</span></a> under the two following scenarios: <span class="math inline">\(i\)</span>) <span class="math inline">\(\tau^2 = 0.2\)</span> and <span class="math inline">\(n_i=100\)</span>; <span class="math inline">\(ii\)</span>) <span class="math inline">\(\tau^2 = 0.1\)</span> and <span class="math inline">\(n_i = 1\)</span>. How does the variance of <span class="math inline">\(Y_i\)</span> change under <span class="math inline">\(i\)</span>) and <span class="math inline">\(ii\)</span>) in comparison to <a href="#fig-var-bin-glmm">Figure&nbsp;<span>3.6</span></a>? How do you explain the differences?</p></li>
+<li><p>Similarly to the previous exercise, consider a Poisson mixed model with linear predictor <span class="math display">\[
+\log\left\{\mu_i\right\} = \beta_0 + Z_i,
+\]</span> where <span class="math inline">\(Z_i\)</span> are a set of mutually independent Gaussian variables with mean 0 and variance <span class="math inline">\(\tau^2\)</span>. Using the code shown in <a href="#sec-overdispersion"><span>Section&nbsp;3.1.2</span></a>, carry out a simulation study to compute the variance of <span class="math inline">\(Y_i\)</span> and generate a graph similar to <a href="#fig-var-bin-glmm">Figure&nbsp;<span>3.6</span></a> to compare the variance of the Poisson mixed model with that of a standard Poisson model. Generate the graph for different values of <span class="math inline">\(\tau^2\)</span> and summarize your findings. NOTE: In this simulation the offset <span class="math inline">\(n_i\)</span> can be set to 1.</p></li>
+<li><p>Create an R function that computes the <em>cloud variogram</em>. As explained in <a href="#sec-expl-spatial"><span>Section&nbsp;3.1.3</span></a>, the cloud variogram is obtained by plotting <span class="math inline">\(\hat{V}_{ij}\)</span> (see <a href="#eq-hat-squared-diff">Equation&nbsp;<span>3.11</span></a>) against the distances <span class="math inline">\(u_{ij}\)</span>. The function should take as input a data-set with three columns: the variable for which the cloud variogram is to be computed; and two columns corresponding to the location of the data. Then, use this function to create the cloud variogram for the model for river-blindness in <a href="#eq-liberia-bin-mixed-elev">Equation&nbsp;<span>3.13</span></a>. How does this compare to empirical variogram that takes the averages within predefined distance classes, as shown in <a href="#fig-liberia-variog">Figure&nbsp;<span>3.7</span></a>?</p></li>
+<li><p>Fit a Binomial mixed model to the Liberia data-set on river-blindness without any covariates, i.e.&nbsp;<span class="math display">\[
+\log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_0 + Z_i.
+\]</span> Making use of the R code presented in <a href="#sec-empirical-variog-bin"><span>Section&nbsp;3.1.3.1</span></a>, use the function <code>s_variogram</code> to generate the empirical variogram for this model and compare this to the empirical variogram of <a href="#fig-liberia-variog">Figure&nbsp;<span>3.7</span></a>. What differences do you observe?</p></li>
+<li><p>Fit a Poisson mixed model to the anopheles mosquito data using elevation as a covariate, i.e. <span class="math display">\[
+\log\{\mu(x_i)\} = \beta_{0} + \beta_{1} d(x_i) + Z_i
+\]</span> where <span class="math inline">\(d(x_i)\)</span> is the measured elevation at location <span class="math inline">\(x_i\)</span>. How strong is the overdispersion in the data? After fitting the model, extract the estimates of the random effects <span class="math inline">\(Z_i\)</span> and compute the empirical variogram with the 95% envelope for spatial independence. Repeat this for different classes of distances by changing the input passed to <code>bins</code> in the <code>s_variogram</code> function. How do the different specifications of <code>bins</code> affect the results?</p></li>
+</ol>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="ref-bates2015" class="csl-entry" role="listitem">
+Bates, Douglas, Martin Mächler, Ben Bolker, and Steve Walker. 2015. <span>“Fitting Linear Mixed-Effects Models Using <span class="nocase">lme4</span>.”</span> <em>Journal of Statistical Software</em> 67 (1): 1–48. <a href="https://doi.org/10.18637/jss.v067.i01">https://doi.org/10.18637/jss.v067.i01</a>.
+</div>
+<div id="ref-bowman1997" class="csl-entry" role="listitem">
+Bowman, A. W. 1997. <em>Applied Smoothing Techniques for Data Analysis : The Kernel Approach with s-Plus Illustrations</em>. Oxford Statistical Science Series ; 18. Oxford : New York: Clarendon Press ; Oxford University Press.
+</div>
+<div id="ref-hastie2001" class="csl-entry" role="listitem">
+Hastie, Trevor, Robert Tibshirani, and Jerome Friedman. 2001. <em>The Elements of Statistical Learning</em>. Springer Series in Statistics. New York, NY, USA: Springer New York Inc.
+</div>
+<div id="ref-gates2020" class="csl-entry" role="listitem">
+Katz, Elizabeth, and Bill &amp; Melinda Gates Foundation. 2020. <span>“Gender and Malaria Evidence Reivew.”</span> Bill &amp; Melinda Gates Foundation. <a href="https://www.gatesgenderequalitytoolbox.org/wp-content/uploads/BMGF_Malaria-Review_FC.pdf">https://www.gatesgenderequalitytoolbox.org/wp-content/uploads/BMGF_Malaria-Review_FC.pdf</a>.
+</div>
+<div id="ref-smith2007" class="csl-entry" role="listitem">
+Smith, David L, Carlos A Guerra, Robert W Snow, and Simon I Hay. 2007. <span>“Standardizing Estimates of the Plasmodium Falciparum Parasite Rate.”</span> <em>Malaria Journal</em> 6 (1): 131–31.
+</div>
+<div id="ref-tobler1970" class="csl-entry" role="listitem">
+Tobler, W. R. 1970. <span>“A Computer Movie Simulating Urban Growth in the Detroit Region.”</span> <em>Economic Geography</em> 46: 234–40.
+</div>
+<div id="ref-weisberg2014" class="csl-entry" role="listitem">
+Weisberg, Sanford. 2014. <em>Applied Linear Regression</em>. Fourth. Hoboken <span>NJ</span>: Wiley. <a href="http://z.umn.edu/alr4ed">http://z.umn.edu/alr4ed</a>.
+</div>
+</div>
+</section>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1"><p>The letter <span class="math inline">\(e\)</span> stands for the so called Euler’s number and represents the base of the natural logarithm. In the book, we write <span class="math inline">\(\log(\cdot)\)</span> to mean the “natural logarithm of <span class="math inline">\(\cdot\)</span>”.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
 </section>
 
 </main> <!-- /main -->
@@ -275,9 +1093,23 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     icon: icon
   };
   anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
   const clipboard = new window.ClipboardJS('.code-copy-button', {
-    target: function(trigger) {
-      return trigger.previousElementSibling;
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
     }
   });
   clipboard.on('success', function(e) {
@@ -342,6 +1174,92 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       return note.innerHTML;
     });
   }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
   const findCites = (el) => {
     const parentEl = el.parentElement;
     if (parentEl) {
@@ -383,8 +1301,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./02_exploratory-analysis.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Exploratory analysis</span></span>
+      <a href="./02_handling-spatial-data.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Handling of spatial data in R</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
