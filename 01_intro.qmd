@@ -273,7 +273,7 @@ The model described in ([-@eq-linear-predictor-ch1]) can be seen as the most bas
 
 The types of problems that statistical models are applied to can be distinguished into three main categories: prediction problems; explanatory problems; problems of hypothesis testing. Most of the times, geostatistical problems tend to fall under the first category, where the goal is make predictive inferences on the process $S(x)$ at location $x$, which is usually outside of the set of sampled locations. However, as will illustrate in the later chapters, geostatistical models play an important also in the other two types of problems. In particular, we will show that spatial correlation can have a substantial impact on the point estimates and standard errors for $\beta$. Hence, if the goal of the analysis is explain the relationship between a covariate $d(x)$ with the mean component $\mu$.
 
-### The Matern family of correlation functions
+### The Matern family of correlation functions {#sec-metern-correlation}
 
 Throughout the book, we shall consider the @matern2013 family of correlation functions to model the spatial correlation of the Gaussian process $S(x)$. This defined as $$
 \rho(u;\phi,\kappa) =\{2^{\kappa-1} \Gamma(\kappa)\}^{-1} (u/\phi)^\kappa K_\kappa(u/\phi),
