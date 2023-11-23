@@ -3,7 +3,7 @@
 ## List of the main functions used in the chapter {.unnumbered}
 
 | Function      | R Package | Used for                                                                                     |
-|------------|------------|------------------------------------------------|
+|---------------|---------------|-------------------------------------------|
 | `lmer`        | `lme4`    | Fitting linear mixed models                                                                  |
 | `glmer`       | `lme4`    | Fitting generalized linear mixed models                                                      |
 | `glgm`        | `RiskMap` | Fitting generalized linear mixed models                                                      |
@@ -557,24 +557,24 @@ $$ {#eq-linear-geostat-model} To fully specify a geostatistical model for our da
 
 As illustrated in the previous sections, the initial step of exploratory analysis allows us to handle the first aspect, where we determine the regression relationship between covariates and the mean value $\mu_i$. However, based on existing methods of exploratory analysis, it is difficult to understand what is a suitable correlation function at this stage. A commonly recommended starting point is the Matern correlation function (see @eq-matern), which offers considerable flexibility in capturing a wide range of correlation structures, under the assumption stationarity and isotropy. As we shall illustrate in the next example, even estimating a Matern correlation function is a task that poses many inferential challenges due to the poor identifiability, especially, of its smoothness parameter $\kappa$.
 
-### Evaluating the inclusion of the measurement term and the specification of the smoothness parameter
+### Evaluating the inclusion of the measurement error term $U_i$ and the specification of the smoothness parameter $\kappa$ {#sec-glm-parest}
 
-In this section we analyse the Galicia data using a linear geostatistical geostatitsical model for the log-transformed lead concentration, which we denote as $Y_i$. Since we do not use covariates, we then write the model as
-$$
+In this section we analyse the Galicia data using a linear geostatistical geostatitsical model for the log-transformed lead concentration, which we denote as $Y_i$. Since we do not use covariates, we then write the model as $$
 Y_i = \mu + S(x_i) + U_i
-$$ {#eq-galicia-lgm}
-where were $S(x)$ is a Matern process with variance $\sigma^2$, scale parameter $\phi$ and and smothness parameter $\kappa$; the $U_i$ correspond to the measurement error term and denote with $\omega^2$ their variance. 
+$$ {#eq-galicia-lgm} where were $S(x)$ is a Matern process with variance $\sigma^2$, scale parameter $\phi$ and and smothness parameter $\kappa$; the $U_i$ correspond to the measurement error term and denote with $\omega^2$ their variance.
 
 We carry out the parameter estimation of the model using the `glgpm` function from the `RiskMap` package. This function implements maximum likelihood estimation for generalized linear mixed models using a Matern correlation function, while fixing the smoothness parameter $\kappa$ at prespecified value by the user. The object passed to the argument `data` in `glpm` can either be a `data.frame` object or an `sf` object. Below we illustrate the use of `glgpm` while distinguishing between these two cases.
+
 ```{r, collapse=TRUE}
 # Parameter estimation when the argument passed to `data` is a data-frame
 fit_galicia <- 
 glgpm(log(lead) ~ gp(x, y, kappa = 1.5), data=galicia, family = "gaussian",
       crs = 32629, scale_to_km = TRUE, messages = FALSE)
 ```
-The code above shows the use of `glgpm` by passing `galicia` as a `data.frame` object to `data`. The specification of the Guassian process $S(x)$ is done through the addition of the term `gp()` in the formula. The function `gp` allows you to specify the columns of the coordinates in the data, in this case `x` and `y`, the smoothness parameter through the argument `kappa`, set to 1.5 in this example. In the help page of `gp`, you can see that by default the nugget term (denoted in this book by the random variable $Z_i$) is excluded from the model by default; to include and estimate the variance parameter of the nugget, you should set `nugget=NULL` in the `gp()` function. However, doing so for a linear model that only has one observation per location will generate error message as this is a non-identifiable model for the same reasons given in @sec-explanal-lm. However, if the measurement error variance is known this can be fixed by the user using the argument `fix_var_me` and the inclusion of the nugget term is then possible (to better understand this point, try Exercise 7 at the end of this chapter). 
 
-The argument `crs` is used to specify the coordinate reference system (CRS) of the data. For the Galicia data, as well as for every other data-set used in this book, the CRS is reported in the help page description of the data-set. If `crs` is not specified, the function will assume that the coordinates are in longitude/latitude format and will use these without applying any transformation. Finally, the argument `scale_to_km`, is used to specify whether the distances between locations should be scaled to kilometers or maintained in meter; this argument will not affect the scale, and thus the interpretation of the spatial correlation parameter $\phi$. 
+The code above shows the use of `glgpm` by passing `galicia` as a `data.frame` object to `data`. The specification of the Guassian process $S(x)$ is done through the addition of the term `gp()` in the formula. The function `gp` allows you to specify the columns of the coordinates in the data, in this case `x` and `y`, the smoothness parameter through the argument `kappa`, set to 1.5 in this example. In the help page of `gp`, you can see that by default the nugget term (denoted in this book by the random variable $Z_i$) is excluded from the model by default; to include and estimate the variance parameter of the nugget, you should set `nugget=NULL` in the `gp()` function. However, doing so for a linear model that only has one observation per location will generate error message as this is a non-identifiable model for the same reasons given in @sec-explanal-lm. However, if the measurement error variance is known this can be fixed by the user using the argument `fix_var_me` and the inclusion of the nugget term is then possible (to better understand this point, try Exercise 7 at the end of this chapter).
+
+The argument `crs` is used to specify the coordinate reference system (CRS) of the data. For the Galicia data, as well as for every other data-set used in this book, the CRS is reported in the help page description of the data-set. If `crs` is not specified, the function will assume that the coordinates are in longitude/latitude format and will use these without applying any transformation. Finally, the argument `scale_to_km`, is used to specify whether the distances between locations should be scaled to kilometers or maintained in meter; this argument will not affect the scale, and thus the interpretation of the spatial correlation parameter $\phi$.
 
 ```{r, collapse=TRUE}
 # Parameter estimation when the argument passed to `data` is an sf object
@@ -584,13 +584,17 @@ fit_galicia_sf <-
 glgpm(log(lead) ~ gp(kappa = 1.5), data=galicia_sf, family = "gaussian",
       scale_to_km = TRUE, messages = FALSE)
 ```
-The code above shows the alternative approach to estimate the model, when the argument passed to `data` is an `sf` object. In this case, the data-set `galicia` is converted into an `sf` object before the use of the `glgpm` function using `st_as_sf`. When when then fit the linear geostatistical model with `galicia_sf`, the only differences with the previous chunk of code that used `galicia` instead, is that the coordinates names in `gp()` and the `crs` argument in `glgpm` do not need to be specified as they are both directly obtained from `galicia_sf`. 
+
+The code above shows the alternative approach to estimate the model, when the argument passed to `data` is an `sf` object. In this case, the data-set `galicia` is converted into an `sf` object before the use of the `glgpm` function using `st_as_sf`. When when then fit the linear geostatistical model with `galicia_sf`, the only differences with the previous chunk of code that used `galicia` instead, is that the coordinates names in `gp()` and the `crs` argument in `glgpm` do not need to be specified as they are both directly obtained from `galicia_sf`.
+
 ```{r, collapse=TRUE}
 summary(fit_galicia)
 ```
-We can then inspect the point and interval estimates for the model through the `summary` function of the model as shown in the code chunk above. This outputs is presented in three sections: in the first section, we have the results for the regression coefficients; in the second section, we have the estimate for the variance of the measurement error component, $\omega^2$ whose point estimate is about 0.015; in the final section, we have the estimates for the parameters of the spatial covariance function, $\sigma^2$ and $\phi$ which are about 0.171 and 9.021 (km), respectively. The message `Variance of the nugget effect fixed at 0` indicates that the nugget has not been included in the mode; try Exercise 7 to see how this summary changes in the presence of the nugget term. 
 
-At this point, you may be wondering, why we have used 1.5 for the value of $\kappa$ and whether there is a statistical approach to find the most suitable value for this. We show such an approach in the code below. However, before examining the code, we would like to point an important aspect that relates to how the value of $\kappa$ can affect the estimate of the measurement error variance $\omega^2$. As we have shown, in @sec-matern-correlation, values of $\kappa$ that are closer to zero will give a rougher and less regular surface for $S(x)$. In the case of a single observation, when $\kappa$ is closer to zero, it will thus become increasingly difficult to estimate $\omega^2$ since the likelihood function may attribute most of the noisiness to $S(x)$ and rely less on $U_i$ to explain the unstructured random variation found in the data. As a consequence of this, we can expect that for value of $\kappa$ closer to zero, the estimates of $\omega^2$ will also be smaller and, on the contrary, when $\kappa$ is larger the estimates of $\omega^2$ will also increase. The results generated in the below clearly illustrate this point.
+We can then inspect the point and interval estimates for the model through the `summary` function of the model as shown in the code chunk above. This outputs is presented in three sections: in the first section, we have the results for the regression coefficients; in the second section, we have the estimate for the variance of the measurement error component, $\omega^2$ whose point estimate is about 0.015; in the final section, we have the estimates for the parameters of the spatial covariance function, $\sigma^2$ and $\phi$ which are about 0.171 and 9.021 (km), respectively. The message `Variance of the nugget effect fixed at 0` indicates that the nugget has not been included in the mode; try Exercise 7 to see how this summary changes in the presence of the nugget term.
+
+At this point, you may be wondering, why we have used 1.5 for the value of $\kappa$ and whether there is a statistical approach to find the most suitable value for this. We show such an approach in the code below. However, before examining the code, we would like to point an important aspect that relates to how the value of $\kappa$ can affect the estimate of the measurement error variance $\omega^2$. As we have shown, in @sec-matern-correlation, values of $\kappa$ that are closer to zero will give a rougher and less regular surface for $S(x)$. In the case of a single observation, when $\kappa$ is closer to zero, it will thus become increasingly difficult to estimate $\omega^2$ since the likelihood function may attribute most of the noisiness to $S(x)$ and rely less on $U_i$ to explain the unstructured random variation found in the data. As a consequence of this, we can expect that for value of $\kappa$ closer to zero, the estimates of $\omega^2$ will also be smaller and, on the contrary, when $\kappa$ is larger, the estimates of $\omega^2$ will also increase. The results generated in the below clearly illustrate this point.
+
 ```{r, collapse=TRUE}
 
 # Number of the values chosen for kappa
@@ -604,7 +608,7 @@ kappa_values <- seq(0.5, 3.5, length = n_kappa)
 llik_values <- rep(NA, length = n_kappa)
 
 # Vector that will store the maximum likelihood estimates
-# of the variance of the measurment error
+# of the variance of the measurement error
 sigma2_me_hat <- rep(NA, length = n_kappa)
 
 # List that will contain all the geostatistical models fitted for 
@@ -620,21 +624,27 @@ for(i in 1:n_kappa) {
 }
 
 ```
-
-
-
 ```{r, echo=FALSE, fig.align = "center", fig.height = 8, fig.width = 12,out.width = "8.5in"}
 #| label: fig-galicia-matern
-#| fig-cap: "(a) profile likeihood for $\\kappa$ with the horizontal dashed line corresponding to the (approximate) threshold for constructing a 95% confidence interval based on a $\\chi^2$ with one degree of freedom; (b) plot of the maximum likelihood estimate for the variance of the measurement error $U_i$, denoted in the text as $\\omega^2$, against the chosen fixed value for $\\kappa$. "
+#| fig-cap: "(a) plot of the maximum likelihood estimate for the variance of the measurement error $U_i$, denoted in the text as $\\omega^2$, against the chosen fixed value for $\\kappa$; (b) profile likeihood for $\\kappa$ with the horizontal dashed line corresponding to the (approximate) threshold for constructing a 95% confidence interval based on a $\\chi^2$ with one degree of freedom. "
 
 par(mfrow=c(1,2))
-plot(kappa_values, llik_values, type="b",
-     xlab = expression(kappa), ylab = "Likelihood function at MLE", main = "(a)")
-abline(h = max(llik_values)-pchisq(0.95, df = 2)/2, lty="dashed")
 plot(kappa_values, sigma2_me_hat, type="b",
-     xlab = expression(kappa), ylab = expression(hat(omega)^2), main = "(b)")
+     xlab = expression(kappa), ylab = expression(hat(omega)^2), main = "(a)")
+plot(kappa_values, llik_values, type="b",
+     xlab = expression(kappa), ylab = "Likelihood function at MLE", main = "(b)")
+abline(h = max(llik_values)-pchisq(0.95, df = 2)/2, lty="dashed")
 
 ```
+By examining the results shown in panel (a) of @fig-galicia-matern, we observe that, as expected, smaller values for $\kappa$ leads to smaller point estimates for $\omega^2$ and viceversa. This begs the question, what should be our chosen value for $\kappa$? 
+
+To answer this question, a natural approach is to estimate the model for different values of $\kappa$ and see which one give the best fit to the data, according to the likelihood function. In panel (b) of @fig-galicia-matern, we show the results of this approach where we considered 10 values for $\kappa$ within the range 0.5 to 3.5 (see code above). In this plot, we have also added a horizontal line to help us to approximate a range of the most plausible value for $\kappa$. More precisely, the horizontal dashed line is computed by taking the maximum observed values of the likelihoods computed for the different values of $\kappa$, say $\hat{M}$ and we subtract the quantile 0.95 of a $\chi^2$ distribution with 1 degree of freedom. In R this horizontal line is obtained as
+```{r, eval=FALSE}
+max(llik_values)-pchisq(0.95, df = 2)/2
+```
+where `llik_values` is as defined in the previous chunk of code. Note that this approach is essentially constructing the profile likelihood for $\kappa$ which one could use to derive a confidence interval for $\kappa$ with a finer segmentation for `kappa_values`. However, our current objective is not to derive the confidence interval for $\kappa$, but rather to gain a broad understanding of the $\kappa$ values supported by the dataset. The values of $\kappa$ that corresponds to likelihood values above the horizontal line are approximately between 0.75 and 2.75. Hence, selecting $\kappa=1.5$ seems to be a reasonable one in this case. Now, you may be pondering: are there value other than $\kappa=1.5$ that could fit the data even better? Our answer is that it is not worth the effort to try estimate $\kappa$ more precisely because it is empirically very difficult and, under some scenarios, even impossible. Estimating $\kappa$ poses a well-documented challenge in geostatistics (@zhang2004), which justifies our adoption of a pragmatic approach that sets it at a predefined value. This issue is also further exacerbated when analyzing count data, which tend to be less informative about the correlation structure than continuously measured data.  
+
+### Introducing additional random effects into the linear predictor using the `re()` function
 
 ## Generalized linear geostatistical models
 
@@ -663,5 +673,9 @@ plot(kappa_values, sigma2_me_hat, type="b",
 6.  Fit a Poisson mixed model to the anopheles mosquito data using elevation as a covariate, i.e. $$
     \log\{\mu(x_i)\} = \beta_{0} + \beta_{1} d(x_i) + Z_i
     $$ where $d(x_i)$ is the measured elevation at location $x_i$. How strong is the overdispersion in the data? After fitting the model, extract the estimates of the random effects $Z_i$ and compute the empirical variogram with the 95% envelope for spatial independence. Repeat this for different classes of distances by changing the input passed to `bins` in the `s_variogram` function. How do the different specifications of `bins` affect the results?
-    
-7. 
+
+7. Consider a linear model for the Galicia data as in @sec-glm-parest but now also introduce a nugget term, hence
+$$
+Y_i = \mu + S(x_i) + Z_i + U_i
+$$ {#eq-galicia-lgm-v2}
+where $Z_i$ are i.i.d. Gaussian variables with mean 0 and variance $\tau^2$. Fit the model by fixing the variance of $U_i$, $\omega^2$ to 0.01 using the argument `fix_var_me` in `glgpm`. Using this model, reproduce the graph as shown in @fig-galicia-matern. Repeat this, but now fix $\omega^2$ to 0.02. How do the curves change and why?
