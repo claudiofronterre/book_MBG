@@ -3,7 +3,7 @@
 ## List of the main functions used in the chapter {.unnumbered}
 
 | Function      | R Package | Used for                                                                                     |
-|---------------|---------------|-------------------------------------------|
+|-------------------|-------------------|-----------------------------------|
 | `lmer`        | `lme4`    | Fitting linear mixed models                                                                  |
 | `glmer`       | `lme4`    | Fitting generalized linear mixed models                                                      |
 | `glgm`        | `RiskMap` | Fitting generalized linear mixed models                                                      |
@@ -408,7 +408,7 @@ Before we can evaluate residual spatial correlation, there remains one crucial c
 
 We now show an application of all the concepts introduced in this section to the Liberia data on river-blindness.
 
-#### Binomial data: assessing spatial correlation for the Liberia data {#sec-empirical-variog-bin}
+#### Example: assessing spatial correlation for the Liberia data {#sec-empirical-variog-bin}
 
 We consider the Binomial mixed model that uses the log-transformed elevation as a covariate to model river blindness prevalence, hence $$
 \log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_{0} + \beta_{1}\log\{e(x_i)\} + Z_i
@@ -624,6 +624,7 @@ for(i in 1:n_kappa) {
 }
 
 ```
+
 ```{r, echo=FALSE, fig.align = "center", fig.height = 8, fig.width = 12,out.width = "8.5in"}
 #| label: fig-galicia-matern
 #| fig-cap: "(a) plot of the maximum likelihood estimate for the variance of the measurement error $U_i$, denoted in the text as $\\omega^2$, against the chosen fixed value for $\\kappa$; (b) profile likeihood for $\\kappa$ with the horizontal dashed line corresponding to the (approximate) threshold for constructing a 95% confidence interval based on a $\\chi^2$ with one degree of freedom. "
@@ -636,16 +637,92 @@ plot(kappa_values, llik_values, type="b",
 abline(h = max(llik_values)-pchisq(0.95, df = 2)/2, lty="dashed")
 
 ```
-By examining the results shown in panel (a) of @fig-galicia-matern, we observe that, as expected, smaller values for $\kappa$ leads to smaller point estimates for $\omega^2$ and viceversa. This begs the question, what should be our chosen value for $\kappa$? 
+
+By examining the results shown in panel (a) of @fig-galicia-matern, we observe that, as expected, smaller values for $\kappa$ leads to smaller point estimates for $\omega^2$ and viceversa. This begs the question, what should be our chosen value for $\kappa$?
 
 To answer this question, a natural approach is to estimate the model for different values of $\kappa$ and see which one give the best fit to the data, according to the likelihood function. In panel (b) of @fig-galicia-matern, we show the results of this approach where we considered 10 values for $\kappa$ within the range 0.5 to 3.5 (see code above). In this plot, we have also added a horizontal line to help us to approximate a range of the most plausible value for $\kappa$. More precisely, the horizontal dashed line is computed by taking the maximum observed values of the likelihoods computed for the different values of $\kappa$, say $\hat{M}$ and we subtract the quantile 0.95 of a $\chi^2$ distribution with 1 degree of freedom. In R this horizontal line is obtained as
+
 ```{r, eval=FALSE}
 max(llik_values)-pchisq(0.95, df = 2)/2
 ```
-where `llik_values` is as defined in the previous chunk of code. Note that this approach is essentially constructing the profile likelihood for $\kappa$ which one could use to derive a confidence interval for $\kappa$ with a finer segmentation for `kappa_values`. However, our current objective is not to derive the confidence interval for $\kappa$, but rather to gain a broad understanding of the $\kappa$ values supported by the dataset. The values of $\kappa$ that corresponds to likelihood values above the horizontal line are approximately between 0.75 and 2.75. Hence, selecting $\kappa=1.5$ seems to be a reasonable one in this case. Now, you may be pondering: are there value other than $\kappa=1.5$ that could fit the data even better? Our answer is that it is not worth the effort to try estimate $\kappa$ more precisely because it is empirically very difficult and, under some scenarios, even impossible. Estimating $\kappa$ poses a well-documented challenge in geostatistics (@zhang2004), which justifies our adoption of a pragmatic approach that sets it at a predefined value. This issue is also further exacerbated when analyzing count data, which tend to be less informative about the correlation structure than continuously measured data.  
 
-### Introducing additional random effects into the linear predictor using the `re()` function
+where `llik_values` is as defined in the previous chunk of code. Note that this approach is essentially constructing the profile likelihood for $\kappa$ which one could use to derive a confidence interval for $\kappa$ with a finer segmentation for `kappa_values`. However, our current objective is not to derive the confidence interval for $\kappa$, but rather to gain a broad understanding of the $\kappa$ values supported by the dataset. The values of $\kappa$ that corresponds to likelihood values above the horizontal line are approximately between 0.75 and 2.75. Hence, selecting $\kappa=1.5$ seems to be a reasonable one in this case. Now, you may be pondering: are there value other than $\kappa=1.5$ that could fit the data even better? Our answer is that it is not worth the effort to try estimate $\kappa$ more precisely because it is empirically very difficult and, under some scenarios, even impossible. Estimating $\kappa$ poses a well-documented challenge in geostatistics (@zhang2004), which justifies our adoption of a pragmatic approach that sets it at a predefined value. This issue is also further exacerbated when analyzing count data, which tend to be less informative about the correlation structure than continuously measured data.
 
+### Modelling hierarchical geostatistical data using the `re()` function {#sec-add-re-glgm}
+
+We now consider the analysis of geostatistical data with a hierarchical structure and show how to formulate and fit a geostatistical model that accounts for the effects of the different layers of the data. For this purpose, we use the `italy_sim` where each of the sampled locations can be grouped according to two administrative subdivisions of Italy, regions (Admin level 2) and provinces (Admin level 3), as shown in @fig-italy-maps.
+
+```{r, collapse=TRUE, message=FALSE}
+#| label: fig-italy-maps
+#| fig-cap: "The plot shows the location of the data-set `italy_sim` (red crosses), with the boundaries of the regions (left) and provinces (right) of Italy."
+
+library(rgeoboundaries)
+library(mapview)
+italy_regions <- geoboundaries(country = "italy", adm_lvl = "adm2")
+
+italy_provinces <- geoboundaries(country = "italy", adm_lvl = "adm3")
+
+par(mfrow = c(1,2))
+
+# Map of the data with the region boundaries
+map_regions <- ggplot() + 
+geom_sf(data = italy_sim_sf, pch = 4, color = "red") + 
+geom_sf(data = italy_regions, fill = NA) + 
+theme_void() +
+labs(title = "Regions") +
+theme(plot.title = element_text(hjust = 1/2))
+
+# Map of the data with the province boundaries
+map_provinces <- ggplot() + 
+geom_sf(data = italy_sim_sf, pch = 4, color = "red") + 
+geom_sf(data = italy_provinces, fill = NA) + 
+theme_void() +
+labs(title = "Provinces") +
+theme(plot.title = element_text(hjust = 1/2))
+
+library(gridExtra)
+grid.arrange(map_regions, map_provinces, ncol = 2)
+
+```
+
+Let $V_h$, for $h=1,\ldots,n_V$ and $Z_k$, for $k=1,\ldots,n_{Z}$, be a set of mutually independent Gaussian variables with zero means and variances $\sigma^2_{V}$ and $\sigma^2_{Z}$, respectively. Finally let $\mathcal{A}_h$, for $h=1,\ldots,n_V$ and $\mathcal{B}_k$, for $k=1,\ldots,n_{Z}$, denote the areas encompassed by the boundaries of the region and provinces, respectively. Since we have 10 repeated observations at each locations, we shall use $Y_{ij}$ to denote the $j$-th outcome (found in the data under the column `y`) at the $i$-th location $x_i$. The model from which we generated data $y_{ij}$ is $$
+Y_{ij} = \beta_0 + \overbrace{\beta_1 d(x_i) + S(x_i)}^\text{Location-level effect} + \underbrace{\sum_{h=1}^{n_{V}} I(x_i \in \mathcal{A}_h) \times V_h}_\text{Region effect} +\\ \overbrace{\sum_{k=1}^{n_{Z}} I(x_i \in \mathcal{B}_k) \times Z_k}^\text{Province effect} +  \underbrace{U_{ij}}_\text{Measurement error},
+$$ {#eq-italy-sim-model} for $j=1,\ldots 10$ and $i=1,\ldots,200$, where, $d(x_i)$ is the log-transformed population density, $I(x \in \mathcal{R})$ is an indicator function that takes value 1 if the location $x$ falls within the boundaries of the area denoted by $\mathcal{R}$ and 0 otherwise. The covariance function chosen in the generation of the data was an exponential correlation function hence ${\rm cov}\{S(x), S(x') = \sigma^2 \exp\{-||x-x'||/\phi\}$.
+
+The inclusion of the random effects $V_h$, for the region, and $Z_k$, for the province, can be included by using the `re()` function into the `formula` passed to `glgpm` as shown below.
+
+```{r,collapse=TRUE,message=FALSE}
+
+                        # Location-level effect
+italy_fit <- glgpm( y ~ log(pop_dens) + gp(kappa = 0.5, nugget = 0) +
+                        # Region and province effects
+                        re(region, province),
+         data = italy_sim_sf, scale_to_km = TRUE,
+         family = "gaussian")
+
+summary(italy_fit)
+
+```
+
+In the code above, the `factor` variables `region` and `province` found in `italy_sim` are passed to `re()` and these are estimated as unstructured random effects as defined by @eq-italy-sim-model. From the summary of model, we then obtain the parameter and interval estimates as reported in @tbl-italy-sim-mle. 
+
+| Parameter      | Point estimate | Lower limit | Upper limit |
+|----------------|----------------|-------------|-------------|
+| $\beta_0$      | -1.074         | -2.032      | -0.117      |
+| $\beta_1$      | 1.373          | 1.352       | 1.394       |
+| $\sigma^2$     | 0.917          |  0.595      | 1.414       |
+| $\phi$         | 214.520        | 153.608     | 299.587     |
+| $\sigma^2_{V}$ | 0.241          | 0.146       | 0.398       |
+| $\sigma^2_{Z}$ | 1.457          | 1.379       | 1.540       |
+| $\omega^2$     | 0.196          | 0.194       | 0.199       |
+
+: Maximum likelihood estimates and, lower and upper limits of the 95% confidence interval for the parameters of the model in @eq-italy-sim-lmm. {#tbl-italy-sim-mle}
+
+The function `to_table` from the `RiskMap` package can be used to obtain the Latex or HTML code directly from a fit of the model. Here is an example. 
+
+```{r,collapse=TRUE,message=FALSE}
+to_table(italy_fit, digits = 3)
+```
 ## Generalized linear geostatistical models
 
 ## Theory
@@ -674,8 +751,6 @@ where `llik_values` is as defined in the previous chunk of code. Note that this 
     \log\{\mu(x_i)\} = \beta_{0} + \beta_{1} d(x_i) + Z_i
     $$ where $d(x_i)$ is the measured elevation at location $x_i$. How strong is the overdispersion in the data? After fitting the model, extract the estimates of the random effects $Z_i$ and compute the empirical variogram with the 95% envelope for spatial independence. Repeat this for different classes of distances by changing the input passed to `bins` in the `s_variogram` function. How do the different specifications of `bins` affect the results?
 
-7. Consider a linear model for the Galicia data as in @sec-glm-parest but now also introduce a nugget term, hence
-$$
-Y_i = \mu + S(x_i) + Z_i + U_i
-$$ {#eq-galicia-lgm-v2}
-where $Z_i$ are i.i.d. Gaussian variables with mean 0 and variance $\tau^2$. Fit the model by fixing the variance of $U_i$, $\omega^2$ to 0.01 using the argument `fix_var_me` in `glgpm`. Using this model, reproduce the graph as shown in @fig-galicia-matern. Repeat this, but now fix $\omega^2$ to 0.02. How do the curves change and why?
+7.  Consider a linear model for the Galicia data as in @sec-glm-parest but now also introduce a nugget term, hence $$
+    Y_i = \mu + S(x_i) + Z_i + U_i
+    $$ {#eq-galicia-lgm-v2} where $Z_i$ are i.i.d. Gaussian variables with mean 0 and variance $\tau^2$. Fit the model by fixing the variance of $U_i$, $\omega^2$ to 0.01 using the argument `fix_var_me` in `glgpm`. Using this model, reproduce the graph as shown in @fig-galicia-matern. Repeat this, but now fix $\omega^2$ to 0.02. How do the curves change and why?
