@@ -226,7 +226,7 @@
 
 \begin{document}
 \maketitle
-\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[interior hidden, enhanced, breakable, borderline west={3pt}{0pt}{shadecolor}, sharp corners, boxrule=0pt, frame hidden]}{\end{tcolorbox}}\fi
+\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[sharp corners, boxrule=0pt, borderline west={3pt}{0pt}{shadecolor}, enhanced, breakable, interior hidden, frame hidden]}{\end{tcolorbox}}\fi
 
 \renewcommand*\contentsname{Table of contents}
 {
@@ -1054,9 +1054,9 @@ chapter}
 \markright{List of the main functions used in the chapter}
 
 \begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2603}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2603}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.4795}}@{}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2055}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2055}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.5890}}@{}}
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Function
@@ -2500,8 +2500,7 @@ the empirical variogram falls outside of the 95\% envelope for spatial
 independence.
 
 \hypertarget{sec-linear-model}{%
-\section{Parameter estimation: the linear geostatistical
-model}\label{sec-linear-model}}
+\section{The linear geostatistical model}\label{sec-linear-model}}
 
 In this section, we consider spatially referenced outcomes \(Y_i\) that
 are continuous. We first consider the simpler case of a single
@@ -2636,8 +2635,8 @@ do not need to be specified as they are both directly obtained from
 \begin{Shaded}
 \begin{Highlighting}[]
 \FunctionTok{summary}\NormalTok{(fit\_galicia)}
-\DocumentationTok{\#\# Geostatistical linear model }
-\DocumentationTok{\#\# \textquotesingle{}Lower limit\textquotesingle{} and \textquotesingle{}Upper limit\textquotesingle{} are the limits of the95\% confidence level intervals }
+\DocumentationTok{\#\# Linear geostatsitical model }
+\DocumentationTok{\#\# \textquotesingle{}Lower limit\textquotesingle{} and \textquotesingle{}Upper limit\textquotesingle{} are the limits of the 95\% confidence level intervals }
 \DocumentationTok{\#\# }
 \DocumentationTok{\#\#  Regression coefficients }
 \DocumentationTok{\#\#             Estimate Lower limit Upper limit   StdErr z.value   p.value    }
@@ -2878,22 +2877,26 @@ below.
          \AttributeTok{family =} \StringTok{"gaussian"}\NormalTok{)}
 \DocumentationTok{\#\# The CRS used is EPSG:32634 }
 \DocumentationTok{\#\# Distances between locations are computed in kilometers }
-\DocumentationTok{\#\#   0:     430.59466: {-}0.404481  1.33798  0.00000  5.30607  0.00000  0.00000  0.00000}
-\DocumentationTok{\#\#   1:    {-}139.11498: {-}0.407668  1.36548 {-}0.0189346  5.32468 {-}0.908799 {-}0.00256388 0.0148744}
-\DocumentationTok{\#\#   2:    {-}279.05702: {-}1.21582  1.37480 {-}0.538617  4.98928 {-}1.94843 {-}0.565719 0.365940}
-\DocumentationTok{\#\#   3:    {-}330.45019: {-}1.11959  1.37294 {-}0.103810  5.35702 {-}1.67443 {-}1.18312 0.367271}
-\DocumentationTok{\#\#   4:    {-}331.43272: {-}1.07102  1.37291 {-}0.100149  5.35516 {-}1.62984 {-}1.37447 0.375269}
-\DocumentationTok{\#\#   5:    {-}331.43375: {-}1.07439  1.37288 {-}0.0867550  5.36830 {-}1.62883 {-}1.42311 0.376285}
-\DocumentationTok{\#\#   6:    {-}331.43375: {-}1.07445  1.37288 {-}0.0866232  5.36840 {-}1.62883 {-}1.42491 0.376323}
-\DocumentationTok{\#\#   7:    {-}331.43375: {-}1.07445  1.37288 {-}0.0866232  5.36840 {-}1.62883 {-}1.42491 0.376323}
+\DocumentationTok{\#\#   0:     441.00731: {-}0.404481  1.33798  0.00000  4.62406  0.00000  0.00000  0.00000}
+\DocumentationTok{\#\#   1:    {-}130.05497: {-}0.408825  1.35003 {-}0.0387110  4.66059 {-}0.910409 {-}0.00265292 0.0107965}
+\DocumentationTok{\#\#   2:    {-}268.13436: {-}0.865126  1.39525 {-}0.0305268  5.92133 {-}1.96079 {-}0.666581 0.487537}
+\DocumentationTok{\#\#   3:    {-}329.24560: {-}1.44091  1.38139 {-}0.546306  4.98616 {-}1.67936 {-}1.15202 0.383821}
+\DocumentationTok{\#\#   4:    {-}331.20861: {-}1.38498  1.37256 0.165464  5.61366 {-}1.63033 {-}2.11435 0.371263}
+\DocumentationTok{\#\#   5:    {-}331.28418: {-}0.874796  1.37322 {-}0.271990  5.18071 {-}1.62887 {-}0.970705 0.371407}
+\DocumentationTok{\#\#   6:    {-}331.42968: {-}1.04087  1.37294 {-}0.119652  5.33634 {-}1.62883 {-}1.33321 0.375031}
+\DocumentationTok{\#\#   7:    {-}331.43375: {-}1.07312  1.37288 {-}0.0878211  5.36725 {-}1.62883 {-}1.42011 0.376251}
+\DocumentationTok{\#\#   8:    {-}331.43375: {-}1.07445  1.37288 {-}0.0866254  5.36840 {-}1.62883 {-}1.42489 0.376323}
+\DocumentationTok{\#\#   9:    {-}331.43375: {-}1.07445  1.37288 {-}0.0866228  5.36840 {-}1.62883 {-}1.42491 0.376323}
+\DocumentationTok{\#\#  10:    {-}331.43375: {-}1.07445  1.37288 {-}0.0866227  5.36840 {-}1.62883 {-}1.42491 0.376323}
+\DocumentationTok{\#\#  11:    {-}331.43375: {-}1.07445  1.37288 {-}0.0866227  5.36840 {-}1.62883 {-}1.42491 0.376323}
 
 \FunctionTok{summary}\NormalTok{(italy\_fit)}
-\DocumentationTok{\#\# Geostatistical linear model }
-\DocumentationTok{\#\# \textquotesingle{}Lower limit\textquotesingle{} and \textquotesingle{}Upper limit\textquotesingle{} are the limits of the95\% confidence level intervals }
+\DocumentationTok{\#\# Linear geostatsitical model }
+\DocumentationTok{\#\# \textquotesingle{}Lower limit\textquotesingle{} and \textquotesingle{}Upper limit\textquotesingle{} are the limits of the 95\% confidence level intervals }
 \DocumentationTok{\#\# }
 \DocumentationTok{\#\#  Regression coefficients }
 \DocumentationTok{\#\#                Estimate Lower limit Upper limit    StdErr z.value p.value    }
-\DocumentationTok{\#\# (Intercept)   {-}1.074453   {-}2.031694   {-}0.117213  0.488397    {-}2.2 0.02781 *  }
+\DocumentationTok{\#\# (Intercept)   {-}1.074454   {-}2.031694   {-}0.117213  0.488397    {-}2.2 0.02781 *  }
 \DocumentationTok{\#\# log(pop\_dens)  1.372877    1.352018    1.393735  0.010642   129.0 \textless{} 2e{-}16 ***}
 \DocumentationTok{\#\# {-}{-}{-}}
 \DocumentationTok{\#\# Signif. codes:  0 \textquotesingle{}***\textquotesingle{} 0.001 \textquotesingle{}**\textquotesingle{} 0.01 \textquotesingle{}*\textquotesingle{} 0.05 \textquotesingle{}.\textquotesingle{} 0.1 \textquotesingle{} \textquotesingle{} 1}
@@ -2905,7 +2908,7 @@ below.
 \DocumentationTok{\#\# Matern covariance parameters (kappa=0.5) }
 \DocumentationTok{\#\#                       Estimate Lower limit Upper limit}
 \DocumentationTok{\#\# Spatial process var.   0.91702     0.59470       1.414}
-\DocumentationTok{\#\# Spatial corr. scale  214.52024   153.60790     299.587}
+\DocumentationTok{\#\# Spatial corr. scale  214.52032   153.60797     299.587}
 \DocumentationTok{\#\# Variance of the nugget effect fixed at 0 }
 \DocumentationTok{\#\# }
 \DocumentationTok{\#\#  Unstructured random effects }
@@ -2960,7 +2963,7 @@ Here is an example.
 \begin{Highlighting}[]
 \FunctionTok{to\_table}\NormalTok{(italy\_fit, }\AttributeTok{digits =} \DecValTok{3}\NormalTok{)}
 \DocumentationTok{\#\# \% latex table generated in R 4.1.2 by xtable 1.8{-}4 package}
-\DocumentationTok{\#\# \% Fri Nov 24 14:43:05 2023}
+\DocumentationTok{\#\# \% Thu Feb  1 16:23:10 2024}
 \DocumentationTok{\#\# \textbackslash{}begin\{table\}[ht]}
 \DocumentationTok{\#\# \textbackslash{}centering}
 \DocumentationTok{\#\# \textbackslash{}begin\{tabular\}\{rrrr\}}
@@ -2983,6 +2986,87 @@ Here is an example.
 \hypertarget{generalized-linear-geostatistical-models}{%
 \section{Generalized linear geostatistical
 models}\label{generalized-linear-geostatistical-models}}
+
+We now consider the modelling of count outcomes, focusing our attention
+to the Binomial and Poisson geostatistical models.
+
+The use of Binomial geostatistical model is appropriate whenever the
+reported counts have a known upper bound. For example, when analyzing
+aggregated disease counts from cross-sectional survey data, the total
+number of people sampled at a location defines the largest number of
+possible reported disease cases. Recalling the model specification of
+Table~\ref{tbl-glm}, we specify the Binomial geostatistical model by
+stating that the reported disease counts \(Y_i\) out of \(n_i\) (the
+maximum value that \(Y_i\) can take) at location \(x_i\), conditionally
+on the spatial random effects \(S(x_i)\), follow a Binomial distribution
+with probability \(p(x_i)\) and logit-linear predictor
+\begin{equation}\protect\hypertarget{eq-lp-bin}{}{
+\log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = d(x_i)^\top \beta + S(x_i).
+}\label{eq-lp-bin}\end{equation} In this model, \(p(x_i)\) is commonly
+understood as representing the prevalence of the disease under
+consideration, defined as the proportion of individuals with the disease
+at a specific moment. While \(p(x_i)\) is not strictly a proportion, its
+interpretation as disease prevalence is justified by the fact that if we
+were to sample a sufficiently large population at location \(x_i\), the
+proportion of individuals with the disease would converge closely to the
+value of \(p(x_i)\).
+
+A Binomial geostatistical model is also used when analyzing data at
+individual level where the outcome is binary and usually indicates the
+positive or negative result of a test for a disease under investigation.
+In this analysis, a mix of individual-level variables and location-level
+variables could be introduced to model the probability of a positive
+test. To formally write the model, we now use \(Y_{ij}\) to indicate the
+binary outcome taking value 1, if the test was positive, and 0, if
+negative, for the \(j\)-th individual sampled at location \(x_i\). The
+linear predictor now takes the form
+\begin{equation}\protect\hypertarget{eq-lp-bin-ind}{}{
+\log\left\{\frac{p_{ij}}{1-p_{ij}}\right\} = e_{ij}^\top \gamma + d(x_{i})^\top \beta + S(x_i).
+}\label{eq-lp-bin-ind}\end{equation} In the model above we have
+distinguished between covariates \(e_{ij}\), that express the effect on
+\(p_{ij}\) due to individual traits (such as age and gender), and
+covariates \(d(x_i)\), that instead quantify the effect on \(p_{ij}\)
+resulting from the environmental attributes of location \(x_i\) (such as
+elevation, temperature, and precipitation). In this model \(p_{ij}\) --
+the probability of a positive test -- once again can be interpreted as
+the disease prevalence for a population characterized by the individual
+traits \(e_{ij}\) and residing at location \(x_i\).
+
+Finally, when the counts arise from a population whose size is unknown
+or when the occurrence of a disease is very small relative to the size
+of the target population, one should consider the use of a Poisson
+geostaistical model. We then use \(Y_i\) to denote the reported counts
+at location \(x_i\) and assume that this, conditionally on a Gaussian
+process \(S(x_i)\), follows a Poisson distribution with mean
+\(\lambda(x_i)\) and log-linear predictor
+\begin{equation}\protect\hypertarget{eq-poisson-lp}{}{
+\log\left\{\lambda(x_i)\right\} = d(x_i)^\top \beta + S(x_i). 
+}\label{eq-poisson-lp}\end{equation} If for example, \(Y_i\) corresponds
+to the number of new cases reported at a health facility at location
+\(x_i\) over a certain, the \(\lambda(x_i)\) is interpreted as the
+average number of new cases reported over that period. If the
+information on the size of the population at risk for the diseases were
+available, this can be incorporated into the model so as to enable the
+interpretation of \(\lambda(x_i)\) as the disease incidence, defined as
+the total number of new cases reported over a given period of time
+divided by the population at risk. If we denote the latter as \(m_i\),
+then we would specify the mean of \(Y_i\) as \(m_i\lambda(x_i)\) an
+model \(\lambda(x_i)\) as already specified in
+Equation~\ref{eq-poisson-lp}. Another prevalent application of the
+Poisson geostatistical model in epidemiology involves mapping the
+abundance of disease vectors. Here, \(\lambda(x_i)\) corresponds to the
+mean number of vectors per unit area. Also, note that in this last
+scenario \(m_i\) cannot be defined as it is the goal of the analysis to
+infer the vector population size at location \(x_i\).
+
+In all the three models, namely Equation~\ref{eq-lp-bin},
+Equation~\ref{eq-lp-bin-ind} and Equation~\ref{eq-poisson-lp}, one might
+consider the inclusion of an additional random effect \(Z_i\),
+previously used for the linear geostatistical model, to account for
+small spatial variation or overdispersion that stems from the omission
+of covariates that may not necessarily exhibit spatial structure, such
+as behavioral or genetic traits. We shall further elaborate and provide
+guidance on this point in the following examples of this section.
 
 \hypertarget{theory}{%
 \section{Theory}\label{theory}}
