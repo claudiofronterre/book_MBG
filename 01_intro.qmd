@@ -44,7 +44,7 @@ It is advised that you obtain the latest 64-bit version of R in order to run the
 The list of the R packages used in this book is provided in @tbl-packages.
 
 | R packages      | Used for                                                   |
-|--------------------|----------------------------------------------------|
+|---------------------|---------------------------------------------------|
 | `RiskMap` (E)   | Estimating of geostatistical models and spatial prediction |
 | `sf` (E)        | Handling of spatial data in R                              |
 | `terra` (E)     | Handling of raster files in R                              |
@@ -72,7 +72,7 @@ data(NAME_OF_THE_DATASET)
 where in place of `NAME_OF_THE_DATASET` you should type of the name of one of the data-sets listed in @tbl-data-sets.
 
 | Names of the data-set | Short description                                                                     | Used in this book as |
-|-----------------|--------------------------------------|-----------------|
+|------------------|-------------------------------------|------------------|
 | `galicia`             | Lead concentration m from moss samples collected in Galicia, Northern Spain           | Example              |
 | `liberia`             | Prevalence data on river-blindness from Liberia                                       | Example              |
 | `malkenya`            | Malaria prevalence data from a community and school survey conducted in Western Kenya | Example              |
@@ -273,7 +273,7 @@ The model described in ([-@eq-linear-predictor-ch1]) can be seen as the most bas
 
 The types of problems that statistical models are applied to can be distinguished into three main categories: prediction problems; explanatory problems; problems of hypothesis testing. Most of the times, geostatistical problems tend to fall under the first category, where the goal is make predictive inferences on the process $S(x)$ at location $x$, which is usually outside of the set of sampled locations. However, as will illustrate in the later chapters, geostatistical models play an important also in the other two types of problems. In particular, we will show that spatial correlation can have a substantial impact on the point estimates and standard errors for $\beta$. Hence, if the goal of the analysis is explain the relationship between a covariate $d(x)$ with the mean component $\mu$.
 
-### The Matern family of correlation functions
+### The Matern family of correlation functions {#sec-matern-correlation}
 
 Throughout the book, we shall consider the @matern2013 family of correlation functions to model the spatial correlation of the Gaussian process $S(x)$. This defined as $$
 \rho(u;\phi,\kappa) =\{2^{\kappa-1} \Gamma(\kappa)\}^{-1} (u/\phi)^\kappa K_\kappa(u/\phi),

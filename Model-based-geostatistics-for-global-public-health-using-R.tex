@@ -226,7 +226,7 @@
 
 \begin{document}
 \maketitle
-\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[frame hidden, sharp corners, boxrule=0pt, breakable, borderline west={3pt}{0pt}{shadecolor}, enhanced, interior hidden]}{\end{tcolorbox}}\fi
+\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[sharp corners, boxrule=0pt, borderline west={3pt}{0pt}{shadecolor}, enhanced, breakable, interior hidden, frame hidden]}{\end{tcolorbox}}\fi
 
 \renewcommand*\contentsname{Table of contents}
 {
@@ -374,8 +374,8 @@ Table~\ref{tbl-packages}.
 
 \hypertarget{tbl-packages}{}
 \begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.3611}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.6389}}@{}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.2917}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.7083}}@{}}
 \caption{\label{tbl-packages}List of the R packages that will be used in
 the book with a description of their use in the data analysis. The
 packages marked by (E) are essential for the geostatistical analysis.
@@ -420,7 +420,7 @@ To install packages in R for the first time, you can use the command
 \end{Shaded}
 
 \hypertarget{sec-examples-ch1}{%
-\section{Example data-sets used in the book}\label{sec-examples-ch1}}
+\section{Data-sets used in the book}\label{sec-examples-ch1}}
 
 The geostatistical data-sets described in this section will be used
 throughout the book to illustrate the use of the R packages mentioned in
@@ -440,9 +440,9 @@ name of one of the data-sets listed in Table~\ref{tbl-data-sets}.
 
 \hypertarget{tbl-data-sets}{}
 \begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2535}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.4930}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2535}}@{}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2466}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.5068}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2466}}@{}}
 \caption{\label{tbl-data-sets}List of data-sets available from the
 \texttt{RiskMap} package. Data-sets listed as ``Example'' are used
 throughout the book to illustrate the use of R functions. Data-sets
@@ -472,7 +472,7 @@ Used in this book as
 \endlastfoot
 \texttt{galicia} & Lead concentration m from moss samples collected in
 Galicia, Northern Spain & Example \\
-\texttt{liberia} & Prevalence data on river-blindness from Libera &
+\texttt{liberia} & Prevalence data on river-blindness from Liberia &
 Example \\
 \texttt{malkenya} & Malaria prevalence data from a community and school
 survey conducted in Western Kenya & Example \\
@@ -829,18 +829,109 @@ impact on the point estimates and standard errors for \(\beta\). Hence,
 if the goal of the analysis is explain the relationship between a
 covariate \(d(x)\) with the mean component \(\mu\).
 
-\hypertarget{the-matern-family-of-covariance-function}{%
-\subsection{The Matern family of covariance
-function}\label{the-matern-family-of-covariance-function}}
+\hypertarget{sec-matern-correlation}{%
+\subsection{The Matern family of correlation
+functions}\label{sec-matern-correlation}}
 
 Throughout the book, we shall consider the Matern (2013) family of
-covariance functions to model the spatial correlation of the Gaussian
+correlation functions to model the spatial correlation of the Gaussian
 process \(S(x)\). This defined as
 \begin{equation}\protect\hypertarget{eq-matern}{}{
 \rho(u;\phi,\kappa) =\{2^{\kappa-1} \Gamma(\kappa)\}^{-1} (u/\phi)^\kappa K_\kappa(u/\phi),
 }\label{eq-matern}\end{equation} where \(\phi>0\) and \(\kappa>0\) are
 parameters and \(K_\kappa(\cdot)\) is the modified Bessel function of
-the third kind of order \(\kappa\).
+the third kind of order \(\kappa\). The parameters \(\phi\) and
+\(\kappa\) regulate how fast the spatial correlation decays to zero for
+increasing distance and the smoothness of the process, respectively. A
+special case of Matern family of correlation functions, which is
+obtained when \(\kappa=0.5\), will be of particular relevance to the
+application considered in this book. This is the expeonential
+correlation function which we write as
+\begin{equation}\protect\hypertarget{eq-exp}{}{
+\rho(u;\phi) = \exp\{-u/\phi\}.
+}\label{eq-exp}\end{equation}
+
+Another special case, which we dot consider in this book but has often
+been used in machine learning applications, is the Gaussian correlation
+function obtain as a limiting case for \(\kappa \to +\infty\) the
+possible smoothest process arising from the Matern family.
+
+To better understand how \(\phi\) and \(\kappa\) affect the spatial
+correlation and the pattern of the spatial of the spatial surface, we
+now consider some examples.
+
+\begin{figure}
+
+{\centering \includegraphics[width=8.5in,height=\textheight]{01_intro_files/figure-pdf/fig-matern-func-1.pdf}
+
+}
+
+\caption{\label{fig-matern-func}Examples of stationary and isotropic
+Matern correlation functions. Panel (a) shows three different
+correlations functions that have the same smothness parameter of
+\(\kappa=0.5\), while varying the scale parameter \(\phi\) over
+\({0.05, 0.1, 0.2}\). In panel (b) the scale of the spatial correlation
+\(\phi\) is chosen so that each of the three functions reaches 0.05 at
+distance 0.3 (as also shown by the horizontal and vertical black dashed
+segments).}
+
+\end{figure}
+
+Figure~\ref{fig-matern-func} shows six different Matern correlation
+functions. In panel (a), we have kept \(\kappa\) fixed to 0.5 and varied
+\(\phi\) over the values 0.05, 0.1 and 0.2. As expected, for larger
+values of \(\phi\) the correlation function has a slower decay to zero.
+Panels (a) to (c), in Figure~\ref{fig-matern-sim}, show three
+realizations of a Gaussian process from each of these correlation
+functions. The mean of the Gaussian process was set to zero and variance
+to 1. We can observe that spatial correlations with larger scales are
+associated with longer spatial trends, whilst smaller scales exhibit a
+patchier pattern. This is because, as \(\phi\) takes values that are
+closer to zero, the spatial surface will tend to show a less structured
+pattern and will revert towards its zero mean more rapidly.
+
+Finally, let us consider the correlation functions, shown in the panel
+(b) of Figure~\ref{fig-matern-func}. Here, we have varied \(\kappa\)
+over the values 0.5, 1.5 and 2.5, whilst \(\phi\) has been fixed in
+order to force all three correlation functions to reach 0.05 for
+distance 0.3. In this way, we can better observe the effect of different
+values \(\kappa\) on the spatial surface for process that have
+approximately the same range for the spatial correlation. In
+Figure~\ref{fig-matern-sim}, we observe three realizations from these
+correlation functions. We observe that the differences between the
+different surface are determined by the small spatial scale behaviour;
+\(\kappa = 0.5\) correspond to a rougher and less regular spatial
+pattern, whilst \(\kappa=2.5\) shows a smoothest surface of the three
+processes considered. These properties of the spatial surface are
+related to the so called differentiability of the the Guassian process,
+which determines its local behaviour. If you are interested in delving
+these theoretical aspects, we suggest reading Chapter 2 of Stein (1999).
+
+\begin{figure}
+
+{\centering \includegraphics{01_intro_files/figure-pdf/fig-matern-sim-1.pdf}
+
+}
+
+\caption{\label{fig-matern-sim}Simulated spatial surface using the three
+correltion functions shown in Figure~\ref{fig-matern-func}. Panels (a),
+(b) and (c) correspond to the correlation functions from panel (a) in
+Figure~\ref{fig-matern-func} and in order these are: \(\phi = 0.05\) and
+\(\kappa=0.5\); (b) \(\phi=0.1\) and \(\kappa=0.5\); (c) \(\phi=0.2\)
+and \(\kappa=0.5\). Panels (c), (d) and (e) correspond to the
+correlation functions from panel (b) in Figure~\ref{fig-matern-func} and
+in order these are: \(\phi = 0.1\) and \(\kappa=0.5\); (b)
+\(\phi=0.063\) and \(\kappa=1.5\); (c) \(\phi=0.051\) and
+\(\kappa=2.5\).}
+
+\end{figure}
+
+The flexibility provided by the Matern correlation function in capturing
+different forms of spatial correlations has made one of, if not the most
+widely used correlation function in model-based geostatistics (Stein
+1999). For this reason, in this book we will consider the Matern
+correlation function. We will consider estimation issues related to the
+Matern correlation in Chapter~\ref{sec-estimation}.
 
 \hypertarget{workflow-of-a-statistical-analysis-and-structure-of-the-book}{%
 \section{Workflow of a statistical analysis and structure of the
@@ -963,9 +1054,9 @@ chapter}
 \markright{List of the main functions used in the chapter}
 
 \begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.1667}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.1667}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.6667}}@{}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2055}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2055}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.5890}}@{}}
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Function
@@ -1024,10 +1115,6 @@ Let us first consider the example of the river-blindness data in Liberia
 (Section~\ref{sec-rb-ch1}), and examine the association between
 prevalence and elevation. We first generate a plot of the prevalence
 against the measured elevation at each of the sample locations
-
-\begin{verbatim}
-## Linking to GEOS 3.10.2, GDAL 3.4.3, PROJ 8.2.1; sf_use_s2() is TRUE
-\end{verbatim}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1744,9 +1831,10 @@ We encourage you to do Exercise 1 and Exercise 2 at the end of this
 chapter, to further explore how generalized linear mixed models can be
 used as a tool to account for overdispersion.
 
-\hypertarget{maximum-likelihood-estimation-of-generalized-linear-mixed-models}{%
+\hypertarget{maximum-likelihood-estimation-of-generalized-linear-mixed-models-for-count-data}{%
 \subsubsection{Maximum likelihood estimation of generalized linear mixed
-models}\label{maximum-likelihood-estimation-of-generalized-linear-mixed-models}}
+models for count
+data}\label{maximum-likelihood-estimation-of-generalized-linear-mixed-models-for-count-data}}
 
 We now illustrate how to fit a generalize linear mixed, using the
 \texttt{anopheles} data-set as an example. We consider two models: an
@@ -2033,9 +2121,9 @@ absence of spatial correlation through the following iterative steps.
 We now show an application of all the concepts introduced in this
 section to the Liberia data on river-blindness.
 
-\hypertarget{sec-empirical-variog}{%
-\subsubsection{Using the empirical variogram to assess spatial
-correlation for the Liberia data}\label{sec-empirical-variog}}
+\hypertarget{sec-empirical-variog-bin}{%
+\subsubsection{Example: assessing spatial correlation for the Liberia
+data}\label{sec-empirical-variog-bin}}
 
 We consider the Binomial mixed model that uses the log-transformed
 elevation as a covariate to model river blindness prevalence, hence
@@ -2205,23 +2293,780 @@ unreliable tool for drawing statistical inferences. In other words, we
 advocate employing the empirical variogram primarily to assess the
 presence of residual correlation.
 
+\hypertarget{sec-empirical-variog-lm}{%
+\subsubsection{Exploring residual spatial correlation with linear
+Guassian models}\label{sec-empirical-variog-lm}}
+
+When using a linear model to assess spatial correlation, it is important
+to distinguish two cases: 1) when the data contain only one location per
+location; 2) when more than one observation per location is available.
+We now consider each of these two scenarios separately.
+
+\hypertarget{one-observation-per-location}{%
+\paragraph{One observation per
+location}\label{one-observation-per-location}}
+
+To illustrate the use of the variogram under this scenario, we shall use
+the Gailicia data on lead concentration in moss samples. The simplest
+possible model for the data is a standard linear model without
+covariates which assumes independence among the observations, hence
+\begin{equation}\protect\hypertarget{eq-std-lm-galicia}{}{
+Y_i = \beta_0 + U_i
+}\label{eq-std-lm-galicia}\end{equation} where the \(U_i\) are i.i.d.
+Gaussian variables with mean zero and variance \(\omega^2\). At this
+stage, our goal is then to assess whether the assumption of independence
+for the \(Z_i\) is supported by the data or whether there is evidence of
+spatial correlation. However, the measurement error of the device may be
+present as part of the natural random variation in \(Z_i\) which might
+mask the detection of spatial correlation using the residuals \(Z_i\)
+challenging, especially is the measurement error dominates the spatial
+variation of the data. One would be tempted to introduce an additional,
+location-specific random effect, say \(Z_i\) with mean zero and variance
+\(\tau^2\) and fit the model
+\begin{equation}\protect\hypertarget{eq-std-lm2-galicia}{}{
+Y_i = \beta_0 + Z_i + U_i,
+}\label{eq-std-lm2-galicia}\end{equation} where we interpret \(U_i\) as
+random variation due to the measurement device and \(Z_i\) as a random
+effect accounting for unmeasured covariates that contribute to the
+variation between locations in lead concentration. However, the model in
+Equation~\ref{eq-std-lm2-galicia} is not identifiable because we cannot
+disentangle the separate contributions of \(Z_i\) and \(U_i\) from the
+variation of the data, unless: a) we know the precision of the
+measurement device, \(\omega\) (recall that \(\omega^2\) is the variance
+of \(U_i\)); b) or, if we do not know \(\omega\), we can then separate
+the two sources of variation only if we have multiple observations per
+location (the scenario which we shall consider in the next section).
+
+For the Galicia data, for we do not know the measurement device
+precision and we only have one observation per location. However, this
+does not prevent us from using the variogram based on the residuals from
+Equation~\ref{eq-std-lm-galicia}, while keeping in mind the limitations
+and uncertainty that are inherent to this exploratory tool as remarked
+at the end of the last paragraph.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Fitting of the linear model and extraction of the residuals  }
+\NormalTok{lm\_fit }\OtherTok{\textless{}{-}} \FunctionTok{lm}\NormalTok{(}\FunctionTok{log}\NormalTok{(lead) }\SpecialCharTok{\textasciitilde{}} \DecValTok{1}\NormalTok{, }\AttributeTok{data =}\NormalTok{ galicia)}
+\NormalTok{galicia}\SpecialCharTok{$}\NormalTok{residuals }\OtherTok{\textless{}{-}}\NormalTok{ lm\_fit}\SpecialCharTok{$}\NormalTok{residuals}
+
+\CommentTok{\# Convert the galicia data frame into an "sf" object}
+\NormalTok{galicia\_sf }\OtherTok{\textless{}{-}} \FunctionTok{st\_as\_sf}\NormalTok{(galicia, }\AttributeTok{coords =} \FunctionTok{c}\NormalTok{(}\StringTok{"x"}\NormalTok{, }\StringTok{"y"}\NormalTok{), }\AttributeTok{crs =} \DecValTok{32629}\NormalTok{)}
+
+\CommentTok{\# Compute the variogram, using the residuals from the linear model fit,}
+\CommentTok{\# and the 95\% confidence level envelope for spatial independence}
+\NormalTok{galicia\_variog }\OtherTok{\textless{}{-}} \FunctionTok{s\_variogram}\NormalTok{(galicia\_sf, }\AttributeTok{variable =} \StringTok{"residuals"}\NormalTok{,}
+                              \AttributeTok{scale\_to\_km =} \ConstantTok{TRUE}\NormalTok{,}
+                              \AttributeTok{bins =} \FunctionTok{seq}\NormalTok{(}\DecValTok{10}\NormalTok{, }\DecValTok{140}\NormalTok{, }\AttributeTok{length =} \DecValTok{15}\NormalTok{),}
+                              \AttributeTok{n\_permutation =} \DecValTok{10000}\NormalTok{)}
+
+\CommentTok{\# Plotting the results}
+\FunctionTok{plot\_s\_variogram}\NormalTok{(galicia\_variog, }\AttributeTok{plot\_envelope =} \ConstantTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{03_model-fitting_files/figure-pdf/fig-galicia-variog-1.pdf}
+
+}
+
+\caption{\label{fig-galicia-variog}Plot of the empirical variogram
+(solid line) computed using the estimated residuals from the model in
+Equation~\ref{eq-std-lm-galicia}. The blue shaded area is the 95\%
+confidence level envelope generated using the permutation procedure
+described in Section~\ref{sec-expl-spatial}.}
+
+\end{figure}
+
+In the code above, we first fit the linear model in
+Equation~\ref{eq-std-lm-galicia} and then extract the residuals from
+this. Note that for this simple model, the residuals of the model are
+obtained by simply centering the outcome to zero by subtracting its
+mean. However, for more complex linear models that use covariates the
+computation of the residuals is more involved and can be carried out
+through a simple extension of the code above by specifying an
+appropriate \texttt{formula} in the \texttt{lm} function.
+
+Figure~\ref{fig-galicia-variog} shows the empirical variogram and the
+95\% envelope for spatial independence. This clearly shows that the
+measurement of lead concentration are spatially correlated.
+
+\hypertarget{sec-explanal-lm}{%
+\paragraph{More than one observation per
+location}\label{sec-explanal-lm}}
+
+For the case of more than one observation per location, we shall
+consider the \texttt{italy\_sim} data-set. This data-set contains 10
+observations per location, for a total of 200 locations. The variable
+\texttt{ID\_loc} is a numeric indicator that can be used to identify the
+location each observation belong to. For this data-set, we use the
+population density, named \texttt{pop\_dens}, as a log-transformed
+covariate; we leave you as an exercise to assess that is a reasonable
+modelling choice.
+
+To specify a non-spatial mixed model for the outcome, we then use two
+subscripts: \(i\) to identify a given location; \(j\) to identify the
+\(j\)-th observation for a given location \(i\). We denote as \(Z_i\)
+the location-specific random effect ans as \(U_{ij}\) the random
+variation due to the measurement error inherent to each observation.
+Hence, we write
+\begin{equation}\protect\hypertarget{eq-italy-sim-lmm}{}{
+Y_{ij} = \beta_0 + \beta_1 \log\{d(x_i)\} + Z_i + U_{ij},
+}\label{eq-italy-sim-lmm}\end{equation} where \(d(x_i)\) is the
+population density at location \(x_i\); as before, we use \(\tau^2\) and
+\(\omega^2\) to denote the variances of \(Z_i\) and \(U_{ij}\),
+respectively. To fit this model to the data we use the \texttt{lmer}
+function from the \texttt{lme4} package.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Fitting a linear mixed model to the italy\_sim data{-}set}
+\CommentTok{\# See main text for model specification}
+\NormalTok{lmer\_fit }\OtherTok{\textless{}{-}} \FunctionTok{lmer}\NormalTok{(y }\SpecialCharTok{\textasciitilde{}} \FunctionTok{log}\NormalTok{(pop\_dens) }\SpecialCharTok{+}\NormalTok{ (}\DecValTok{1}\SpecialCharTok{|}\NormalTok{ID\_loc), }\AttributeTok{data =}\NormalTok{ italy\_sim)}
+
+\FunctionTok{summary}\NormalTok{(lmer\_fit)}
+\DocumentationTok{\#\# Linear mixed model fit by REML [\textquotesingle{}lmerMod\textquotesingle{}]}
+\DocumentationTok{\#\# Formula: y \textasciitilde{} log(pop\_dens) + (1 | ID\_loc)}
+\DocumentationTok{\#\#    Data: italy\_sim}
+\DocumentationTok{\#\# }
+\DocumentationTok{\#\# REML criterion at convergence: 3390.9}
+\DocumentationTok{\#\# }
+\DocumentationTok{\#\# Scaled residuals: }
+\DocumentationTok{\#\#      Min       1Q   Median       3Q      Max }
+\DocumentationTok{\#\# {-}2.85209 {-}0.64198 {-}0.01832  0.66014  3.01870 }
+\DocumentationTok{\#\# }
+\DocumentationTok{\#\# Random effects:}
+\DocumentationTok{\#\#  Groups   Name        Variance Std.Dev.}
+\DocumentationTok{\#\#  ID\_loc   (Intercept) 2.5006   1.5813  }
+\DocumentationTok{\#\#  Residual             0.1959   0.4426  }
+\DocumentationTok{\#\# Number of obs: 2000, groups:  ID\_loc, 200}
+\DocumentationTok{\#\# }
+\DocumentationTok{\#\# Fixed effects:}
+\DocumentationTok{\#\#               Estimate Std. Error t value}
+\DocumentationTok{\#\# (Intercept)   {-}0.40448    0.57613  {-}0.702}
+\DocumentationTok{\#\# log(pop\_dens)  1.33798    0.07643  17.506}
+\DocumentationTok{\#\# }
+\DocumentationTok{\#\# Correlation of Fixed Effects:}
+\DocumentationTok{\#\#             (Intr)}
+\DocumentationTok{\#\# log(pp\_dns) {-}0.981}
+
+\CommentTok{\# Incorporating the estimated random effects into the data}
+\NormalTok{italy\_sim}\SpecialCharTok{$}\NormalTok{rand\_eff }\OtherTok{\textless{}{-}}\FunctionTok{ranef}\NormalTok{(lmer\_fit)}\SpecialCharTok{$}\NormalTok{ID\_loc[italy\_sim}\SpecialCharTok{$}\NormalTok{ID\_loc,}\DecValTok{1}\NormalTok{]}
+
+\CommentTok{\# Converting the italy\_sim data frame into an "sf" object }
+\NormalTok{italy\_sim\_sf }\OtherTok{\textless{}{-}} \FunctionTok{st\_as\_sf}\NormalTok{(italy\_sim, }\AttributeTok{coords=}\FunctionTok{c}\NormalTok{(}\StringTok{"x1"}\NormalTok{, }\StringTok{"x2"}\NormalTok{), }\AttributeTok{crs =} \DecValTok{32634}\NormalTok{)}
+
+\CommentTok{\# Compute the variogram, using the random effects from the linear mixed model fit,}
+\CommentTok{\# and the 95\% confidence level envelope for spatial independence}
+\NormalTok{italy\_sim\_variog }\OtherTok{\textless{}{-}} \FunctionTok{s\_variogram}\NormalTok{(italy\_sim\_sf, }\AttributeTok{variable =} \StringTok{"rand\_eff"}\NormalTok{, }
+                                \AttributeTok{scale\_to\_km =} \ConstantTok{TRUE}\NormalTok{,}
+                                \AttributeTok{n\_permutation =} \DecValTok{200}\NormalTok{)}
+
+\CommentTok{\# Plotting the results}
+\FunctionTok{plot\_s\_variogram}\NormalTok{(italy\_sim\_variog, }\AttributeTok{plot\_envelope =} \ConstantTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{03_model-fitting_files/figure-pdf/fig-italy-sim-variog-1.pdf}
+
+}
+
+\caption{\label{fig-italy-sim-variog}Plot of the empirical variogram
+(solid line) computed using the estimated random effects from the model
+in Equation~\ref{eq-italy-sim-lmm}. The blue shaded area is the 95\%
+confidence level envelope generated using the permutation procedure
+described in Section~\ref{sec-expl-spatial}.}
+
+\end{figure}
+
+In the code above, the introduction of the \(Z_i\) random effect is
+specified in the \texttt{lmer} function though
+\texttt{(1\textbar{}ID\_loc)} in the formula; recall that
+\texttt{ID\_loc} is the numerical indicator that identifies each
+location. From the summary of the model, we obtain both the estimates of
+the regression coefficients \(\beta_{0}\) and \(\beta_{1}\), as well for
+the variances \(\tau^2\) listed under \texttt{Random\ effects:}. The
+estimate of \(\sigma^2\) is found on the line of printed output starting
+with \texttt{ID\_loc}, whilst that for \$\omega\^{}2 is next to
+\texttt{Residual}.
+
+The application of the empirical variogram, whose results are shown in
+Figure~\ref{fig-italy-sim-variog}, indicate the presence of residual
+correlation. This is because we observe that the solid line representing
+the empirical variogram falls outside of the 95\% envelope for spatial
+independence.
+
 \hypertarget{sec-linear-model}{%
-\section{Linear Gaussian model}\label{sec-linear-model}}
+\section{The linear geostatistical model}\label{sec-linear-model}}
 
 In this section, we consider spatially referenced outcomes \(Y_i\) that
-are continuous. For simplicity, we consider the case of a single
-measurement \(Y_i\) at each location \(x_i\). Recalling the class of
+are continuous. We first consider the simpler case of a single
+measurement \(Y_i\) per location \(x_i\). Recalling the class of
 generalized linear models introduced in
 Section~\ref{sec-geostat-models}, the linear predictor takes the form
 \begin{equation}\protect\hypertarget{eq-linear-geostat-model-lp}{}{
 \mu_{i} = d(x_i)^\top \beta + S(x_i).
 }\label{eq-linear-geostat-model-lp}\end{equation} Hence, in this case,
 we interpret \(\beta\) as the effect on \(\mu_i\) for a unit increase in
-\(d(x_i)\).
+\(d(x_i)\). Let \(U_i\) denote i.i.d. random variables representing the
+measurement error associated with \(Y_i\), each having mean zero and
+variance \(\omega^2\). Thanks to the linear properties of Gaussian
+random variables, we can also express the linear model in a compact
+expression, as
+\begin{equation}\protect\hypertarget{eq-linear-geostat-model}{}{
+Y_i = \mu_i + U_i = d(x_i)^\top \beta + S(x_i) + U_i.
+}\label{eq-linear-geostat-model}\end{equation} To fully specify a
+geostatistical model for our dataset, we must address two critical
+aspects.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Defining the relationship between each covariate and the mean value
+  \(\mu_i\).
+\item
+  Selecting an appropriate correlation function for \(S(x)\).
+\end{enumerate}
+
+As illustrated in the previous sections, the initial step of exploratory
+analysis allows us to handle the first aspect, where we determine the
+regression relationship between covariates and the mean value \(\mu_i\).
+However, based on existing methods of exploratory analysis, it is
+difficult to understand what is a suitable correlation function at this
+stage. A commonly recommended starting point is the Matern correlation
+function (see Equation~\ref{eq-matern}), which offers considerable
+flexibility in capturing a wide range of correlation structures, under
+the assumption stationarity and isotropy. As we shall illustrate in the
+next example, even estimating a Matern correlation function is a task
+that poses many inferential challenges due to the poor identifiability,
+especially, of its smoothness parameter \(\kappa\).
+
+\hypertarget{sec-glm-parest}{%
+\subsection{\texorpdfstring{Evaluating the inclusion of the measurement
+error term \(U_i\) and the specification of the smoothness parameter
+\(\kappa\)}{Evaluating the inclusion of the measurement error term U\_i and the specification of the smoothness parameter \textbackslash kappa}}\label{sec-glm-parest}}
+
+In this section we analyse the Galicia data using a linear
+geostatistical geostatitsical model for the log-transformed lead
+concentration, which we denote as \(Y_i\). Since we do not use
+covariates, we then write the model as
+\begin{equation}\protect\hypertarget{eq-galicia-lgm}{}{
+Y_i = \mu + S(x_i) + U_i
+}\label{eq-galicia-lgm}\end{equation} where were \(S(x)\) is a Matern
+process with variance \(\sigma^2\), scale parameter \(\phi\) and and
+smothness parameter \(\kappa\); the \(U_i\) correspond to the
+measurement error term and denote with \(\omega^2\) their variance.
+
+We carry out the parameter estimation of the model using the
+\texttt{glgpm} function from the \texttt{RiskMap} package. This function
+implements maximum likelihood estimation for generalized linear mixed
+models using a Matern correlation function, while fixing the smoothness
+parameter \(\kappa\) at prespecified value by the user. The object
+passed to the argument \texttt{data} in \texttt{glpm} can either be a
+\texttt{data.frame} object or an \texttt{sf} object. Below we illustrate
+the use of \texttt{glgpm} while distinguishing between these two cases.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Parameter estimation when the argument passed to \textasciigrave{}data\textasciigrave{} is a data{-}frame}
+\NormalTok{fit\_galicia }\OtherTok{\textless{}{-}} 
+\FunctionTok{glgpm}\NormalTok{(}\FunctionTok{log}\NormalTok{(lead) }\SpecialCharTok{\textasciitilde{}} \FunctionTok{gp}\NormalTok{(x, y, }\AttributeTok{kappa =} \FloatTok{1.5}\NormalTok{), }\AttributeTok{data=}\NormalTok{galicia, }\AttributeTok{family =} \StringTok{"gaussian"}\NormalTok{,}
+      \AttributeTok{crs =} \DecValTok{32629}\NormalTok{, }\AttributeTok{scale\_to\_km =} \ConstantTok{TRUE}\NormalTok{, }\AttributeTok{messages =} \ConstantTok{FALSE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+The code above shows the use of \texttt{glgpm} by passing
+\texttt{galicia} as a \texttt{data.frame} object to \texttt{data}. The
+specification of the Guassian process \(S(x)\) is done through the
+addition of the term \texttt{gp()} in the formula. The function
+\texttt{gp} allows you to specify the columns of the coordinates in the
+data, in this case \texttt{x} and \texttt{y}, the smoothness parameter
+through the argument \texttt{kappa}, set to 1.5 in this example. In the
+help page of \texttt{gp}, you can see that by default the nugget term
+(denoted in this book by the random variable \(Z_i\)) is excluded from
+the model by default; to include and estimate the variance parameter of
+the nugget, you should set \texttt{nugget=NULL} in the \texttt{gp()}
+function. However, doing so for a linear model that only has one
+observation per location will generate error message as this is a
+non-identifiable model for the same reasons given in
+Section~\ref{sec-explanal-lm}. However, if the measurement error
+variance is known this can be fixed by the user using the argument
+\texttt{fix\_var\_me} and the inclusion of the nugget term is then
+possible (to better understand this point, try Exercise 7 at the end of
+this chapter).
+
+The argument \texttt{crs} is used to specify the coordinate reference
+system (CRS) of the data. For the Galicia data, as well as for every
+other data-set used in this book, the CRS is reported in the help page
+description of the data-set. If \texttt{crs} is not specified, the
+function will assume that the coordinates are in longitude/latitude
+format and will use these without applying any transformation. Finally,
+the argument \texttt{scale\_to\_km}, is used to specify whether the
+distances between locations should be scaled to kilometers or maintained
+in meter; this argument will not affect the scale, and thus the
+interpretation of the spatial correlation parameter \(\phi\).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Parameter estimation when the argument passed to \textasciigrave{}data\textasciigrave{} is an sf object}
+\NormalTok{galicia\_sf }\OtherTok{\textless{}{-}} \FunctionTok{st\_as\_sf}\NormalTok{(galicia, }\AttributeTok{coords =} \FunctionTok{c}\NormalTok{(}\StringTok{"x"}\NormalTok{, }\StringTok{"y"}\NormalTok{), }\AttributeTok{crs =} \DecValTok{32629}\NormalTok{)}
+
+\NormalTok{fit\_galicia\_sf }\OtherTok{\textless{}{-}} 
+\FunctionTok{glgpm}\NormalTok{(}\FunctionTok{log}\NormalTok{(lead) }\SpecialCharTok{\textasciitilde{}} \FunctionTok{gp}\NormalTok{(}\AttributeTok{kappa =} \FloatTok{1.5}\NormalTok{), }\AttributeTok{data=}\NormalTok{galicia\_sf, }\AttributeTok{family =} \StringTok{"gaussian"}\NormalTok{,}
+      \AttributeTok{scale\_to\_km =} \ConstantTok{TRUE}\NormalTok{, }\AttributeTok{messages =} \ConstantTok{FALSE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+The code above shows the alternative approach to estimate the model,
+when the argument passed to \texttt{data} is an \texttt{sf} object. In
+this case, the data-set \texttt{galicia} is converted into an
+\texttt{sf} object before the use of the \texttt{glgpm} function using
+\texttt{st\_as\_sf}. When when then fit the linear geostatistical model
+with \texttt{galicia\_sf}, the only differences with the previous chunk
+of code that used \texttt{galicia} instead, is that the coordinates
+names in \texttt{gp()} and the \texttt{crs} argument in \texttt{glgpm}
+do not need to be specified as they are both directly obtained from
+\texttt{galicia\_sf}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{summary}\NormalTok{(fit\_galicia)}
+\DocumentationTok{\#\# Linear geostatsitical model }
+\DocumentationTok{\#\# \textquotesingle{}Lower limit\textquotesingle{} and \textquotesingle{}Upper limit\textquotesingle{} are the limits of the 95\% confidence level intervals }
+\DocumentationTok{\#\# }
+\DocumentationTok{\#\#  Regression coefficients }
+\DocumentationTok{\#\#             Estimate Lower limit Upper limit   StdErr z.value   p.value    }
+\DocumentationTok{\#\# (Intercept) 0.707418    0.552762    0.862075 0.078908  8.9651 \textless{} 2.2e{-}16 ***}
+\DocumentationTok{\#\# {-}{-}{-}}
+\DocumentationTok{\#\# Signif. codes:  0 \textquotesingle{}***\textquotesingle{} 0.001 \textquotesingle{}**\textquotesingle{} 0.01 \textquotesingle{}*\textquotesingle{} 0.05 \textquotesingle{}.\textquotesingle{} 0.1 \textquotesingle{} \textquotesingle{} 1}
+\DocumentationTok{\#\# }
+\DocumentationTok{\#\#                           Estimate Lower limit Upper limit}
+\DocumentationTok{\#\# Measuremment error var. 0.0154636   0.0051797      0.0462}
+\DocumentationTok{\#\# }
+\DocumentationTok{\#\#  Spatial Guassian process }
+\DocumentationTok{\#\# Matern covariance parameters (kappa=1.5) }
+\DocumentationTok{\#\#                      Estimate Lower limit Upper limit}
+\DocumentationTok{\#\# Spatial process var.  0.17127     0.13303      0.2205}
+\DocumentationTok{\#\# Spatial corr. scale   9.02085     7.59521     10.7141}
+\DocumentationTok{\#\# Variance of the nugget effect fixed at 0 }
+\DocumentationTok{\#\# }
+\DocumentationTok{\#\#  Log{-}likelihood: 69.03029}
+\DocumentationTok{\#\# }
+\DocumentationTok{\#\#  AIC: {-}138.0606}
+\DocumentationTok{\#\# }
+\end{Highlighting}
+\end{Shaded}
+
+We can then inspect the point and interval estimates for the model
+through the \texttt{summary} function of the model as shown in the code
+chunk above. This outputs is presented in three sections: in the first
+section, we have the results for the regression coefficients; in the
+second section, we have the estimate for the variance of the measurement
+error component, \(\omega^2\) whose point estimate is about 0.015; in
+the final section, we have the estimates for the parameters of the
+spatial covariance function, \(\sigma^2\) and \(\phi\) which are about
+0.171 and 9.021 (km), respectively. The message
+\texttt{Variance\ of\ the\ nugget\ effect\ fixed\ at\ 0} indicates that
+the nugget has not been included in the mode; try Exercise 7 to see how
+this summary changes in the presence of the nugget term.
+
+At this point, you may be wondering, why we have used 1.5 for the value
+of \(\kappa\) and whether there is a statistical approach to find the
+most suitable value for this. We show such an approach in the code
+below. However, before examining the code, we would like to point an
+important aspect that relates to how the value of \(\kappa\) can affect
+the estimate of the measurement error variance \(\omega^2\). As we have
+shown, in Section~\ref{sec-matern-correlation}, values of \(\kappa\)
+that are closer to zero will give a rougher and less regular surface for
+\(S(x)\). In the case of a single observation, when \(\kappa\) is closer
+to zero, it will thus become increasingly difficult to estimate
+\(\omega^2\) since the likelihood function may attribute most of the
+noisiness to \(S(x)\) and rely less on \(U_i\) to explain the
+unstructured random variation found in the data. As a consequence of
+this, we can expect that for value of \(\kappa\) closer to zero, the
+estimates of \(\omega^2\) will also be smaller and, on the contrary,
+when \(\kappa\) is larger, the estimates of \(\omega^2\) will also
+increase. The results generated in the below clearly illustrate this
+point.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+
+\CommentTok{\# Number of the values chosen for kappa}
+\NormalTok{n\_kappa }\OtherTok{\textless{}{-}} \DecValTok{10}
+
+\CommentTok{\# Set of values for kappa}
+\NormalTok{kappa\_values }\OtherTok{\textless{}{-}} \FunctionTok{seq}\NormalTok{(}\FloatTok{0.5}\NormalTok{, }\FloatTok{3.5}\NormalTok{, }\AttributeTok{length =}\NormalTok{ n\_kappa)}
+
+\CommentTok{\# Vector that will store the values of the likelihood function }
+\CommentTok{\# evaluated at the maximum likelihood estimate}
+\NormalTok{llik\_values }\OtherTok{\textless{}{-}} \FunctionTok{rep}\NormalTok{(}\ConstantTok{NA}\NormalTok{, }\AttributeTok{length =}\NormalTok{ n\_kappa)}
+
+\CommentTok{\# Vector that will store the maximum likelihood estimates}
+\CommentTok{\# of the variance of the measurement error}
+\NormalTok{sigma2\_me\_hat }\OtherTok{\textless{}{-}} \FunctionTok{rep}\NormalTok{(}\ConstantTok{NA}\NormalTok{, }\AttributeTok{length =}\NormalTok{ n\_kappa)}
+
+\CommentTok{\# List that will contain all the geostatistical models fitted for }
+\CommentTok{\# the different values of kappa specified in kappa\_values}
+\NormalTok{fit\_galicia\_list }\OtherTok{\textless{}{-}} \FunctionTok{list}\NormalTok{()}
+
+\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\NormalTok{n\_kappa) \{}
+\NormalTok{  fit\_galicia\_list[[i]] }\OtherTok{\textless{}{-}} \FunctionTok{glgpm}\NormalTok{(}\FunctionTok{log}\NormalTok{(lead) }\SpecialCharTok{\textasciitilde{}} \FunctionTok{gp}\NormalTok{(x, y, }\AttributeTok{kappa =}\NormalTok{ kappa\_values[i]), }
+                                 \AttributeTok{data=}\NormalTok{galicia, }\AttributeTok{family =} \StringTok{"gaussian"}\NormalTok{,}
+                                 \AttributeTok{crs =} \DecValTok{32629}\NormalTok{, }\AttributeTok{scale\_to\_km =} \ConstantTok{TRUE}\NormalTok{, }\AttributeTok{messages =} \ConstantTok{FALSE}\NormalTok{)}
+\NormalTok{  llik\_values[i] }\OtherTok{\textless{}{-}}\NormalTok{  fit\_galicia\_list[[i]]}\SpecialCharTok{$}\NormalTok{log.lik}
+\NormalTok{  sigma2\_me\_hat[i] }\OtherTok{\textless{}{-}}  \FunctionTok{coef}\NormalTok{(fit\_galicia\_list[[i]])[}\StringTok{"sigma2\_me"}\NormalTok{]}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+
+{\centering \includegraphics[width=8.5in,height=\textheight]{03_model-fitting_files/figure-pdf/fig-galicia-matern-1.pdf}
+
+}
+
+\caption{\label{fig-galicia-matern}(a) plot of the maximum likelihood
+estimate for the variance of the measurement error \(U_i\), denoted in
+the text as \(\omega^2\), against the chosen fixed value for \(\kappa\);
+(b) profile likeihood for \(\kappa\) with the horizontal dashed line
+corresponding to the (approximate) threshold for constructing a 95\%
+confidence interval based on a \(\chi^2\) with one degree of freedom.}
+
+\end{figure}
+
+By examining the results shown in panel (a) of
+Figure~\ref{fig-galicia-matern}, we observe that, as expected, smaller
+values for \(\kappa\) leads to smaller point estimates for \(\omega^2\)
+and viceversa. This begs the question, what should be our chosen value
+for \(\kappa\)?
+
+To answer this question, a natural approach is to estimate the model for
+different values of \(\kappa\) and see which one give the best fit to
+the data, according to the likelihood function. In panel (b) of
+Figure~\ref{fig-galicia-matern}, we show the results of this approach
+where we considered 10 values for \(\kappa\) within the range 0.5 to 3.5
+(see code above). In this plot, we have also added a horizontal line to
+help us to approximate a range of the most plausible value for
+\(\kappa\). More precisely, the horizontal dashed line is computed by
+taking the maximum observed values of the likelihoods computed for the
+different values of \(\kappa\), say \(\hat{M}\) and we subtract the
+quantile 0.95 of a \(\chi^2\) distribution with 1 degree of freedom. In
+R this horizontal line is obtained as
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{max}\NormalTok{(llik\_values)}\SpecialCharTok{{-}}\FunctionTok{pchisq}\NormalTok{(}\FloatTok{0.95}\NormalTok{, }\AttributeTok{df =} \DecValTok{2}\NormalTok{)}\SpecialCharTok{/}\DecValTok{2}
+\end{Highlighting}
+\end{Shaded}
+
+where \texttt{llik\_values} is as defined in the previous chunk of code.
+Note that this approach is essentially constructing the profile
+likelihood for \(\kappa\) which one could use to derive a confidence
+interval for \(\kappa\) with a finer segmentation for
+\texttt{kappa\_values}. However, our current objective is not to derive
+the confidence interval for \(\kappa\), but rather to gain a broad
+understanding of the \(\kappa\) values supported by the dataset. The
+values of \(\kappa\) that corresponds to likelihood values above the
+horizontal line are approximately between 0.75 and 2.75. Hence,
+selecting \(\kappa=1.5\) seems to be a reasonable one in this case. Now,
+you may be pondering: are there value other than \(\kappa=1.5\) that
+could fit the data even better? Our answer is that it is not worth the
+effort to try estimate \(\kappa\) more precisely because it is
+empirically very difficult and, under some scenarios, even impossible.
+Estimating \(\kappa\) poses a well-documented challenge in geostatistics
+(Zhang (2004)), which justifies our adoption of a pragmatic approach
+that sets it at a predefined value. This issue is also further
+exacerbated when analyzing count data, which tend to be less informative
+about the correlation structure than continuously measured data.
+
+\hypertarget{sec-add-re-glgm}{%
+\subsection{\texorpdfstring{Modelling hierarchical geostatistical data
+using the \texttt{re()}
+function}{Modelling hierarchical geostatistical data using the re() function}}\label{sec-add-re-glgm}}
+
+We now consider the analysis of geostatistical data with a hierarchical
+structure and show how to formulate and fit a geostatistical model that
+accounts for the effects of the different layers of the data. For this
+purpose, we use the \texttt{italy\_sim} where each of the sampled
+locations can be grouped according to two administrative subdivisions of
+Italy, regions (Admin level 2) and provinces (Admin level 3), as shown
+in Figure~\ref{fig-italy-maps}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(rgeoboundaries)}
+\FunctionTok{library}\NormalTok{(mapview)}
+\NormalTok{italy\_regions }\OtherTok{\textless{}{-}} \FunctionTok{geoboundaries}\NormalTok{(}\AttributeTok{country =} \StringTok{"italy"}\NormalTok{, }\AttributeTok{adm\_lvl =} \StringTok{"adm2"}\NormalTok{)}
+
+\NormalTok{italy\_provinces }\OtherTok{\textless{}{-}} \FunctionTok{geoboundaries}\NormalTok{(}\AttributeTok{country =} \StringTok{"italy"}\NormalTok{, }\AttributeTok{adm\_lvl =} \StringTok{"adm3"}\NormalTok{)}
+
+\FunctionTok{par}\NormalTok{(}\AttributeTok{mfrow =} \FunctionTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{))}
+
+\CommentTok{\# Map of the data with the region boundaries}
+\NormalTok{map\_regions }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{() }\SpecialCharTok{+} 
+\FunctionTok{geom\_sf}\NormalTok{(}\AttributeTok{data =}\NormalTok{ italy\_sim\_sf, }\AttributeTok{pch =} \DecValTok{4}\NormalTok{, }\AttributeTok{color =} \StringTok{"red"}\NormalTok{) }\SpecialCharTok{+} 
+\FunctionTok{geom\_sf}\NormalTok{(}\AttributeTok{data =}\NormalTok{ italy\_regions, }\AttributeTok{fill =} \ConstantTok{NA}\NormalTok{) }\SpecialCharTok{+} 
+\FunctionTok{theme\_void}\NormalTok{() }\SpecialCharTok{+}
+\FunctionTok{labs}\NormalTok{(}\AttributeTok{title =} \StringTok{"Regions"}\NormalTok{) }\SpecialCharTok{+}
+\FunctionTok{theme}\NormalTok{(}\AttributeTok{plot.title =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{hjust =} \DecValTok{1}\SpecialCharTok{/}\DecValTok{2}\NormalTok{))}
+
+\CommentTok{\# Map of the data with the province boundaries}
+\NormalTok{map\_provinces }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{() }\SpecialCharTok{+} 
+\FunctionTok{geom\_sf}\NormalTok{(}\AttributeTok{data =}\NormalTok{ italy\_sim\_sf, }\AttributeTok{pch =} \DecValTok{4}\NormalTok{, }\AttributeTok{color =} \StringTok{"red"}\NormalTok{) }\SpecialCharTok{+} 
+\FunctionTok{geom\_sf}\NormalTok{(}\AttributeTok{data =}\NormalTok{ italy\_provinces, }\AttributeTok{fill =} \ConstantTok{NA}\NormalTok{) }\SpecialCharTok{+} 
+\FunctionTok{theme\_void}\NormalTok{() }\SpecialCharTok{+}
+\FunctionTok{labs}\NormalTok{(}\AttributeTok{title =} \StringTok{"Provinces"}\NormalTok{) }\SpecialCharTok{+}
+\FunctionTok{theme}\NormalTok{(}\AttributeTok{plot.title =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{hjust =} \DecValTok{1}\SpecialCharTok{/}\DecValTok{2}\NormalTok{))}
+
+\FunctionTok{library}\NormalTok{(gridExtra)}
+\FunctionTok{grid.arrange}\NormalTok{(map\_regions, map\_provinces, }\AttributeTok{ncol =} \DecValTok{2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{03_model-fitting_files/figure-pdf/fig-italy-maps-1.pdf}
+
+}
+
+\caption{\label{fig-italy-maps}The plot shows the location of the
+data-set \texttt{italy\_sim} (red crosses), with the boundaries of the
+regions (left) and provinces (right) of Italy.}
+
+\end{figure}
+
+Let \(V_h\), for \(h=1,\ldots,n_V\) and \(Z_k\), for
+\(k=1,\ldots,n_{Z}\), be a set of mutually independent Gaussian
+variables with zero means and variances \(\sigma^2_{V}\) and
+\(\sigma^2_{Z}\), respectively. Finally let \(\mathcal{A}_h\), for
+\(h=1,\ldots,n_V\) and \(\mathcal{B}_k\), for \(k=1,\ldots,n_{Z}\),
+denote the areas encompassed by the boundaries of the region and
+provinces, respectively. Since we have 10 repeated observations at each
+locations, we shall use \(Y_{ij}\) to denote the \(j\)-th outcome (found
+in the data under the column \texttt{y}) at the \(i\)-th location
+\(x_i\). The model from which we generated data \(y_{ij}\) is
+\begin{equation}\protect\hypertarget{eq-italy-sim-model}{}{
+Y_{ij} = \beta_0 + \overbrace{\beta_1 d(x_i) + S(x_i)}^\text{Location-level effect} + \underbrace{\sum_{h=1}^{n_{V}} I(x_i \in \mathcal{A}_h) \times V_h}_\text{Region effect} +\\ \overbrace{\sum_{k=1}^{n_{Z}} I(x_i \in \mathcal{B}_k) \times Z_k}^\text{Province effect} +  \underbrace{U_{ij}}_\text{Measurement error},
+}\label{eq-italy-sim-model}\end{equation} for \(j=1,\ldots 10\) and
+\(i=1,\ldots,200\), where, \(d(x_i)\) is the log-transformed population
+density, \(I(x \in \mathcal{R})\) is an indicator function that takes
+value 1 if the location \(x\) falls within the boundaries of the area
+denoted by \(\mathcal{R}\) and 0 otherwise. The covariance function
+chosen in the generation of the data was an exponential correlation
+function hence
+\({\rm cov}\{S(x), S(x') = \sigma^2 \exp\{-||x-x'||/\phi\}\).
+
+The inclusion of the random effects \(V_h\), for the region, and
+\(Z_k\), for the province, can be included by using the \texttt{re()}
+function into the \texttt{formula} passed to \texttt{glgpm} as shown
+below.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+
+                        \CommentTok{\# Location{-}level effect}
+\NormalTok{italy\_fit }\OtherTok{\textless{}{-}} \FunctionTok{glgpm}\NormalTok{( y }\SpecialCharTok{\textasciitilde{}} \FunctionTok{log}\NormalTok{(pop\_dens) }\SpecialCharTok{+} \FunctionTok{gp}\NormalTok{(}\AttributeTok{kappa =} \FloatTok{0.5}\NormalTok{, }\AttributeTok{nugget =} \DecValTok{0}\NormalTok{) }\SpecialCharTok{+}
+                        \CommentTok{\# Region and province effects}
+                        \FunctionTok{re}\NormalTok{(region, province),}
+         \AttributeTok{data =}\NormalTok{ italy\_sim\_sf, }\AttributeTok{scale\_to\_km =} \ConstantTok{TRUE}\NormalTok{,}
+         \AttributeTok{family =} \StringTok{"gaussian"}\NormalTok{)}
+\DocumentationTok{\#\# The CRS used is EPSG:32634 }
+\DocumentationTok{\#\# Distances between locations are computed in kilometers }
+\DocumentationTok{\#\#   0:     441.00731: {-}0.404481  1.33798  0.00000  4.62406  0.00000  0.00000  0.00000}
+\DocumentationTok{\#\#   1:    {-}130.05497: {-}0.408825  1.35003 {-}0.0387110  4.66059 {-}0.910409 {-}0.00265292 0.0107965}
+\DocumentationTok{\#\#   2:    {-}268.13436: {-}0.865126  1.39525 {-}0.0305268  5.92133 {-}1.96079 {-}0.666581 0.487537}
+\DocumentationTok{\#\#   3:    {-}329.24560: {-}1.44091  1.38139 {-}0.546306  4.98616 {-}1.67936 {-}1.15202 0.383821}
+\DocumentationTok{\#\#   4:    {-}331.20861: {-}1.38498  1.37256 0.165464  5.61366 {-}1.63033 {-}2.11435 0.371263}
+\DocumentationTok{\#\#   5:    {-}331.28418: {-}0.874796  1.37322 {-}0.271990  5.18071 {-}1.62887 {-}0.970705 0.371407}
+\DocumentationTok{\#\#   6:    {-}331.42968: {-}1.04087  1.37294 {-}0.119652  5.33634 {-}1.62883 {-}1.33321 0.375031}
+\DocumentationTok{\#\#   7:    {-}331.43375: {-}1.07312  1.37288 {-}0.0878211  5.36725 {-}1.62883 {-}1.42011 0.376251}
+\DocumentationTok{\#\#   8:    {-}331.43375: {-}1.07445  1.37288 {-}0.0866254  5.36840 {-}1.62883 {-}1.42489 0.376323}
+\DocumentationTok{\#\#   9:    {-}331.43375: {-}1.07445  1.37288 {-}0.0866228  5.36840 {-}1.62883 {-}1.42491 0.376323}
+\DocumentationTok{\#\#  10:    {-}331.43375: {-}1.07445  1.37288 {-}0.0866227  5.36840 {-}1.62883 {-}1.42491 0.376323}
+\DocumentationTok{\#\#  11:    {-}331.43375: {-}1.07445  1.37288 {-}0.0866227  5.36840 {-}1.62883 {-}1.42491 0.376323}
+
+\FunctionTok{summary}\NormalTok{(italy\_fit)}
+\DocumentationTok{\#\# Linear geostatsitical model }
+\DocumentationTok{\#\# \textquotesingle{}Lower limit\textquotesingle{} and \textquotesingle{}Upper limit\textquotesingle{} are the limits of the 95\% confidence level intervals }
+\DocumentationTok{\#\# }
+\DocumentationTok{\#\#  Regression coefficients }
+\DocumentationTok{\#\#                Estimate Lower limit Upper limit    StdErr z.value p.value    }
+\DocumentationTok{\#\# (Intercept)   {-}1.074454   {-}2.031694   {-}0.117213  0.488397    {-}2.2 0.02781 *  }
+\DocumentationTok{\#\# log(pop\_dens)  1.372877    1.352018    1.393735  0.010642   129.0 \textless{} 2e{-}16 ***}
+\DocumentationTok{\#\# {-}{-}{-}}
+\DocumentationTok{\#\# Signif. codes:  0 \textquotesingle{}***\textquotesingle{} 0.001 \textquotesingle{}**\textquotesingle{} 0.01 \textquotesingle{}*\textquotesingle{} 0.05 \textquotesingle{}.\textquotesingle{} 0.1 \textquotesingle{} \textquotesingle{} 1}
+\DocumentationTok{\#\# }
+\DocumentationTok{\#\#                          Estimate Lower limit Upper limit}
+\DocumentationTok{\#\# Measuremment error var.  0.19616     0.19361      0.1987}
+\DocumentationTok{\#\# }
+\DocumentationTok{\#\#  Spatial Guassian process }
+\DocumentationTok{\#\# Matern covariance parameters (kappa=0.5) }
+\DocumentationTok{\#\#                       Estimate Lower limit Upper limit}
+\DocumentationTok{\#\# Spatial process var.   0.91702     0.59470       1.414}
+\DocumentationTok{\#\# Spatial corr. scale  214.52032   153.60797     299.587}
+\DocumentationTok{\#\# Variance of the nugget effect fixed at 0 }
+\DocumentationTok{\#\# }
+\DocumentationTok{\#\#  Unstructured random effects }
+\DocumentationTok{\#\#                             Estimate Lower limit Upper limit}
+\DocumentationTok{\#\# region (random eff. var.)    0.24053     0.14553      0.3976}
+\DocumentationTok{\#\# province (random eff. var.)  1.45692     1.37851      1.5398}
+\DocumentationTok{\#\# }
+\DocumentationTok{\#\#  Log{-}likelihood: 331.4338}
+\DocumentationTok{\#\# }
+\DocumentationTok{\#\#  AIC: {-}662.8675}
+\DocumentationTok{\#\# }
+\end{Highlighting}
+\end{Shaded}
+
+In the code above, the \texttt{factor} variables \texttt{region} and
+\texttt{province} found in \texttt{italy\_sim} are passed to
+\texttt{re()} and these are estimated as unstructured random effects as
+defined by Equation~\ref{eq-italy-sim-model}. From the summary of model,
+we then obtain the parameter and interval estimates as reported in
+Table~\ref{tbl-italy-sim-mle}.
+
+\hypertarget{tbl-italy-sim-mle}{}
+\begin{longtable}[]{@{}llll@{}}
+\caption{\label{tbl-italy-sim-mle}Maximum likelihood estimates and,
+lower and upper limits of the 95\% confidence interval for the
+parameters of the model in
+Equation~\ref{eq-italy-sim-lmm}.}\tabularnewline
+\toprule\noalign{}
+Parameter & Point estimate & Lower limit & Upper limit \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+Parameter & Point estimate & Lower limit & Upper limit \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\(\beta_0\) & -1.074 & -2.032 & -0.117 \\
+\(\beta_1\) & 1.373 & 1.352 & 1.394 \\
+\(\sigma^2\) & 0.917 & 0.595 & 1.414 \\
+\(\phi\) & 214.520 & 153.608 & 299.587 \\
+\(\sigma^2_{V}\) & 0.241 & 0.146 & 0.398 \\
+\(\sigma^2_{Z}\) & 1.457 & 1.379 & 1.540 \\
+\(\omega^2\) & 0.196 & 0.194 & 0.199 \\
+\end{longtable}
+
+The function \texttt{to\_table} from the \texttt{RiskMap} package can be
+used to obtain the Latex or HTML code directly from a fit of the model.
+Here is an example.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{to\_table}\NormalTok{(italy\_fit, }\AttributeTok{digits =} \DecValTok{3}\NormalTok{)}
+\DocumentationTok{\#\# \% latex table generated in R 4.1.2 by xtable 1.8{-}4 package}
+\DocumentationTok{\#\# \% Thu Feb  1 16:23:10 2024}
+\DocumentationTok{\#\# \textbackslash{}begin\{table\}[ht]}
+\DocumentationTok{\#\# \textbackslash{}centering}
+\DocumentationTok{\#\# \textbackslash{}begin\{tabular\}\{rrrr\}}
+\DocumentationTok{\#\#   \textbackslash{}hline}
+\DocumentationTok{\#\#  \& Estimate \& Lower limit \& Upper limit \textbackslash{}\textbackslash{} }
+\DocumentationTok{\#\#   \textbackslash{}hline}
+\DocumentationTok{\#\# (Intercept) \& {-}1.074 \& {-}2.032 \& {-}0.117 \textbackslash{}\textbackslash{} }
+\DocumentationTok{\#\#   log(pop\textbackslash{}\_dens) \& 1.373 \& 1.352 \& 1.394 \textbackslash{}\textbackslash{} }
+\DocumentationTok{\#\#   Spatial process var. \& 0.917 \& 0.595 \& 1.414 \textbackslash{}\textbackslash{} }
+\DocumentationTok{\#\#   Spatial corr. scale \& 214.520 \& 153.608 \& 299.587 \textbackslash{}\textbackslash{} }
+\DocumentationTok{\#\#   region (random eff. var.) \& 0.241 \& 0.146 \& 0.398 \textbackslash{}\textbackslash{} }
+\DocumentationTok{\#\#   province (random eff. var.) \& 1.457 \& 1.379 \& 1.540 \textbackslash{}\textbackslash{} }
+\DocumentationTok{\#\#   Measuremment error var. \& 0.196 \& 0.194 \& 0.199 \textbackslash{}\textbackslash{} }
+\DocumentationTok{\#\#    \textbackslash{}hline}
+\DocumentationTok{\#\# \textbackslash{}end\{tabular\}}
+\DocumentationTok{\#\# \textbackslash{}end\{table\}}
+\end{Highlighting}
+\end{Shaded}
 
 \hypertarget{generalized-linear-geostatistical-models}{%
 \section{Generalized linear geostatistical
 models}\label{generalized-linear-geostatistical-models}}
+
+We now consider the modelling of count outcomes, focusing our attention
+to the Binomial and Poisson geostatistical models.
+
+The use of Binomial geostatistical model is appropriate whenever the
+reported counts have a known upper bound. For example, when analyzing
+aggregated disease counts from cross-sectional survey data, the total
+number of people sampled at a location defines the largest number of
+possible reported disease cases. Recalling the model specification of
+Table~\ref{tbl-glm}, we specify the Binomial geostatistical model by
+stating that the reported disease counts \(Y_i\) out of \(n_i\) (the
+maximum value that \(Y_i\) can take) at location \(x_i\), conditionally
+on the spatial random effects \(S(x_i)\), follow a Binomial distribution
+with probability \(p(x_i)\) and logit-linear predictor
+\begin{equation}\protect\hypertarget{eq-lp-bin}{}{
+\log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = d(x_i)^\top \beta + S(x_i).
+}\label{eq-lp-bin}\end{equation} In this model, \(p(x_i)\) is commonly
+understood as representing the prevalence of the disease under
+consideration, defined as the proportion of individuals with the disease
+at a specific moment. While \(p(x_i)\) is not strictly a proportion, its
+interpretation as disease prevalence is justified by the fact that if we
+were to sample a sufficiently large population at location \(x_i\), the
+proportion of individuals with the disease would converge closely to the
+value of \(p(x_i)\).
+
+A Binomial geostatistical model is also used when analyzing data at
+individual level where the outcome is binary and usually indicates the
+positive or negative result of a test for a disease under investigation.
+In this analysis, a mix of individual-level variables and location-level
+variables could be introduced to model the probability of a positive
+test. To formally write the model, we now use \(Y_{ij}\) to indicate the
+binary outcome taking value 1, if the test was positive, and 0, if
+negative, for the \(j\)-th individual sampled at location \(x_i\). The
+linear predictor now takes the form
+\begin{equation}\protect\hypertarget{eq-lp-bin-ind}{}{
+\log\left\{\frac{p_{ij}}{1-p_{ij}}\right\} = e_{ij}^\top \gamma + d(x_{i})^\top \beta + S(x_i).
+}\label{eq-lp-bin-ind}\end{equation} In the model above we have
+distinguished between covariates \(e_{ij}\), that express the effect on
+\(p_{ij}\) due to individual traits (such as age and gender), and
+covariates \(d(x_i)\), that instead quantify the effect on \(p_{ij}\)
+resulting from the environmental attributes of location \(x_i\) (such as
+elevation, temperature, and precipitation). In this model \(p_{ij}\) --
+the probability of a positive test -- once again can be interpreted as
+the disease prevalence for a population characterized by the individual
+traits \(e_{ij}\) and residing at location \(x_i\).
+
+Finally, when the counts arise from a population whose size is unknown
+or when the occurrence of a disease is very small relative to the size
+of the target population, one should consider the use of a Poisson
+geostaistical model. We then use \(Y_i\) to denote the reported counts
+at location \(x_i\) and assume that this, conditionally on a Gaussian
+process \(S(x_i)\), follows a Poisson distribution with mean
+\(\lambda(x_i)\) and log-linear predictor
+\begin{equation}\protect\hypertarget{eq-poisson-lp}{}{
+\log\left\{\lambda(x_i)\right\} = d(x_i)^\top \beta + S(x_i). 
+}\label{eq-poisson-lp}\end{equation} If for example, \(Y_i\) corresponds
+to the number of new cases reported at a health facility at location
+\(x_i\) over a certain, the \(\lambda(x_i)\) is interpreted as the
+average number of new cases reported over that period. If the
+information on the size of the population at risk for the diseases were
+available, this can be incorporated into the model so as to enable the
+interpretation of \(\lambda(x_i)\) as the disease incidence, defined as
+the total number of new cases reported over a given period of time
+divided by the population at risk. If we denote the latter as \(m_i\),
+then we would specify the mean of \(Y_i\) as \(m_i\lambda(x_i)\) an
+model \(\lambda(x_i)\) as already specified in
+Equation~\ref{eq-poisson-lp}. Another prevalent application of the
+Poisson geostatistical model in epidemiology involves mapping the
+abundance of disease vectors. Here, \(\lambda(x_i)\) corresponds to the
+mean number of vectors per unit area. Also, note that in this last
+scenario \(m_i\) cannot be defined as it is the goal of the analysis to
+infer the vector population size at location \(x_i\).
+
+In all the three models, namely Equation~\ref{eq-lp-bin},
+Equation~\ref{eq-lp-bin-ind} and Equation~\ref{eq-poisson-lp}, one might
+consider the inclusion of an additional random effect \(Z_i\),
+previously used for the linear geostatistical model, to account for
+small spatial variation or overdispersion that stems from the omission
+of covariates that may not necessarily exhibit spatial structure, such
+as behavioral or genetic traits. We shall further elaborate and provide
+guidance on this point in the following examples of this section.
 
 \hypertarget{theory}{%
 \section{Theory}\label{theory}}
@@ -2229,6 +3074,15 @@ models}\label{generalized-linear-geostatistical-models}}
 \hypertarget{the-likelihood-function-of-a-genearlized-linear-mixed-model}{%
 \subsection{The likelihood function of a genearlized linear mixed
 model}\label{the-likelihood-function-of-a-genearlized-linear-mixed-model}}
+
+\hypertarget{the-likelihood-function-of-a-genearlized-linear-geostatistical-model}{%
+\subsection{The likelihood function of a genearlized linear
+geostatistical
+model}\label{the-likelihood-function-of-a-genearlized-linear-geostatistical-model}}
+
+\hypertarget{monte-carlo-maximum-likelihood}{%
+\subsection{Monte Carlo maximum
+likelihood}\label{monte-carlo-maximum-likelihood}}
 
 \hypertarget{exercises}{%
 \section{Exercises}\label{exercises}}
@@ -2260,8 +3114,8 @@ model}\label{the-likelihood-function-of-a-genearlized-linear-mixed-model}}
 \item
   Create an R function that computes the \emph{cloud variogram}. As
   explained in Section~\ref{sec-expl-spatial}, the cloud variogram is
-  obtained by plotting \(\hat{V}_ij\) (see
-  Equation~\ref{eq-hat-squared-diff}) against the distances \(u_ij\).
+  obtained by plotting \(\hat{V}_{ij}\) (see
+  Equation~\ref{eq-hat-squared-diff}) against the distances \(u_{ij}\).
   The function should take as input a data-set with three columns: the
   variable for which the cloud variogram is to be computed; and two
   columns corresponding to the location of the data. Then, use this
@@ -2275,10 +3129,33 @@ model}\label{the-likelihood-function-of-a-genearlized-linear-mixed-model}}
   without any covariates, i.e.~\[
   \log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_0 + Z_i.
   \] Making use of the R code presented in
-  Section~\ref{sec-empirical-variog}, use the function
+  Section~\ref{sec-empirical-variog-bin}, use the function
   \texttt{s\_variogram} to generate the empirical variogram for this
   model and compare this to the empirical variogram of
   Figure~\ref{fig-liberia-variog}. What differences do you observe?
+\item
+  Fit a Poisson mixed model to the anopheles mosquito data using
+  elevation as a covariate, i.e.~\[
+  \log\{\mu(x_i)\} = \beta_{0} + \beta_{1} d(x_i) + Z_i
+  \] where \(d(x_i)\) is the measured elevation at location \(x_i\). How
+  strong is the overdispersion in the data? After fitting the model,
+  extract the estimates of the random effects \(Z_i\) and compute the
+  empirical variogram with the 95\% envelope for spatial independence.
+  Repeat this for different classes of distances by changing the input
+  passed to \texttt{bins} in the \texttt{s\_variogram} function. How do
+  the different specifications of \texttt{bins} affect the results?
+\item
+  Consider a linear model for the Galicia data as in
+  Section~\ref{sec-glm-parest} but now also introduce a nugget term,
+  hence \begin{equation}\protect\hypertarget{eq-galicia-lgm-v2}{}{
+  Y_i = \mu + S(x_i) + Z_i + U_i
+  }\label{eq-galicia-lgm-v2}\end{equation} where \(Z_i\) are i.i.d.
+  Gaussian variables with mean 0 and variance \(\tau^2\). Fit the model
+  by fixing the variance of \(U_i\), \(\omega^2\) to 0.01 using the
+  argument \texttt{fix\_var\_me} in \texttt{glgpm}. Using this model,
+  reproduce the graph as shown in Figure~\ref{fig-galicia-matern}.
+  Repeat this, but now fix \(\omega^2\) to 0.02. How do the curves
+  change and why?
 \end{enumerate}
 
 \bookmarksetup{startatroot}
@@ -2479,6 +3356,11 @@ Smith, David L, Carlos A Guerra, Robert W Snow, and Simon I Hay. 2007.
 {``Standardizing Estimates of the Plasmodium Falciparum Parasite
 Rate.''} \emph{Malaria Journal} 6 (1): 131--31.
 
+\leavevmode\vadjust pre{\hypertarget{ref-stein1999}{}}%
+Stein, Michael L. 1999. \emph{Interpolation of Spatial Data Some Theory
+for Kriging}. 1st ed. 1999. Springer Series in Statistics. New York, NY:
+Springer New York : Imprint: Springer.
+
 \leavevmode\vadjust pre{\hypertarget{ref-stevenson2013}{}}%
 Stevenson, Gillian H. AND Gitonga, Jennifer C. AND Stresman. 2013.
 {``Reliability of School Surveys in Estimating Geographic Variation in
@@ -2507,6 +3389,11 @@ Geology} 3: 215--26.
 \leavevmode\vadjust pre{\hypertarget{ref-weisberg2014}{}}%
 Weisberg, Sanford. 2014. \emph{Applied Linear Regression}. Fourth.
 Hoboken {NJ}: Wiley. \url{http://z.umn.edu/alr4ed}.
+
+\leavevmode\vadjust pre{\hypertarget{ref-zhang2004}{}}%
+Zhang, Hao. 2004. {``Inconsistent Estimation and Asymptotically Equal
+Interpolations in Model-Based Geostatistics.''} \emph{Journal of the
+American Statistical Association} 99 (465): 250--61.
 
 \leavevmode\vadjust pre{\hypertarget{ref-zoure2014}{}}%
 Zouré, Honorat GM, Mounkaila Noma, Afework H Tekle, Uche V Amazigo,
