@@ -3,7 +3,7 @@
 ## List of the main functions used in the chapter {.unnumbered}
 
 | Function      | R Package | Used for                                                                                     |
-|------------|------------|------------------------------------------------|
+|---------------|---------------|-------------------------------------------|
 | `lmer`        | `lme4`    | Fitting linear mixed models                                                                  |
 | `glmer`       | `lme4`    | Fitting generalized linear mixed models                                                      |
 | `glgm`        | `RiskMap` | Fitting generalized linear mixed models                                                      |
@@ -28,8 +28,7 @@ Let us first consider the example of the river-blindness data in Liberia (@sec-r
 ```{r, echo=FALSE, collapse=TRUE, message=FALSE}
 library(ggplot2)
 library(sf)
-library(devtools)
-load_all("../RiskMap/")
+library(RiskMap)
 data(galicia)
 data(italy_sim)
 data(liberia)
@@ -775,8 +774,7 @@ In this section, we provide more technical details on the derivation of the like
 
 Let $\theta = (\beta, \tau^2)$ denote the vectore of unkown parameters, where $\beta$ is the vector of regression coefficients and $\tau^2$ is the variance of the random effects $Z = (Z_1, \ldots, Z_n)$. The likelihood function for a set of observations $Y = (Y_1, \ldots, Y_n)$, for $i=1,\ldots,n$, under the model in @eq-linear-predictor-glmms-ch2, is obtained by deriving the marginal distribution of $Y_i$, hence $$
 L(\theta) = [Y] = \int_{R^n} \: [Z] [Y \:|\: Z] \: d Z
-$$ 
-Since the elements $Z_i$ in $Z$ are mutually independent, we can write $$
+$$ Since the elements $Z_i$ in $Z$ are mutually independent, we can write $$
 [Z] = \prod_{i=1}^n [Z_i]
 $$ and, using the conditional independence among the $Y$ given $Z$, we obtain $$
 [Y \:|\: Z] = \prod_{i=1}^n [Y_i | Z_i].
@@ -788,31 +786,79 @@ Another important observation is that the integrals that express the likelihood 
 
 ### The likelihood function of a genearlized linear geostatistical model
 
-To derive the likelihood function of a generalized linear geostatistical model (GLGM), we consider the special case of a single observation per location without loss of generality. Let $Y$ and $Z$ denote the same vectors of random variables introduced in the previous section, with components $Y_i$ and $Z_i$ corresponding to the set of locations $X = (x_1, \ldots, x_n)$. Additionally, we define $S(X) = (S(x_1), \ldots, S(x_n))$ to represent the spatial Gaussian process at the sampled locations $X$. In this case the vector of unknown parameters is $\theta = (\beta, \sigma^2, \phi, \tau^2)$ and, as done in the previous section, we can obtain the likelihood function though the marinal distribution of the data, hence we write
- $$
+To derive the likelihood function of a generalized linear geostatistical model (GLGM), we consider the special case of a single observation per location without loss of generality. Let $Y$ and $Z$ denote the same vectors of random variables introduced in the previous section, with components $Y_i$ and $Z_i$ corresponding to the set of locations $X = (x_1, \ldots, x_n)$. Additionally, we define $S(X) = (S(x_1), \ldots, S(x_n))$ to represent the spatial Gaussian process at the sampled locations $X$. In this case the vector of unknown parameters is $\theta = (\beta, \sigma^2, \phi, \tau^2)$ and, as done in the previous section, we can obtain the likelihood function though the marinal distribution of the data, hence we write $$
 L(\theta) = [Y] = \int_{R^n} \int_{R^n} \: [Z] [S] [Y \:|\: Z, S] \: d Z d S
-$$ {#eq-glgm-lik1}
-To simplify the explanation and notation in this section and the following ones, we will first rewrite the likelihood function in terms of the random effect \( W_i = S(x_i) + Z_i \). We will denote this in its vector form as \( W = (W_1, \ldots, W_n) \).
- $$
-L(\theta) = [Y] = \int_{R^n} \: [W] [Y \:|\: W] \: d W
-$$ {#eq-glgm-lik2}
-In this model formulation, we assume that $Y$ conditionally on $W$ is a set of mutually independent outcomes, hence
-$$
+$$ {#eq-glgm-lik1} To simplify the explanation and notation in this section and the following ones, we will first rewrite the likelihood function in terms of the random effect ( W_i = S(x_i) + Z_i ) and will denote this in its vector form as $W = (W_1, \ldots, W_n)$. Hence we write 
+$$L(\theta) = [Y] = \int_{R^n} \: [W] [Y \:|\: W] \: d W$$ {#eq-glgm-lik2} 
+In this model formulation, we assume that $Y$ conditionally on $W$ is a set of mutually independent outcomes, hence $$
 [Y | W]  = \prod_{i=1}^n [Y_i | W_i].
-$$
-However, unlike in the previous section, the distribution of $[W]$ is a Multivariate Gaussian distribution with correlated components, hence we cannot split the integral into separate univariate ones as before. More specifically, $W$ follows a Multivariate Gaussian distribution with mean vector $0$ and covariance matrix $\Omega$, whose $(i, j)$-th entry is
-$$
+$$ However, unlike in the previous section, the distribution of $[W]$ is a Multivariate Gaussian distribution with correlated components, hence we cannot split the integral into separate univariate ones as before. More specifically, $W$ follows a Multivariate Gaussian distribution with mean vector $0$ and covariance matrix $\Omega$, whose $(i, j)$-th entry is $$
 [\Omega]_{ij} = 
 \begin{cases}
 \sigma^2 \rho(u_{ij}; \phi, \kappa) & \mbox{if }i\neq j \\
 \sigma^2 + \tau^2 &  \mbox{if }i = j
 \end{cases}
+$$ where $\rho(u;\phi,\kappa)$ is the Matern correlation function with scale parameter $\phi$ and smoothness parameter $\kappa$; see @eq-matern. 
+
+In the next two sections we provide a brief overview of Markov chain Monte Carlo and how these can be used to approximate the likelihood function in @eq-glgm-lik2.
+
+#### Monte Carlo Markov Chain: sampling from the predictive distribution of the spatial Gaussian process
+
+Let us consider the problem of sampling from the distribution of $[W | Y]$, where $W$ and $Y$ are the random variables with the same properties as previously introduced. Although the distribution $[W | Y]$ has not yet appeared in the derivation of the likelihood function of a generalized linear geostatistical model, sampling from $[W | Y]$ will be a crucial step in our approach to maximum likelihood estimation which we will illustrate in the next sub-section. However, direct simulation from this distribution is not feasible, hence we have to resort to Markov Chain Monte Carlo (MCMC) methods which we now briefly introduce.
+
+The \textit{Metropolis-Hastings algorithm} is a foundational technique in the field of MCMC methods, which are widely used for sampling from complex probability distributions. The primary goal of MCMC methods is to generate a sequence of samples from a target distribution where direct sampling is challenging, such as the distribution of $[W | Y]$. The Metropolis-Hastings algorithm, first introduced by @metropolis1953equation and later generalized by @hastings1970monte, achieves this by constructing a Markov chain that has $[W | Y]$ as its stationary distribution. In what follows, we shall use $\pi(W)$ to denote the density function of $[W | Y]$
+
+Given a current realization $W_{(k)}$ of the distribution $[W | Y]$ in the Markov chain, the algorithm proceeds as follows.
+
+-   Propose a new realization $W_{(k+1)}$ from $q(W_{(k+1)} \mid W_{(k)})$, where $q(\cdot \mid \cdot)$ is the density function of a chosen proposal distribution.
+-   Compute the acceptance probability:
+    $$
+    \alpha = \min \left(1, \frac{\pi(W_{(k+1)}) q(W_{(k)} \mid W_{(k+1)})}{\pi(W_{(k)}) q(W_{(k+1)} \mid W_{(k)})} \right).
+    $$
+-   Accept the proposed realization $W_{(k+1)}$ with probability $\alpha$; otherwise, retain the current realization $W_{(k)}$.
+
+The algorithm ensures that, under certain conditions, the chain converges to the target distribution $\pi(W)$ as the number of steps increases @roberts1996exponential.
+
+The functions of the `RiskMap` package for fitting Binomial and Poisson geostatistical models implement the \textit{Metropolis-Adjusted Langevin Algorithm (MALA)}, which is an improvement over traditional Metropolis-Hastings MCMC methods. Introduced by @rossky1978brownian and further developed by @roberts1996exponential, MALA incorporates gradient information from the target distribution to propose more informed moves, potentially leading to faster convergence and more efficient exploration of the target distribution.
+
+MALA combines the Metropolis-Hastings framework with Langevin dynamics, where proposals $q(\cdot | \cdot)$ are defined as:
+
 $$
-where $\rho(u;\phi,\kappa)$ is the Matern 
+W_{(k+1)} = W_{(k)} + \frac{\epsilon^2}{2} \nabla \log \pi(W_{(k)}) + \epsilon \, \eta,
+$$
 
-### Monte Carlo Markov Chain: sampling from the predictive distribution of the spatial Gaussian process
+where $\epsilon$ is a step size parameter, $\nabla \log \pi(W_{(k)})$ is the gradient of the log of the target density with respect to $W_{(k)}$, and $\eta \sim \mathcal{N}(0, I)$ is a Gaussian random variable with mean 0 and indendent components with unit variance.
 
-### Monte Carlo maximum likelihood {#sec-mcml}
+By leveraging the gradient, MALA can propose moves that are more likely to be accepted, especially in high-dimensional spaces or regions of low probability density.
+
+In the context of Laplace sampling for geostatistical models, the \textit{Metropolis-Adjusted Langevin Algorithm (MALA)} is used to construct an efficient proposal distribution. The primary objective is to generate samples from a conditional distribution of latent Gaussian processes, which is challenging due to high dimensionality and complex dependence structures.
+
+The Laplace sampling method, as implemented in the `RiskMap` package, utilizes a specific form of MALA. Here, the proposal distribution is derived from a second-order Taylor expansion around the mode of the target distribution [W | Y]. Let $\hat{w}$ be the mode of this conditional distribution, and let $\hat{\Omega}$ be the inverse of the negative Hessian matrix evaluated at $\hat{w}$, which approximates the local covariance structure of the distribution. We then define the random variable $\tilde{W}$ as
+
+$$
+\tilde{W} = \hat{\Omega}^{1/2} (W - \hat{w})
+$$
+
+This linear transformation is applied to decorrelate the components of $W$, making the MCMC updates more efficient [@geyer1994]. The function `Laplace_sampling_MCMC` in `RiskMap` uses this approach where by at each iteration the variable $\tilde{W}$ using the MALA algorithm, and samples for $[W | Y]$ are then obtained by inverting the linear transformation from the above equation. The logic behind using this approach is that it allows the proposal distribution to adapt to the local geometry of the posterior, thus improving convergence properties and reducing the correlation between successive samples (see @christensen2004).
+
+Once the MCMC algorithm has completed all iterations, it is important to ensure that it has converged to the target distribution. The diagnostic methods listed below can be used to assess convergence using the obtained MCMC samples.
+
+1. **Trace Plots**: Plotting the sampled values against the iterations can help visually inspect if the chains have reached a stationary distribution. A well-mixed chain should appear as a "random walk" around a stable mean value.
+
+2. **Autocorrelation Plots**: These plots measure the correlation between samples as a function of the lag between them. Low autocorrelation across lags indicates good mixing, suggesting convergence.
+
+3. **Effective Sample Size (ESS)**: The ESS measures the number of independent samples that an MCMC chain is equivalent to, accounting for the autocorrelation in the chain. It is calculated as:
+$$
+   \text{ESS} = \frac{N}{1 + 2 \sum_{k=1}^{\infty} \rho_k},
+$$
+where $N$ is the total number of MCMC samples and $\rho_k$ is the autocorrelation at lag $k$. A high ESS indicates that the chain has good mixing properties and the samples are nearly independent. The summation of autocorrelations up to a sufficiently large lag is used to estimate the reduction in effective sample size due to the dependence between samples. A small ESS suggests high autocorrelation and that more samples are needed to achieve the same precision as a set of independent samples. The ESS calculation is detailed in @geyer1992practical.
+
+In addition to those, other diagnostics can provide further assurance of convergence. For example, the Gelman-Rubin diagnostic compares the variance between multiple chains to the variance within each chain; a diagnostic value close to 1 indicates that the chains have converged to a common distribution [@gelman1992inference]. Also, the Geweke diagnostic tests for convergence compares the means of the first part and last part of a single MCMC chain. If the means are not significantly different, it suggests that the chain has reached stationarity [@geweke1992evaluating]. Employing these additional diagnostics, along with those listed above, provides a comprehensive approach to assessing the convergence and reliability of MCMC results. Using a combination of these diagnostics helps to robustly assess whether the MCMC algorithm has adequately explored the target distribution.
+
+For a general overview of MCMC algorithms, we refer you to @brooks2011handbook and @geyer2019handbook.
+
+
+#### Monte Carlo maximum likelihood {#sec-mcml}
 
 ## Exercises
 
@@ -834,4 +880,3 @@ where $\rho(u;\phi,\kappa)$ is the Matern
 
 7.  Consider a linear model for the Galicia data as in @sec-glm-parest but now also introduce a nugget term, hence $$
     Y_i = \mu + S(x_i) + Z_i + U_i
-    $$ {#eq-galicia-lgm-v2} where $Z_i$ are i.i.d. Gaussian variables with mean 0 and variance $\tau^2$. Fit the model by fixing the variance of $U_i$, $\omega^2$ to 0.01 using the argument `fix_var_me` in `glgpm`. Using this model, reproduce the graph as shown in @fig-galicia-matern. Repeat this, but now fix $\omega^2$ to 0.02. How do the curves change and why?
