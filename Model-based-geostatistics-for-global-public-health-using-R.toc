@@ -7,33 +7,56 @@
 \contentsline {subsection}{\numberline {1.2.2}Topics in statistics}{8}{subsection.1.2.2}%
 \contentsline {subsection}{\numberline {1.2.3}Topics in R programming}{8}{subsection.1.2.3}%
 \contentsline {section}{\numberline {1.3}Obtaining and running the R packages}{9}{section.1.3}%
-\contentsline {section}{\numberline {1.4}Example data-sets used in the book}{10}{section.1.4}%
+\contentsline {section}{\numberline {1.4}Data-sets used in the book}{10}{section.1.4}%
 \contentsline {subsection}{\numberline {1.4.1}Lead concentration in Galicia}{10}{subsection.1.4.1}%
 \contentsline {subsection}{\numberline {1.4.2}River-blindness in Liberia}{11}{subsection.1.4.2}%
-\contentsline {subsection}{\numberline {1.4.3}\emph {Anopheles gambiae} mosquitoes in Southern Cameroon}{11}{subsection.1.4.3}%
-\contentsline {section}{\numberline {1.5}Geostatistical problems and geostatistical models}{13}{section.1.5}%
-\contentsline {section}{\numberline {1.6}Workflow of a statistical analysis and structure of the book}{16}{section.1.6}%
-\contentsline {chapter}{\numberline {2}Exploratory analysis}{17}{chapter.2}%
-\contentsline {section}{\numberline {2.1}Importing and processing spatial data in R}{17}{section.2.1}%
-\contentsline {section}{\numberline {2.2}Visualizing geostatistical data}{17}{section.2.2}%
-\contentsline {section}{\numberline {2.3}Exploring associations}{17}{section.2.3}%
-\contentsline {section}{\numberline {2.4}Analysis of the residuals}{17}{section.2.4}%
-\contentsline {subsection}{\numberline {2.4.1}Diagnostics for overdispersion}{17}{subsection.2.4.1}%
-\contentsline {subsection}{\numberline {2.4.2}Diagnostics for residual spatial variation}{17}{subsection.2.4.2}%
-\contentsline {chapter}{\numberline {3}Model fitting}{19}{chapter.3}%
-\contentsline {section}{\numberline {3.1}Linear Gaussian model}{19}{section.3.1}%
-\contentsline {section}{\numberline {3.2}Generalized linear geostatistical models}{19}{section.3.2}%
-\contentsline {chapter}{\numberline {4}Model validation}{21}{chapter.4}%
-\contentsline {section}{\numberline {4.1}How to simulate geostatistical data from a fitted model}{21}{section.4.1}%
-\contentsline {section}{\numberline {4.2}Validating the calibration of the model}{21}{section.4.2}%
-\contentsline {section}{\numberline {4.3}Validating the spatial correlation of the model}{21}{section.4.3}%
-\contentsline {chapter}{\numberline {5}Geostatistical prediction}{23}{chapter.5}%
-\contentsline {section}{\numberline {5.1}Pixel-level predictive targets}{23}{section.5.1}%
-\contentsline {section}{\numberline {5.2}Area-level predictive targets}{23}{section.5.2}%
-\contentsline {section}{\numberline {5.3}Comparing the predictive performance of geostatistical models}{23}{section.5.3}%
-\contentsline {chapter}{\numberline {6}Case studies}{25}{chapter.6}%
-\contentsline {section}{\numberline {6.1}Mapping stunting risk in Ghan}{25}{section.6.1}%
-\contentsline {section}{\numberline {6.2}Mapping river blindness in Malawi}{25}{section.6.2}%
-\contentsline {section}{\numberline {6.3}Mapping mosquitoes abundance in Cameroon}{25}{section.6.3}%
-\contentsline {fm}{References}{27}{chapter*.6}%
-\contentsline {chapter}{References}{27}{chapter*.6}%
+\contentsline {subsection}{\numberline {1.4.3}Malaria in the Western Kenyan Highlands}{12}{subsection.1.4.3}%
+\contentsline {subsection}{\numberline {1.4.4}\emph {Anopheles gambiae} mosquitoes in Southern Cameroon}{12}{subsection.1.4.4}%
+\contentsline {subsection}{\numberline {1.4.5}Simulated-dataset}{14}{subsection.1.4.5}%
+\contentsline {section}{\numberline {1.5}Geostatistical problems and geostatistical models}{15}{section.1.5}%
+\contentsline {subsection}{\numberline {1.5.1}The Matern family of correlation functions}{17}{subsection.1.5.1}%
+\contentsline {section}{\numberline {1.6}Workflow of a statistical analysis and structure of the book}{21}{section.1.6}%
+\contentsline {chapter}{\numberline {2}Handling of spatial data in R}{23}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Importing and processing spatial data in R}{23}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Visualizing geostatistical data}{23}{section.2.2}%
+\contentsline {section}{\numberline {2.3}}{23}{section.2.3}%
+\contentsline {chapter}{\numberline {3}Model formulation and parameter estimation}{25}{chapter.3}%
+\contentsline {section}{List of the main functions used in the chapter}{25}{section*.10}%
+\contentsline {section}{\numberline {3.1}Exploratory analysis}{25}{section.3.1}%
+\contentsline {subsection}{\numberline {3.1.1}Exploring associations with risk factors using count data}{25}{subsection.3.1.1}%
+\contentsline {subsubsection}{\numberline {3.1.1.1}When the outcome is an aggregated count}{26}{subsubsection.3.1.1.1}%
+\contentsline {subsubsection}{\numberline {3.1.1.2}When the outcome is an invidual-level binary indicator}{30}{subsubsection.3.1.1.2}%
+\contentsline {subsection}{\numberline {3.1.2}Exploring overdispersion in count data}{36}{subsection.3.1.2}%
+\contentsline {subsubsection}{\numberline {3.1.2.1}Maximum likelihood estimation of generalized linear mixed models for count data}{39}{subsubsection.3.1.2.1}%
+\contentsline {subsection}{\numberline {3.1.3}Exploring residual spatial correlation}{42}{subsection.3.1.3}%
+\contentsline {subsubsection}{\numberline {3.1.3.1}Example: assessing spatial correlation for the Liberia data}{44}{subsubsection.3.1.3.1}%
+\contentsline {subsubsection}{\numberline {3.1.3.2}Exploring residual spatial correlation with linear Guassian models}{48}{subsubsection.3.1.3.2}%
+\contentsline {paragraph}{\numberline {3.1.3.2.1}One observation per location}{48}{paragraph.3.1.3.2.1}%
+\contentsline {paragraph}{\numberline {3.1.3.2.2}More than one observation per location}{49}{paragraph.3.1.3.2.2}%
+\contentsline {section}{\numberline {3.2}The linear geostatistical model}{52}{section.3.2}%
+\contentsline {subsection}{\numberline {3.2.1}Evaluating the inclusion of the measurement error term \(U_i\) and the specification of the smoothness parameter \(\kappa \)}{52}{subsection.3.2.1}%
+\contentsline {subsection}{\numberline {3.2.2}Modelling hierarchical geostatistical data using the \texttt {re()} function}{56}{subsection.3.2.2}%
+\contentsline {section}{\numberline {3.3}Generalized linear geostatistical models}{61}{section.3.3}%
+\contentsline {subsection}{\numberline {3.3.1}Example: river-blindness in Liberia}{63}{subsection.3.3.1}%
+\contentsline {section}{\numberline {3.4}Theory}{64}{section.3.4}%
+\contentsline {subsection}{\numberline {3.4.1}Maximum likelihood estimation for non-Guassian mixed models with independent random effects}{64}{subsection.3.4.1}%
+\contentsline {subsection}{\numberline {3.4.2}Maximum likelihood estimation for non-Guassian generalized linear geostatistical models}{66}{subsection.3.4.2}%
+\contentsline {subsubsection}{\numberline {3.4.2.1}Monte Carlo maximum likelihood}{67}{subsubsection.3.4.2.1}%
+\contentsline {subsubsection}{\numberline {3.4.2.2}Monte Carlo Markov Chain: sampling from the predictive distribution of the spatial Gaussian process}{68}{subsubsection.3.4.2.2}%
+\contentsline {subsubsection}{\numberline {3.4.2.3}Summary with example}{71}{subsubsection.3.4.2.3}%
+\contentsline {subsubsection}{\numberline {3.4.2.4}Alternative approaches to parameter estimation}{75}{subsubsection.3.4.2.4}%
+\contentsline {section}{\numberline {3.5}Exercises}{75}{section.3.5}%
+\contentsline {chapter}{\numberline {4}Model validation}{77}{chapter.4}%
+\contentsline {section}{\numberline {4.1}How to simulate geostatistical data from a fitted model}{77}{section.4.1}%
+\contentsline {section}{\numberline {4.2}Validating the calibration of the model}{77}{section.4.2}%
+\contentsline {section}{\numberline {4.3}Validating the spatial correlation of the model}{77}{section.4.3}%
+\contentsline {chapter}{\numberline {5}Geostatistical prediction}{79}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Pixel-level predictive targets}{79}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Area-level predictive targets}{79}{section.5.2}%
+\contentsline {section}{\numberline {5.3}Comparing the predictive performance of geostatistical models}{79}{section.5.3}%
+\contentsline {chapter}{\numberline {6}Case studies}{81}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Mapping stunting risk in Ghan}{81}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Mapping river blindness in Malawi}{81}{section.6.2}%
+\contentsline {section}{\numberline {6.3}Mapping mosquitoes abundance in Cameroon}{81}{section.6.3}%
+\contentsline {fm}{References}{83}{chapter*.25}%
+\contentsline {chapter}{References}{83}{chapter*.25}%
