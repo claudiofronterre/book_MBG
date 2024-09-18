@@ -1,123 +1,123 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2023.5.30)  9 JUN 2023 15:04
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2024.3.15)  10 SEP 2024 12:50
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
 **Model-based-geostatistics-for-global-public-health-using-R.tex
 (./Model-based-geostatistics-for-global-public-health-using-R.tex
-LaTeX2e <2020-02-02> patch level 2
-L3 programming layer <2020-02-14> (./krantz.cls
+LaTeX2e <2021-11-15> patch level 1
+L3 programming layer <2022-01-21> (./krantz.cls
 Document Class: krantz 2021/10/04 v1.4n Standard LaTeX document class
 (/usr/share/texlive/texmf-dist/tex/latex/base/bk10.clo
-File: bk10.clo 2019/12/20 v1.4l Standard LaTeX file (size option)
+File: bk10.clo 2021/10/04 v1.4n Standard LaTeX file (size option)
 )
-\trimheight=\dimen134
-\trimwidth=\dimen135
-\normaltextheight=\dimen136
-\tempa=\dimen137
-\tempdimen=\dimen138
-\htrim=\dimen139
-\vtrimtop=\dimen140
-\vtrimbot=\dimen141
-\ul@box=\box45
-\ur@box=\box46
-\ll@box=\box47
-\lr@box=\box48
-\@cipboxa=\box49
-\@cipboxb=\box50
-\@ciprulewidth=\dimen142
-\c@part=\count167
-\c@chapter=\count168
-\c@section=\count169
-\c@subsection=\count170
-\c@subsubsection=\count171
-\c@paragraph=\count172
-\c@subparagraph=\count173
-\tempbox=\box51
-\tempdimen=\dimen143
-\secwd=\dimen144
-\subsecwd=\dimen145
-\subsubsecwd=\dimen146
-\c@figure=\count174
-\c@table=\count175
+\trimheight=\dimen138
+\trimwidth=\dimen139
+\normaltextheight=\dimen140
+\tempa=\dimen141
+\tempdimen=\dimen142
+\htrim=\dimen143
+\vtrimtop=\dimen144
+\vtrimbot=\dimen145
+\ul@box=\box50
+\ur@box=\box51
+\ll@box=\box52
+\lr@box=\box53
+\@cipboxa=\box54
+\@cipboxb=\box55
+\@ciprulewidth=\dimen146
+\c@part=\count185
+\c@chapter=\count186
+\c@section=\count187
+\c@subsection=\count188
+\c@subsubsection=\count189
+\c@paragraph=\count190
+\c@subparagraph=\count191
+\tempbox=\box56
+\tempdimen=\dimen147
+\secwd=\dimen148
+\subsecwd=\dimen149
+\subsubsecwd=\dimen150
+\c@figure=\count192
+\c@table=\count193
 \abovecaptionskip=\skip47
 \belowcaptionskip=\skip48
-\@tablebox=\box52
-\@tabletitlebox=\box53
-\@tablewidth=\dimen147
-\@tabletitlewidth=\dimen148
-\max@tablewidth=\dimen149
-\c@numauthors=\count176
-\@AUonebox=\box54
-\@AUtwobox=\box55
-\@AUthreebox=\box56
-\@AUfourbox=\box57
-\@AUfivebox=\box58
-\@AUsixbox=\box59
-\@AUsevenbox=\box60
-\@AUeightbox=\box61
-\@AUninebox=\box62
-\@AUtenbox=\box63
-\@AUelevenbox=\box64
-\@AUtwelvebox=\box65
-\@AUthirteenbox=\box66
-\@AUfourteenbox=\box67
-\@AUfifteenbox=\box68
-\@AUaffonebox=\box69
-\@AUafftwobox=\box70
-\@AUaffthreebox=\box71
-\@AUafffourbox=\box72
-\@AUafffivebox=\box73
-\@AUaffsixbox=\box74
-\@AUaffsevenbox=\box75
-\@AUaffeightbox=\box76
-\@AUaffninebox=\box77
-\@AUafftenbox=\box78
-\@AUaffelevenbox=\box79
-\@AUafftwelvebox=\box80
-\@AUaffthirteenbox=\box81
-\@AUafffourteenbox=\box82
-\@AUafffifteenbox=\box83
-\@finalAUboxfromone=\box84
-\@finalAUboxfromtwo=\box85
-\@finalAUboxfromthree=\box86
-\@finalAUboxfromfour=\box87
-\@finalAUboxfromfive=\box88
-\@finalAUboxfromsix=\box89
-\@finalAUboxfromseven=\box90
-\@finalAUboxfromeight=\box91
-\@finalAUboxfromnine=\box92
-\@finalAUboxfromten=\box93
-\@finalAUboxfromeleven=\box94
-\@finalAUboxfromtwelve=\box95
-\@finalAUboxfromthirteen=\box96
-\@finalAUboxfromfourteen=\box97
-\@finalAUboxfromfifteen=\box98
-\c@chaptocdepth=\count177
-\bibindent=\dimen150
+\@tablebox=\box57
+\@tabletitlebox=\box58
+\@tablewidth=\dimen151
+\@tabletitlewidth=\dimen152
+\max@tablewidth=\dimen153
+\c@numauthors=\count194
+\@AUonebox=\box59
+\@AUtwobox=\box60
+\@AUthreebox=\box61
+\@AUfourbox=\box62
+\@AUfivebox=\box63
+\@AUsixbox=\box64
+\@AUsevenbox=\box65
+\@AUeightbox=\box66
+\@AUninebox=\box67
+\@AUtenbox=\box68
+\@AUelevenbox=\box69
+\@AUtwelvebox=\box70
+\@AUthirteenbox=\box71
+\@AUfourteenbox=\box72
+\@AUfifteenbox=\box73
+\@AUaffonebox=\box74
+\@AUafftwobox=\box75
+\@AUaffthreebox=\box76
+\@AUafffourbox=\box77
+\@AUafffivebox=\box78
+\@AUaffsixbox=\box79
+\@AUaffsevenbox=\box80
+\@AUaffeightbox=\box81
+\@AUaffninebox=\box82
+\@AUafftenbox=\box83
+\@AUaffelevenbox=\box84
+\@AUafftwelvebox=\box85
+\@AUaffthirteenbox=\box86
+\@AUafffourteenbox=\box87
+\@AUafffifteenbox=\box88
+\@finalAUboxfromone=\box89
+\@finalAUboxfromtwo=\box90
+\@finalAUboxfromthree=\box91
+\@finalAUboxfromfour=\box92
+\@finalAUboxfromfive=\box93
+\@finalAUboxfromsix=\box94
+\@finalAUboxfromseven=\box95
+\@finalAUboxfromeight=\box96
+\@finalAUboxfromnine=\box97
+\@finalAUboxfromten=\box98
+\@finalAUboxfromeleven=\box99
+\@finalAUboxfromtwelve=\box100
+\@finalAUboxfromthirteen=\box101
+\@finalAUboxfromfourteen=\box102
+\@finalAUboxfromfifteen=\box103
+\c@chaptocdepth=\count195
+\bibindent=\dimen154
 
 (/usr/share/texlive/texmf-dist/tex/latex/graphics/color.sty
-Package: color 2019/11/23 v1.2a Standard LaTeX Color (DPC)
+Package: color 2021/12/07 v1.3c Standard LaTeX Color (DPC)
 
 (/usr/share/texlive/texmf-dist/tex/latex/graphics-cfg/color.cfg
 File: color.cfg 2016/01/02 v1.6 sample color configuration
 )
-Package color Info: Driver file: pdftex.def on input line 147.
+Package color Info: Driver file: pdftex.def on input line 149.
 
 (/usr/share/texlive/texmf-dist/tex/latex/graphics-def/pdftex.def
-File: pdftex.def 2018/01/08 v1.0l Graphics/color driver for pdftex
+File: pdftex.def 2020/10/05 v1.2a Graphics/color driver for pdftex
 ))
 (/usr/share/texlive/texmf-dist/tex/latex/framed/framed.sty
 Package: framed 2011/10/22 v 0.96: framed or shaded text with page breaks
 \OuterFrameSep=\skip49
-\fb@frw=\dimen151
-\fb@frh=\dimen152
-\FrameRule=\dimen153
-\FrameSep=\dimen154
+\fb@frw=\dimen155
+\fb@frh=\dimen156
+\FrameRule=\dimen157
+\FrameSep=\dimen158
 )
-\tempbox=\box99
-\notewidth=\dimen155
-\wherebox=\box100
-\wherewidth=\dimen156
+\tempbox=\box104
+\notewidth=\dimen159
+\wherebox=\box105
+\wherewidth=\dimen160
 \listtextleftmargin=\skip50
 \listtextleftmarginii=\skip51
 \listtextleftmarginiii=\skip52
@@ -137,68 +137,68 @@ Package: framed 2011/10/22 v 0.96: framed or shaded text with page breaks
 \itemsepi=\skip66
 \itemsepii=\skip67
 \itemsepiii=\skip68
-\enumdimwd=\dimen157
-\enumdim=\dimen158
-\concolwidth=\dimen159
-\stempbox=\box101
+\enumdimwd=\dimen161
+\enumdim=\dimen162
+\concolwidth=\dimen163
+\stempbox=\box106
 )
 (/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsmath.sty
-Package: amsmath 2020/01/20 v2.17e AMS math features
+Package: amsmath 2021/10/15 v2.17l AMS math features
 \@mathmargin=\skip69
 
 For additional information on amsmath, use the `?' option.
 (/usr/share/texlive/texmf-dist/tex/latex/amsmath/amstext.sty
-Package: amstext 2000/06/29 v2.01 AMS text
+Package: amstext 2021/08/26 v2.01 AMS text
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsgen.sty
 File: amsgen.sty 1999/11/30 v2.0 generic functions
-\@emptytoks=\toks14
-\ex@=\dimen160
+\@emptytoks=\toks16
+\ex@=\dimen164
 ))
 (/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsbsy.sty
 Package: amsbsy 1999/11/29 v1.2d Bold Symbols
-\pmbraise@=\dimen161
+\pmbraise@=\dimen165
 )
 (/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsopn.sty
-Package: amsopn 2016/03/08 v2.02 operator names
+Package: amsopn 2021/08/26 v2.02 operator names
 )
-\inf@bad=\count178
-LaTeX Info: Redefining \frac on input line 227.
-\uproot@=\count179
-\leftroot@=\count180
-LaTeX Info: Redefining \overline on input line 389.
-\classnum@=\count181
-\DOTSCASE@=\count182
-LaTeX Info: Redefining \ldots on input line 486.
-LaTeX Info: Redefining \dots on input line 489.
-LaTeX Info: Redefining \cdots on input line 610.
-\Mathstrutbox@=\box102
-\strutbox@=\box103
-\big@size=\dimen162
-LaTeX Font Info:    Redeclaring font encoding OML on input line 733.
-LaTeX Font Info:    Redeclaring font encoding OMS on input line 734.
-\macc@depth=\count183
-\c@MaxMatrixCols=\count184
+\inf@bad=\count196
+LaTeX Info: Redefining \frac on input line 234.
+\uproot@=\count197
+\leftroot@=\count198
+LaTeX Info: Redefining \overline on input line 399.
+\classnum@=\count199
+\DOTSCASE@=\count266
+LaTeX Info: Redefining \ldots on input line 496.
+LaTeX Info: Redefining \dots on input line 499.
+LaTeX Info: Redefining \cdots on input line 620.
+\Mathstrutbox@=\box107
+\strutbox@=\box108
+\big@size=\dimen166
+LaTeX Font Info:    Redeclaring font encoding OML on input line 743.
+LaTeX Font Info:    Redeclaring font encoding OMS on input line 744.
+\macc@depth=\count267
+\c@MaxMatrixCols=\count268
 \dotsspace@=\muskip16
-\c@parentequation=\count185
-\dspbrk@lvl=\count186
-\tag@help=\toks15
-\row@=\count187
-\column@=\count188
-\maxfields@=\count189
-\andhelp@=\toks16
-\eqnshift@=\dimen163
-\alignsep@=\dimen164
-\tagshift@=\dimen165
-\tagwidth@=\dimen166
-\totwidth@=\dimen167
-\lineht@=\dimen168
-\@envbody=\toks17
+\c@parentequation=\count269
+\dspbrk@lvl=\count270
+\tag@help=\toks17
+\row@=\count271
+\column@=\count272
+\maxfields@=\count273
+\andhelp@=\toks18
+\eqnshift@=\dimen167
+\alignsep@=\dimen168
+\tagshift@=\dimen169
+\tagwidth@=\dimen170
+\totwidth@=\dimen171
+\lineht@=\dimen172
+\@envbody=\toks19
 \multlinegap=\skip70
 \multlinetaggap=\skip71
-\mathdisplay@stack=\toks18
-LaTeX Info: Redefining \[ on input line 2859.
-LaTeX Info: Redefining \] on input line 2860.
+\mathdisplay@stack=\toks20
+LaTeX Info: Redefining \[ on input line 2938.
+LaTeX Info: Redefining \] on input line 2939.
 )
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amssymb.sty
 Package: amssymb 2013/01/14 v3.01 AMS font symbols
@@ -212,15 +212,15 @@ LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
 (Font)                  U/euf/m/n --> U/euf/b/n on input line 106.
 ))
 (/usr/share/texlive/texmf-dist/tex/generic/iftex/iftex.sty
-Package: iftex 2019/11/07 v1.0c TeX engine tests
+Package: iftex 2020/03/06 v1.0d TeX engine tests
 )
 (/usr/share/texlive/texmf-dist/tex/latex/base/fontenc.sty
-Package: fontenc 2020/02/11 v2.0o Standard LaTeX package
+Package: fontenc 2021/04/29 v2.0v Standard LaTeX package
 )
 (/usr/share/texlive/texmf-dist/tex/latex/base/inputenc.sty
-Package: inputenc 2018/08/11 v1.3c Input encoding file
-\inpenc@prehook=\toks19
-\inpenc@posthook=\toks20
+Package: inputenc 2021/02/14 v1.3d Input encoding file
+\inpenc@prehook=\toks21
+\inpenc@posthook=\toks22
 )
 (/usr/share/texlive/texmf-dist/tex/latex/base/textcomp.sty
 Package: textcomp 2020/02/02 v2.0n Standard LaTeX package
@@ -265,182 +265,187 @@ Package: upquote 2012/04/19 v1.3 upright-quote and grave-accent glyphs in verba
 tim
 )
 (/usr/share/texlive/texmf-dist/tex/latex/microtype/microtype.sty
-Package: microtype 2019/11/18 v2.7d Micro-typographical refinements (RS)
+Package: microtype 2021/12/10 v3.0b Micro-typographical refinements (RS)
 
 (/usr/share/texlive/texmf-dist/tex/latex/graphics/keyval.sty
 Package: keyval 2014/10/28 v1.15 key=value parser (DPC)
-\KV@toks@=\toks21
+\KV@toks@=\toks23
 )
-\MT@toks=\toks22
-\MT@count=\count190
-LaTeX Info: Redefining \textls on input line 790.
-\MT@outer@kern=\dimen169
-LaTeX Info: Redefining \textmicrotypecontext on input line 1354.
-\MT@listname@count=\count191
+(/usr/share/texlive/texmf-dist/tex/latex/etoolbox/etoolbox.sty
+Package: etoolbox 2020/10/05 v2.5k e-TeX tools for LaTeX (JAW)
+\etb@tempcnta=\count274
+)
+\MT@toks=\toks24
+\MT@count=\count275
+\MT@tempbox=\box109
+LaTeX Info: Redefining \leftprotrusion on input line 1010.
+LaTeX Info: Redefining \rightprotrusion on input line 1018.
+LaTeX Info: Redefining \textls on input line 1173.
+\MT@outer@kern=\dimen173
+LaTeX Info: Redefining \textmicrotypecontext on input line 1759.
+\MT@listname@count=\count276
 
 (/usr/share/texlive/texmf-dist/tex/latex/microtype/microtype-pdftex.def
-File: microtype-pdftex.def 2019/11/18 v2.7d Definitions specific to pdftex (RS)
+File: microtype-pdftex.def 2021/12/10 v3.0b Definitions specific to pdftex (RS)
 
-LaTeX Info: Redefining \lsstyle on input line 914.
-LaTeX Info: Redefining \lslig on input line 914.
+LaTeX Info: Redefining \lsstyle on input line 897.
+LaTeX Info: Redefining \lslig on input line 897.
 \MT@outer@space=\skip72
 )
 Package microtype Info: Loading configuration file microtype.cfg.
 
 (/usr/share/texlive/texmf-dist/tex/latex/microtype/microtype.cfg
-File: microtype.cfg 2019/11/18 v2.7d microtype main configuration file (RS)
+File: microtype.cfg 2021/12/10 v3.0b microtype main configuration file (RS)
 ))
 (/usr/share/texlive/texmf-dist/tex/latex/parskip/parskip.sty
-Package: parskip 2020-01-22 v2.0d non-zero parskip adjustments
+Package: parskip 2021-03-14 v2.0h non-zero parskip adjustments
 
 (/usr/share/texlive/texmf-dist/tex/latex/kvoptions/kvoptions.sty
-Package: kvoptions 2019/11/29 v3.13 Key value format for package options (HO)
+Package: kvoptions 2020-10-07 v3.14 Key value format for package options (HO)
 
 (/usr/share/texlive/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty
-Package: ltxcmds 2019/12/15 v1.24 LaTeX kernel commands for general use (HO)
+Package: ltxcmds 2020-05-10 v1.25 LaTeX kernel commands for general use (HO)
 )
 (/usr/share/texlive/texmf-dist/tex/generic/kvsetkeys/kvsetkeys.sty
 Package: kvsetkeys 2019/12/15 v1.18 Key value parser (HO)
-))
-(/usr/share/texlive/texmf-dist/tex/latex/etoolbox/etoolbox.sty
-Package: etoolbox 2019/09/21 v2.5h e-TeX tools for LaTeX (JAW)
-\etb@tempcnta=\count192
-))
+)))
 (/usr/share/texlive/texmf-dist/tex/latex/xcolor/xcolor.sty
-Package: xcolor 2016/05/11 v2.12 LaTeX color extensions (UK)
+Package: xcolor 2021/10/31 v2.13 LaTeX color extensions (UK)
 
 (/usr/share/texlive/texmf-dist/tex/latex/graphics-cfg/color.cfg
 File: color.cfg 2016/01/02 v1.6 sample color configuration
 )
-Package xcolor Info: Driver file: pdftex.def on input line 225.
-LaTeX Info: Redefining \color on input line 709.
-Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1348.
-Package xcolor Info: Model `hsb' substituted by `rgb' on input line 1352.
-Package xcolor Info: Model `RGB' extended on input line 1364.
-Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1366.
-Package xcolor Info: Model `Hsb' substituted by `hsb' on input line 1367.
-Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1368.
-Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1369.
-Package xcolor Info: Model `Gray' substituted by `gray' on input line 1370.
-Package xcolor Info: Model `wave' substituted by `hsb' on input line 1371.
+Package xcolor Info: Driver file: pdftex.def on input line 227.
+LaTeX Info: Redefining \color on input line 711.
+Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1352.
+Package xcolor Info: Model `hsb' substituted by `rgb' on input line 1356.
+Package xcolor Info: Model `RGB' extended on input line 1368.
+Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1370.
+Package xcolor Info: Model `Hsb' substituted by `hsb' on input line 1371.
+Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1372.
+Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1373.
+Package xcolor Info: Model `Gray' substituted by `gray' on input line 1374.
+Package xcolor Info: Model `wave' substituted by `hsb' on input line 1375.
 
 (/usr/share/texlive/texmf-dist/tex/latex/graphics/dvipsnam.def
 File: dvipsnam.def 2016/06/17 v3.0m Driver-dependent file (DPC,SPQR)
 )
 (/usr/share/texlive/texmf-dist/tex/latex/xcolor/svgnam.def
-File: svgnam.def 2016/05/11 v2.12 Predefined colors according to SVG 1.1 (UK)
+File: svgnam.def 2021/10/31 v2.13 Predefined colors according to SVG 1.1 (UK)
 )
 (/usr/share/texlive/texmf-dist/tex/latex/xcolor/x11nam.def
-File: x11nam.def 2016/05/11 v2.12 Predefined colors according to Unix/X11 (UK)
+File: x11nam.def 2021/10/31 v2.13 Predefined colors according to Unix/X11 (UK)
 ))
 (/usr/share/texlive/texmf-dist/tex/latex/fancyvrb/fancyvrb.sty
-Package: fancyvrb 2020/01/13 v3.5 verbatim text (tvz,hv)
-\FV@CodeLineNo=\count193
+Package: fancyvrb 2021/12/21 4.1b verbatim text (tvz,hv)
+\FV@CodeLineNo=\count277
 \FV@InFile=\read2
-\FV@TabBox=\box104
-\c@FancyVerbLine=\count194
-\FV@StepNumber=\count195
+\FV@TabBox=\box110
+\c@FancyVerbLine=\count278
+\FV@StepNumber=\count279
 \FV@OutFile=\write3
 )
 (/usr/share/texlive/texmf-dist/tex/latex/tools/longtable.sty
-Package: longtable 2020/01/07 v4.13 Multi-page Table package (DPC)
+Package: longtable 2021-09-01 v4.17 Multi-page Table package (DPC)
 \LTleft=\skip73
 \LTright=\skip74
 \LTpre=\skip75
 \LTpost=\skip76
-\LTchunksize=\count196
-\LTcapwidth=\dimen170
-\LT@head=\box105
-\LT@firsthead=\box106
-\LT@foot=\box107
-\LT@lastfoot=\box108
-\LT@cols=\count197
-\LT@rows=\count198
-\c@LT@tables=\count199
-\c@LT@chunks=\count266
-\LT@p@ftn=\toks23
+\LTchunksize=\count280
+\LTcapwidth=\dimen174
+\LT@head=\box111
+\LT@firsthead=\box112
+\LT@foot=\box113
+\LT@lastfoot=\box114
+\LT@gbox=\box115
+\LT@cols=\count281
+\LT@rows=\count282
+\c@LT@tables=\count283
+\c@LT@chunks=\count284
+\LT@p@ftn=\toks25
 )
 (/usr/share/texlive/texmf-dist/tex/latex/booktabs/booktabs.sty
 Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
-\heavyrulewidth=\dimen171
-\lightrulewidth=\dimen172
-\cmidrulewidth=\dimen173
-\belowrulesep=\dimen174
-\belowbottomsep=\dimen175
-\aboverulesep=\dimen176
-\abovetopsep=\dimen177
-\cmidrulesep=\dimen178
-\cmidrulekern=\dimen179
-\defaultaddspace=\dimen180
-\@cmidla=\count267
-\@cmidlb=\count268
-\@aboverulesep=\dimen181
-\@belowrulesep=\dimen182
-\@thisruleclass=\count269
-\@lastruleclass=\count270
-\@thisrulewidth=\dimen183
+\heavyrulewidth=\dimen175
+\lightrulewidth=\dimen176
+\cmidrulewidth=\dimen177
+\belowrulesep=\dimen178
+\belowbottomsep=\dimen179
+\aboverulesep=\dimen180
+\abovetopsep=\dimen181
+\cmidrulesep=\dimen182
+\cmidrulekern=\dimen183
+\defaultaddspace=\dimen184
+\@cmidla=\count285
+\@cmidlb=\count286
+\@aboverulesep=\dimen185
+\@belowrulesep=\dimen186
+\@thisruleclass=\count287
+\@lastruleclass=\count288
+\@thisrulewidth=\dimen187
 )
 (/usr/share/texlive/texmf-dist/tex/latex/tools/array.sty
-Package: array 2019/08/31 v2.4l Tabular extension package (FMi)
-\col@sep=\dimen184
-\ar@mcellbox=\box109
-\extrarowheight=\dimen185
-\NC@list=\toks24
+Package: array 2021/10/04 v2.5f Tabular extension package (FMi)
+\col@sep=\dimen188
+\ar@mcellbox=\box116
+\extrarowheight=\dimen189
+\NC@list=\toks26
 \extratabsurround=\skip77
 \backup@length=\skip78
-\ar@cellbox=\box110
+\ar@cellbox=\box117
 )
 (/usr/share/texlive/texmf-dist/tex/latex/tools/calc.sty
 Package: calc 2017/05/25 v4.3 Infix arithmetic (KKT,FJ)
-\calc@Acount=\count271
-\calc@Bcount=\count272
-\calc@Adimen=\dimen186
-\calc@Bdimen=\dimen187
+\calc@Acount=\count289
+\calc@Bcount=\count290
+\calc@Adimen=\dimen190
+\calc@Bdimen=\dimen191
 \calc@Askip=\skip79
 \calc@Bskip=\skip80
 LaTeX Info: Redefining \setlength on input line 80.
 LaTeX Info: Redefining \addtolength on input line 81.
-\calc@Ccount=\count273
+\calc@Ccount=\count291
 \calc@Cskip=\skip81
 )
 (/usr/share/texlive/texmf-dist/tex/latex/footnotehyper/footnotehyper.sty
-Package: footnotehyper 2019/11/07 v1.1a hyperref aware footnote.sty (JFB)
-\FNH@notes=\box111
-\FNH@width=\dimen188
+Package: footnotehyper 2021/08/13 v1.1e hyperref aware footnote.sty (JFB)
+\FNH@notes=\box118
+\FNH@width=\dimen192
+\FNH@toks=\toks27
 )
 (/usr/share/texlive/texmf-dist/tex/latex/graphics/graphicx.sty
-Package: graphicx 2019/11/30 v1.2a Enhanced LaTeX Graphics (DPC,SPQR)
+Package: graphicx 2021/09/16 v1.2d Enhanced LaTeX Graphics (DPC,SPQR)
 
 (/usr/share/texlive/texmf-dist/tex/latex/graphics/graphics.sty
-Package: graphics 2019/11/30 v1.4a Standard LaTeX Graphics (DPC,SPQR)
+Package: graphics 2021/03/04 v1.4d Standard LaTeX Graphics (DPC,SPQR)
 
 (/usr/share/texlive/texmf-dist/tex/latex/graphics/trig.sty
-Package: trig 2016/01/03 v1.10 sin cos tan (DPC)
+Package: trig 2021/08/11 v1.11 sin cos tan (DPC)
 )
 (/usr/share/texlive/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
 File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
 )
-Package graphics Info: Driver file: pdftex.def on input line 105.
+Package graphics Info: Driver file: pdftex.def on input line 107.
 )
-\Gin@req@height=\dimen189
-\Gin@req@width=\dimen190
+\Gin@req@height=\dimen193
+\Gin@req@width=\dimen194
 )
 \cslhangindent=\skip82
 \csllabelwidth=\skip83
 \cslentryspacingunit=\skip84
-\c@theorem=\count274
-\c@exercise=\count275
-\c@example=\count276
-\c@definition=\count277
+\c@theorem=\count292
+\c@exercise=\count293
+\c@example=\count294
+\c@definition=\count295
 
 (/usr/share/texlive/texmf-dist/tex/latex/bookmark/bookmark.sty
-Package: bookmark 2019/12/03 v1.28 PDF bookmarks (HO)
+Package: bookmark 2020-11-06 v1.29 PDF bookmarks (HO)
 
 (/usr/share/texlive/texmf-dist/tex/latex/hyperref/hyperref.sty
-Package: hyperref 2020/01/14 v7.00d Hypertext links for LaTeX
+Package: hyperref 2021-06-07 v7.00m Hypertext links for LaTeX
 
-(/usr/share/texlive/texmf-dist/tex/latex/pdftexcmds/pdftexcmds.sty
-Package: pdftexcmds 2019/11/24 v0.31 Utility functions of pdfTeX for LuaTeX (HO
+(/usr/share/texlive/texmf-dist/tex/generic/pdftexcmds/pdftexcmds.sty
+Package: pdftexcmds 2020-06-27 v0.33 Utility functions of pdfTeX for LuaTeX (HO
 )
 
 (/usr/share/texlive/texmf-dist/tex/generic/infwarerr/infwarerr.sty
@@ -465,14 +470,18 @@ Package: letltxmacro 2019/12/03 v1.6 Let assignment for LaTeX macros (HO)
 (/usr/share/texlive/texmf-dist/tex/latex/auxhook/auxhook.sty
 Package: auxhook 2019-12-17 v1.6 Hooks for auxiliary files (HO)
 )
-\@linkdim=\dimen191
-\Hy@linkcounter=\count278
-\Hy@pagecounter=\count279
+\@linkdim=\dimen195
+\Hy@linkcounter=\count296
+\Hy@pagecounter=\count297
 
 (/usr/share/texlive/texmf-dist/tex/latex/hyperref/pd1enc.def
-File: pd1enc.def 2020/01/14 v7.00d Hyperref: PDFDocEncoding definition (HO)
+File: pd1enc.def 2021-06-07 v7.00m Hyperref: PDFDocEncoding definition (HO)
 Now handling font encoding PD1 ...
 ... no UTF-8 mapping file for font encoding PD1
+)
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/hyperref-langpatches.def
+File: hyperref-langpatches.def 2021-06-07 v7.00m Hyperref: patches for babel la
+nguages
 )
 (/usr/share/texlive/texmf-dist/tex/generic/intcalc/intcalc.sty
 Package: intcalc 2019/12/15 v1.3 Expandable calculations with integers (HO)
@@ -480,30 +489,29 @@ Package: intcalc 2019/12/15 v1.3 Expandable calculations with integers (HO)
 (/usr/share/texlive/texmf-dist/tex/generic/etexcmds/etexcmds.sty
 Package: etexcmds 2019/12/15 v1.7 Avoid name clashes with e-TeX commands (HO)
 )
-\Hy@SavedSpaceFactor=\count280
-\pdfmajorversion=\count281
-Package hyperref Info: Option `unicode' set `true' on input line 4421.
+\Hy@SavedSpaceFactor=\count298
 
 (/usr/share/texlive/texmf-dist/tex/latex/hyperref/puenc.def
-File: puenc.def 2020/01/14 v7.00d Hyperref: PDF Unicode definition (HO)
+File: puenc.def 2021-06-07 v7.00m Hyperref: PDF Unicode definition (HO)
 Now handling font encoding PU ...
 ... no UTF-8 mapping file for font encoding PU
 )
-Package hyperref Info: Hyper figures OFF on input line 4547.
-Package hyperref Info: Link nesting OFF on input line 4552.
-Package hyperref Info: Hyper index ON on input line 4555.
-Package hyperref Info: Plain pages OFF on input line 4562.
-Package hyperref Info: Backreferencing OFF on input line 4567.
+Package hyperref Info: Option `unicode' set `true' on input line 4073.
+Package hyperref Info: Hyper figures OFF on input line 4192.
+Package hyperref Info: Link nesting OFF on input line 4197.
+Package hyperref Info: Hyper index ON on input line 4200.
+Package hyperref Info: Plain pages OFF on input line 4207.
+Package hyperref Info: Backreferencing OFF on input line 4212.
 Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
-Package hyperref Info: Bookmarks ON on input line 4800.
-\c@Hy@tempcnt=\count282
+Package hyperref Info: Bookmarks ON on input line 4445.
+\c@Hy@tempcnt=\count299
 
 (/usr/share/texlive/texmf-dist/tex/latex/url/url.sty
 \Urlmuskip=\muskip17
 Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
 )
-LaTeX Info: Redefining \url on input line 5159.
-\XeTeXLinkMargin=\dimen192
+LaTeX Info: Redefining \url on input line 4804.
+\XeTeXLinkMargin=\dimen196
 
 (/usr/share/texlive/texmf-dist/tex/generic/bitset/bitset.sty
 Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
@@ -512,36 +520,39 @@ Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
 Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO
 )
 ))
-\Fld@menulength=\count283
-\Field@Width=\dimen193
-\Fld@charsize=\dimen194
-Package hyperref Info: Hyper figures OFF on input line 6430.
-Package hyperref Info: Link nesting OFF on input line 6435.
-Package hyperref Info: Hyper index ON on input line 6438.
-Package hyperref Info: backreferencing OFF on input line 6445.
-Package hyperref Info: Link coloring OFF on input line 6450.
-Package hyperref Info: Link coloring with OCG OFF on input line 6455.
-Package hyperref Info: PDF/A mode OFF on input line 6460.
-LaTeX Info: Redefining \ref on input line 6500.
-LaTeX Info: Redefining \pageref on input line 6504.
+\Fld@menulength=\count300
+\Field@Width=\dimen197
+\Fld@charsize=\dimen198
+Package hyperref Info: Hyper figures OFF on input line 6076.
+Package hyperref Info: Link nesting OFF on input line 6081.
+Package hyperref Info: Hyper index ON on input line 6084.
+Package hyperref Info: backreferencing OFF on input line 6091.
+Package hyperref Info: Link coloring OFF on input line 6096.
+Package hyperref Info: Link coloring with OCG OFF on input line 6101.
+Package hyperref Info: PDF/A mode OFF on input line 6106.
+LaTeX Info: Redefining \ref on input line 6146.
+LaTeX Info: Redefining \pageref on input line 6150.
 
-(/usr/share/texlive/texmf-dist/tex/generic/atbegshi/atbegshi.sty
-Package: atbegshi 2019/12/05 v1.19 At begin shipout hook (HO)
+(/usr/share/texlive/texmf-dist/tex/latex/base/atbegshi-ltx.sty
+Package: atbegshi-ltx 2021/01/10 v1.0c Emulation of the original atbegshi
+package with kernel methods
 )
-\Hy@abspage=\count284
-\c@Item=\count285
-\c@Hfootnote=\count286
+\Hy@abspage=\count301
+\c@Item=\count302
+\c@Hfootnote=\count303
 )
 Package hyperref Info: Driver (autodetected): hpdftex.
 
 (/usr/share/texlive/texmf-dist/tex/latex/hyperref/hpdftex.def
-File: hpdftex.def 2020/01/14 v7.00d Hyperref driver for pdfTeX
+File: hpdftex.def 2021-06-07 v7.00m Hyperref driver for pdfTeX
 
-(/usr/share/texlive/texmf-dist/tex/latex/atveryend/atveryend.sty
-Package: atveryend 2019-12-11 v1.11 Hooks at the very end of document (HO)
+(/usr/share/texlive/texmf-dist/tex/latex/base/atveryend-ltx.sty
+Package: atveryend-ltx 2020/08/19 v1.0a Emulation of the original atveryend pac
+kage
+with kernel methods
 )
-\Fld@listcount=\count287
-\c@bookmark@seq@number=\count288
+\Fld@listcount=\count304
+\c@bookmark@seq@number=\count305
 
 (/usr/share/texlive/texmf-dist/tex/latex/rerunfilecheck/rerunfilecheck.sty
 Package: rerunfilecheck 2019/12/05 v1.9 Rerun checks for auxiliary files (HO)
@@ -555,148 +566,144 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 \Hy@SectionHShift=\skip85
 )
 (/usr/share/texlive/texmf-dist/tex/latex/bookmark/bkm-pdftex.def
-File: bkm-pdftex.def 2019/12/03 v1.28 bookmark driver for pdfTeX (HO)
-\BKM@id=\count289
+File: bkm-pdftex.def 2020-11-06 v1.29 bookmark driver for pdfTeX (HO)
+\BKM@id=\count306
 ))
 (/usr/share/texlive/texmf-dist/tex/latex/caption/caption.sty
-Package: caption 2020/01/03 v3.4h Customizing captions (AR)
+Package: caption 2020/10/26 v3.5g Customizing captions (AR)
 
 (/usr/share/texlive/texmf-dist/tex/latex/caption/caption3.sty
-Package: caption3 2020/01/03 v1.8h caption3 kernel (AR)
-Package caption3 Info: TeX engine: e-TeX on input line 61.
-\captionmargin=\dimen195
-\captionmargin@=\dimen196
-\captionwidth=\dimen197
-\caption@tempdima=\dimen198
-\caption@indent=\dimen199
-\caption@parindent=\dimen256
-\caption@hangindent=\dimen257
+Package: caption3 2020/10/21 v2.2e caption3 kernel (AR)
+\captionmargin=\dimen199
+\captionmargin@=\dimen256
+\captionwidth=\dimen257
+\caption@tempdima=\dimen258
+\caption@indent=\dimen259
+\caption@parindent=\dimen260
+\caption@hangindent=\dimen261
 Package caption Info: Unknown document class (or package),
 (caption)             standard defaults will be used.
 Package caption Info: \@makecaption = \long macro:#1#2->\vskip \abovecaptionski
 p \ifx \@captype \Fig \sbox \@tempboxa {{\FigCapFont #1}\par #2}\ifdim \wd \@te
 mpboxa >\hsize {\FigCapFont #1}\par #2\par \else {\FigCapFont #1}\par #2\par \f
 i \else \let \caption \tabletitle \fi \vskip \belowcaptionskip  on input line 1
-082.
+139.
 )
 
 Package caption Warning: Unknown document class (or package),
 (caption)                standard defaults will be used.
 See the caption package documentation for explanation.
 
-\c@caption@flags=\count290
-\c@continuedfloat=\count291
+\c@caption@flags=\count307
+\c@continuedfloat=\count308
 Package caption Info: hyperref package is loaded.
 Package caption Info: longtable package is loaded.
 (/usr/share/texlive/texmf-dist/tex/latex/caption/ltcaption.sty
-Package: ltcaption 2018/08/26 v1.4a longtable captions (AR)
+Package: ltcaption 2020/05/30 v1.4b longtable captions (AR)
 ))
 (/usr/share/texlive/texmf-dist/tex/latex/float/float.sty
 Package: float 2001/11/08 v1.3d Float enhancements (AL)
-\c@float@type=\count292
-\float@exts=\toks25
-\float@box=\box112
-\@float@everytoks=\toks26
-\@floatcapt=\box113
+\c@float@type=\count309
+\float@exts=\toks28
+\float@box=\box119
+\@float@everytoks=\toks29
+\@floatcapt=\box120
 )
-\@float@every@codelisting=\toks27
-\c@codelisting=\count293
+\@float@every@codelisting=\toks30
+\c@codelisting=\count310
 
 (/usr/share/texlive/texmf-dist/tex/latex/caption/subcaption.sty
-Package: subcaption 2020/01/22 v1.3d Sub-captions (AR)
-\c@subfigure=\count294
-\c@subtable=\count295
+Package: subcaption 2020/10/07 v1.3j Sub-captions (AR)
+\c@subfigure=\count311
+\c@subtable=\count312
 )
 (/usr/share/texlive/texmf-dist/tex/latex/tcolorbox/tcolorbox.sty
-Package: tcolorbox 2019/11/15 version 4.22 text color boxes
+Package: tcolorbox 2022/01/07 version 5.0.2 text color boxes
 
 (/usr/share/texlive/texmf-dist/tex/latex/pgf/basiclayer/pgf.sty
 (/usr/share/texlive/texmf-dist/tex/latex/pgf/utilities/pgfrcs.sty
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/utilities/pgfutil-common.tex
-\pgfutil@everybye=\toks28
-\pgfutil@tempdima=\dimen258
-\pgfutil@tempdimb=\dimen259
+\pgfutil@everybye=\toks31
+\pgfutil@tempdima=\dimen262
+\pgfutil@tempdimb=\dimen263
 
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/utilities/pgfutil-common-lists.t
 ex)) (/usr/share/texlive/texmf-dist/tex/generic/pgf/utilities/pgfutil-latex.def
-\pgfutil@abb=\box114
-(/usr/share/texlive/texmf-dist/tex/latex/ms/everyshi.sty
-Package: everyshi 2001/05/15 v3.00 EveryShipout Package (MS)
-))
-(/usr/share/texlive/texmf-dist/tex/generic/pgf/utilities/pgfrcs.code.tex
+\pgfutil@abb=\box121
+) (/usr/share/texlive/texmf-dist/tex/generic/pgf/utilities/pgfrcs.code.tex
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/pgf.revision.tex)
-Package: pgfrcs 2020/01/08 v3.1.5b (3.1.5b)
+Package: pgfrcs 2021/05/15 v3.1.9a (3.1.9a)
 ))
-Package: pgf 2020/01/08 v3.1.5b (3.1.5b)
+Package: pgf 2021/05/15 v3.1.9a (3.1.9a)
 
 (/usr/share/texlive/texmf-dist/tex/latex/pgf/basiclayer/pgfcore.sty
 (/usr/share/texlive/texmf-dist/tex/latex/pgf/systemlayer/pgfsys.sty
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/systemlayer/pgfsys.code.tex
-Package: pgfsys 2020/01/08 v3.1.5b (3.1.5b)
+Package: pgfsys 2021/05/15 v3.1.9a (3.1.9a)
 
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/utilities/pgfkeys.code.tex
-\pgfkeys@pathtoks=\toks29
-\pgfkeys@temptoks=\toks30
+\pgfkeys@pathtoks=\toks32
+\pgfkeys@temptoks=\toks33
 
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/utilities/pgfkeysfiltered.code.t
 ex
-\pgfkeys@tmptoks=\toks31
+\pgfkeys@tmptoks=\toks34
 ))
-\pgf@x=\dimen260
-\pgf@y=\dimen261
-\pgf@xa=\dimen262
-\pgf@ya=\dimen263
-\pgf@xb=\dimen264
-\pgf@yb=\dimen265
-\pgf@xc=\dimen266
-\pgf@yc=\dimen267
-\pgf@xd=\dimen268
-\pgf@yd=\dimen269
+\pgf@x=\dimen264
+\pgf@y=\dimen265
+\pgf@xa=\dimen266
+\pgf@ya=\dimen267
+\pgf@xb=\dimen268
+\pgf@yb=\dimen269
+\pgf@xc=\dimen270
+\pgf@yc=\dimen271
+\pgf@xd=\dimen272
+\pgf@yd=\dimen273
 \w@pgf@writea=\write4
 \r@pgf@reada=\read3
-\c@pgf@counta=\count296
-\c@pgf@countb=\count297
-\c@pgf@countc=\count298
-\c@pgf@countd=\count299
-\t@pgf@toka=\toks32
-\t@pgf@tokb=\toks33
-\t@pgf@tokc=\toks34
-\pgf@sys@id@count=\count300
+\c@pgf@counta=\count313
+\c@pgf@countb=\count314
+\c@pgf@countc=\count315
+\c@pgf@countd=\count316
+\t@pgf@toka=\toks35
+\t@pgf@tokb=\toks36
+\t@pgf@tokc=\toks37
+\pgf@sys@id@count=\count317
  (/usr/share/texlive/texmf-dist/tex/generic/pgf/systemlayer/pgf.cfg
-File: pgf.cfg 2020/01/08 v3.1.5b (3.1.5b)
+File: pgf.cfg 2021/05/15 v3.1.9a (3.1.9a)
 )
 Driver file for pgf: pgfsys-pdftex.def
 
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/systemlayer/pgfsys-pdftex.def
-File: pgfsys-pdftex.def 2020/01/08 v3.1.5b (3.1.5b)
+File: pgfsys-pdftex.def 2021/05/15 v3.1.9a (3.1.9a)
 
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/systemlayer/pgfsys-common-pdf.de
 f
-File: pgfsys-common-pdf.def 2020/01/08 v3.1.5b (3.1.5b)
+File: pgfsys-common-pdf.def 2021/05/15 v3.1.9a (3.1.9a)
 )))
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/systemlayer/pgfsyssoftpath.code.
 tex
-File: pgfsyssoftpath.code.tex 2020/01/08 v3.1.5b (3.1.5b)
-\pgfsyssoftpath@smallbuffer@items=\count301
-\pgfsyssoftpath@bigbuffer@items=\count302
+File: pgfsyssoftpath.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+\pgfsyssoftpath@smallbuffer@items=\count318
+\pgfsyssoftpath@bigbuffer@items=\count319
 )
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/systemlayer/pgfsysprotocol.code.
 tex
-File: pgfsysprotocol.code.tex 2020/01/08 v3.1.5b (3.1.5b)
+File: pgfsysprotocol.code.tex 2021/05/15 v3.1.9a (3.1.9a)
 ))
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcore.code.tex
-Package: pgfcore 2020/01/08 v3.1.5b (3.1.5b)
+Package: pgfcore 2021/05/15 v3.1.9a (3.1.9a)
 
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmath.code.tex
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathcalc.code.tex
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathutil.code.tex)
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathparser.code.tex
-\pgfmath@dimen=\dimen270
-\pgfmath@count=\count303
-\pgfmath@box=\box115
-\pgfmath@toks=\toks35
-\pgfmath@stack@operand=\toks36
-\pgfmath@stack@operation=\toks37
+\pgfmath@dimen=\dimen274
+\pgfmath@count=\count320
+\pgfmath@box=\box122
+\pgfmath@toks=\toks38
+\pgfmath@stack@operand=\toks39
+\pgfmath@stack@operation=\toks40
 )
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.code.tex
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.basic.code
@@ -716,123 +723,123 @@ tex)
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.integerari
 thmetics.code.tex)))
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathfloat.code.tex
-\c@pgfmathroundto@lastzeros=\count304
+\c@pgfmathroundto@lastzeros=\count321
 ))
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfint.code.tex)
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepoints.code.te
 x
-File: pgfcorepoints.code.tex 2020/01/08 v3.1.5b (3.1.5b)
-\pgf@picminx=\dimen271
-\pgf@picmaxx=\dimen272
-\pgf@picminy=\dimen273
-\pgf@picmaxy=\dimen274
-\pgf@pathminx=\dimen275
-\pgf@pathmaxx=\dimen276
-\pgf@pathminy=\dimen277
-\pgf@pathmaxy=\dimen278
-\pgf@xx=\dimen279
-\pgf@xy=\dimen280
-\pgf@yx=\dimen281
-\pgf@yy=\dimen282
-\pgf@zx=\dimen283
-\pgf@zy=\dimen284
+File: pgfcorepoints.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+\pgf@picminx=\dimen275
+\pgf@picmaxx=\dimen276
+\pgf@picminy=\dimen277
+\pgf@picmaxy=\dimen278
+\pgf@pathminx=\dimen279
+\pgf@pathmaxx=\dimen280
+\pgf@pathminy=\dimen281
+\pgf@pathmaxy=\dimen282
+\pgf@xx=\dimen283
+\pgf@xy=\dimen284
+\pgf@yx=\dimen285
+\pgf@yy=\dimen286
+\pgf@zx=\dimen287
+\pgf@zy=\dimen288
 )
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepathconstruct.
 code.tex
-File: pgfcorepathconstruct.code.tex 2020/01/08 v3.1.5b (3.1.5b)
-\pgf@path@lastx=\dimen285
-\pgf@path@lasty=\dimen286
+File: pgfcorepathconstruct.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+\pgf@path@lastx=\dimen289
+\pgf@path@lasty=\dimen290
 )
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepathusage.code
 .tex
-File: pgfcorepathusage.code.tex 2020/01/08 v3.1.5b (3.1.5b)
-\pgf@shorten@end@additional=\dimen287
-\pgf@shorten@start@additional=\dimen288
+File: pgfcorepathusage.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+\pgf@shorten@end@additional=\dimen291
+\pgf@shorten@start@additional=\dimen292
 )
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorescopes.code.te
 x
-File: pgfcorescopes.code.tex 2020/01/08 v3.1.5b (3.1.5b)
-\pgfpic=\box116
-\pgf@hbox=\box117
-\pgf@layerbox@main=\box118
-\pgf@picture@serial@count=\count305
+File: pgfcorescopes.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+\pgfpic=\box123
+\pgf@hbox=\box124
+\pgf@layerbox@main=\box125
+\pgf@picture@serial@count=\count322
 )
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcoregraphicstate.c
 ode.tex
-File: pgfcoregraphicstate.code.tex 2020/01/08 v3.1.5b (3.1.5b)
-\pgflinewidth=\dimen289
+File: pgfcoregraphicstate.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+\pgflinewidth=\dimen293
 )
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcoretransformation
 s.code.tex
-File: pgfcoretransformations.code.tex 2020/01/08 v3.1.5b (3.1.5b)
-\pgf@pt@x=\dimen290
-\pgf@pt@y=\dimen291
-\pgf@pt@temp=\dimen292
+File: pgfcoretransformations.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+\pgf@pt@x=\dimen294
+\pgf@pt@y=\dimen295
+\pgf@pt@temp=\dimen296
 )
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorequick.code.tex
-File: pgfcorequick.code.tex 2020/01/08 v3.1.5b (3.1.5b)
+File: pgfcorequick.code.tex 2021/05/15 v3.1.9a (3.1.9a)
 )
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreobjects.code.t
 ex
-File: pgfcoreobjects.code.tex 2020/01/08 v3.1.5b (3.1.5b)
+File: pgfcoreobjects.code.tex 2021/05/15 v3.1.9a (3.1.9a)
 )
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepathprocessing
 .code.tex
-File: pgfcorepathprocessing.code.tex 2020/01/08 v3.1.5b (3.1.5b)
+File: pgfcorepathprocessing.code.tex 2021/05/15 v3.1.9a (3.1.9a)
 )
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorearrows.code.te
 x
-File: pgfcorearrows.code.tex 2020/01/08 v3.1.5b (3.1.5b)
-\pgfarrowsep=\dimen293
+File: pgfcorearrows.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+\pgfarrowsep=\dimen297
 )
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreshade.code.tex
-File: pgfcoreshade.code.tex 2020/01/08 v3.1.5b (3.1.5b)
-\pgf@max=\dimen294
-\pgf@sys@shading@range@num=\count306
-\pgf@shadingcount=\count307
+File: pgfcoreshade.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+\pgf@max=\dimen298
+\pgf@sys@shading@range@num=\count323
+\pgf@shadingcount=\count324
 )
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreimage.code.tex
-File: pgfcoreimage.code.tex 2020/01/08 v3.1.5b (3.1.5b)
+File: pgfcoreimage.code.tex 2021/05/15 v3.1.9a (3.1.9a)
 
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreexternal.code.
 tex
-File: pgfcoreexternal.code.tex 2020/01/08 v3.1.5b (3.1.5b)
-\pgfexternal@startupbox=\box119
+File: pgfcoreexternal.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+\pgfexternal@startupbox=\box126
 ))
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorelayers.code.te
 x
-File: pgfcorelayers.code.tex 2020/01/08 v3.1.5b (3.1.5b)
+File: pgfcorelayers.code.tex 2021/05/15 v3.1.9a (3.1.9a)
 )
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcoretransparency.c
 ode.tex
-File: pgfcoretransparency.code.tex 2020/01/08 v3.1.5b (3.1.5b)
+File: pgfcoretransparency.code.tex 2021/05/15 v3.1.9a (3.1.9a)
 )
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepatterns.code.
 tex
-File: pgfcorepatterns.code.tex 2020/01/08 v3.1.5b (3.1.5b)
+File: pgfcorepatterns.code.tex 2021/05/15 v3.1.9a (3.1.9a)
 )
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorerdf.code.tex
-File: pgfcorerdf.code.tex 2020/01/08 v3.1.5b (3.1.5b)
+File: pgfcorerdf.code.tex 2021/05/15 v3.1.9a (3.1.9a)
 )))
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/modules/pgfmoduleshapes.code.tex
-File: pgfmoduleshapes.code.tex 2020/01/08 v3.1.5b (3.1.5b)
-\pgfnodeparttextbox=\box120
+File: pgfmoduleshapes.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+\pgfnodeparttextbox=\box127
 ) (/usr/share/texlive/texmf-dist/tex/generic/pgf/modules/pgfmoduleplot.code.tex
-File: pgfmoduleplot.code.tex 2020/01/08 v3.1.5b (3.1.5b)
+File: pgfmoduleplot.code.tex 2021/05/15 v3.1.9a (3.1.9a)
 )
 (/usr/share/texlive/texmf-dist/tex/latex/pgf/compatibility/pgfcomp-version-0-65
 .sty
-Package: pgfcomp-version-0-65 2020/01/08 v3.1.5b (3.1.5b)
-\pgf@nodesepstart=\dimen295
-\pgf@nodesepend=\dimen296
+Package: pgfcomp-version-0-65 2021/05/15 v3.1.9a (3.1.9a)
+\pgf@nodesepstart=\dimen299
+\pgf@nodesepend=\dimen300
 )
 (/usr/share/texlive/texmf-dist/tex/latex/pgf/compatibility/pgfcomp-version-1-18
 .sty
-Package: pgfcomp-version-1-18 2020/01/08 v3.1.5b (3.1.5b)
+Package: pgfcomp-version-1-18 2021/05/15 v3.1.9a (3.1.9a)
 )) (/usr/share/texlive/texmf-dist/tex/latex/tools/verbatim.sty
-Package: verbatim 2019/11/10 v1.5r LaTeX2e package for verbatim enhancements
-\every@verbatim=\toks38
-\verbatim@line=\toks39
+Package: verbatim 2020-07-07 v1.5u LaTeX2e package for verbatim enhancements
+\every@verbatim=\toks41
+\verbatim@line=\toks42
 \verbatim@in@stream=\read4
 )
 (/usr/share/texlive/texmf-dist/tex/latex/environ/environ.sty
@@ -841,22 +848,20 @@ Package: environ 2014/05/04 v0.3 A new way to define environments
 (/usr/share/texlive/texmf-dist/tex/latex/trimspaces/trimspaces.sty
 Package: trimspaces 2009/09/17 v1.1 Trim spaces around a token list
 ))
-\tcb@titlebox=\box121
-\tcb@upperbox=\box122
-\tcb@lowerbox=\box123
-\tcb@phantombox=\box124
-\c@tcbbreakpart=\count308
-\c@tcblayer=\count309
-\tcolorbox@number=\count310
-\tcb@temp=\box125
-\tcb@temp=\box126
-\tcb@temp=\box127
-\tcb@temp=\box128
-\tcb@out=\write5
-\tcb@record@out=\write6
+\tcb@titlebox=\box128
+\tcb@upperbox=\box129
+\tcb@lowerbox=\box130
+\tcb@phantombox=\box131
+\c@tcbbreakpart=\count325
+\c@tcblayer=\count326
+\c@tcolorbox@number=\count327
+\tcb@temp=\box132
+\tcb@temp=\box133
+\tcb@temp=\box134
+\tcb@temp=\box135
 
 (/usr/share/texlive/texmf-dist/tex/latex/tcolorbox/tcbskins.code.tex
-Library (tcolorbox): 'tcbskins.code.tex' version '4.22'
+Library (tcolorbox): 'tcbskins.code.tex' version '5.0.2'
 (/usr/share/texlive/texmf-dist/tex/latex/pgf/frontendlayer/tikz.sty
 (/usr/share/texlive/texmf-dist/tex/latex/pgf/utilities/pgffor.sty
 (/usr/share/texlive/texmf-dist/tex/latex/pgf/utilities/pgfkeys.sty
@@ -864,72 +869,82 @@ Library (tcolorbox): 'tcbskins.code.tex' version '4.22'
 (/usr/share/texlive/texmf-dist/tex/latex/pgf/math/pgfmath.sty
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmath.code.tex))
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/utilities/pgffor.code.tex
-Package: pgffor 2020/01/08 v3.1.5b (3.1.5b)
+Package: pgffor 2021/05/15 v3.1.9a (3.1.9a)
 
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmath.code.tex)
-\pgffor@iter=\dimen297
-\pgffor@skip=\dimen298
-\pgffor@stack=\toks40
-\pgffor@toks=\toks41
+\pgffor@iter=\dimen301
+\pgffor@skip=\dimen302
+\pgffor@stack=\toks43
+\pgffor@toks=\toks44
 ))
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/tikz.code.tex
-Package: tikz 2020/01/08 v3.1.5b (3.1.5b)
+Package: tikz 2021/05/15 v3.1.9a (3.1.9a)
 
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/libraries/pgflibraryplothandlers
 .code.tex
-File: pgflibraryplothandlers.code.tex 2020/01/08 v3.1.5b (3.1.5b)
-\pgf@plot@mark@count=\count311
-\pgfplotmarksize=\dimen299
+File: pgflibraryplothandlers.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+\pgf@plot@mark@count=\count328
+\pgfplotmarksize=\dimen303
 )
-\tikz@lastx=\dimen300
-\tikz@lasty=\dimen301
-\tikz@lastxsaved=\dimen302
-\tikz@lastysaved=\dimen303
-\tikz@lastmovetox=\dimen304
-\tikz@lastmovetoy=\dimen305
-\tikzleveldistance=\dimen306
-\tikzsiblingdistance=\dimen307
-\tikz@figbox=\box129
-\tikz@figbox@bg=\box130
-\tikz@tempbox=\box131
-\tikz@tempbox@bg=\box132
-\tikztreelevel=\count312
-\tikznumberofchildren=\count313
-\tikznumberofcurrentchild=\count314
-\tikz@fig@count=\count315
+\tikz@lastx=\dimen304
+\tikz@lasty=\dimen305
+\tikz@lastxsaved=\dimen306
+\tikz@lastysaved=\dimen307
+\tikz@lastmovetox=\dimen308
+\tikz@lastmovetoy=\dimen309
+\tikzleveldistance=\dimen310
+\tikzsiblingdistance=\dimen311
+\tikz@figbox=\box136
+\tikz@figbox@bg=\box137
+\tikz@tempbox=\box138
+\tikz@tempbox@bg=\box139
+\tikztreelevel=\count329
+\tikznumberofchildren=\count330
+\tikznumberofcurrentchild=\count331
+\tikz@fig@count=\count332
 
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/modules/pgfmodulematrix.code.tex
-File: pgfmodulematrix.code.tex 2020/01/08 v3.1.5b (3.1.5b)
-\pgfmatrixcurrentrow=\count316
-\pgfmatrixcurrentcolumn=\count317
-\pgf@matrix@numberofcolumns=\count318
+File: pgfmodulematrix.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+\pgfmatrixcurrentrow=\count333
+\pgfmatrixcurrentcolumn=\count334
+\pgf@matrix@numberofcolumns=\count335
 )
-\tikz@expandcount=\count319
+\tikz@expandcount=\count336
 
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tik
 zlibrarytopaths.code.tex
-File: tikzlibrarytopaths.code.tex 2020/01/08 v3.1.5b (3.1.5b)
+File: tikzlibrarytopaths.code.tex 2021/05/15 v3.1.9a (3.1.9a)
 )))
-\tcb@waterbox=\box133
+\tcb@waterbox=\box140
 
 (/usr/share/texlive/texmf-dist/tex/latex/tcolorbox/tcbskinsjigsaw.code.tex
-Library (tcolorbox): 'tcbskinsjigsaw.code.tex' version '4.22'
+Library (tcolorbox): 'tcbskinsjigsaw.code.tex' version '5.0.2'
 )) (/usr/share/texlive/texmf-dist/tex/latex/tcolorbox/tcbbreakable.code.tex
-Library (tcolorbox): 'tcbbreakable.code.tex' version '4.22'
-\tcb@testbox=\box134
-\tcb@totalupperbox=\box135
-\tcb@totallowerbox=\box136
-)) (/usr/share/texlive/texmf-dist/tex/latex/xurl/xurl.sty
-Package: xurl 2020/01/24 v 0.09 modify URL breaks
+Library (tcolorbox): 'tcbbreakable.code.tex' version '5.0.2'
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/pdfcol.sty
+Package: pdfcol 2019/12/29 v1.6 Handle new color stacks for pdfTeX (HO)
+)
+Package pdfcol Info: New color stack `tcb@breakable' = 1 on input line 23.
+\tcb@testbox=\box141
+\tcb@totalupperbox=\box142
+\tcb@totallowerbox=\box143
+))
+(/usr/share/texlive/texmf-dist/tex/latex/xurl/xurl.sty
+Package: xurl 2022/01/09 v 0.10 modify URL breaks
 )
 Package hyperref Info: Option `colorlinks' set `true' on input line 221.
+LaTeX Font Info:    Trying to load font information for T1+lmr on input line 22
+7.
 
-(/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-pdfmode.def
-File: l3backend-pdfmode.def 2020-02-03 L3 backend support: PDF mode
-\l__kernel_color_stack_int=\count320
-\l__pdf_internal_box=\box137
+(/usr/share/texmf/tex/latex/lm/t1lmr.fd
+File: t1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-(./Model-based-geostatistics-for-global-public-health-using-R.aux)
+(/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
+File: l3backend-pdftex.def 2022-01-12 L3 backend support: PDF output (pdfTeX)
+\l__color_backend_stack_int=\count337
+\l__pdf_internal_box=\box144
+)
+No file Model-based-geostatistics-for-global-public-health-using-R.aux.
 \openout1 = `Model-based-geostatistics-for-global-public-health-using-R.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 227.
@@ -950,31 +965,24 @@ LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 227.
 LaTeX Font Info:    ... okay on input line 227.
 LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 227.
 LaTeX Font Info:    ... okay on input line 227.
-LaTeX Font Info:    Trying to load font information for T1+lmr on input line 22
-7.
-
-(/usr/share/texmf/tex/latex/lm/t1lmr.fd
-File: t1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
-)
 LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 2
 27.
-
 (/usr/share/texmf/tex/latex/lm/ts1lmr.fd
 File: ts1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 (/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count321
-\scratchdimen=\dimen308
-\scratchbox=\box138
-\nofMPsegments=\count322
-\nofMParguments=\count323
-\everyMPshowfont=\toks42
-\MPscratchCnt=\count324
-\MPscratchDim=\dimen309
-\MPnumerator=\count325
-\makeMPintoPDFobject=\count326
-\everyMPtoPDFconversion=\toks43
+\scratchcounter=\count338
+\scratchdimen=\dimen312
+\scratchbox=\box145
+\nofMPsegments=\count339
+\nofMParguments=\count340
+\everyMPshowfont=\toks45
+\MPscratchCnt=\count341
+\MPscratchDim=\dimen313
+\MPnumerator=\count342
+\makeMPintoPDFobject=\count343
+\everyMPtoPDFconversion=\toks46
 ) (/usr/share/texlive/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
 Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
@@ -985,12 +993,16 @@ File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
 LaTeX Info: Redefining \microtypecontext on input line 227.
+Package microtype Info: Applying patch `item' on input line 227.
+Package microtype Info: Applying patch `toc' on input line 227.
+Package microtype Info: Applying patch `eqnum' on input line 227.
+Package microtype Info: Applying patch `footnote' on input line 227.
 Package microtype Info: Generating PDF output.
 Package microtype Info: Character protrusion enabled (level 2).
 Package microtype Info: Using protrusion set `basicmath'.
 Package microtype Info: Automatic font expansion enabled (level 2),
 (microtype)             stretch: 20, shrink: 20, step: 1, non-selected.
-Package microtype Info: Using default expansion set `basictext'.
+Package microtype Info: Using default expansion set `alltext-nott'.
 LaTeX Info: Redefining \showhyphens on input line 227.
 Package microtype Info: No adjustment of tracking.
 Package microtype Info: No adjustment of interword spacing.
@@ -1000,11 +1012,10 @@ Package microtype Info: No adjustment of character kerning.
 File: mt-cmr.cfg 2013/05/19 v2.2 microtype config. file: Computer Modern Roman 
 (RS)
 )
-\AtBeginShipoutBox=\box139
 Package hyperref Info: Link coloring ON on input line 227.
 
 (/usr/share/texlive/texmf-dist/tex/latex/hyperref/nameref.sty
-Package: nameref 2019/09/16 v2.46 Cross-referencing by name of section
+Package: nameref 2021-04-02 v2.47 Cross-referencing by name of section
 
 (/usr/share/texlive/texmf-dist/tex/latex/refcount/refcount.sty
 Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
@@ -1012,7 +1023,7 @@ Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
 (/usr/share/texlive/texmf-dist/tex/generic/gettitlestring/gettitlestring.sty
 Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 )
-\c@section@level=\count327
+\c@section@level=\count344
 )
 LaTeX Info: Redefining \ref on input line 227.
 LaTeX Info: Redefining \pageref on input line 227.
@@ -1021,7 +1032,6 @@ Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: float package is loaded.
 Package caption Info: End \AtBeginDocument code.
 
-ABD: EveryShipout initializing macros
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
@@ -1105,53 +1115,13 @@ Underfull \hbox (badness 10000) detected at line 235
 []
  []
 
-(./Model-based-geostatistics-for-global-public-health-using-R.toc
-LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 4
-.
 
-(/usr/share/texmf/tex/latex/lm/ot1lmr.fd
-File: ot1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
-)
-LaTeX Font Info:    Trying to load font information for OML+lmm on input line 4
-.
+Package hyperref Warning: old toc file detected, not used; run LaTeX again.
 
-(/usr/share/texmf/tex/latex/lm/omllmm.fd
-File: omllmm.fd 2009/10/30 v1.6 Font defs for Latin Modern
-)
-LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 
-4.
+\tf@toc=\write5
+\openout5 = `Model-based-geostatistics-for-global-public-health-using-R.toc'.
 
-(/usr/share/texmf/tex/latex/lm/omslmsy.fd
-File: omslmsy.fd 2009/10/30 v1.6 Font defs for Latin Modern
-)
-LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 
-4.
 
-(/usr/share/texmf/tex/latex/lm/omxlmex.fd
-File: omxlmex.fd 2009/10/30 v1.6 Font defs for Latin Modern
-)
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 4.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 4.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 4.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 4.
-
-(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
-File: umsa.fd 2013/01/14 v3.01 AMS symbols A
-)
-(/usr/share/texlive/texmf-dist/tex/latex/microtype/mt-msa.cfg
-File: mt-msa.cfg 2006/02/04 v1.1 microtype config. file: AMS symbols (a) (RS)
-)
-LaTeX Font Info:    Trying to load font information for U+msb on input line 4.
-
-(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
-File: umsb.fd 2013/01/14 v3.01 AMS symbols B
-)
-(/usr/share/texlive/texmf-dist/tex/latex/microtype/mt-msb.cfg
-File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
-)
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
@@ -1188,11 +1158,46 @@ Underfull \hbox (badness 10000) has occurred while \output is active
  [][][][] 
  []
 
-[3])
-\tf@toc=\write7
-\openout7 = `Model-based-geostatistics-for-global-public-health-using-R.toc'.
+[3]
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [4]
+
+Overfull \hbox (336.25pt too wide) has occurred while \output is active
+[]
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+Overfull \hbox (336.25pt too wide) has occurred while \output is active
+[]
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+Overfull \hbox (336.25pt too wide) has occurred while \output is active
+[]
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+Overfull \hbox (336.25pt too wide) has occurred while \output is active
+[]
+ []
+
+
+Underfull \hbox (badness 10000) has occurred while \output is active
+ [][][][] 
+ []
+
+[4
+
+]
 Underfull \vbox (badness 10000) detected at line 240
  []
 
@@ -1274,7 +1279,6 @@ Underfull \hbox (badness 10000) has occurred while \output is active
  []
 
 [5
-
 
 ]
 Underfull \vbox (badness 10000) has occurred while \output is active []
@@ -1395,63 +1399,284 @@ Underfull \hbox (badness 10000) has occurred while \output is active
 
 [7
 
-] [8] [9]
-<./figures/galicia_ch1.png, id=146, 995.72pt x 762.85pt>
+] [8]
+
+LaTeX Warning: Reference `tbl-packages' on page 9 undefined on input line 373.
+
+[9]
+
+LaTeX Warning: Reference `tbl-data-sets' on page 10 undefined on input line 439
+.
+
+
+LaTeX Warning: Reference `sec-case-studies' on page 10 undefined on input line 
+450.
+
+
+LaTeX Warning: Reference `sec-case-studies' on page 10 undefined on input line 
+450.
+
+<./figures/galicia_ch1.png, id=77, 995.72pt x 762.85pt>
 File: ./figures/galicia_ch1.png Graphic file (type png)
 <use ./figures/galicia_ch1.png>
-Package pdftex.def Info: ./figures/galicia_ch1.png  used on input line 467.
+Package pdftex.def Info: ./figures/galicia_ch1.png  used on input line 491.
 (pdftex.def)             Requested size: 239.20558pt x 183.26234pt.
-<./figures/liberia_ch1.png, id=149, 995.72pt x 762.85pt>
+
+LaTeX Warning: Reference `fig-galicia-ch1' on page 10 undefined on input line 5
+05.
+
+[10]
+<./figures/liberia_ch1.png, id=88, 995.72pt x 762.85pt>
 File: ./figures/liberia_ch1.png Graphic file (type png)
 <use ./figures/liberia_ch1.png>
-Package pdftex.def Info: ./figures/liberia_ch1.png  used on input line 504.
+Package pdftex.def Info: ./figures/liberia_ch1.png  used on input line 527.
 (pdftex.def)             Requested size: 239.20558pt x 183.26234pt.
- [10]
-<./figures/anopheles_ch1.png, id=158, 995.72pt x 762.85pt>
+
+
+LaTeX Warning: Reference `fig-liberia-ch1' on page 11 undefined on input line 5
+39.
+
+[11 <./figures/galicia_ch1.png>]
+<./figures/malkenya_ch1.png, id=97, 995.72pt x 762.85pt>
+File: ./figures/malkenya_ch1.png Graphic file (type png)
+<use ./figures/malkenya_ch1.png>
+Package pdftex.def Info: ./figures/malkenya_ch1.png  used on input line 561.
+(pdftex.def)             Requested size: 239.20558pt x 183.26234pt.
+<./figures/anopheles_ch1.png, id=98, 995.72pt x 762.85pt>
 File: ./figures/anopheles_ch1.png Graphic file (type png)
 <use ./figures/anopheles_ch1.png>
-Package pdftex.def Info: ./figures/anopheles_ch1.png  used on input line 539.
+Package pdftex.def Info: ./figures/anopheles_ch1.png  used on input line 593.
 (pdftex.def)             Requested size: 239.20558pt x 183.26234pt.
- [11 <./figures/galicia_ch1.png>] [12 <./figures/liberia_ch1.png> <./figures/an
-opheles_ch1.png>] [13] [14] [15]
-<figures/workflow_diagram.png, id=206, 166.221pt x 361.35pt>
-File: figures/workflow_diagram.png Graphic file (type png)
-<use figures/workflow_diagram.png>
-Package pdftex.def Info: figures/workflow_diagram.png  used on input line 745.
+ [12 <./figures/liberia_ch1.png>] [13 <./figures/malkenya_ch1.png> <./figures/a
+nopheles_ch1.png>]
+
+LaTeX Warning: Reference `fig-anopheles-ch1' on page 14 undefined on input line
+ 610.
+
+<./figures/italy_sim_ch1.png, id=119, 995.72pt x 762.85pt>
+File: ./figures/italy_sim_ch1.png Graphic file (type png)
+<use ./figures/italy_sim_ch1.png>
+Package pdftex.def Info: ./figures/italy_sim_ch1.png  used on input line 623.
+(pdftex.def)             Requested size: 239.20558pt x 183.26234pt.
+
+LaTeX Warning: Reference `sec-linear-model' on page 14 undefined on input line 
+635.
+
+
+LaTeX Warning: Reference `sec-case-studies' on page 14 undefined on input line 
+642.
+
+[14 <./figures/italy_sim_ch1.png>]
+LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 6
+83.
+ (/usr/share/texmf/tex/latex/lm/ot1lmr.fd
+File: ot1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
+)
+LaTeX Font Info:    Trying to load font information for OML+lmm on input line 6
+83.
+
+(/usr/share/texmf/tex/latex/lm/omllmm.fd
+File: omllmm.fd 2009/10/30 v1.6 Font defs for Latin Modern
+)
+LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 
+683.
+
+(/usr/share/texmf/tex/latex/lm/omslmsy.fd
+File: omslmsy.fd 2009/10/30 v1.6 Font defs for Latin Modern
+)
+LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 
+683.
+
+(/usr/share/texmf/tex/latex/lm/omxlmex.fd
+File: omxlmex.fd 2009/10/30 v1.6 Font defs for Latin Modern
+)
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <10> on input line 683.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <7> on input line 683.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <5> on input line 683.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 683
+.
+
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
+File: umsa.fd 2013/01/14 v3.01 AMS symbols A
+)
+(/usr/share/texlive/texmf-dist/tex/latex/microtype/mt-msa.cfg
+File: mt-msa.cfg 2006/02/04 v1.1 microtype config. file: AMS symbols (a) (RS)
+)
+LaTeX Font Info:    Trying to load font information for U+msb on input line 683
+.
+
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
+File: umsb.fd 2013/01/14 v3.01 AMS symbols B
+)
+(/usr/share/texlive/texmf-dist/tex/latex/microtype/mt-msb.cfg
+File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
+) [15]
+
+LaTeX Warning: Reference `tbl-glm' on page 16 undefined on input line 735.
+
+
+LaTeX Warning: Reference `tbl-glm' on page 16 undefined on input line 738.
+
+[16]
+
+LaTeX Warning: Reference `eq-linear-predictor-ch1' on page 17 undefined on inpu
+t line 801.
+
+
+LaTeX Warning: Reference `eq-linear-predictor-ch1' on page 17 undefined on inpu
+t line 812.
+
+[17]
+<01_intro_files/figure-pdf/fig-matern-func-1.pdf, id=164, 834.11626pt x 536.002
+5pt>
+File: 01_intro_files/figure-pdf/fig-matern-func-1.pdf Graphic file (type pdf)
+<use 01_intro_files/figure-pdf/fig-matern-func-1.pdf>
+Package pdftex.def Info: 01_intro_files/figure-pdf/fig-matern-func-1.pdf  used 
+on input line 865.
+(pdftex.def)             Requested size: 614.32176pt x 394.76271pt.
+
+Overfull \hbox (277.82176pt too wide) in paragraph at lines 865--866
+ [][] 
+ []
+
+
+LaTeX Warning: Reference `fig-matern-func' on page 18 undefined on input line 8
+80.
+
+
+LaTeX Warning: Reference `fig-matern-sim' on page 18 undefined on input line 88
+4.
+
+
+LaTeX Warning: Reference `fig-matern-func' on page 18 undefined on input line 8
+94.
+
+
+LaTeX Warning: Reference `fig-matern-sim' on page 18 undefined on input line 90
+0.
+
+<01_intro_files/figure-pdf/fig-matern-sim-1.pdf, id=165, 380.42125pt x 224.84pt
+>
+File: 01_intro_files/figure-pdf/fig-matern-sim-1.pdf Graphic file (type pdf)
+<use 01_intro_files/figure-pdf/fig-matern-sim-1.pdf>
+Package pdftex.def Info: 01_intro_files/figure-pdf/fig-matern-sim-1.pdf  used o
+n input line 912.
+(pdftex.def)             Requested size: 336.50734pt x 198.8856pt.
+
+LaTeX Warning: Reference `fig-matern-func' on page 18 undefined on input line 9
+25.
+
+
+LaTeX Warning: Reference `fig-matern-func' on page 18 undefined on input line 9
+25.
+
+
+LaTeX Warning: Reference `fig-matern-func' on page 18 undefined on input line 9
+25.
+
+
+LaTeX Warning: Reference `fig-matern-func' on page 18 undefined on input line 9
+25.
+
+
+LaTeX Warning: Reference `fig-matern-func' on page 18 undefined on input line 9
+25.
+
+
+LaTeX Warning: Reference `fig-matern-func' on page 18 undefined on input line 9
+25.
+
+
+LaTeX Warning: Reference `sec-estimation' on page 18 undefined on input line 93
+4.
+
+<./figures/workflow_diagram.png, id=166, 166.221pt x 361.35pt>
+File: ./figures/workflow_diagram.png Graphic file (type png)
+<use ./figures/workflow_diagram.png>
+Package pdftex.def Info: ./figures/workflow_diagram.png  used on input line 942
+.
 (pdftex.def)             Requested size: 166.22057pt x 361.34912pt.
- [16 <./figures/workflow_diagram.png>]
-Underfull \vbox (badness 10000) detected at line 756
+[18] [19 <./01_intro_files/figure-pdf/fig-matern-func-1.pdf>] [20 <./01_intro_f
+iles/figure-pdf/fig-matern-sim-1.pdf>]
+
+LaTeX Warning: Reference `fig-stages' on page 21 undefined on input line 950.
+
+
+LaTeX Warning: Reference `sec-examples-ch1' on page 21 undefined on input line 
+952.
+
+[21 <./figures/workflow_diagram.png>]
+
+LaTeX Warning: Reference `fig-stages' on page 22 undefined on input line 980.
+
+
+LaTeX Warning: Reference `sec-geo-prediction' on page 22 undefined on input lin
+e 982.
+
+
+LaTeX Warning: Reference `sec-handling-data' on page 22 undefined on input line
+ 984.
+
+
+LaTeX Warning: Reference `sec-geo-prediction' on page 22 undefined on input lin
+e 987.
+
+
+LaTeX Warning: Reference `sec-case-studies' on page 22 undefined on input line 
+988.
+
+
+LaTeX Warning: Reference `sec-estimation' on page 22 undefined on input line 99
+1.
+
+
+LaTeX Warning: Reference `sec-validation' on page 22 undefined on input line 99
+7.
+
+
+LaTeX Warning: Reference `sec-geo-prediction' on page 22 undefined on input lin
+e 1000.
+
+
+LaTeX Warning: Reference `sec-case-studies' on page 22 undefined on input line 
+1004.
+
+[22]
+Underfull \vbox (badness 10000) detected at line 1014
  []
 
 
-Overfull \hbox (336.25pt too wide) detected at line 756
+Overfull \hbox (336.25pt too wide) detected at line 1014
 []
  []
 
 
-Underfull \vbox (badness 10000) detected at line 756
+Underfull \vbox (badness 10000) detected at line 1014
  []
 
 
-Overfull \hbox (336.25pt too wide) detected at line 756
+Overfull \hbox (336.25pt too wide) detected at line 1014
 []
  []
 
 
-Underfull \vbox (badness 10000) detected at line 756
+Underfull \vbox (badness 10000) detected at line 1014
  []
 
 
-Overfull \hbox (336.25pt too wide) detected at line 756
+Overfull \hbox (336.25pt too wide) detected at line 1014
 []
  []
 
 
-Underfull \vbox (badness 10000) detected at line 756
+Underfull \vbox (badness 10000) detected at line 1014
  []
 
 
-Overfull \hbox (336.25pt too wide) detected at line 756
+Overfull \hbox (336.25pt too wide) detected at line 1014
 []
  []
 
@@ -1493,353 +1718,8 @@ Underfull \hbox (badness 10000) has occurred while \output is active
  [][][][] 
  []
 
-[17
-
-
-]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
-Overfull \hbox (336.25pt too wide) has occurred while \output is active
-[]
- []
-
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
-Overfull \hbox (336.25pt too wide) has occurred while \output is active
-[]
- []
-
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
-Overfull \hbox (336.25pt too wide) has occurred while \output is active
-[]
- []
-
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
-Overfull \hbox (336.25pt too wide) has occurred while \output is active
-[]
- []
-
-
-Underfull \hbox (badness 10000) has occurred while \output is active
- [][][][] 
- []
-
-[18
-
-]
-Underfull \vbox (badness 10000) detected at line 798
- []
-
-
-Overfull \hbox (336.25pt too wide) detected at line 798
-[]
- []
-
-
-Underfull \vbox (badness 10000) detected at line 798
- []
-
-
-Overfull \hbox (336.25pt too wide) detected at line 798
-[]
- []
-
-
-Underfull \vbox (badness 10000) detected at line 798
- []
-
-
-Overfull \hbox (336.25pt too wide) detected at line 798
-[]
- []
-
-
-Underfull \vbox (badness 10000) detected at line 798
- []
-
-
-Overfull \hbox (336.25pt too wide) detected at line 798
-[]
- []
-
-Chapter 3.
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
-Overfull \hbox (336.25pt too wide) has occurred while \output is active
-[]
- []
-
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
-Overfull \hbox (336.25pt too wide) has occurred while \output is active
-[]
- []
-
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
-Overfull \hbox (336.25pt too wide) has occurred while \output is active
-[]
- []
-
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
-Overfull \hbox (336.25pt too wide) has occurred while \output is active
-[]
- []
-
-
-Underfull \hbox (badness 10000) has occurred while \output is active
- [][][][] 
- []
-
-[19
-
-]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
-Overfull \hbox (336.25pt too wide) has occurred while \output is active
-[]
- []
-
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
-Overfull \hbox (336.25pt too wide) has occurred while \output is active
-[]
- []
-
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
-Overfull \hbox (336.25pt too wide) has occurred while \output is active
-[]
- []
-
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
-Overfull \hbox (336.25pt too wide) has occurred while \output is active
-[]
- []
-
-
-Underfull \hbox (badness 10000) has occurred while \output is active
- [][][][] 
- []
-
-[20
-
-]
-Underfull \vbox (badness 10000) detected at line 825
- []
-
-
-Overfull \hbox (336.25pt too wide) detected at line 825
-[]
- []
-
-
-Underfull \vbox (badness 10000) detected at line 825
- []
-
-
-Overfull \hbox (336.25pt too wide) detected at line 825
-[]
- []
-
-
-Underfull \vbox (badness 10000) detected at line 825
- []
-
-
-Overfull \hbox (336.25pt too wide) detected at line 825
-[]
- []
-
-
-Underfull \vbox (badness 10000) detected at line 825
- []
-
-
-Overfull \hbox (336.25pt too wide) detected at line 825
-[]
- []
-
-Chapter 4.
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
-Overfull \hbox (336.25pt too wide) has occurred while \output is active
-[]
- []
-
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
-Overfull \hbox (336.25pt too wide) has occurred while \output is active
-[]
- []
-
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
-Overfull \hbox (336.25pt too wide) has occurred while \output is active
-[]
- []
-
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
-Overfull \hbox (336.25pt too wide) has occurred while \output is active
-[]
- []
-
-
-Underfull \hbox (badness 10000) has occurred while \output is active
- [][][][] 
- []
-
-[21
-
-]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
-Overfull \hbox (336.25pt too wide) has occurred while \output is active
-[]
- []
-
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
-Overfull \hbox (336.25pt too wide) has occurred while \output is active
-[]
- []
-
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
-Overfull \hbox (336.25pt too wide) has occurred while \output is active
-[]
- []
-
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
-Overfull \hbox (336.25pt too wide) has occurred while \output is active
-[]
- []
-
-
-Underfull \hbox (badness 10000) has occurred while \output is active
- [][][][] 
- []
-
-[22
-
-]
-Underfull \vbox (badness 10000) detected at line 857
- []
-
-
-Overfull \hbox (336.25pt too wide) detected at line 857
-[]
- []
-
-
-Underfull \vbox (badness 10000) detected at line 857
- []
-
-
-Overfull \hbox (336.25pt too wide) detected at line 857
-[]
- []
-
-
-Underfull \vbox (badness 10000) detected at line 857
- []
-
-
-Overfull \hbox (336.25pt too wide) detected at line 857
-[]
- []
-
-
-Underfull \vbox (badness 10000) detected at line 857
- []
-
-
-Overfull \hbox (336.25pt too wide) detected at line 857
-[]
- []
-
-Chapter 5.
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
-Overfull \hbox (336.25pt too wide) has occurred while \output is active
-[]
- []
-
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
-Overfull \hbox (336.25pt too wide) has occurred while \output is active
-[]
- []
-
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
-Overfull \hbox (336.25pt too wide) has occurred while \output is active
-[]
- []
-
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
-Overfull \hbox (336.25pt too wide) has occurred while \output is active
-[]
- []
-
-
-Underfull \hbox (badness 10000) has occurred while \output is active
- [][][][] 
- []
-
 [23
+
 
 ]
 Underfull \vbox (badness 10000) has occurred while \output is active []
@@ -1881,38 +1761,1465 @@ Underfull \hbox (badness 10000) has occurred while \output is active
 [24
 
 ]
-Underfull \vbox (badness 10000) detected at line 889
+Underfull \vbox (badness 10000) detected at line 1046
  []
 
 
-Overfull \hbox (336.25pt too wide) detected at line 889
+Overfull \hbox (336.25pt too wide) detected at line 1046
 []
  []
 
 
-Underfull \vbox (badness 10000) detected at line 889
+Underfull \vbox (badness 10000) detected at line 1046
  []
 
 
-Overfull \hbox (336.25pt too wide) detected at line 889
+Overfull \hbox (336.25pt too wide) detected at line 1046
 []
  []
 
 
-Underfull \vbox (badness 10000) detected at line 889
+Underfull \vbox (badness 10000) detected at line 1046
  []
 
 
-Overfull \hbox (336.25pt too wide) detected at line 889
+Overfull \hbox (336.25pt too wide) detected at line 1046
 []
  []
 
 
-Underfull \vbox (badness 10000) detected at line 889
+Underfull \vbox (badness 10000) detected at line 1046
  []
 
 
-Overfull \hbox (336.25pt too wide) detected at line 889
+Overfull \hbox (336.25pt too wide) detected at line 1046
+[]
+ []
+
+Chapter 3.
+
+LaTeX Warning: Reference `fig-stages' on page 25 undefined on input line 1084.
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+Overfull \hbox (336.25pt too wide) has occurred while \output is active
+[]
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+Overfull \hbox (336.25pt too wide) has occurred while \output is active
+[]
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+Overfull \hbox (336.25pt too wide) has occurred while \output is active
+[]
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+Overfull \hbox (336.25pt too wide) has occurred while \output is active
+[]
+ []
+
+
+Underfull \hbox (badness 10000) has occurred while \output is active
+ [][][][] 
+ []
+
+[25
+
+]
+
+LaTeX Warning: Reference `sec-rb-ch1' on page 26 undefined on input line 1115.
+
+
+LaTeX Warning: File `03_model-fitting_files/figure-pdf/fig-prev-elev-liberia-1.
+pdf' not found on input line 1130.
+
+
+! Package pdftex.def Error: File `03_model-fitting_files/figure-pdf/fig-prev-el
+ev-liberia-1.pdf' not found: using draft setting.
+
+See the pdftex.def package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1130 .../figure-pdf/fig-prev-elev-liberia-1.pdf}
+                                                  
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+LaTeX Warning: Reference `fig-prev-elev-liberia' on page 26 undefined on input 
+line 1139.
+
+
+LaTeX Warning: Reference `fig-prev-elev-liberia' on page 26 undefined on input 
+line 1144.
+
+
+LaTeX Warning: Reference `tbl-glm' on page 26 undefined on input line 1147.
+
+
+LaTeX Warning: Reference `sec-geostat-models' on page 26 undefined on input lin
+e 1148.
+
+[26]
+
+LaTeX Warning: File `03_model-fitting_files/figure-pdf/fig-elogit-elev-liberia-
+1.pdf' not found on input line 1190.
+
+
+! Package pdftex.def Error: File `03_model-fitting_files/figure-pdf/fig-elogit-
+elev-liberia-1.pdf' not found: using draft setting.
+
+See the pdftex.def package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1190 ...igure-pdf/fig-elogit-elev-liberia-1.pdf}
+                                                  
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+LaTeX Warning: Reference `fig-elogit-elev-liberia' on page 27 undefined on inpu
+t line 1199.
+
+
+LaTeX Warning: Reference `fig-elogit-elev-liberia' on page 27 undefined on inpu
+t line 1207.
+
+
+LaTeX Warning: Reference `fig-elogit-elev-liberia' on page 27 undefined on inpu
+t line 1213.
+
+[27]
+
+LaTeX Warning: Reference `eq-log-elev-glm' on page 28 undefined on input line 1
+238.
+
+
+LaTeX Warning: Reference `eq-lspline-elev-glm' on page 28 undefined on input li
+ne 1239.
+
+
+LaTeX Warning: Reference `eq-log-elev-glm' on page 28 undefined on input line 1
+263.
+
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <8> on input line 1269.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <6> on input line 1269.
+[28]
+
+LaTeX Warning: Reference `sec-geo-prediction' on page 29 undefined on input lin
+e 1281.
+
+
+LaTeX Warning: Reference `sec-mosq-data-ch1' on page 29 undefined on input line
+ 1286.
+
+
+LaTeX Warning: Reference `tbl-glm' on page 29 undefined on input line 1291.
+
+
+LaTeX Warning: File `03_model-fitting_files/figure-pdf/fig-logcounts-elev-mosq-
+1.pdf' not found on input line 1312.
+
+
+! Package pdftex.def Error: File `03_model-fitting_files/figure-pdf/fig-logcoun
+ts-elev-mosq-1.pdf' not found: using draft setting.
+
+See the pdftex.def package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1312 ...igure-pdf/fig-logcounts-elev-mosq-1.pdf}
+                                                  
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+[29]
+
+LaTeX Warning: Reference `fig-logcounts-elev-mosq' on page 30 undefined on inpu
+t line 1323.
+
+
+LaTeX Warning: Reference `sec-malaria-ch1' on page 30 undefined on input line 1
+334.
+
+
+LaTeX Warning: Reference `eq-empirical-logit' on page 30 undefined on input lin
+e 1338.
+
+[30]
+
+LaTeX Warning: Reference `eq-empirical-logit' on page 31 undefined on input lin
+e 1384.
+
+
+LaTeX Warning: Reference `eq-empirical-logit-bin' on page 31 undefined on input
+ line 1393.
+
+
+LaTeX Warning: File `03_model-fitting_files/figure-pdf/fig-elogit-age-malkenya-
+1.pdf' not found on input line 1432.
+
+
+! Package pdftex.def Error: File `03_model-fitting_files/figure-pdf/fig-elogit-
+age-malkenya-1.pdf' not found: using draft setting.
+
+See the pdftex.def package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1432 ...igure-pdf/fig-elogit-age-malkenya-1.pdf}
+                                                  
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+[31]
+
+LaTeX Warning: Reference `fig-elogit-age-malkenya' on page 32 undefined on inpu
+t line 1443.
+
+
+LaTeX Warning: Reference `fig-elogit-age-malkenya' on page 32 undefined on inpu
+t line 1468.
+
+
+Overfull \hbox (1.08112pt too wide) detected at line 1481
+[][][][]
+ []
+
+[32]
+
+LaTeX Warning: Reference `fig-elogit-age-malkenya' on page 33 undefined on inpu
+t line 1487.
+
+
+Overfull \hbox (9.47198pt too wide) detected at line 1498
+[][][][]
+ []
+
+
+LaTeX Warning: Reference `eq-age-only-reg' on page 33 undefined on input line 1
+504.
+
+LaTeX Font Info:    Trying to load font information for TS1+lmtt on input line 
+1534.
+(/usr/share/texmf/tex/latex/lm/ts1lmtt.fd
+File: ts1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
+) [33]
+
+LaTeX Warning: Reference `eq-age-inter-reg' on page 34 undefined on input line 
+1547.
+
+[34]
+
+LaTeX Warning: Reference `eq-empirical-logit-bin' on page 35 undefined on input
+ line 1623.
+
+
+LaTeX Warning: File `03_model-fitting_files/figure-pdf/fig-elogit-elev-malkenya
+-1.pdf' not found on input line 1638.
+
+
+! Package pdftex.def Error: File `03_model-fitting_files/figure-pdf/fig-elogit-
+elev-malkenya-1.pdf' not found: using draft setting.
+
+See the pdftex.def package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1638 ...gure-pdf/fig-elogit-elev-malkenya-1.pdf}
+                                                  
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+LaTeX Warning: Reference `fig-elogit-elev-malkenya' on page 35 undefined on inp
+ut line 1647.
+
+[35]
+
+LaTeX Warning: Reference `eq-linear-predictor-ch1' on page 36 undefined on inpu
+t line 1703.
+
+[36]
+
+LaTeX Warning: Reference `eq-bin-glmm-example' on page 37 undefined on input li
+ne 1729.
+
+[37]
+
+LaTeX Warning: File `03_model-fitting_files/figure-pdf/fig-var-bin-glmm-1.pdf' 
+not found on input line 1798.
+
+
+! Package pdftex.def Error: File `03_model-fitting_files/figure-pdf/fig-var-bin
+-glmm-1.pdf' not found: using draft setting.
+
+See the pdftex.def package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1798 ...files/figure-pdf/fig-var-bin-glmm-1.pdf}
+                                                  
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+LaTeX Warning: Reference `eq-bin-glmm-example' on page 38 undefined on input li
+ne 1804.
+
+
+LaTeX Warning: Reference `eq-bin-glmm-example' on page 38 undefined on input li
+ne 1804.
+
+
+LaTeX Warning: Reference `fig-var-bin-glmm' on page 38 undefined on input line 
+1808.
+
+
+LaTeX Warning: Reference `eq-bin-glmm-example' on page 38 undefined on input li
+ne 1814.
+
+[38]
+
+LaTeX Warning: Reference `eq-anopheles-glmm' on page 39 undefined on input line
+ 1857.
+
+[39] [40] [41]
+
+LaTeX Warning: Reference `sec-expl-assoc' on page 42 undefined on input line 20
+11.
+
+
+LaTeX Warning: Reference `sec-overdispersion' on page 42 undefined on input lin
+e 2013.
+
+[42]
+
+LaTeX Warning: Reference `eq-linear-predictor-glmms-ch2' on page 43 undefined o
+n input line 2027.
+
+
+LaTeX Warning: Reference `eq-squared-diff' on page 43 undefined on input line 2
+054.
+
+
+LaTeX Warning: Reference `sec-linear-model' on page 43 undefined on input line 
+2081.
+
+[43]
+Underfull \hbox (badness 10000) detected at line 2102
+ [][]
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 2102
+[][][]
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 2105
+ [][]
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 2105
+[][][]
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 2108
+ [][]
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 2108
+[][][]
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 2110
+ [][]
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 2110
+[][][]
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 2114
+ [][]
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 2114
+[][][]
+ []
+
+[44
+Non-PDF special ignored!
+<special> color cmyk 0 0 0 1.0
+Non-PDF special ignored!
+<special> color cmyk 0 0 0 1.0
+Non-PDF special ignored!
+<special> color cmyk 0 0 0 1.0
+Non-PDF special ignored!
+<special> color cmyk 0 0 0 1.0
+Non-PDF special ignored!
+<special> color cmyk 0 0 0 1.0
+]
+Overfull \hbox (9.999pt too wide) in paragraph at lines 2155--2155
+[]\T1/lmtt/m/n/10 Generalized linear mixed model fit by maximum likelihood (Ada
+ptive[] 
+ []
+
+[45] [46]
+
+LaTeX Warning: File `03_model-fitting_files/figure-pdf/fig-liberia-variog-1.pdf
+' not found on input line 2265.
+
+
+! Package pdftex.def Error: File `03_model-fitting_files/figure-pdf/fig-liberia
+-variog-1.pdf' not found: using draft setting.
+
+See the pdftex.def package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.2265 ...les/figure-pdf/fig-liberia-variog-1.pdf}
+                                                  
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+LaTeX Warning: Reference `eq-liberia-bin-mixed-elev' on page 47 undefined on in
+put line 2273.
+
+
+LaTeX Warning: Reference `sec-expl-spatial' on page 47 undefined on input line 
+2273.
+
+
+LaTeX Warning: Reference `eq-liberia-bin-mixed-elev' on page 47 undefined on in
+put line 2273.
+
+
+LaTeX Warning: Reference `sec-expl-spatial' on page 47 undefined on input line 
+2273.
+
+
+LaTeX Warning: Reference `fig-liberia-variog' on page 47 undefined on input lin
+e 2281.
+
+
+LaTeX Warning: Reference `fig-liberia-variog' on page 47 undefined on input lin
+e 2286.
+
+[47]
+
+LaTeX Warning: Reference `eq-std-lm2-galicia' on page 48 undefined on input lin
+e 2332.
+
+
+LaTeX Warning: Reference `eq-std-lm-galicia' on page 48 undefined on input line
+ 2343.
+
+[48]
+
+LaTeX Warning: File `03_model-fitting_files/figure-pdf/fig-galicia-variog-1.pdf
+' not found on input line 2370.
+
+
+! Package pdftex.def Error: File `03_model-fitting_files/figure-pdf/fig-galicia
+-variog-1.pdf' not found: using draft setting.
+
+See the pdftex.def package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.2370 ...les/figure-pdf/fig-galicia-variog-1.pdf}
+                                                  
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+LaTeX Warning: Reference `eq-std-lm-galicia' on page 49 undefined on input line
+ 2378.
+
+
+LaTeX Warning: Reference `sec-expl-spatial' on page 49 undefined on input line 
+2378.
+
+
+LaTeX Warning: Reference `eq-std-lm-galicia' on page 49 undefined on input line
+ 2378.
+
+
+LaTeX Warning: Reference `sec-expl-spatial' on page 49 undefined on input line 
+2378.
+
+
+LaTeX Warning: Reference `eq-std-lm-galicia' on page 49 undefined on input line
+ 2383.
+
+
+LaTeX Warning: Reference `fig-galicia-variog' on page 49 undefined on input lin
+e 2391.
+
+[49] [50]
+
+LaTeX Warning: File `03_model-fitting_files/figure-pdf/fig-italy-sim-variog-1.p
+df' not found on input line 2473.
+
+
+! Package pdftex.def Error: File `03_model-fitting_files/figure-pdf/fig-italy-s
+im-variog-1.pdf' not found: using draft setting.
+
+See the pdftex.def package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.2473 ...s/figure-pdf/fig-italy-sim-variog-1.pdf}
+                                                  
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+LaTeX Warning: Reference `eq-italy-sim-lmm' on page 51 undefined on input line 
+2481.
+
+
+LaTeX Warning: Reference `sec-expl-spatial' on page 51 undefined on input line 
+2481.
+
+
+LaTeX Warning: Reference `eq-italy-sim-lmm' on page 51 undefined on input line 
+2481.
+
+
+LaTeX Warning: Reference `sec-expl-spatial' on page 51 undefined on input line 
+2481.
+
+! Missing $ inserted.
+<inserted text> 
+                $
+l.2493 ...exttt{ID\_loc}, whilst that for \$\omega
+                                                  \^{}2 is next to
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+
+LaTeX Warning: Command \^ invalid in math mode on input line 2493.
+
+! Please use \mathaccent for accents in math mode.
+\MT@orig@add@accent ...gnorespaces \relax \accent 
+                                                  #1 #2\egroup \ifmmode \els...
+l.2493 ...t{ID\_loc}, whilst that for \$\omega\^{}
+                                                  2 is next to
+I'm changing \accent to \mathaccent here; wish me luck.
+(Accents are not the same in formulas as they are in text.)
+
+! Missing { inserted.
+<to be read again> 
+                   \egroup 
+l.2493 ...t{ID\_loc}, whilst that for \$\omega\^{}
+                                                  2 is next to
+A left brace was mandatory here, so I've put one in.
+You might want to delete and/or insert some corrections
+so that I will find a matching right brace soon.
+(If you're confused by all this, try typing `I}' now.)
+
+! Missing $ inserted.
+<inserted text> 
+                $
+l.2495 
+       
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+! Missing } inserted.
+<inserted text> 
+                }
+l.2495 
+       
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+
+LaTeX Warning: Reference `fig-italy-sim-variog' on page 51 undefined on input l
+ine 2497.
+
+
+LaTeX Warning: Reference `sec-geostat-models' on page 51 undefined on input lin
+e 2509.
+
+[51]
+Underfull \hbox (badness 10000) detected at line 2529
+ [][]
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 2529
+[][][]
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 2532
+ [][]
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 2532
+[][][]
+ []
+
+
+LaTeX Warning: Reference `eq-matern' on page 52 undefined on input line 2541.
+
+LaTeX Font Info:    Calculating math sizes for size <11> on input line 2551.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <11> on input line 2551.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <7.69997> on input line 2551.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <5.5> on input line 2551.
+[52
+Non-PDF special ignored!
+<special> color cmyk 0 0 0 1.0
+Non-PDF special ignored!
+<special> color cmyk 0 0 0 1.0
+]
+
+LaTeX Warning: Reference `sec-explanal-lm' on page 53 undefined on input line 2
+596.
+
+[53] [54]
+
+LaTeX Warning: Reference `sec-matern-correlation' on page 55 undefined on input
+ line 2684.
+
+[55]
+
+LaTeX Warning: File `03_model-fitting_files/figure-pdf/fig-galicia-matern-1.pdf
+' not found on input line 2730.
+
+
+! Package pdftex.def Error: File `03_model-fitting_files/figure-pdf/fig-galicia
+-matern-1.pdf' not found: using draft setting.
+
+See the pdftex.def package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.2730 ...les/figure-pdf/fig-galicia-matern-1.pdf}
+                                                  
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+Overfull \hbox (206.64972pt too wide) in paragraph at lines 2730--2731
+ [][] 
+ []
+
+
+LaTeX Warning: Float too large for page by 70.14972pt on input line 2741.
+
+
+LaTeX Warning: Reference `fig-galicia-matern' on page 56 undefined on input lin
+e 2744.
+
+
+LaTeX Warning: Reference `fig-galicia-matern' on page 56 undefined on input lin
+e 2752.
+
+LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <11> not available
+(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 2791.
+
+LaTeX Warning: Reference `fig-italy-maps' on page 56 undefined on input line 27
+99.
+
+[56] [57]
+
+LaTeX Warning: File `03_model-fitting_files/figure-pdf/fig-italy-maps-1.pdf' no
+t found on input line 2834.
+
+
+! Package pdftex.def Error: File `03_model-fitting_files/figure-pdf/fig-italy-m
+aps-1.pdf' not found: using draft setting.
+
+See the pdftex.def package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.2834 ...g_files/figure-pdf/fig-italy-maps-1.pdf}
+                                                  
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+[58]
+Overfull \hbox (57.2448pt too wide) detected at line 2856
+[][][][]
+ []
+
+[59]
+
+LaTeX Warning: Reference `eq-italy-sim-model' on page 60 undefined on input lin
+e 2927.
+
+
+LaTeX Warning: Reference `tbl-italy-sim-mle' on page 60 undefined on input line
+ 2929.
+
+
+LaTeX Warning: Reference `eq-italy-sim-lmm' on page 60 undefined on input line 
+2936.
+
+
+LaTeX Warning: Reference `eq-italy-sim-lmm' on page 60 undefined on input line 
+2936.
+
+[60]
+
+LaTeX Warning: Reference `tbl-glm' on page 61 undefined on input line 2996.
+
+[61]
+
+LaTeX Warning: Reference `eq-poisson-lp' on page 62 undefined on input line 305
+3.
+
+
+LaTeX Warning: Reference `eq-lp-bin' on page 62 undefined on input line 3060.
+
+
+LaTeX Warning: Reference `eq-lp-bin-ind' on page 62 undefined on input line 306
+1.
+
+
+LaTeX Warning: Reference `eq-poisson-lp' on page 62 undefined on input line 306
+1.
+
+[62]
+
+LaTeX Warning: Reference `sec-agg-count-exp' on page 63 undefined on input line
+ 3073.
+
+
+LaTeX Warning: Reference `sec-empirical-variog-bin' on page 63 undefined on inp
+ut line 3076.
+
+
+LaTeX Warning: Reference `eq-liberia-bin-mixed-elev' on page 63 undefined on in
+put line 3081.
+
+
+LaTeX Warning: Reference `sec-mcml' on page 63 undefined on input line 3091.
+
+
+Overfull \hbox (104.49872pt too wide) in paragraph at lines 3110--3110
+[]\TS1/lmtt/m/n/10 '\T1/lmtt/m/n/10 Lower limit\TS1/lmtt/m/n/10 ' \T1/lmtt/m/n/
+10 and \TS1/lmtt/m/n/10 '\T1/lmtt/m/n/10 Upper limit\TS1/lmtt/m/n/10 ' \T1/lmtt
+/m/n/10 are the limits of the 95% confidence level intervals[] 
+ []
+
+
+Overfull \hbox (62.49884pt too wide) in paragraph at lines 3113--3113
+[]                \T1/lmtt/m/n/10 Estimate Lower limit Upper limit    StdErr z.
+value   p.value[] 
+ []
+
+
+Overfull \hbox (62.49884pt too wide) in paragraph at lines 3114--3114
+[]\T1/lmtt/m/n/10 (Intercept)    -2.948777   -3.376292   -2.521263  0.218123 -1
+3.519 < 2.2e-16[] 
+ []
+
+
+Overfull \hbox (62.49884pt too wide) in paragraph at lines 3115--3115
+[]\T1/lmtt/m/n/10 log(elevation)  0.298443    0.257020    0.339867  0.021135  1
+4.121 < 2.2e-16[] 
+ []
+
+[63]
+
+LaTeX Warning: Reference `sec-mcml' on page 64 undefined on input line 3144.
+
+
+LaTeX Warning: Reference `eq-linear-predictor-glmms-ch2' on page 64 undefined o
+n input line 3167.
+
+[64]
+
+LaTeX Warning: Reference `eq-linear-predictor-glmms-ch2' on page 65 undefined o
+n input line 3179.
+
+
+LaTeX Warning: Reference `eq-linear-predictor-glmms-ch2' on page 65 undefined o
+n input line 3192.
+
+
+LaTeX Warning: Reference `eq-glmm-final' on page 65 undefined on input line 319
+9.
+
+
+LaTeX Warning: Reference `sec-empirical-variog-lm' on page 65 undefined on inpu
+t line 3203.
+
+[65]
+
+LaTeX Warning: Reference `eq-matern' on page 66 undefined on input line 3260.
+
+
+LaTeX Warning: Reference `eq-glgm-lik2' on page 66 undefined on input line 3264
+.
+
+[66]
+
+LaTeX Warning: Reference `eq-glgm-lik2' on page 67 undefined on input line 3285
+.
+
+
+LaTeX Warning: Reference `eq-mcml1' on page 67 undefined on input line 3304.
+
+
+LaTeX Warning: Reference `eq-mcml1' on page 67 undefined on input line 3311.
+
+
+LaTeX Warning: Reference `eq-mcml2' on page 67 undefined on input line 3317.
+
+
+LaTeX Warning: Reference `eq-mcml2' on page 67 undefined on input line 3319.
+
+[67]
+
+LaTeX Warning: Reference `eq-mcml2' on page 68 undefined on input line 3339.
+
+! Missing $ inserted.
+<inserted text> 
+                $
+l.3340 \mid
+            Y{]}\$\$ in place of \([W \mid Y; \theta_0]\), but it is important
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+
+! LaTeX Error: Bad math environment delimiter.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.3340 \mid Y{]}\$\$ in place of \(
+                                   [W \mid Y; \theta_0]\), but it is important
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+[68] [69]
+Underfull \hbox (badness 10000) detected at line 3446
+ [][]
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 3446
+[][][]
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 3451
+ [][]
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 3451
+[][][]
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 3456
+ [][]
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 3456
+[][][]
+ []
+
+[70
+Non-PDF special ignored!
+<special> color cmyk 0 0 0 1.0
+Non-PDF special ignored!
+<special> color cmyk 0 0 0 1.0
+Non-PDF special ignored!
+<special> color cmyk 0 0 0 1.0
+]
+Underfull \hbox (badness 10000) detected at line 3530
+ [][]
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 3530
+[][][]
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 3533
+ [][]
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 3533
+[][][]
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 3537
+ [][]
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 3537
+[][][]
+ []
+
+
+LaTeX Warning: Reference `eq-mcml2' on page 71 undefined on input line 3538.
+
+
+Underfull \hbox (badness 10000) detected at line 3540
+ [][]
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 3540
+[][][]
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 3543
+ [][]
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 3543
+[][][]
+ []
+
+[71
+Non-PDF special ignored!
+<special> color cmyk 0 0 0 1.0
+Non-PDF special ignored!
+<special> color cmyk 0 0 0 1.0
+Non-PDF special ignored!
+<special> color cmyk 0 0 0 1.0
+Non-PDF special ignored!
+<special> color cmyk 0 0 0 1.0
+]
+Underfull \hbox (badness 10000) detected at line 3545
+ [][]
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 3545
+[][][]
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 3549
+ [][]
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 3549
+[][][]
+ []
+
+
+LaTeX Warning: Reference `sec-liberia-estim1' on page 72 undefined on input lin
+e 3559.
+
+
+LaTeX Warning: Reference `sec-liberia-estim1' on page 72 undefined on input lin
+e 3563.
+
+
+LaTeX Warning: Reference `sec-liberia-estim1' on page 72 undefined on input lin
+e 3598.
+
+
+LaTeX Warning: File `03_model-fitting_files/figure-pdf/fig-check-mcmc-mean-1.pd
+f' not found on input line 3611.
+
+
+! Package pdftex.def Error: File `03_model-fitting_files/figure-pdf/fig-check-m
+cmc-mean-1.pdf' not found: using draft setting.
+
+See the pdftex.def package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.3611 ...es/figure-pdf/fig-check-mcmc-mean-1.pdf}
+                                                  
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+[72
+Non-PDF special ignored!
+<special> color cmyk 0 0 0 1.0
+Non-PDF special ignored!
+<special> color cmyk 0 0 0 1.0
+Non-PDF special ignored!
+<special> color cmyk 0 0 0 1.0
+]
+
+LaTeX Warning: Reference `fig-check-mcmc-mean' on page 73 undefined on input li
+ne 3625.
+
+
+LaTeX Warning: Reference `sec-mcmc-mala' on page 73 undefined on input line 363
+4.
+
+
+LaTeX Warning: File `03_model-fitting_files/figure-pdf/fig-check-comp10-mcmc-1.
+pdf' not found on input line 3645.
+
+
+! Package pdftex.def Error: File `03_model-fitting_files/figure-pdf/fig-check-c
+omp10-mcmc-1.pdf' not found: using draft setting.
+
+See the pdftex.def package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.3645 .../figure-pdf/fig-check-comp10-mcmc-1.pdf}
+                                                  
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+LaTeX Warning: Reference `fig-check-mcmc-mean' on page 73 undefined on input li
+ne 3655.
+
+
+LaTeX Warning: Reference `fig-check-comp10-mcmc' on page 73 undefined on input 
+line 3656.
+
+[73]
+
+LaTeX Warning: File `03_model-fitting_files/figure-pdf/fig-mcmc-10k-1.pdf' not 
+found on input line 3690.
+
+
+! Package pdftex.def Error: File `03_model-fitting_files/figure-pdf/fig-mcmc-10
+k-1.pdf' not found: using draft setting.
+
+See the pdftex.def package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.3690 ...ing_files/figure-pdf/fig-mcmc-10k-1.pdf}
+                                                  
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+LaTeX Warning: Reference `fig-mcmc-10k' on page 74 undefined on input line 3703
+.
+
+[74]
+Underfull \hbox (badness 10000) detected at line 3742
+ [][]
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 3742
+[][][]
+ []
+
+
+LaTeX Warning: Reference `eq-linear-predictor-glmms-ch2' on page 75 undefined o
+n input line 3743.
+
+
+LaTeX Warning: Reference `sec-overdispersion' on page 75 undefined on input lin
+e 3744.
+
+
+LaTeX Warning: Reference `fig-var-bin-glmm' on page 75 undefined on input line 
+3745.
+
+
+LaTeX Warning: Reference `fig-var-bin-glmm' on page 75 undefined on input line 
+3749.
+
+
+Underfull \hbox (badness 10000) detected at line 3751
+ [][]
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 3751
+[][][]
+ []
+
+
+LaTeX Warning: Reference `sec-overdispersion' on page 75 undefined on input lin
+e 3756.
+
+
+LaTeX Warning: Reference `fig-var-bin-glmm' on page 75 undefined on input line 
+3758.
+
+
+Underfull \hbox (badness 10000) detected at line 3763
+ [][]
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 3763
+[][][]
+ []
+
+
+LaTeX Warning: Reference `sec-expl-spatial' on page 75 undefined on input line 
+3764.
+
+
+LaTeX Warning: Reference `eq-hat-squared-diff' on page 75 undefined on input li
+ne 3766.
+
+
+LaTeX Warning: Reference `eq-liberia-bin-mixed-elev' on page 75 undefined on in
+put line 3771.
+
+
+LaTeX Warning: Reference `fig-liberia-variog' on page 75 undefined on input lin
+e 3774.
+
+[75
+Non-PDF special ignored!
+<special> color cmyk 0 0 0 1.0
+Non-PDF special ignored!
+<special> color cmyk 0 0 0 1.0
+Non-PDF special ignored!
+<special> color cmyk 0 0 0 1.0
+]
+Underfull \hbox (badness 10000) detected at line 3776
+ [][]
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 3776
+[][][]
+ []
+
+
+LaTeX Warning: Reference `sec-empirical-variog-bin' on page 76 undefined on inp
+ut line 3780.
+
+
+LaTeX Warning: Reference `fig-liberia-variog' on page 76 undefined on input lin
+e 3783.
+
+
+Underfull \hbox (badness 10000) detected at line 3785
+ [][]
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 3785
+[][][]
+ []
+
+[76
+Non-PDF special ignored!
+<special> color cmyk 0 0 0 1.0
+Non-PDF special ignored!
+<special> color cmyk 0 0 0 1.0
+]
+Underfull \vbox (badness 10000) detected at line 3800
+ []
+
+
+Overfull \hbox (336.25pt too wide) detected at line 3800
+[]
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 3800
+ []
+
+
+Overfull \hbox (336.25pt too wide) detected at line 3800
+[]
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 3800
+ []
+
+
+Overfull \hbox (336.25pt too wide) detected at line 3800
+[]
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 3800
+ []
+
+
+Overfull \hbox (336.25pt too wide) detected at line 3800
+[]
+ []
+
+Chapter 4.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+Overfull \hbox (336.25pt too wide) has occurred while \output is active
+[]
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+Overfull \hbox (336.25pt too wide) has occurred while \output is active
+[]
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+Overfull \hbox (336.25pt too wide) has occurred while \output is active
+[]
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+Overfull \hbox (336.25pt too wide) has occurred while \output is active
+[]
+ []
+
+
+Underfull \hbox (badness 10000) has occurred while \output is active
+ [][][][] 
+ []
+
+[77
+
+
+]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+Overfull \hbox (336.25pt too wide) has occurred while \output is active
+[]
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+Overfull \hbox (336.25pt too wide) has occurred while \output is active
+[]
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+Overfull \hbox (336.25pt too wide) has occurred while \output is active
+[]
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+Overfull \hbox (336.25pt too wide) has occurred while \output is active
+[]
+ []
+
+
+Underfull \hbox (badness 10000) has occurred while \output is active
+ [][][][] 
+ []
+
+[78
+
+]
+Underfull \vbox (badness 10000) detected at line 3832
+ []
+
+
+Overfull \hbox (336.25pt too wide) detected at line 3832
+[]
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 3832
+ []
+
+
+Overfull \hbox (336.25pt too wide) detected at line 3832
+[]
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 3832
+ []
+
+
+Overfull \hbox (336.25pt too wide) detected at line 3832
+[]
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 3832
+ []
+
+
+Overfull \hbox (336.25pt too wide) detected at line 3832
+[]
+ []
+
+Chapter 5.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+Overfull \hbox (336.25pt too wide) has occurred while \output is active
+[]
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+Overfull \hbox (336.25pt too wide) has occurred while \output is active
+[]
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+Overfull \hbox (336.25pt too wide) has occurred while \output is active
+[]
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+Overfull \hbox (336.25pt too wide) has occurred while \output is active
+[]
+ []
+
+
+Underfull \hbox (badness 10000) has occurred while \output is active
+ [][][][] 
+ []
+
+[79
+
+]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+Overfull \hbox (336.25pt too wide) has occurred while \output is active
+[]
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+Overfull \hbox (336.25pt too wide) has occurred while \output is active
+[]
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+Overfull \hbox (336.25pt too wide) has occurred while \output is active
+[]
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+Overfull \hbox (336.25pt too wide) has occurred while \output is active
+[]
+ []
+
+
+Underfull \hbox (badness 10000) has occurred while \output is active
+ [][][][] 
+ []
+
+[80
+
+]
+Underfull \vbox (badness 10000) detected at line 3864
+ []
+
+
+Overfull \hbox (336.25pt too wide) detected at line 3864
+[]
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 3864
+ []
+
+
+Overfull \hbox (336.25pt too wide) detected at line 3864
+[]
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 3864
+ []
+
+
+Overfull \hbox (336.25pt too wide) detected at line 3864
+[]
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 3864
+ []
+
+
+Overfull \hbox (336.25pt too wide) detected at line 3864
 []
  []
 
@@ -1954,7 +3261,7 @@ Underfull \hbox (badness 10000) has occurred while \output is active
  [][][][] 
  []
 
-[25
+[81
 
 ]
 Underfull \vbox (badness 10000) has occurred while \output is active []
@@ -1993,46 +3300,46 @@ Underfull \hbox (badness 10000) has occurred while \output is active
  [][][][] 
  []
 
-[26
+[82
 
 ]
-Underfull \vbox (badness 10000) detected at line 921
+Underfull \vbox (badness 10000) detected at line 3896
  []
 
 
-Overfull \hbox (336.25pt too wide) detected at line 921
+Overfull \hbox (336.25pt too wide) detected at line 3896
 []
  []
 
 
-Underfull \vbox (badness 10000) detected at line 921
+Underfull \vbox (badness 10000) detected at line 3896
  []
 
 
-Overfull \hbox (336.25pt too wide) detected at line 921
+Overfull \hbox (336.25pt too wide) detected at line 3896
 []
  []
 
 
-Underfull \vbox (badness 10000) detected at line 921
+Underfull \vbox (badness 10000) detected at line 3896
  []
 
 
-Overfull \hbox (336.25pt too wide) detected at line 921
+Overfull \hbox (336.25pt too wide) detected at line 3896
 []
  []
 
 
-Underfull \vbox (badness 10000) detected at line 921
+Underfull \vbox (badness 10000) detected at line 3896
  []
 
 
-Overfull \hbox (336.25pt too wide) detected at line 921
+Overfull \hbox (336.25pt too wide) detected at line 3896
 []
  []
 
 
-Underfull \hbox (badness 10000) detected at line 921
+Underfull \hbox (badness 10000) detected at line 3896
 []
  []
 
@@ -2073,42 +3380,54 @@ Underfull \hbox (badness 10000) has occurred while \output is active
  [][][][] 
  []
 
-[27
+[83
 
-] [28]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1015.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 1015.
- (./Model-based-geostatistics-for-global-public-health-using-R.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1015.
-Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 1015.
+]
+Overfull \hbox (0.11862pt too wide) in paragraph at lines 3996--4000
+\T1/lmr/m/n/10 (+13) w . g a t e s g e n d e r e q u a l i t y t o o l b o x . 
+o r g / w p -[] c o n t e n t / u p l o a d s / B M G F _ M a l a r ia -[]
+ []
+
+[84] [85] (./Model-based-geostatistics-for-global-public-health-using-R.aux)
+
+LaTeX Warning: There were undefined references.
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
  ) 
 Here is how much of TeX's memory you used:
- 28662 strings out of 483140
- 533064 string characters out of 5965151
- 843116 words of memory out of 5000000
- 42924 multiletter control sequences out of 15000+600000
- 607285 words of font info for 124 fonts, out of 8000000 for 9000
- 36 hyphenation exceptions out of 8191
- 59i,9n,87p,857b,895s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/share/texmf/fonts/enc/dvips/lm/lm-mathsy.enc}{/usr/share/texmf/fonts/en
-c/dvips/lm/lm-mathex.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm-mathit.enc}{/u
-sr/share/texmf/fonts/enc/dvips/lm/lm-rm.enc}{/usr/share/texmf/fonts/enc/dvips/l
-m/lm-ec.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm-ts1.enc}</usr/share/texmf/f
+ 30834 strings out of 478287
+ 615883 string characters out of 5849289
+ 919253 words of memory out of 5000000
+ 47803 multiletter control sequences out of 15000+600000
+ 580030 words of font info for 244 fonts, out of 8000000 for 9000
+ 1141 hyphenation exceptions out of 8191
+ 83i,10n,89p,1446b,1007s stack positions out of 5000i,500n,10000p,200000b,80000s
+{/usr/share/texmf/fonts/enc/dvips/lm/lm-ec.enc}{/usr/share/texmf/fonts/enc/dv
+ips/lm/lm-mathit.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm-ts1.enc}{/usr/shar
+e/texmf/fonts/enc/dvips/lm/lm-mathsy.enc}{/usr/share/texmf/fonts/enc/dvips/lm/l
+m-rm.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm-mathex.enc}</usr/share/texmf/f
 onts/type1/public/lm/lmbx10.pfb></usr/share/texmf/fonts/type1/public/lm/lmbx12.
 pfb></usr/share/texmf/fonts/type1/public/lm/lmbxi10.pfb></usr/share/texmf/fonts
 /type1/public/lm/lmbxo10.pfb></usr/share/texmf/fonts/type1/public/lm/lmex10.pfb
 ></usr/share/texmf/fonts/type1/public/lm/lmmi10.pfb></usr/share/texmf/fonts/typ
-e1/public/lm/lmmi7.pfb></usr/share/texmf/fonts/type1/public/lm/lmr10.pfb></usr/
-share/texmf/fonts/type1/public/lm/lmr7.pfb></usr/share/texmf/fonts/type1/public
-/lm/lmri10.pfb></usr/share/texmf/fonts/type1/public/lm/lmri12.pfb></usr/share/t
-exmf/fonts/type1/public/lm/lmro17.pfb></usr/share/texmf/fonts/type1/public/lm/l
-msy10.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy7.pfb></usr/share/texmf/f
-onts/type1/public/lm/lmtt10.pfb>
+e1/public/lm/lmmi12.pfb></usr/share/texmf/fonts/type1/public/lm/lmmi5.pfb></usr
+/share/texmf/fonts/type1/public/lm/lmmi7.pfb></usr/share/texmf/fonts/type1/publ
+ic/lm/lmmi8.pfb></usr/share/texmf/fonts/type1/public/lm/lmr10.pfb></usr/share/t
+exmf/fonts/type1/public/lm/lmr6.pfb></usr/share/texmf/fonts/type1/public/lm/lmr
+7.pfb></usr/share/texmf/fonts/type1/public/lm/lmr8.pfb></usr/share/texmf/fonts/
+type1/public/lm/lmri10.pfb></usr/share/texmf/fonts/type1/public/lm/lmri12.pfb><
+/usr/share/texmf/fonts/type1/public/lm/lmro17.pfb></usr/share/texmf/fonts/type1
+/public/lm/lmsy10.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy7.pfb></usr/s
+hare/texmf/fonts/type1/public/lm/lmsy8.pfb></usr/share/texmf/fonts/type1/public
+/lm/lmtk10.pfb></usr/share/texmf/fonts/type1/public/lm/lmtt10.pfb></usr/share/t
+exmf/fonts/type1/public/lm/lmtti10.pfb>
 Output written on Model-based-geostatistics-for-global-public-health-using-R.pd
-f (28 pages, 912182 bytes).
+f (85 pages, 1968078 bytes).
 PDF statistics:
- 515 PDF objects out of 1000 (max. 8388607)
- 458 compressed objects within 5 object streams
- 134 named destinations out of 1000 (max. 500000)
- 8537 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 1090 PDF objects out of 1200 (max. 8388607)
+ 918 compressed objects within 10 object streams
+ 373 named destinations out of 1000 (max. 500000)
+ 57805 words of extra memory for PDF output out of 61914 (max. 10000000)
 
