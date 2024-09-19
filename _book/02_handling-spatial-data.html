@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.450">
+<meta name="generator" content="quarto-1.4.553">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -22,7 +22,7 @@ ul.task-list li input[type="checkbox"] {
 }
 /* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -81,7 +81,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   "collapse-after": 3,
   "panel-placement": "start",
   "type": "textbox",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -90,11 +96,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
     "search-submit-button-title": "Submit",
     "search-label": "Search"
   }
 }</script>
+<link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
+<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
 
 
 </head>
@@ -105,12 +114,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./02_handling-spatial-data.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Handling of spatial data in R</span></a></li></ol></nav>
-      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-      </a>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./02_handling-spatial-data.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Handling of spatial data in R</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
         <i class="bi bi-search"></i>
       </button>
@@ -120,7 +129,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="./">Model-based geostatistics for global public health using R</a> 
@@ -184,16 +193,43 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </ul>
     </div>
 </nav>
-<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#importing-and-processing-spatial-data-in-r" id="toc-importing-and-processing-spatial-data-in-r" class="nav-link active" data-scroll-target="#importing-and-processing-spatial-data-in-r"><span class="header-section-number">2.1</span> Importing and processing spatial data in R</a></li>
-  <li><a href="#visualizing-geostatistical-data" id="toc-visualizing-geostatistical-data" class="nav-link" data-scroll-target="#visualizing-geostatistical-data"><span class="header-section-number">2.2</span> Visualizing geostatistical data</a></li>
-  <li><a href="#section" id="toc-section" class="nav-link" data-scroll-target="#section"><span class="header-section-number">2.3</span> </a></li>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">2.1</span> Introduction</a></li>
+  <li><a href="#spatial-data-handling-in-geostatistical-analysis" id="toc-spatial-data-handling-in-geostatistical-analysis" class="nav-link" data-scroll-target="#spatial-data-handling-in-geostatistical-analysis"><span class="header-section-number">2.2</span> Spatial data handling in geostatistical analysis</a></li>
+  <li><a href="#chapter-overview" id="toc-chapter-overview" class="nav-link" data-scroll-target="#chapter-overview"><span class="header-section-number">2.3</span> Chapter overview</a></li>
+  <li><a href="#accessing-covariates-for-disease-mapping" id="toc-accessing-covariates-for-disease-mapping" class="nav-link" data-scroll-target="#accessing-covariates-for-disease-mapping"><span class="header-section-number">2.4</span> Accessing covariates for disease mapping</a>
+  <ul class="collapse">
+  <li><a href="#example-downloading-administrative-boundaries" id="toc-example-downloading-administrative-boundaries" class="nav-link" data-scroll-target="#example-downloading-administrative-boundaries"><span class="header-section-number">2.4.1</span> Example: Downloading administrative boundaries</a></li>
+  <li><a href="#sec-pop-data" id="toc-sec-pop-data" class="nav-link" data-scroll-target="#sec-pop-data"><span class="header-section-number">2.4.2</span> Example: Download population data</a></li>
+  </ul></li>
+  <li><a href="#importing-and-standardizing-spatial-data" id="toc-importing-and-standardizing-spatial-data" class="nav-link" data-scroll-target="#importing-and-standardizing-spatial-data"><span class="header-section-number">2.5</span> Importing and standardizing spatial data</a>
+  <ul class="collapse">
+  <li><a href="#importing-vector-data" id="toc-importing-vector-data" class="nav-link" data-scroll-target="#importing-vector-data"><span class="header-section-number">2.5.1</span> Importing vector data</a></li>
+  <li><a href="#importing-raster-data" id="toc-importing-raster-data" class="nav-link" data-scroll-target="#importing-raster-data"><span class="header-section-number">2.5.2</span> Importing raster data</a></li>
+  <li><a href="#understanding-coordinate-reference-systems-crs" id="toc-understanding-coordinate-reference-systems-crs" class="nav-link" data-scroll-target="#understanding-coordinate-reference-systems-crs"><span class="header-section-number">2.5.3</span> Understanding coordinate reference systems (CRS)</a></li>
+  <li><a href="#epsg-codes" id="toc-epsg-codes" class="nav-link" data-scroll-target="#epsg-codes"><span class="header-section-number">2.5.4</span> EPSG codes</a></li>
+  <li><a href="#convert-a-data-frame-to-an-sf-object" id="toc-convert-a-data-frame-to-an-sf-object" class="nav-link" data-scroll-target="#convert-a-data-frame-to-an-sf-object"><span class="header-section-number">2.5.5</span> Convert a data frame to an <code>sf</code> object</a></li>
+  <li><a href="#working-with-crss-in-r" id="toc-working-with-crss-in-r" class="nav-link" data-scroll-target="#working-with-crss-in-r"><span class="header-section-number">2.5.6</span> Working with CRSs in R</a></li>
+  <li><a href="#common-issues-and-considerations" id="toc-common-issues-and-considerations" class="nav-link" data-scroll-target="#common-issues-and-considerations"><span class="header-section-number">2.5.7</span> Common Issues and Considerations</a></li>
+  </ul></li>
+  <li><a href="#extracting-covariate-data" id="toc-extracting-covariate-data" class="nav-link" data-scroll-target="#extracting-covariate-data"><span class="header-section-number">2.6</span> Extracting covariate data</a>
+  <ul class="collapse">
+  <li><a href="#extracting-covariates-from-raster-layers" id="toc-extracting-covariates-from-raster-layers" class="nav-link" data-scroll-target="#extracting-covariates-from-raster-layers"><span class="header-section-number">2.6.1</span> Extracting covariates from raster layers</a></li>
+  </ul></li>
+  <li><a href="#creating-a-predictive-grid" id="toc-creating-a-predictive-grid" class="nav-link" data-scroll-target="#creating-a-predictive-grid"><span class="header-section-number">2.7</span> Creating a predictive grid</a></li>
+  <li><a href="#visualizing-spatial-data" id="toc-visualizing-spatial-data" class="nav-link" data-scroll-target="#visualizing-spatial-data"><span class="header-section-number">2.8</span> Visualizing spatial data</a>
+  <ul class="collapse">
+  <li><a href="#visualizing-point-data" id="toc-visualizing-point-data" class="nav-link" data-scroll-target="#visualizing-point-data"><span class="header-section-number">2.8.1</span> Visualizing point data</a></li>
+  <li><a href="#visualizing-polygon-data" id="toc-visualizing-polygon-data" class="nav-link" data-scroll-target="#visualizing-polygon-data"><span class="header-section-number">2.8.2</span> Visualizing polygon data</a></li>
+  <li><a href="#visualizing-raster-data" id="toc-visualizing-raster-data" class="nav-link" data-scroll-target="#visualizing-raster-data"><span class="header-section-number">2.8.3</span> Visualizing raster data</a></li>
+  <li><a href="#combining-multiple-spatial-data-types" id="toc-combining-multiple-spatial-data-types" class="nav-link" data-scroll-target="#combining-multiple-spatial-data-types"><span class="header-section-number">2.8.4</span> Combining Multiple Spatial Data Types</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -215,26 +251,657 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </div>
   
 
+
 </header>
 
-<p>This is a book created from markdown and executable code.</p>
-<p>See <span class="citation" data-cites="knuth84">(<a href="references.html#ref-knuth84" role="doc-biblioref"><strong>knuth84?</strong></a>)</span> for additional discussion of literate programming.</p>
+
+<section id="introduction" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">2.1</span> Introduction</h2>
+<p>Geostatistical analysis primarily deals with <strong>point-referenced data</strong>. However, geostatistical modeling often requires more than just point data—<strong>raster</strong> and <strong>areal (polygon)</strong> data are frequently used to build essential covariates, enhance spatial understanding, or provide environmental context. For instance, population density, climate data, land use, and elevation, often key covariates in many spatial analyses, usually come in raster or polygon formats. Efficient handling of these different data types is critical for successful model-building. This chapter provides a comprehensive guide to the various stages of managing spatial data in R, using the <code>sf</code> and <code>terra</code> packages, to support a complete geostatistical workflow.</p>
+</section>
+<section id="spatial-data-handling-in-geostatistical-analysis" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="spatial-data-handling-in-geostatistical-analysis"><span class="header-section-number">2.2</span> Spatial data handling in geostatistical analysis</h2>
+<p>Throughout a geostatistical analysis, handling spatial data takes place at multiple key stages:</p>
+<ol type="1">
+<li><p><strong>Retrieving External Spatial Data Sources</strong>: Before starting the modeling process, one often needs to acquire spatial datasets from external sources to improve model accuracy. These could include satellite-derived environmental variables, population data from <a href="https://www.worldpop.org/">WorldPop</a>, or climate data from <a href="https://www.worldclim.org/">WorldClim</a>. Acquiring these datasets and ensuring they are in compatible formats and resolutions is an essential early step in spatial analysis.</p></li>
+<li><p><strong>Importing and Standardizing Spatial Data</strong>: Once external data is obtained, it must be imported into R. This involves handling various file formats such as shapefiles or geopackages for vector data and GeoTIFFs for raster data. Moreover, different datasets might use different <strong>Coordinate Reference Systems (CRS)</strong>, requiring CRS standardization to ensure that all datasets align correctly. Failure to standardize CRS can result in spatial misalignments and incorrect results.</p></li>
+<li><p><strong>Extracting Covariate Information for Modeling</strong>: Covariate extraction is an essential step in geostatistical modeling. After importing spatial data, it is necessary to extract relevant covariate information both for the <strong>sampled locations</strong> (where we have observed data) and the <strong>prediction locations</strong> (where we wish to make predictions). This step involves linking raster or polygonal covariates—such as climate, population, or land cover data—to the geostatistical data points.</p></li>
+<li><p><strong>Prediction and Creation of a Spatial Grid</strong>: For predictive geostatistical models, a regular grid of points is often created over the study region. Covariates must then be assigned to each grid point to make predictions across the entire region of interest. Creating predictive grids and linking them to the necessary covariates is key to generating continuous spatial predictions from geostatistical models.</p></li>
+<li><p><strong>Visualizing Spatial Data</strong>: Visualization is crucial for exploring spatial data, interpreting model results, and communicating findings. Whether working with point-referenced data, polygons, or rasters, clear and effective visualization helps reveal patterns that inform the modeling process. Effective visualization can also help highlight covariate trends, spatial clusters, and uncertainty in predictions.</p></li>
+</ol>
+</section>
+<section id="chapter-overview" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="chapter-overview"><span class="header-section-number">2.3</span> Chapter overview</h2>
+<p>This chapter introduces methods for handling spatial data at each stage of the geostatistical analysis workflow. You’ll learn how to:</p>
+<ul>
+<li><p>Retrieve covariates from external spatial data sources;</p></li>
+<li><p>Import and standardize spatial data;</p></li>
+<li><p>Extract covariates for geostatistical analysis;</p></li>
+<li><p>Create predictive grids and link them with covariates;</p></li>
+<li><p>Visualize spatial data effectively to aid in analysis and presentation.</p></li>
+</ul>
+<p>By mastering these steps, you’ll be equipped to handle the complexity of spatial data in geostatistical modeling, enhancing your analyses and improving your predictions.</p>
+</section>
+<section id="accessing-covariates-for-disease-mapping" class="level2" data-number="2.4">
+<h2 data-number="2.4" class="anchored" data-anchor-id="accessing-covariates-for-disease-mapping"><span class="header-section-number">2.4</span> Accessing covariates for disease mapping</h2>
+<p>Covariates can play a crucial role in understanding and modeling the spatial variation in disease risk. In geostatistical analysis, incorporating environmental, demographic, and climatic variables might improve the predictive power of models or at least reduce the level of uncertainty in the predictions. These covariates can influence factors such as the spread of infectious diseases, the distribution of disease vectors, and the socio-economic conditions that impact health outcomes.</p>
+<p>A wide range of open-access spatial datasets provide covariates for disease mapping. These include population density, climate, land cover, and human infrastructure data, which often come in raster or polygon formats. Alongside these environmental covariates, administrative boundaries are also crucial for public health analysis, as they help organize and aggregate data at different levels (e.g., country, region, or district). For example, aggregating health outcomes or covariate data by administrative units allows researchers to identify geographic disparities and allocate resources accordingly. Fortunately, open-source platforms such as <a href="https://www.geoboundaries.org/">geoBoundaries</a> provide easily accessible administrative boundary data for many countries at various levels of granularity. This data is available in formats compatible with geospatial analysis tools in R, making it easy to integrate into geostatistical workflows.</p>
+<p><a href="#tbl-data-sources" class="quarto-xref">Table&nbsp;<span>2.1</span></a> below summarizes key sources of covariates useful in disease mapping. Each dataset offers specific types of data, from satellite-derived environmental variables to gridded population estimates and administrative boundaries, which can be accessed through various R packages or APIs.</p>
+<p>MENTION RSPATIAL DATA WEBSITE?? https://rspatialdata.github.io/</p>
+<div id="tbl-data-sources" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-data-sources-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;2.1: Some key sources of covariates useful in disease mapping and R packages to retrieve them.
+</figcaption>
+<div aria-describedby="tbl-data-sources-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<colgroup>
+<col style="width: 23%">
+<col style="width: 23%">
+<col style="width: 29%">
+<col style="width: 23%">
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Source</strong></th>
+<th><strong>Data Type</strong></th>
+<th><strong>Description</strong></th>
+<th><strong>R Package</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>WorldClim</strong></td>
+<td>Climate (temperature, rainfall)</td>
+<td>Global climate data</td>
+<td><code>geodata</code></td>
+</tr>
+<tr class="even">
+<td><strong>MODIS</strong></td>
+<td>Remote Sensing</td>
+<td>Satellite imagery (e.g., vegetation indices)</td>
+<td><code>MODIStsp</code></td>
+</tr>
+<tr class="odd">
+<td><strong>OpenStreetMap (OSM)</strong></td>
+<td>Human settlements, roads</td>
+<td>Global geographic features</td>
+<td><code>osmdata</code></td>
+</tr>
+<tr class="even">
+<td><strong>Google Earth Engine</strong></td>
+<td>Satellite imagery</td>
+<td>Large-scale environmental data analysis</td>
+<td><code>rgee</code></td>
+</tr>
+<tr class="odd">
+<td><strong>WorldPop</strong></td>
+<td>Population data</td>
+<td>Gridded population density estimates</td>
+<td><code>worldpop</code> (via API)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<section id="example-downloading-administrative-boundaries" class="level3" data-number="2.4.1">
+<h3 data-number="2.4.1" class="anchored" data-anchor-id="example-downloading-administrative-boundaries"><span class="header-section-number">2.4.1</span> Example: Downloading administrative boundaries</h3>
+<p>Administrative boundaries provide an essential spatial structure for many types of geostatistical analyses, particularly in disease mapping where data is often aggregated by administrative units such as regions, districsts or provinces. The <a href="https://www.geoboundaries.org/">geoBoundaries</a> datasets, which are accessible via the <code>rgeoboundaries</code> package, provides openly available administrative boundary data for nearly every country, allowing researchers to integrate these boundaries into their analyses seamlessly.</p>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the rgeoboundaries package</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rgeoboundaries)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Download administrative boundaries for Liberia (level 0: country)</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>liberia_admin0 <span class="ot">&lt;-</span> <span class="fu">gb_adm0</span>(<span class="st">"Liberia"</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Do the same for level 1: regions</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>liberia_admin1 <span class="ot">&lt;-</span> <span class="fu">gb_adm1</span>(<span class="st">"Liberia"</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the administrative boundaries</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(liberia_admin0<span class="sc">$</span>geometry)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(liberia_admin1<span class="sc">$</span>geometry)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="fig-liberia-admin" class="quarto-layout-panel">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-liberia-admin-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-layout-row">
+<div class="cell-output-display quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-liberia-admin" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-liberia-admin-1" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-liberia-admin-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="02_handling-spatial-data_files/figure-html/fig-liberia-admin-1.png" class="img-fluid figure-img" data-ref-parent="fig-liberia-admin" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-liberia-admin-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(a) Adimin level 0
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output-display quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-liberia-admin" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-liberia-admin-2" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-liberia-admin-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="02_handling-spatial-data_files/figure-html/fig-liberia-admin-2.png" class="img-fluid figure-img" data-ref-parent="fig-liberia-admin" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-liberia-admin-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(b) Admin level 1
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-liberia-admin-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2.1: Administrative boundaries for Liberia retrieved using the <code>rgeoboundaries</code> package.
+</figcaption>
+</figure>
+</div>
+</section>
+<section id="sec-pop-data" class="level3" data-number="2.4.2">
+<h3 data-number="2.4.2" class="anchored" data-anchor-id="sec-pop-data"><span class="header-section-number">2.4.2</span> Example: Download population data</h3>
+<p>Population density is a key covariate in geostatistical models for public health research. In this section, we demonstrate how to retrieve high-resolution population data for Liberia from <a href="https://www.worldpop.org/">WorldPop</a> using the <code>wpgpDownloadR</code> package. This package provides easy access to the WorldPop datasets, which offers gridded population estimates at various spatial resolutions.</p>
+<p>Before downloading the data, we will search for available datasets for Liberia. The function <code>wpgpListCountryDatasets()</code> helps in retrieving a list of all available datasets for a specified country.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span> <span class="sc">+</span> <span class="dv">1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(wpgpDownloadR)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Search for datasets available for Liberia </span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># usign the ISO3 country code</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>lbr_datasets <span class="ot">&lt;-</span> <span class="fu">wpgpListCountryDatasets</span>(<span class="at">ISO3 =</span> <span class="st">"LBR"</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>lbr_datasets</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["ISO"],"name":[1],"type":["int"],"align":["right"]},{"label":["ISO3"],"name":[2],"type":["chr"],"align":["left"]},{"label":["Country"],"name":[3],"type":["chr"],"align":["left"]},{"label":["Covariate"],"name":[4],"type":["chr"],"align":["left"]},{"label":["Description"],"name":[5],"type":["chr"],"align":["left"]}],"data":[{"1":"430","2":"LBR","3":"Liberia","4":"ppp_2000","5":"Estimated total number of people per grid-cell 2000 The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator)","_rn_":"125"},{"1":"430","2":"LBR","3":"Liberia","4":"ppp_2001","5":"Estimated total number of people per grid-cell 2001 The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator)","_rn_":"374"},{"1":"430","2":"LBR","3":"Liberia","4":"ppp_2002","5":"Estimated total number of people per grid-cell 2002 The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator)","_rn_":"623"},{"1":"430","2":"LBR","3":"Liberia","4":"ppp_2003","5":"Estimated total number of people per grid-cell 2003 The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator)","_rn_":"872"},{"1":"430","2":"LBR","3":"Liberia","4":"ppp_2004","5":"Estimated total number of people per grid-cell 2004 The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator)","_rn_":"1121"},{"1":"430","2":"LBR","3":"Liberia","4":"ppp_2005","5":"Estimated total number of people per grid-cell 2005 The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator)","_rn_":"1370"},{"1":"430","2":"LBR","3":"Liberia","4":"ppp_2006","5":"Estimated total number of people per grid-cell 2006 The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator)","_rn_":"1619"},{"1":"430","2":"LBR","3":"Liberia","4":"ppp_2007","5":"Estimated total number of people per grid-cell 2007 The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator)","_rn_":"1868"},{"1":"430","2":"LBR","3":"Liberia","4":"ppp_2008","5":"Estimated total number of people per grid-cell 2008 The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator)","_rn_":"2117"},{"1":"430","2":"LBR","3":"Liberia","4":"ppp_2009","5":"Estimated total number of people per grid-cell 2009 The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator)","_rn_":"2366"},{"1":"430","2":"LBR","3":"Liberia","4":"ppp_2010","5":"Estimated total number of people per grid-cell 2010 The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator)","_rn_":"2615"},{"1":"430","2":"LBR","3":"Liberia","4":"ppp_2011","5":"Estimated total number of people per grid-cell 2011 The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator)","_rn_":"2864"},{"1":"430","2":"LBR","3":"Liberia","4":"ppp_2012","5":"Estimated total number of people per grid-cell 2012 The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator)","_rn_":"3113"},{"1":"430","2":"LBR","3":"Liberia","4":"ppp_2013","5":"Estimated total number of people per grid-cell 2013 The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator)","_rn_":"3362"},{"1":"430","2":"LBR","3":"Liberia","4":"ppp_2014","5":"Estimated total number of people per grid-cell 2014 The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator)","_rn_":"3611"},{"1":"430","2":"LBR","3":"Liberia","4":"ppp_2015","5":"Estimated total number of people per grid-cell 2015 The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator)","_rn_":"3860"},{"1":"430","2":"LBR","3":"Liberia","4":"ppp_2016","5":"Estimated total number of people per grid-cell 2016 The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator)","_rn_":"4109"},{"1":"430","2":"LBR","3":"Liberia","4":"ppp_2017","5":"Estimated total number of people per grid-cell 2017 The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator)","_rn_":"4358"},{"1":"430","2":"LBR","3":"Liberia","4":"ppp_2018","5":"Estimated total number of people per grid-cell 2018 The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator)","_rn_":"4607"},{"1":"430","2":"LBR","3":"Liberia","4":"ppp_2019","5":"Estimated total number of people per grid-cell 2019 The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator)","_rn_":"4856"},{"1":"430","2":"LBR","3":"Liberia","4":"ppp_2020","5":"Estimated total number of people per grid-cell 2020 The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator)","_rn_":"5105"},{"1":"430","2":"LBR","3":"Liberia","4":"ppp_2000_UNadj","5":"Estimated total number of people per grid-cell 2000 with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator)","_rn_":"5354"},{"1":"430","2":"LBR","3":"Liberia","4":"ppp_2001_UNadj","5":"Estimated total number of people per grid-cell 2001 with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator)","_rn_":"5603"},{"1":"430","2":"LBR","3":"Liberia","4":"ppp_2002_UNadj","5":"Estimated total number of people per grid-cell 2002 with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator)","_rn_":"5852"},{"1":"430","2":"LBR","3":"Liberia","4":"ppp_2003_UNadj","5":"Estimated total number of people per grid-cell 2003 with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator)","_rn_":"6101"},{"1":"430","2":"LBR","3":"Liberia","4":"ppp_2004_UNadj","5":"Estimated total number of people per grid-cell 2004 with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator)","_rn_":"6350"},{"1":"430","2":"LBR","3":"Liberia","4":"ppp_2005_UNadj","5":"Estimated total number of people per grid-cell 2005 with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator)","_rn_":"6599"},{"1":"430","2":"LBR","3":"Liberia","4":"ppp_2006_UNadj","5":"Estimated total number of people per grid-cell 2006 with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator)","_rn_":"6848"},{"1":"430","2":"LBR","3":"Liberia","4":"ppp_2007_UNadj","5":"Estimated total number of people per grid-cell 2007 with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator)","_rn_":"7097"},{"1":"430","2":"LBR","3":"Liberia","4":"ppp_2008_UNadj","5":"Estimated total number of people per grid-cell 2008 with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator)","_rn_":"7346"},{"1":"430","2":"LBR","3":"Liberia","4":"ppp_2009_UNadj","5":"Estimated total number of people per grid-cell 2009 with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator)","_rn_":"7595"},{"1":"430","2":"LBR","3":"Liberia","4":"ppp_2010_UNadj","5":"Estimated total number of people per grid-cell 2010 with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator)","_rn_":"7844"},{"1":"430","2":"LBR","3":"Liberia","4":"ppp_2011_UNadj","5":"Estimated total number of people per grid-cell 2011 with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator)","_rn_":"8093"},{"1":"430","2":"LBR","3":"Liberia","4":"ppp_2012_UNadj","5":"Estimated total number of people per grid-cell 2012 with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator)","_rn_":"8342"},{"1":"430","2":"LBR","3":"Liberia","4":"ppp_2013_UNadj","5":"Estimated total number of people per grid-cell 2013 with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator)","_rn_":"8591"},{"1":"430","2":"LBR","3":"Liberia","4":"ppp_2014_UNadj","5":"Estimated total number of people per grid-cell 2014 with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator)","_rn_":"8840"},{"1":"430","2":"LBR","3":"Liberia","4":"ppp_2015_UNadj","5":"Estimated total number of people per grid-cell 2015 with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator)","_rn_":"9089"},{"1":"430","2":"LBR","3":"Liberia","4":"ppp_2016_UNadj","5":"Estimated total number of people per grid-cell 2016 with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator)","_rn_":"9338"},{"1":"430","2":"LBR","3":"Liberia","4":"ppp_2017_UNadj","5":"Estimated total number of people per grid-cell 2017 with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator)","_rn_":"9587"},{"1":"430","2":"LBR","3":"Liberia","4":"ppp_2018_UNadj","5":"Estimated total number of people per grid-cell 2018 with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator)","_rn_":"9836"},{"1":"430","2":"LBR","3":"Liberia","4":"ppp_2019_UNadj","5":"Estimated total number of people per grid-cell 2019 with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator)","_rn_":"10085"},{"1":"430","2":"LBR","3":"Liberia","4":"ppp_2020_UNadj","5":"Estimated total number of people per grid-cell 2020 with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator)","_rn_":"10334"},{"1":"430","2":"LBR","3":"Liberia","4":"ppp_2020_constrained","5":"Estimated total number of people per grid-cell 2020. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). The units are number of people per pixel. NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"10577"},{"1":"430","2":"LBR","3":"Liberia","4":"ppp_2020_UNadj_constrained","5":"Estimated total number of people per grid-cell 2020 with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). The units are number of people per pixel. NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"10818"},{"1":"430","2":"LBR","3":"Liberia","4":"tt50k_100m_2000","5":"EC-JRC travel time to major cities 2000","_rn_":"11064"},{"1":"430","2":"LBR","3":"Liberia","4":"bsgmi_100m_2001","5":"Interpolated built-settlement areas 2001","_rn_":"14908"},{"1":"430","2":"LBR","3":"Liberia","4":"dst_bsgmi_100m_2001","5":"Distance to interpolated built-settlement area edges 2001","_rn_":"14909"},{"1":"430","2":"LBR","3":"Liberia","4":"bsgmi_100m_2002","5":"Interpolated built-settlement areas 2002","_rn_":"14910"},{"1":"430","2":"LBR","3":"Liberia","4":"dst_bsgmi_100m_2002","5":"Distance to interpolated built-settlement area edges 2002","_rn_":"14911"},{"1":"430","2":"LBR","3":"Liberia","4":"bsgmi_100m_2003","5":"Interpolated built-settlement areas 2003","_rn_":"14912"},{"1":"430","2":"LBR","3":"Liberia","4":"dst_bsgmi_100m_2003","5":"Distance to interpolated built-settlement area edges 2003","_rn_":"14913"},{"1":"430","2":"LBR","3":"Liberia","4":"bsgmi_100m_2004","5":"Interpolated built-settlement areas 2004","_rn_":"14914"},{"1":"430","2":"LBR","3":"Liberia","4":"dst_bsgmi_100m_2004","5":"Distance to interpolated built-settlement area edges 2004","_rn_":"14915"},{"1":"430","2":"LBR","3":"Liberia","4":"bsgmi_100m_2005","5":"Interpolated built-settlement areas 2005","_rn_":"14916"},{"1":"430","2":"LBR","3":"Liberia","4":"dst_bsgmi_100m_2005","5":"Distance to interpolated built-settlement area edges 2005","_rn_":"14917"},{"1":"430","2":"LBR","3":"Liberia","4":"bsgmi_100m_2006","5":"Interpolated built-settlement areas 2006","_rn_":"14918"},{"1":"430","2":"LBR","3":"Liberia","4":"dst_bsgmi_100m_2006","5":"Distance to interpolated built-settlement area edges 2006","_rn_":"14919"},{"1":"430","2":"LBR","3":"Liberia","4":"bsgmi_100m_2007","5":"Interpolated built-settlement areas 2007","_rn_":"14920"},{"1":"430","2":"LBR","3":"Liberia","4":"dst_bsgmi_100m_2007","5":"Distance to interpolated built-settlement area edges 2007","_rn_":"14921"},{"1":"430","2":"LBR","3":"Liberia","4":"bsgmi_100m_2008","5":"Interpolated built-settlement areas 2008","_rn_":"14922"},{"1":"430","2":"LBR","3":"Liberia","4":"dst_bsgmi_100m_2008","5":"Distance to interpolated built-settlement area edges 2008","_rn_":"14923"},{"1":"430","2":"LBR","3":"Liberia","4":"bsgmi_100m_2009","5":"Interpolated built-settlement areas 2009","_rn_":"14924"},{"1":"430","2":"LBR","3":"Liberia","4":"dst_bsgmi_100m_2009","5":"Distance to interpolated built-settlement area edges 2009","_rn_":"14925"},{"1":"430","2":"LBR","3":"Liberia","4":"bsgmi_100m_2010","5":"Interpolated built-settlement areas 2010","_rn_":"14926"},{"1":"430","2":"LBR","3":"Liberia","4":"dst_bsgmi_100m_2010","5":"Distance to interpolated built-settlement area edges 2010","_rn_":"14927"},{"1":"430","2":"LBR","3":"Liberia","4":"bsgmi_100m_2011","5":"Interpolated built-settlement areas 2011","_rn_":"14928"},{"1":"430","2":"LBR","3":"Liberia","4":"dst_bsgmi_100m_2011","5":"Distance to interpolated built-settlement area edges 2011","_rn_":"14929"},{"1":"430","2":"LBR","3":"Liberia","4":"bsgmi_100m_2013","5":"Interpolated built-settlement areas 2013","_rn_":"14930"},{"1":"430","2":"LBR","3":"Liberia","4":"dst_bsgmi_100m_2013","5":"Distance to interpolated built-settlement area edges 2013","_rn_":"14931"},{"1":"430","2":"LBR","3":"Liberia","4":"dst_bsgme_100m_2015","5":"Distance to extrapolated built-settlement area edges 2015","_rn_":"14932"},{"1":"430","2":"LBR","3":"Liberia","4":"dst_bsgme_100m_2016","5":"Distance to extrapolated built-settlement area edges 2016","_rn_":"14933"},{"1":"430","2":"LBR","3":"Liberia","4":"dst_bsgme_100m_2017","5":"Distance to extrapolated built-settlement area edges 2017","_rn_":"14934"},{"1":"430","2":"LBR","3":"Liberia","4":"dst_bsgme_100m_2018","5":"Distance to extrapolated built-settlement area edges 2018","_rn_":"14935"},{"1":"430","2":"LBR","3":"Liberia","4":"dst_bsgme_100m_2019","5":"Distance to extrapolated built-settlement area edges 2019","_rn_":"14936"},{"1":"430","2":"LBR","3":"Liberia","4":"dst_bsgme_100m_2020","5":"Distance to extrapolated built-settlement area edges 2020","_rn_":"14937"},{"1":"430","2":"LBR","3":"Liberia","4":"dst_coastline_100m_2000_2020","5":"Distance to coastline 2000-2020","_rn_":"18780"},{"1":"430","2":"LBR","3":"Liberia","4":"dmsp_100m_2000","5":"DMSP-OLS night-time lights 2000","_rn_":"20393"},{"1":"430","2":"LBR","3":"Liberia","4":"dmsp_100m_2001","5":"DMSP-OLS night-time lights 2001","_rn_":"20394"},{"1":"430","2":"LBR","3":"Liberia","4":"dmsp_100m_2002","5":"DMSP-OLS night-time lights 2002","_rn_":"20395"},{"1":"430","2":"LBR","3":"Liberia","4":"dmsp_100m_2003","5":"DMSP-OLS night-time lights 2003","_rn_":"20396"},{"1":"430","2":"LBR","3":"Liberia","4":"dmsp_100m_2004","5":"DMSP-OLS night-time lights 2004","_rn_":"20397"},{"1":"430","2":"LBR","3":"Liberia","4":"dmsp_100m_2005","5":"DMSP-OLS night-time lights 2005","_rn_":"20398"},{"1":"430","2":"LBR","3":"Liberia","4":"dmsp_100m_2006","5":"DMSP-OLS night-time lights 2006","_rn_":"20399"},{"1":"430","2":"LBR","3":"Liberia","4":"dmsp_100m_2007","5":"DMSP-OLS night-time lights 2007","_rn_":"20400"},{"1":"430","2":"LBR","3":"Liberia","4":"dmsp_100m_2008","5":"DMSP-OLS night-time lights 2008","_rn_":"20401"},{"1":"430","2":"LBR","3":"Liberia","4":"dmsp_100m_2009","5":"DMSP-OLS night-time lights 2009","_rn_":"20402"},{"1":"430","2":"LBR","3":"Liberia","4":"dmsp_100m_2010","5":"DMSP-OLS night-time lights 2010","_rn_":"20403"},{"1":"430","2":"LBR","3":"Liberia","4":"dmsp_100m_2011","5":"DMSP-OLS night-time lights 2011","_rn_":"20404"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst011_100m_2000","5":"Distance to ESA-CCI-LC cultivated area edges 2000","_rn_":"37765"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst040_100m_2000","5":"Distance to ESA-CCI-LC woody-tree area edges 2000","_rn_":"37766"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst130_100m_2000","5":"Distance to ESA-CCI-LC shrub area edges 2000","_rn_":"37767"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst140_100m_2000","5":"Distance to ESA-CCI-LC herbaceous area edges 2000","_rn_":"37768"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst150_100m_2000","5":"Distance to  ESA-CCI-LC sparse vegetation area edges 2000","_rn_":"37769"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst160_100m_2000","5":"Distance to  ESA-CCI-LC aquatic vegetation area edges 2000","_rn_":"37770"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst190_100m_2000","5":"Distance to ESA-CCI-LC artificial surface edges 2000","_rn_":"37771"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst200_100m_2000","5":"Distance to ESA-CCI-LC bare area edges 2000","_rn_":"37772"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst011_100m_2001","5":"Distance to ESA-CCI-LC cultivated area edges 2001","_rn_":"37773"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst040_100m_2001","5":"Distance to ESA-CCI-LC woody-tree area edges 2001","_rn_":"37774"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst130_100m_2001","5":"Distance to ESA-CCI-LC shrub area edges 2001","_rn_":"37775"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst140_100m_2001","5":"Distance to ESA-CCI-LC herbaceous area edges 2001","_rn_":"37776"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst150_100m_2001","5":"Distance to  ESA-CCI-LC sparse vegetation area edges 2001","_rn_":"37777"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst160_100m_2001","5":"Distance to  ESA-CCI-LC aquatic vegetation area edges 2001","_rn_":"37778"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst190_100m_2001","5":"Distance to ESA-CCI-LC artificial surface edges 2001","_rn_":"37779"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst200_100m_2001","5":"Distance to ESA-CCI-LC bare area edges 2001","_rn_":"37780"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst011_100m_2002","5":"Distance to ESA-CCI-LC cultivated area edges 2002","_rn_":"37781"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst040_100m_2002","5":"Distance to ESA-CCI-LC woody-tree area edges 2002","_rn_":"37782"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst130_100m_2002","5":"Distance to ESA-CCI-LC shrub area edges 2002","_rn_":"37783"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst140_100m_2002","5":"Distance to ESA-CCI-LC herbaceous area edges 2002","_rn_":"37784"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst150_100m_2002","5":"Distance to  ESA-CCI-LC sparse vegetation area edges 2002","_rn_":"37785"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst160_100m_2002","5":"Distance to  ESA-CCI-LC aquatic vegetation area edges 2002","_rn_":"37786"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst190_100m_2002","5":"Distance to ESA-CCI-LC artificial surface edges 2002","_rn_":"37787"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst200_100m_2002","5":"Distance to ESA-CCI-LC bare area edges 2002","_rn_":"37788"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst011_100m_2003","5":"Distance to ESA-CCI-LC cultivated area edges 2003","_rn_":"37789"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst040_100m_2003","5":"Distance to ESA-CCI-LC woody-tree area edges 2003","_rn_":"37790"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst130_100m_2003","5":"Distance to ESA-CCI-LC shrub area edges 2003","_rn_":"37791"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst140_100m_2003","5":"Distance to ESA-CCI-LC herbaceous area edges 2003","_rn_":"37792"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst150_100m_2003","5":"Distance to  ESA-CCI-LC sparse vegetation area edges 2003","_rn_":"37793"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst160_100m_2003","5":"Distance to  ESA-CCI-LC aquatic vegetation area edges 2003","_rn_":"37794"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst190_100m_2003","5":"Distance to ESA-CCI-LC artificial surface edges 2003","_rn_":"37795"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst200_100m_2003","5":"Distance to ESA-CCI-LC bare area edges 2003","_rn_":"37796"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst011_100m_2004","5":"Distance to ESA-CCI-LC cultivated area edges 2004","_rn_":"37797"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst040_100m_2004","5":"Distance to ESA-CCI-LC woody-tree area edges 2004","_rn_":"37798"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst130_100m_2004","5":"Distance to ESA-CCI-LC shrub area edges 2004","_rn_":"37799"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst140_100m_2004","5":"Distance to ESA-CCI-LC herbaceous area edges 2004","_rn_":"37800"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst150_100m_2004","5":"Distance to  ESA-CCI-LC sparse vegetation area edges 2004","_rn_":"37801"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst160_100m_2004","5":"Distance to  ESA-CCI-LC aquatic vegetation area edges 2004","_rn_":"37802"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst190_100m_2004","5":"Distance to ESA-CCI-LC artificial surface edges 2004","_rn_":"37803"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst200_100m_2004","5":"Distance to ESA-CCI-LC bare area edges 2004","_rn_":"37804"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst011_100m_2005","5":"Distance to ESA-CCI-LC cultivated area edges 2005","_rn_":"37805"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst040_100m_2005","5":"Distance to ESA-CCI-LC woody-tree area edges 2005","_rn_":"37806"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst130_100m_2005","5":"Distance to ESA-CCI-LC shrub area edges 2005","_rn_":"37807"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst140_100m_2005","5":"Distance to ESA-CCI-LC herbaceous area edges 2005","_rn_":"37808"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst150_100m_2005","5":"Distance to  ESA-CCI-LC sparse vegetation area edges 2005","_rn_":"37809"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst160_100m_2005","5":"Distance to  ESA-CCI-LC aquatic vegetation area edges 2005","_rn_":"37810"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst190_100m_2005","5":"Distance to ESA-CCI-LC artificial surface edges 2005","_rn_":"37811"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst200_100m_2005","5":"Distance to ESA-CCI-LC bare area edges 2005","_rn_":"37812"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst011_100m_2006","5":"Distance to ESA-CCI-LC cultivated area edges 2006","_rn_":"37813"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst040_100m_2006","5":"Distance to ESA-CCI-LC woody-tree area edges 2006","_rn_":"37814"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst130_100m_2006","5":"Distance to ESA-CCI-LC shrub area edges 2006","_rn_":"37815"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst140_100m_2006","5":"Distance to ESA-CCI-LC herbaceous area edges 2006","_rn_":"37816"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst150_100m_2006","5":"Distance to  ESA-CCI-LC sparse vegetation area edges 2006","_rn_":"37817"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst160_100m_2006","5":"Distance to  ESA-CCI-LC aquatic vegetation area edges 2006","_rn_":"37818"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst190_100m_2006","5":"Distance to ESA-CCI-LC artificial surface edges 2006","_rn_":"37819"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst200_100m_2006","5":"Distance to ESA-CCI-LC bare area edges 2006","_rn_":"37820"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst011_100m_2007","5":"Distance to ESA-CCI-LC cultivated area edges 2007","_rn_":"37821"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst040_100m_2007","5":"Distance to ESA-CCI-LC woody-tree area edges 2007","_rn_":"37822"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst130_100m_2007","5":"Distance to ESA-CCI-LC shrub area edges 2007","_rn_":"37823"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst140_100m_2007","5":"Distance to ESA-CCI-LC herbaceous area edges 2007","_rn_":"37824"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst150_100m_2007","5":"Distance to  ESA-CCI-LC sparse vegetation area edges 2007","_rn_":"37825"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst160_100m_2007","5":"Distance to  ESA-CCI-LC aquatic vegetation area edges 2007","_rn_":"37826"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst190_100m_2007","5":"Distance to ESA-CCI-LC artificial surface edges 2007","_rn_":"37827"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst200_100m_2007","5":"Distance to ESA-CCI-LC bare area edges 2007","_rn_":"37828"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst011_100m_2008","5":"Distance to ESA-CCI-LC cultivated area edges 2008","_rn_":"37829"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst040_100m_2008","5":"Distance to ESA-CCI-LC woody-tree area edges 2008","_rn_":"37830"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst130_100m_2008","5":"Distance to ESA-CCI-LC shrub area edges 2008","_rn_":"37831"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst140_100m_2008","5":"Distance to ESA-CCI-LC herbaceous area edges 2008","_rn_":"37832"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst150_100m_2008","5":"Distance to  ESA-CCI-LC sparse vegetation area edges 2008","_rn_":"37833"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst160_100m_2008","5":"Distance to  ESA-CCI-LC aquatic vegetation area edges 2008","_rn_":"37834"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst190_100m_2008","5":"Distance to ESA-CCI-LC artificial surface edges 2008","_rn_":"37835"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst200_100m_2008","5":"Distance to ESA-CCI-LC bare area edges 2008","_rn_":"37836"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst011_100m_2009","5":"Distance to ESA-CCI-LC cultivated area edges 2009","_rn_":"37837"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst040_100m_2009","5":"Distance to ESA-CCI-LC woody-tree area edges 2009","_rn_":"37838"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst130_100m_2009","5":"Distance to ESA-CCI-LC shrub area edges 2009","_rn_":"37839"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst140_100m_2009","5":"Distance to ESA-CCI-LC herbaceous area edges 2009","_rn_":"37840"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst150_100m_2009","5":"Distance to  ESA-CCI-LC sparse vegetation area edges 2009","_rn_":"37841"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst160_100m_2009","5":"Distance to  ESA-CCI-LC aquatic vegetation area edges 2009","_rn_":"37842"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst190_100m_2009","5":"Distance to ESA-CCI-LC artificial surface edges 2009","_rn_":"37843"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst200_100m_2009","5":"Distance to ESA-CCI-LC bare area edges 2009","_rn_":"37844"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst011_100m_2010","5":"Distance to ESA-CCI-LC cultivated area edges 2010","_rn_":"37845"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst040_100m_2010","5":"Distance to ESA-CCI-LC woody-tree area edges 2010","_rn_":"37846"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst130_100m_2010","5":"Distance to ESA-CCI-LC shrub area edges 2010","_rn_":"37847"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst140_100m_2010","5":"Distance to ESA-CCI-LC herbaceous area edges 2010","_rn_":"37848"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst150_100m_2010","5":"Distance to  ESA-CCI-LC sparse vegetation area edges 2010","_rn_":"37849"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst160_100m_2010","5":"Distance to  ESA-CCI-LC aquatic vegetation area edges 2010","_rn_":"37850"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst190_100m_2010","5":"Distance to ESA-CCI-LC artificial surface edges 2010","_rn_":"37851"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst200_100m_2010","5":"Distance to ESA-CCI-LC bare area edges 2010","_rn_":"37852"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst011_100m_2011","5":"Distance to ESA-CCI-LC cultivated area edges 2011","_rn_":"37853"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst040_100m_2011","5":"Distance to ESA-CCI-LC woody-tree area edges 2011","_rn_":"37854"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst130_100m_2011","5":"Distance to ESA-CCI-LC shrub area edges 2011","_rn_":"37855"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst140_100m_2011","5":"Distance to ESA-CCI-LC herbaceous area edges 2011","_rn_":"37856"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst150_100m_2011","5":"Distance to  ESA-CCI-LC sparse vegetation area edges 2011","_rn_":"37857"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst160_100m_2011","5":"Distance to  ESA-CCI-LC aquatic vegetation area edges 2011","_rn_":"37858"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst190_100m_2011","5":"Distance to ESA-CCI-LC artificial surface edges 2011","_rn_":"37859"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst200_100m_2011","5":"Distance to ESA-CCI-LC bare area edges 2011","_rn_":"37860"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst011_100m_2012","5":"Distance to ESA-CCI-LC cultivated area edges 2012","_rn_":"37861"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst040_100m_2012","5":"Distance to ESA-CCI-LC woody-tree area edges 2012","_rn_":"37862"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst130_100m_2012","5":"Distance to ESA-CCI-LC shrub area edges 2012","_rn_":"37863"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst140_100m_2012","5":"Distance to ESA-CCI-LC herbaceous area edges 2012","_rn_":"37864"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst150_100m_2012","5":"Distance to  ESA-CCI-LC sparse vegetation area edges 2012","_rn_":"37865"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst160_100m_2012","5":"Distance to  ESA-CCI-LC aquatic vegetation area edges 2012","_rn_":"37866"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst190_100m_2012","5":"Distance to ESA-CCI-LC artificial surface edges 2012","_rn_":"37867"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst200_100m_2012","5":"Distance to ESA-CCI-LC bare area edges 2012","_rn_":"37868"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst011_100m_2013","5":"Distance to ESA-CCI-LC cultivated area edges 2013","_rn_":"37869"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst040_100m_2013","5":"Distance to ESA-CCI-LC woody-tree area edges 2013","_rn_":"37870"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst130_100m_2013","5":"Distance to ESA-CCI-LC shrub area edges 2013","_rn_":"37871"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst140_100m_2013","5":"Distance to ESA-CCI-LC herbaceous area edges 2013","_rn_":"37872"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst150_100m_2013","5":"Distance to  ESA-CCI-LC sparse vegetation area edges 2013","_rn_":"37873"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst160_100m_2013","5":"Distance to  ESA-CCI-LC aquatic vegetation area edges 2013","_rn_":"37874"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst190_100m_2013","5":"Distance to ESA-CCI-LC artificial surface edges 2013","_rn_":"37875"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst200_100m_2013","5":"Distance to ESA-CCI-LC bare area edges 2013","_rn_":"37876"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst011_100m_2014","5":"Distance to ESA-CCI-LC cultivated area edges 2014","_rn_":"37877"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst040_100m_2014","5":"Distance to ESA-CCI-LC woody-tree area edges 2014","_rn_":"37878"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst130_100m_2014","5":"Distance to ESA-CCI-LC shrub area edges 2014","_rn_":"37879"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst140_100m_2014","5":"Distance to ESA-CCI-LC herbaceous area edges 2014","_rn_":"37880"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst150_100m_2014","5":"Distance to  ESA-CCI-LC sparse vegetation area edges 2014","_rn_":"37881"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst160_100m_2014","5":"Distance to  ESA-CCI-LC aquatic vegetation area edges 2014","_rn_":"37882"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst190_100m_2014","5":"Distance to ESA-CCI-LC artificial surface edges 2014","_rn_":"37883"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst200_100m_2014","5":"Distance to ESA-CCI-LC bare area edges 2014","_rn_":"37884"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst011_100m_2015","5":"Distance to ESA-CCI-LC cultivated area edges 2015","_rn_":"37885"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst040_100m_2015","5":"Distance to ESA-CCI-LC woody-tree area edges 2015","_rn_":"37886"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst130_100m_2015","5":"Distance to ESA-CCI-LC shrub area edges 2015","_rn_":"37887"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst140_100m_2015","5":"Distance to ESA-CCI-LC herbaceous area edges 2015","_rn_":"37888"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst150_100m_2015","5":"Distance to  ESA-CCI-LC sparse vegetation area edges 2015","_rn_":"37889"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst160_100m_2015","5":"Distance to  ESA-CCI-LC aquatic vegetation area edges 2015","_rn_":"37890"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst190_100m_2015","5":"Distance to ESA-CCI-LC artificial surface edges 2015","_rn_":"37891"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst200_100m_2015","5":"Distance to ESA-CCI-LC bare area edges 2015","_rn_":"37892"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_water_100m_2000_2012","5":"ESA-CCI-LC inland waterbodies 2000-2012","_rn_":"54013"},{"1":"430","2":"LBR","3":"Liberia","4":"esaccilc_dst_water_100m_2000_2012","5":"Distance to ESA-CCI-LC inland waterbody 2000-2012","_rn_":"54014"},{"1":"430","2":"LBR","3":"Liberia","4":"level0_100m_2000_2020","5":"Countries, territories, and dependencies 2000-2020","_rn_":"54511"},{"1":"430","2":"LBR","3":"Liberia","4":"subnational_admin_2000_2020","5":"Subnational administrative units 2000-2020","_rn_":"54512"},{"1":"430","2":"LBR","3":"Liberia","4":"osm_dst_roadintersec_100m_2016","5":"Distance to OSM major road intersections 2016","_rn_":"55133"},{"1":"430","2":"LBR","3":"Liberia","4":"osm_dst_waterway_100m_2016","5":"Distance to OSM major waterways 2016","_rn_":"55134"},{"1":"430","2":"LBR","3":"Liberia","4":"osm_dst_road_100m_2016","5":"Distance to OSM major roads 2016","_rn_":"55135"},{"1":"430","2":"LBR","3":"Liberia","4":"px_area_100m","5":"Grid-cell surface areas","_rn_":"55632"},{"1":"430","2":"LBR","3":"Liberia","4":"ghslesaccilc_100m_2000","5":"GHSL+ESA-CCI-LC built-settlement areas 2000","_rn_":"57989"},{"1":"430","2":"LBR","3":"Liberia","4":"dst_ghslesaccilc_100m_2000","5":"Distance to GHSL+ESA-CCI-LC built-settlement area edges 2000","_rn_":"57990"},{"1":"430","2":"LBR","3":"Liberia","4":"ghslesaccilcguf_100m_2012","5":"GHSL+ESA-CCI-LC+GUF built-settlement areas 2012","_rn_":"57991"},{"1":"430","2":"LBR","3":"Liberia","4":"dst_ghslesaccilcguf_100m_2012","5":"Distance to GHSL+ESA-CCI-LC+GUF built-settlement area edges 2012","_rn_":"57992"},{"1":"430","2":"LBR","3":"Liberia","4":"ghslesaccilcgufghsl_100m_2014","5":"GHSL+ESA-CCI-LC+GUF built-settlement areas 2014","_rn_":"57993"},{"1":"430","2":"LBR","3":"Liberia","4":"dst_ghslesaccilcgufghsll_100m_2014","5":"Distance to GHSL+ESA-CCI-LC+GUF built-settlement area edges 2014","_rn_":"57994"},{"1":"430","2":"LBR","3":"Liberia","4":"urbpx_prp_1_100m_2000","5":"Proportion of GHSL+ESA-CCI-LC built-settlement grid-cells with 1 grid-cell radius 2000","_rn_":"57995"},{"1":"430","2":"LBR","3":"Liberia","4":"urbpx_prp_5_100m_2000","5":"Proportion of GHSL+ESA-CCI-LC built-settlement grid-cells with 5 grid-cell radius 2000","_rn_":"57996"},{"1":"430","2":"LBR","3":"Liberia","4":"urbpx_prp_10_100m_2000","5":"Proportion of GHSL+ESA-CCI-LC built-settlement grid-cells with 10 grid-cell radius 2000","_rn_":"57997"},{"1":"430","2":"LBR","3":"Liberia","4":"urbpx_prp_15_100m_2000","5":"Proportion of GHSL+ESA-CCI-LC built-settlement grid-cells with 15 grid-cell radius 2000","_rn_":"57998"},{"1":"430","2":"LBR","3":"Liberia","4":"urbpx_prp_1_100m_2012","5":"Proportion of GHSL+ESA-CCI-LC+GUF built-settlement grid-cells with 1 grid-cell radius 2012","_rn_":"57999"},{"1":"430","2":"LBR","3":"Liberia","4":"urbpx_prp_5_100m_2012","5":"Proportion of GHSL+ESA-CCI-LC+GUF built-settlement grid-cells with 5 grid-cell radius 2012","_rn_":"58000"},{"1":"430","2":"LBR","3":"Liberia","4":"urbpx_prp_10_100m_2012","5":"Proportion of GHSL+ESA-CCI-LC+GUF built-settlement grid-cells with 10 grid-cell radius 2012","_rn_":"58001"},{"1":"430","2":"LBR","3":"Liberia","4":"urbpx_prp_15_100m_2012","5":"Proportion of GHSL+ESA-CCI-LC+GUF built-settlement grid-cells with 15 grid-cell radius 2012","_rn_":"58002"},{"1":"430","2":"LBR","3":"Liberia","4":"urbpx_prp_1_100m_2014","5":"Proportion of GHSL+ESA-CCI-LC+GUF built-settlement grid-cells with 1 grid-cell radius 2014","_rn_":"58003"},{"1":"430","2":"LBR","3":"Liberia","4":"urbpx_prp_5_100m_2014","5":"Proportion of GHSL+ESA-CCI-LC+GUF built-settlement grid-cells with 5 grid-cell radius 2014","_rn_":"58004"},{"1":"430","2":"LBR","3":"Liberia","4":"urbpx_prp_10_100m_2014","5":"Proportion of GHSL+ESA-CCI-LC+GUF built-settlement grid-cells with 10 grid-cell radius 2014","_rn_":"58005"},{"1":"430","2":"LBR","3":"Liberia","4":"urbpx_prp_15_100m_2014","5":"Proportion of GHSL+ESA-CCI-LC+GUF built-settlement grid-cells with 15 grid-cell radius 2014","_rn_":"58006"},{"1":"430","2":"LBR","3":"Liberia","4":"srtm_slope_100m","5":"SRTM slope 2000","_rn_":"60363"},{"1":"430","2":"LBR","3":"Liberia","4":"srtm_topo_100m","5":"SRTM elevation 2000","_rn_":"60612"},{"1":"430","2":"LBR","3":"Liberia","4":"viirs_100m_2012","5":"VIIRS night-time lights 2012","_rn_":"61357"},{"1":"430","2":"LBR","3":"Liberia","4":"viirs_100m_2013","5":"VIIRS night-time lights 2013","_rn_":"61358"},{"1":"430","2":"LBR","3":"Liberia","4":"viirs_100m_2014","5":"VIIRS night-time lights 2014","_rn_":"61359"},{"1":"430","2":"LBR","3":"Liberia","4":"viirs_100m_2015","5":"VIIRS night-time lights 2015","_rn_":"61360"},{"1":"430","2":"LBR","3":"Liberia","4":"viirs_100m_2016","5":"VIIRS night-time lights 2016","_rn_":"61361"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_0_2019","5":"Estimated 0-12 month old female per grid-cell  in 2019","_rn_":"66446"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_1_2019","5":"Estimated 1-4 year old female per grid-cell  in 2019","_rn_":"66447"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_5_2019","5":"Estimated 5-8 year old female per grid-cell  in 2019","_rn_":"66448"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_10_2019","5":"Estimated 10-14 year old female per grid-cell  in 2019","_rn_":"66449"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_15_2019","5":"Estimated 15-19 year old female per grid-cell  in 2019","_rn_":"66450"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_20_2019","5":"Estimated 20-24 year old female per grid-cell  in 2019","_rn_":"66451"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_25_2019","5":"Estimated 25-29 year old female per grid-cell  in 2019","_rn_":"66452"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_30_2019","5":"Estimated 30-34 year old female per grid-cell  in 2019","_rn_":"66453"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_35_2019","5":"Estimated 35-39 year old female per grid-cell  in 2019","_rn_":"66454"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_40_2019","5":"Estimated 40-44 year old female per grid-cell  in 2019","_rn_":"66455"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_45_2019","5":"Estimated 45-49 year old female per grid-cell  in 2019","_rn_":"66456"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_50_2019","5":"Estimated 50-54 year old female per grid-cell  in 2019","_rn_":"66457"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_55_2019","5":"Estimated 55-59 year old female per grid-cell  in 2019","_rn_":"66458"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_60_2019","5":"Estimated 60-64 year old female per grid-cell  in 2019","_rn_":"66459"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_65_2019","5":"Estimated 65-69 year old female per grid-cell  in 2019","_rn_":"66460"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_70_2019","5":"Estimated 70-74 year old female per grid-cell  in 2019","_rn_":"66461"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_75_2019","5":"Estimated 75-79 year old female per grid-cell  in 2019","_rn_":"66462"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_80_2019","5":"Estimated 80 year old female per grid-cell  in 2019","_rn_":"66463"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_0_2019","5":"Estimated 0-12 month old male per grid-cell  in 2019","_rn_":"66464"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_1_2019","5":"Estimated 1-4 year old male per grid-cell  in 2019","_rn_":"66465"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_5_2019","5":"Estimated 5-8 year old male per grid-cell  in 2019","_rn_":"66466"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_10_2019","5":"Estimated 10-14 year old male per grid-cell  in 2019","_rn_":"66467"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_15_2019","5":"Estimated 15-19 year old male per grid-cell  in 2019","_rn_":"66468"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_20_2019","5":"Estimated 20-24 year old male per grid-cell  in 2019","_rn_":"66469"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_25_2019","5":"Estimated 25-29 year old male per grid-cell  in 2019","_rn_":"66470"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_30_2019","5":"Estimated 30-34 year old male per grid-cell  in 2019","_rn_":"66471"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_35_2019","5":"Estimated 35-39 year old male per grid-cell  in 2019","_rn_":"66472"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_40_2019","5":"Estimated 40-44 year old male per grid-cell  in 2019","_rn_":"66473"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_45_2019","5":"Estimated 45-49 year old male per grid-cell  in 2019","_rn_":"66474"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_50_2019","5":"Estimated 50-54 year old male per grid-cell  in 2019","_rn_":"66475"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_55_2019","5":"Estimated 55-59 year old male per grid-cell  in 2019","_rn_":"66476"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_60_2019","5":"Estimated 60-64 year old male per grid-cell  in 2019","_rn_":"66477"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_65_2019","5":"Estimated 65-69 year old male per grid-cell  in 2019","_rn_":"66478"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_70_2019","5":"Estimated 70-74 year old male per grid-cell  in 2019","_rn_":"66479"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_75_2019","5":"Estimated 75-79 year old male per grid-cell  in 2019","_rn_":"66480"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_80_2019","5":"Estimated 80 year old male per grid-cell  in 2019","_rn_":"66481"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_0_2020","5":"Estimated 0-12 month old female per grid-cell  in 2020","_rn_":"75410"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_1_2020","5":"Estimated 1-4 year old female per grid-cell  in 2020","_rn_":"75411"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_5_2020","5":"Estimated 5-8 year old female per grid-cell  in 2020","_rn_":"75412"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_10_2020","5":"Estimated 10-14 year old female per grid-cell  in 2020","_rn_":"75413"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_15_2020","5":"Estimated 15-19 year old female per grid-cell  in 2020","_rn_":"75414"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_20_2020","5":"Estimated 20-24 year old female per grid-cell  in 2020","_rn_":"75415"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_25_2020","5":"Estimated 25-29 year old female per grid-cell  in 2020","_rn_":"75416"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_30_2020","5":"Estimated 30-34 year old female per grid-cell  in 2020","_rn_":"75417"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_35_2020","5":"Estimated 35-39 year old female per grid-cell  in 2020","_rn_":"75418"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_40_2020","5":"Estimated 40-44 year old female per grid-cell  in 2020","_rn_":"75419"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_45_2020","5":"Estimated 45-49 year old female per grid-cell  in 2020","_rn_":"75420"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_50_2020","5":"Estimated 50-54 year old female per grid-cell  in 2020","_rn_":"75421"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_55_2020","5":"Estimated 55-59 year old female per grid-cell  in 2020","_rn_":"75422"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_60_2020","5":"Estimated 60-64 year old female per grid-cell  in 2020","_rn_":"75423"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_65_2020","5":"Estimated 65-69 year old female per grid-cell  in 2020","_rn_":"75424"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_70_2020","5":"Estimated 70-74 year old female per grid-cell  in 2020","_rn_":"75425"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_75_2020","5":"Estimated 75-79 year old female per grid-cell  in 2020","_rn_":"75426"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_80_2020","5":"Estimated 80 year old female per grid-cell  in 2020","_rn_":"75427"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_0_2020","5":"Estimated 0-12 month old male per grid-cell  in 2020","_rn_":"75428"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_1_2020","5":"Estimated 1-4 year old male per grid-cell  in 2020","_rn_":"75429"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_5_2020","5":"Estimated 5-8 year old male per grid-cell  in 2020","_rn_":"75430"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_10_2020","5":"Estimated 10-14 year old male per grid-cell  in 2020","_rn_":"75431"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_15_2020","5":"Estimated 15-19 year old male per grid-cell  in 2020","_rn_":"75432"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_20_2020","5":"Estimated 20-24 year old male per grid-cell  in 2020","_rn_":"75433"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_25_2020","5":"Estimated 25-29 year old male per grid-cell  in 2020","_rn_":"75434"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_30_2020","5":"Estimated 30-34 year old male per grid-cell  in 2020","_rn_":"75435"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_35_2020","5":"Estimated 35-39 year old male per grid-cell  in 2020","_rn_":"75436"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_40_2020","5":"Estimated 40-44 year old male per grid-cell  in 2020","_rn_":"75437"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_45_2020","5":"Estimated 45-49 year old male per grid-cell  in 2020","_rn_":"75438"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_50_2020","5":"Estimated 50-54 year old male per grid-cell  in 2020","_rn_":"75439"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_55_2020","5":"Estimated 55-59 year old male per grid-cell  in 2020","_rn_":"75440"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_60_2020","5":"Estimated 60-64 year old male per grid-cell  in 2020","_rn_":"75441"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_65_2020","5":"Estimated 65-69 year old male per grid-cell  in 2020","_rn_":"75442"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_70_2020","5":"Estimated 70-74 year old male per grid-cell  in 2020","_rn_":"75443"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_75_2020","5":"Estimated 75-79 year old male per grid-cell  in 2020","_rn_":"75444"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_80_2020","5":"Estimated 80 year old male per grid-cell  in 2020","_rn_":"75445"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_0_2020_constrained","5":"Estimated 0-12 month old female per grid-cell  in 2020. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"84158"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_1_2020_constrained","5":"Estimated 1-4 year old female per grid-cell  in 2020. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"84159"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_5_2020_constrained","5":"Estimated 5-8 year old female per grid-cell  in 2020. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"84160"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_10_2020_constrained","5":"Estimated 10-14 year old female per grid-cell  in 2020. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"84161"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_15_2020_constrained","5":"Estimated 15-19 year old female per grid-cell  in 2020. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"84162"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_20_2020_constrained","5":"Estimated 20-24 year old female per grid-cell  in 2020. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"84163"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_25_2020_constrained","5":"Estimated 25-29 year old female per grid-cell  in 2020. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"84164"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_30_2020_constrained","5":"Estimated 30-34 year old female per grid-cell  in 2020. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"84165"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_35_2020_constrained","5":"Estimated 35-39 year old female per grid-cell  in 2020. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"84166"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_40_2020_constrained","5":"Estimated 40-44 year old female per grid-cell  in 2020. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"84167"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_45_2020_constrained","5":"Estimated 45-49 year old female per grid-cell  in 2020. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"84168"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_50_2020_constrained","5":"Estimated 50-54 year old female per grid-cell  in 2020. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"84169"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_55_2020_constrained","5":"Estimated 55-59 year old female per grid-cell  in 2020. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"84170"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_60_2020_constrained","5":"Estimated 60-64 year old female per grid-cell  in 2020. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"84171"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_65_2020_constrained","5":"Estimated 65-69 year old female per grid-cell  in 2020. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"84172"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_70_2020_constrained","5":"Estimated 70-74 year old female per grid-cell  in 2020. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"84173"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_75_2020_constrained","5":"Estimated 75-79 year old female per grid-cell  in 2020. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"84174"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_80_2020_constrained","5":"Estimated 80 year old female per grid-cell  in 2020. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"84175"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_0_2020_constrained","5":"Estimated 0-12 month old male per grid-cell  in 2020. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"84176"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_1_2020_constrained","5":"Estimated 1-4 year old male per grid-cell  in 2020. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"84177"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_5_2020_constrained","5":"Estimated 5-8 year old male per grid-cell  in 2020. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"84178"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_10_2020_constrained","5":"Estimated 10-14 year old male per grid-cell  in 2020. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"84179"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_15_2020_constrained","5":"Estimated 15-19 year old male per grid-cell  in 2020. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"84180"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_20_2020_constrained","5":"Estimated 20-24 year old male per grid-cell  in 2020. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"84181"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_25_2020_constrained","5":"Estimated 25-29 year old male per grid-cell  in 2020. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"84182"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_30_2020_constrained","5":"Estimated 30-34 year old male per grid-cell  in 2020. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"84183"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_35_2020_constrained","5":"Estimated 35-39 year old male per grid-cell  in 2020. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"84184"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_40_2020_constrained","5":"Estimated 40-44 year old male per grid-cell  in 2020. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"84185"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_45_2020_constrained","5":"Estimated 45-49 year old male per grid-cell  in 2020. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"84186"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_50_2020_constrained","5":"Estimated 50-54 year old male per grid-cell  in 2020. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"84187"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_55_2020_constrained","5":"Estimated 55-59 year old male per grid-cell  in 2020. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"84188"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_60_2020_constrained","5":"Estimated 60-64 year old male per grid-cell  in 2020. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"84189"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_65_2020_constrained","5":"Estimated 65-69 year old male per grid-cell  in 2020. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"84190"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_70_2020_constrained","5":"Estimated 70-74 year old male per grid-cell  in 2020. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"84191"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_75_2020_constrained","5":"Estimated 75-79 year old male per grid-cell  in 2020. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"84192"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_80_2020_constrained","5":"Estimated 80 year old male per grid-cell  in 2020. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"84193"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_0_2020_constrained_UNadj","5":"Estimated 0-12 month old female per grid-cell  in 2020.  with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"92834"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_1_2020_constrained_UNadj","5":"Estimated 1-4 year old female per grid-cell  in 2020.  with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"92835"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_5_2020_constrained_UNadj","5":"Estimated 5-8 year old female per grid-cell  in 2020.  with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"92836"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_10_2020_constrained_UNadj","5":"Estimated 10-14 year old female per grid-cell  in 2020.  with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"92837"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_15_2020_constrained_UNadj","5":"Estimated 15-19 year old female per grid-cell  in 2020.  with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"92838"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_20_2020_constrained_UNadj","5":"Estimated 20-24 year old female per grid-cell  in 2020.  with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"92839"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_25_2020_constrained_UNadj","5":"Estimated 25-29 year old female per grid-cell  in 2020.  with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"92840"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_30_2020_constrained_UNadj","5":"Estimated 30-34 year old female per grid-cell  in 2020.  with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"92841"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_35_2020_constrained_UNadj","5":"Estimated 35-39 year old female per grid-cell  in 2020.  with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"92842"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_40_2020_constrained_UNadj","5":"Estimated 40-44 year old female per grid-cell  in 2020.  with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"92843"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_45_2020_constrained_UNadj","5":"Estimated 45-49 year old female per grid-cell  in 2020.  with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"92844"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_50_2020_constrained_UNadj","5":"Estimated 50-54 year old female per grid-cell  in 2020.  with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"92845"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_55_2020_constrained_UNadj","5":"Estimated 55-59 year old female per grid-cell  in 2020.  with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"92846"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_60_2020_constrained_UNadj","5":"Estimated 60-64 year old female per grid-cell  in 2020.  with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"92847"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_65_2020_constrained_UNadj","5":"Estimated 65-69 year old female per grid-cell  in 2020.  with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"92848"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_70_2020_constrained_UNadj","5":"Estimated 70-74 year old female per grid-cell  in 2020.  with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"92849"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_75_2020_constrained_UNadj","5":"Estimated 75-79 year old female per grid-cell  in 2020.  with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"92850"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_f_80_2020_constrained_UNadj","5":"Estimated 80 year old female per grid-cell  in 2020.  with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"92851"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_0_2020_constrained_UNadj","5":"Estimated 0-12 month old male per grid-cell  in 2020.  with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"92852"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_1_2020_constrained_UNadj","5":"Estimated 1-4 year old male per grid-cell  in 2020.  with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"92853"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_5_2020_constrained_UNadj","5":"Estimated 5-8 year old male per grid-cell  in 2020.  with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"92854"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_10_2020_constrained_UNadj","5":"Estimated 10-14 year old male per grid-cell  in 2020.  with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"92855"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_15_2020_constrained_UNadj","5":"Estimated 15-19 year old male per grid-cell  in 2020.  with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"92856"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_20_2020_constrained_UNadj","5":"Estimated 20-24 year old male per grid-cell  in 2020.  with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"92857"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_25_2020_constrained_UNadj","5":"Estimated 25-29 year old male per grid-cell  in 2020.  with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"92858"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_30_2020_constrained_UNadj","5":"Estimated 30-34 year old male per grid-cell  in 2020.  with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"92859"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_35_2020_constrained_UNadj","5":"Estimated 35-39 year old male per grid-cell  in 2020.  with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"92860"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_40_2020_constrained_UNadj","5":"Estimated 40-44 year old male per grid-cell  in 2020.  with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"92861"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_45_2020_constrained_UNadj","5":"Estimated 45-49 year old male per grid-cell  in 2020.  with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"92862"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_50_2020_constrained_UNadj","5":"Estimated 50-54 year old male per grid-cell  in 2020.  with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"92863"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_55_2020_constrained_UNadj","5":"Estimated 55-59 year old male per grid-cell  in 2020.  with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"92864"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_60_2020_constrained_UNadj","5":"Estimated 60-64 year old male per grid-cell  in 2020.  with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"92865"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_65_2020_constrained_UNadj","5":"Estimated 65-69 year old male per grid-cell  in 2020.  with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"92866"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_70_2020_constrained_UNadj","5":"Estimated 70-74 year old male per grid-cell  in 2020.  with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"92867"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_75_2020_constrained_UNadj","5":"Estimated 75-79 year old male per grid-cell  in 2020.  with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"92868"},{"1":"430","2":"LBR","3":"Liberia","4":"agesex_m_80_2020_constrained_UNadj","5":"Estimated 80 year old male per grid-cell  in 2020.  with country total adjusted to match the corresponding UNPD estimate. The dataset is available to download in Geotiff format at a resolution of 3 arc (approximately 100m at the equator). NoData values represent areas that were mapped as unsettled based on building footprints provided by the Digitize Africa project of Ecopia.AI and Maxar Technologies (2020)","_rn_":"92869"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+<p>We can check the description column to see what datasets are available. Let's download the population data for Liberia for the year 2014 at a 100m resolution. The <code>wpgpGetCountryDataset</code> function will then download a raster dataset based on ISO3 code and covariate name.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>lbr_pop_url <span class="ot">&lt;-</span> <span class="fu">wpgpGetCountryDataset</span>(<span class="at">ISO3 =</span> <span class="st">"LBR"</span>, <span class="at">covariate =</span> <span class="st">"ppp_2014"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>This will download a raster file locally in a temporary directory. The path to the downloaded file is contained in the <code>lbr_pop_url</code> variable and when we introduce the <code>terra</code> package in the next sections we will show how to upoload the population raster into R. It is also possible to specify the directory where we want the raster to be downloaded using the <code>destDir</code> argument.</p>
+</section>
+</section>
+<section id="importing-and-standardizing-spatial-data" class="level2" data-number="2.5">
+<h2 data-number="2.5" class="anchored" data-anchor-id="importing-and-standardizing-spatial-data"><span class="header-section-number">2.5</span> Importing and standardizing spatial data</h2>
+<p>In geostatistical analysis, importing and standardizing spatial data is a critical step to ensure that data from different sources align and can be used effectively. Spatial data, whether it's vector data (points, lines, polygons) or raster data (grids), can come in various formats and may use different <strong>Coordinate Reference Systems (CRS)</strong>. To perform accurate spatial analyses, it's essential to import data correctly and ensure consistency in terms of projection and format. This section will cover how to import vector and raster data into R, explain the concept of CRS and sensure that different datasets align properly for subsequent geostatistical analysis.</p>
+<section id="importing-vector-data" class="level3" data-number="2.5.1">
+<h3 data-number="2.5.1" class="anchored" data-anchor-id="importing-vector-data"><span class="header-section-number">2.5.1</span> Importing vector data</h3>
+<p>Vector data are typically stored in formats such as <strong>shapefiles</strong> (<code>.shp</code>) or <strong>geopackages</strong> (<code>.gpkg</code>). The <code>sf</code> (simple features) package in R is the most common tool for handling vector data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the sf package</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Import a shapefile (e.g., administrative boundaries)</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>admin <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="st">"path_to_your_shapefile/Admin_Boundaries.shp"</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Inspect the data</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(admin)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(admin)  <span class="co"># Basic plot of the shapefile</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The <code>st_read()</code> function reads various spatial data formats, automatically recognizing file types.</p>
+</section>
+<section id="importing-raster-data" class="level3" data-number="2.5.2">
+<h3 data-number="2.5.2" class="anchored" data-anchor-id="importing-raster-data"><span class="header-section-number">2.5.2</span> Importing raster data</h3>
+<p>Raster data consists of a grid of cells, where each cell holds a value representing a spatial attribute such as elevation or temperature. The <code>terra</code> package in R is designed to work with raster data and has superseded the older <code>raster</code> package due to better performance and greater functionality. Let’s see now how to import a GeoTIFF file using <code>terra</code>. We can upload the population raster for Liberia that we have downloaded in <a href="#sec-pop-data" class="quarto-xref"><span>Section 2.4.2</span></a>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the terra package</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Import a raster file </span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>lbr_pop_100 <span class="ot">&lt;-</span> <span class="fu">rast</span>(lbr_pop_url)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Inspect the raster data</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(lbr_pop_100)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 2</code></pre>
+<pre><code>class       : SpatRaster 
+dimensions  : 5040, 4945, 1  (nrow, ncol, nlyr)
+resolution  : 0.0008333333, 0.0008333333  (x, y)
+extent      : -11.48625, -7.365417, 4.352084, 8.552084  (xmin, xmax, ymin, ymax)
+coord. ref. : lon/lat WGS 84 (EPSG:4326) 
+source      : lbr_ppp_2014.tif 
+name        : lbr_ppp_2014 
+min value   :  0.006426936 
+max value   : 92.716874581 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Basic plot of the raster</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(lbr_pop_100)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-lbr-pop" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-lbr-pop-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="02_handling-spatial-data_files/figure-html/fig-lbr-pop-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-lbr-pop-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2.2: Liberia population count for 2014 at 100m resolution
+</figcaption>
+</figure>
 </div>
 </div>
-<section id="importing-and-processing-spatial-data-in-r" class="level2" data-number="2.1">
-<h2 data-number="2.1" class="anchored" data-anchor-id="importing-and-processing-spatial-data-in-r"><span class="header-section-number">2.1</span> Importing and processing spatial data in R</h2>
+</div>
+<p>The output of <code>print()</code> provides a detailed summary of the raster’s properties. The <code>rast()</code> function reads raster files in formats like GeoTIFF, ASCII grid, or other common raster formats and then we used <code>plot()</code> as a quick way to visualize raster data.</p>
 </section>
-<section id="visualizing-geostatistical-data" class="level2" data-number="2.2">
-<h2 data-number="2.2" class="anchored" data-anchor-id="visualizing-geostatistical-data"><span class="header-section-number">2.2</span> Visualizing geostatistical data</h2>
+<section id="understanding-coordinate-reference-systems-crs" class="level3" data-number="2.5.3">
+<h3 data-number="2.5.3" class="anchored" data-anchor-id="understanding-coordinate-reference-systems-crs"><span class="header-section-number">2.5.3</span> Understanding coordinate reference systems (CRS)</h3>
+<p>When working with spatial data, especially from different sources, one of the most critical tasks is ensuring that all datasets share the same <strong>Coordinate Reference System (CRS)</strong>. A CRS defines how the two-dimensional map data corresponds to locations on the three-dimensional Earth. If different layers (e.g., raster and vector data) have different CRSs, they may not align correctly when plotted or analyzed together, leading to inaccurate analyses or visualizations.</p>
+<p>CRSs can either be:</p>
+<ul>
+<li><p><strong>Geographic</strong>: These use latitude and longitude coordinates to represent locations on the Earth’s surface. The most common example is <strong>WGS84</strong> (EPSG:4326), the default CRS used by GPS and global datasets.</p></li>
+<li><p><strong>Projected</strong>: These convert the Earth’s curved surface to a flat map and preserve certain properties like area, distance, or direction. Examples include <strong>Universal Transverse Mercator (UTM)</strong> or <strong>Albers Equal Area</strong> projections.</p></li>
+</ul>
+<p>In many cases, using a projected rather than a geographic CRS s preferred, especially when any summary statistic or parameter is distance-related. In a geographic CRS, distances between two points are calculated using angular coordinates (degrees), which do not translate easily into linear units like meters or kilometers. This makes interpreting distances challenging, as the length of a degree of latitude differs from the length of a degree of longitude. In contrast, a projected CRS uses a linear coordinate system (usually meters), ensuring that distances are accurately represented on a flat surface. This is important when computing spatial variograms, covariance functions, or some parameters in geostatistical models, where distance between sampling locations is a key factor. In this context, we assume that the default distance metric is Euclidean distance. However, an important exception to our recommendation arises when analyzing data across large, global-scale regions. In such cases, it is more appropriate to use a geographic CRS along with spherical distances, as these better reflect the curved nature of the Earth’s surface.</p>
 </section>
-<section id="section" class="level2" data-number="2.3">
-<h2 data-number="2.3" class="anchored" data-anchor-id="section"><span class="header-section-number">2.3</span> </h2>
+<section id="epsg-codes" class="level3" data-number="2.5.4">
+<h3 data-number="2.5.4" class="anchored" data-anchor-id="epsg-codes"><span class="header-section-number">2.5.4</span> EPSG codes</h3>
+<p>An <strong>EPSG code</strong> is a unique identifier that defines a CRS. These codes, managed by the <strong>European Petroleum Survey Group (EPSG)</strong>, are widely used in geographic information systems (GIS) to simplify the use of specific projections, ensuring that spatial data is correctly aligned and interpreted. Each EPSG code corresponds to a unique CRS or map projection, making it easier to standardize and manage spatial data from different sources.</p>
+<p>Some key and often used EPSG codes are:</p>
+<ul>
+<li><p><strong>EPSG:4326</strong>: This code represents <strong>WGS84</strong>, the most commonly used geographic CRS, which uses latitude and longitude to describe locations on the Earth’s surface. It is the default CRS for global datasets and GPS systems.</p></li>
+<li><p><strong>EPSG:326XX</strong>: These codes represent the <strong>UTM (Universal Transverse Mercator)</strong> projection, which divides the world into zones. Each zone is optimized to preserve local distances and areas. For example (e.g.&nbsp;EPSG:32629: UTM Zone 29N, covering parts of Western Africa, including Liberia)</p></li>
+<li><p><strong>EPSG:3857</strong>: This code is for the <strong>Web Mercator projection</strong>, which is widely used for web mapping services, including <strong>Google Maps</strong>, <strong>OpenStreetMap</strong>, and <strong>Bing Maps</strong>. This projected CRS uses meters as the unit of distance and is optimized for visualizing maps on a 2D plane, though it distorts area and distance, especially at high latitudes. It is well-suited for interactive online mapping but not ideal for precise distance-based geostatistical analyses.</p></li>
+</ul>
+</section>
+<section id="convert-a-data-frame-to-an-sf-object" class="level3" data-number="2.5.5">
+<h3 data-number="2.5.5" class="anchored" data-anchor-id="convert-a-data-frame-to-an-sf-object"><span class="header-section-number">2.5.5</span> Convert a data frame to an <code>sf</code> object</h3>
+<p>In geospatial analysis, data is often provided in tabular formats like CSV files that contain spatial coordinates (e.g., latitude and longitude). To use these data effectively in R, it is necessary to convert the data frame into an <code>sf</code> object, which is the standard format for working with spatial data in R. Here we show how to achieve this, we can use the Liberia data available in the <code>RiskMap</code> package as it is a data frame.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the RiskMap package</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(RiskMap)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the Liberia data set</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"liberia"</span>)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert the data frame to an sf object</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>liberia_sf <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(liberia, </span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>                       <span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"long"</span>, <span class="st">"lat"</span>), </span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>                       <span class="at">crs =</span> <span class="dv">4326</span>)</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Inspect the new sf object</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>liberia_sf</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["ntest"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["npos"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["elevation"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["log_elevation"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["geometry"],"name":[5],"type":["sf_POINT"],"align":["right"]}],"data":[{"1":"50","2":"14","3":"17.82621","4":"2.880670","5":"<sf_POINT>","_rn_":"1"},{"1":"46","2":"10","3":"104.85070","4":"4.652537","5":"<sf_POINT>","_rn_":"2"},{"1":"43","2":"11","3":"119.09543","4":"4.779925","5":"<sf_POINT>","_rn_":"3"},{"1":"50","2":"10","3":"144.10921","4":"4.970571","5":"<sf_POINT>","_rn_":"4"},{"1":"48","2":"9","3":"19.03508","4":"2.946283","5":"<sf_POINT>","_rn_":"5"},{"1":"50","2":"13","3":"16.99954","4":"2.833186","5":"<sf_POINT>","_rn_":"6"},{"1":"43","2":"9","3":"137.75360","4":"4.925467","5":"<sf_POINT>","_rn_":"7"},{"1":"50","2":"11","3":"101.75000","4":"4.622519","5":"<sf_POINT>","_rn_":"8"},{"1":"47","2":"11","3":"147.12867","4":"4.991308","5":"<sf_POINT>","_rn_":"9"},{"1":"43","2":"0","3":"26.61054","4":"3.281308","5":"<sf_POINT>","_rn_":"10"},{"1":"43","2":"1","3":"126.85216","4":"4.843022","5":"<sf_POINT>","_rn_":"11"},{"1":"48","2":"10","3":"191.12602","4":"5.252933","5":"<sf_POINT>","_rn_":"12"},{"1":"48","2":"1","3":"72.26974","4":"4.280405","5":"<sf_POINT>","_rn_":"13"},{"1":"50","2":"1","3":"83.05280","4":"4.419477","5":"<sf_POINT>","_rn_":"14"},{"1":"50","2":"9","3":"179.05409","4":"5.187688","5":"<sf_POINT>","_rn_":"15"},{"1":"43","2":"7","3":"219.63379","4":"5.391962","5":"<sf_POINT>","_rn_":"16"},{"1":"50","2":"10","3":"275.38584","4":"5.618173","5":"<sf_POINT>","_rn_":"17"},{"1":"47","2":"15","3":"168.74192","4":"5.128370","5":"<sf_POINT>","_rn_":"18"},{"1":"49","2":"17","3":"153.82902","4":"5.035842","5":"<sf_POINT>","_rn_":"19"},{"1":"43","2":"15","3":"182.72222","4":"5.207967","5":"<sf_POINT>","_rn_":"20"},{"1":"45","2":"7","3":"209.68256","4":"5.345595","5":"<sf_POINT>","_rn_":"21"},{"1":"49","2":"10","3":"293.68001","4":"5.682491","5":"<sf_POINT>","_rn_":"22"},{"1":"50","2":"9","3":"266.37234","4":"5.584895","5":"<sf_POINT>","_rn_":"23"},{"1":"41","2":"8","3":"391.74481","4":"5.970611","5":"<sf_POINT>","_rn_":"24"},{"1":"50","2":"14","3":"328.63853","4":"5.794958","5":"<sf_POINT>","_rn_":"25"},{"1":"50","2":"13","3":"243.03890","4":"5.493222","5":"<sf_POINT>","_rn_":"26"},{"1":"43","2":"8","3":"248.74826","4":"5.516441","5":"<sf_POINT>","_rn_":"27"},{"1":"50","2":"12","3":"261.13335","4":"5.565031","5":"<sf_POINT>","_rn_":"28"},{"1":"45","2":"9","3":"314.68551","4":"5.751574","5":"<sf_POINT>","_rn_":"29"},{"1":"42","2":"8","3":"235.96129","4":"5.463668","5":"<sf_POINT>","_rn_":"30"},{"1":"49","2":"11","3":"324.14160","4":"5.781180","5":"<sf_POINT>","_rn_":"31"},{"1":"50","2":"9","3":"368.04498","4":"5.908205","5":"<sf_POINT>","_rn_":"32"},{"1":"50","2":"14","3":"355.43776","4":"5.873350","5":"<sf_POINT>","_rn_":"33"},{"1":"50","2":"16","3":"528.46907","4":"6.269984","5":"<sf_POINT>","_rn_":"34"},{"1":"50","2":"12","3":"43.45274","4":"3.771674","5":"<sf_POINT>","_rn_":"35"},{"1":"46","2":"14","3":"106.91602","4":"4.672044","5":"<sf_POINT>","_rn_":"36"},{"1":"50","2":"4","3":"26.98081","4":"3.295126","5":"<sf_POINT>","_rn_":"37"},{"1":"50","2":"3","3":"16.39052","4":"2.796703","5":"<sf_POINT>","_rn_":"38"},{"1":"46","2":"10","3":"62.49984","4":"4.135164","5":"<sf_POINT>","_rn_":"39"},{"1":"50","2":"10","3":"59.90005","4":"4.092677","5":"<sf_POINT>","_rn_":"40"},{"1":"50","2":"6","3":"28.54618","4":"3.351523","5":"<sf_POINT>","_rn_":"41"},{"1":"43","2":"5","3":"15.95256","4":"2.769619","5":"<sf_POINT>","_rn_":"42"},{"1":"50","2":"10","3":"67.85720","4":"4.217405","5":"<sf_POINT>","_rn_":"43"},{"1":"43","2":"1","3":"11.74960","4":"2.463819","5":"<sf_POINT>","_rn_":"44"},{"1":"50","2":"9","3":"154.26286","4":"5.038658","5":"<sf_POINT>","_rn_":"45"},{"1":"46","2":"14","3":"232.60584","4":"5.449345","5":"<sf_POINT>","_rn_":"46"},{"1":"43","2":"9","3":"221.21223","4":"5.399123","5":"<sf_POINT>","_rn_":"47"},{"1":"49","2":"15","3":"307.24208","4":"5.727636","5":"<sf_POINT>","_rn_":"48"},{"1":"50","2":"14","3":"306.99560","4":"5.726833","5":"<sf_POINT>","_rn_":"49"},{"1":"50","2":"12","3":"339.23185","4":"5.826684","5":"<sf_POINT>","_rn_":"50"},{"1":"46","2":"9","3":"350.72552","4":"5.860004","5":"<sf_POINT>","_rn_":"51"},{"1":"50","2":"16","3":"468.89988","4":"6.150389","5":"<sf_POINT>","_rn_":"52"},{"1":"50","2":"10","3":"350.43568","4":"5.859177","5":"<sf_POINT>","_rn_":"53"},{"1":"44","2":"9","3":"462.81669","4":"6.137331","5":"<sf_POINT>","_rn_":"54"},{"1":"50","2":"11","3":"461.43930","4":"6.134351","5":"<sf_POINT>","_rn_":"55"},{"1":"43","2":"8","3":"530.01579","4":"6.272907","5":"<sf_POINT>","_rn_":"56"},{"1":"50","2":"14","3":"524.92094","4":"6.263248","5":"<sf_POINT>","_rn_":"57"},{"1":"48","2":"10","3":"509.12362","4":"6.232691","5":"<sf_POINT>","_rn_":"58"},{"1":"50","2":"11","3":"585.21129","4":"6.371973","5":"<sf_POINT>","_rn_":"59"},{"1":"43","2":"10","3":"420.64098","4":"6.041780","5":"<sf_POINT>","_rn_":"60"},{"1":"42","2":"9","3":"413.50931","4":"6.024680","5":"<sf_POINT>","_rn_":"61"},{"1":"45","2":"1","3":"30.28219","4":"3.410560","5":"<sf_POINT>","_rn_":"62"},{"1":"50","2":"3","3":"29.04470","4":"3.368836","5":"<sf_POINT>","_rn_":"63"},{"1":"47","2":"1","3":"12.56866","4":"2.531207","5":"<sf_POINT>","_rn_":"64"},{"1":"50","2":"10","3":"67.58882","4":"4.213443","5":"<sf_POINT>","_rn_":"65"},{"1":"41","2":"9","3":"39.58975","4":"3.678570","5":"<sf_POINT>","_rn_":"66"},{"1":"50","2":"8","3":"131.33305","4":"4.877736","5":"<sf_POINT>","_rn_":"67"},{"1":"48","2":"1","3":"10.60796","4":"2.361604","5":"<sf_POINT>","_rn_":"68"},{"1":"40","2":"3","3":"21.68275","4":"3.076517","5":"<sf_POINT>","_rn_":"69"},{"1":"50","2":"4","3":"59.05072","4":"4.078397","5":"<sf_POINT>","_rn_":"70"},{"1":"44","2":"8","3":"74.88933","4":"4.316011","5":"<sf_POINT>","_rn_":"71"},{"1":"50","2":"10","3":"97.90856","4":"4.584034","5":"<sf_POINT>","_rn_":"72"},{"1":"42","2":"9","3":"132.04637","4":"4.883153","5":"<sf_POINT>","_rn_":"73"},{"1":"49","2":"2","3":"27.77351","4":"3.324083","5":"<sf_POINT>","_rn_":"74"},{"1":"40","2":"2","3":"19.23788","4":"2.956881","5":"<sf_POINT>","_rn_":"75"},{"1":"50","2":"4","3":"34.36730","4":"3.537105","5":"<sf_POINT>","_rn_":"76"},{"1":"50","2":"11","3":"117.13212","4":"4.763303","5":"<sf_POINT>","_rn_":"77"},{"1":"46","2":"10","3":"58.78720","4":"4.073924","5":"<sf_POINT>","_rn_":"78"},{"1":"50","2":"10","3":"196.56726","4":"5.281005","5":"<sf_POINT>","_rn_":"79"},{"1":"50","2":"8","3":"222.79488","4":"5.406252","5":"<sf_POINT>","_rn_":"80"},{"1":"48","2":"11","3":"71.72164","4":"4.272793","5":"<sf_POINT>","_rn_":"81"},{"1":"50","2":"12","3":"112.04979","4":"4.718943","5":"<sf_POINT>","_rn_":"82"},{"1":"40","2":"7","3":"261.60762","4":"5.566846","5":"<sf_POINT>","_rn_":"83"},{"1":"50","2":"6","3":"255.48200","4":"5.543152","5":"<sf_POINT>","_rn_":"84"},{"1":"48","2":"10","3":"204.13043","4":"5.318759","5":"<sf_POINT>","_rn_":"85"},{"1":"50","2":"13","3":"210.40515","4":"5.349035","5":"<sf_POINT>","_rn_":"86"},{"1":"50","2":"9","3":"238.36232","4":"5.473792","5":"<sf_POINT>","_rn_":"87"},{"1":"50","2":"10","3":"295.52640","4":"5.688758","5":"<sf_POINT>","_rn_":"88"},{"1":"43","2":"9","3":"168.63179","4":"5.127718","5":"<sf_POINT>","_rn_":"89"},{"1":"50","2":"11","3":"281.69646","4":"5.640830","5":"<sf_POINT>","_rn_":"90"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(liberia_sf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="02_handling-spatial-data_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The <code>st_as_sf()</code> function converts the data frame into an <code>sf</code> object. The <code>coords</code> argument specifies which columns contain the spatial coordinates and the <code>crs</code> argument assigns the CRS that in this case we know being WGS84 (EPSG:4326). The <code>sf</code> object can now be used for operations such as spatial joins, distance calculations, and mapping with other spatial layers. Note that the columns containing the spatial coordinates have been replaced by a <code>geometry</code> column, which now stores this information. If you would like to retain the original coordinate columns in the output, you can set the <code>remove</code> argument to <code>FALSE</code> when converting the data frame to an <code>sf</code> object.</p>
+</section>
+<section id="working-with-crss-in-r" class="level3" data-number="2.5.6">
+<h3 data-number="2.5.6" class="anchored" data-anchor-id="working-with-crss-in-r"><span class="header-section-number">2.5.6</span> Working with CRSs in R</h3>
+<p>When working with data from multiple sources, such as environmental layers, population data, or administrative boundaries, ensuring that all datasets share the same CRS is essential for accurate spatial analysis. This section covers the core tasks involved in managing CRSs in R: checking the CRS of spatial data to ensure datasets are compatible and Reprojecting spatial data into a common CRS when necessary.</p>
+<section id="checking-the-crs-of-spatial-data" class="level4" data-number="2.5.6.1">
+<h4 data-number="2.5.6.1" class="anchored" data-anchor-id="checking-the-crs-of-spatial-data"><span class="header-section-number">2.5.6.1</span> Checking the CRS of Spatial Data</h4>
+<p>Before performing any spatial operation, it's crucial to check the CRS of your spatial datasets. Knowing whether your data uses geographic coordinates (e.g., WGS84) or a projected coordinate system (e.g., UTM) helps ensure that they are aligned and ready for analysis. Both <code>sf</code> and <code>terra</code> provide functions to retrieve and inspect the CRS, ensuring datasets are spatially aligned before analysis. The <code>st_crs()</code> function retrieves the CRS information for vector data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check the CRS of the vector data</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">st_crs</span>(liberia_sf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Coordinate Reference System:
+  User input: EPSG:4326 
+  wkt:
+GEOGCRS["WGS 84",
+    ENSEMBLE["World Geodetic System 1984 ensemble",
+        MEMBER["World Geodetic System 1984 (Transit)"],
+        MEMBER["World Geodetic System 1984 (G730)"],
+        MEMBER["World Geodetic System 1984 (G873)"],
+        MEMBER["World Geodetic System 1984 (G1150)"],
+        MEMBER["World Geodetic System 1984 (G1674)"],
+        MEMBER["World Geodetic System 1984 (G1762)"],
+        MEMBER["World Geodetic System 1984 (G2139)"],
+        ELLIPSOID["WGS 84",6378137,298.257223563,
+            LENGTHUNIT["metre",1]],
+        ENSEMBLEACCURACY[2.0]],
+    PRIMEM["Greenwich",0,
+        ANGLEUNIT["degree",0.0174532925199433]],
+    CS[ellipsoidal,2],
+        AXIS["geodetic latitude (Lat)",north,
+            ORDER[1],
+            ANGLEUNIT["degree",0.0174532925199433]],
+        AXIS["geodetic longitude (Lon)",east,
+            ORDER[2],
+            ANGLEUNIT["degree",0.0174532925199433]],
+    USAGE[
+        SCOPE["Horizontal component of 3D system."],
+        AREA["World."],
+        BBOX[-90,-180,90,180]],
+    ID["EPSG",4326]]</code></pre>
+</div>
+</div>
+<p>The same can be achieved for raster data with the <code>crs()</code> function from the <code>terra</code> package.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check the CRS of the raster data</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">crs</span>(lbr_pop_100, <span class="at">proj =</span> <span class="cn">TRUE</span>, <span class="at">describe =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":["name"],"name":[1],"type":["chr"],"align":["left"]},{"label":["authority"],"name":[2],"type":["chr"],"align":["left"]},{"label":["code"],"name":[3],"type":["chr"],"align":["left"]},{"label":["area"],"name":[4],"type":["chr"],"align":["left"]},{"label":["extent"],"name":[5],"type":["list"],"align":["right"]},{"label":["proj"],"name":[6],"type":["chr"],"align":["left"]}],"data":[{"1":"WGS 84","2":"EPSG","3":"4326","4":"NA","5":"<lgl [4]>","6":"+proj=longlat +datum=WGS84 +no_defs"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+</section>
+<section id="reprojecting-spatial-data-to-a-common-crs" class="level4" data-number="2.5.6.2">
+<h4 data-number="2.5.6.2" class="anchored" data-anchor-id="reprojecting-spatial-data-to-a-common-crs"><span class="header-section-number">2.5.6.2</span> Reprojecting spatial data to a common CRS</h4>
+<p>If your datasets have different CRSs or if you want to change CRS (e.g.&nbsp;from geographical to projected) you will need to reproject one or more datasets so they can be spatially aligned. This ensures that they can be overlaid and analyzed together. For vector data, <code>st_transform()</code> reprojects the data into a specified CRS. This example transforms the liberia point data from WGS84 into UTM. To know what’s the correct UTM zone and hence EPSG code for Liberia we can use the <code>get_epsg_utm</code> function from the <code>RiskMap</code> package.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># MOVE THIS INTO RISKMAP</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>get_epsg_utm <span class="ot">&lt;-</span> <span class="cf">function</span>(sf_object) {</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Ensure the input is an sf object</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">inherits</span>(sf_object, <span class="st">"sf"</span>)) {</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stop</span>(<span class="st">"Input must be an sf object."</span>)</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Check if the CRS is WGS 84 (EPSG: 4326)</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  crs <span class="ot">&lt;-</span> <span class="fu">st_crs</span>(sf_object)</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">is.null</span>(crs) <span class="sc">||</span> crs<span class="sc">$</span>epsg <span class="sc">!=</span> <span class="dv">4326</span>) {</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stop</span>(<span class="st">"Input sf object must have a CRS of WGS84 (EPSG: 4326)."</span>)</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Get the coordinates of the centroid of the sf object</span></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>  centroid <span class="ot">&lt;-</span> <span class="fu">st_centroid</span>(<span class="fu">st_union</span>(sf_object)) </span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>  coords <span class="ot">&lt;-</span> <span class="fu">st_coordinates</span>(centroid)  </span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Function to calculate UTM zone based on longitude</span></span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>  get_utm_zone <span class="ot">&lt;-</span> <span class="cf">function</span>(lon) {</span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>((<span class="fu">floor</span>((lon <span class="sc">+</span> <span class="dv">180</span>) <span class="sc">/</span> <span class="dv">6</span>) <span class="sc">%%</span> <span class="dv">60</span>) <span class="sc">+</span> <span class="dv">1</span>)</span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate UTM zone from longitude</span></span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>  utm_zone <span class="ot">&lt;-</span> <span class="fu">get_utm_zone</span>(coords[<span class="dv">1</span>])</span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Determine the EPSG code based on the latitude (north/south)</span></span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a>  epsg_code <span class="ot">&lt;-</span> <span class="cf">if</span> (coords[<span class="dv">2</span>] <span class="sc">&gt;=</span> <span class="dv">0</span>) {</span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a>    <span class="dv">32600</span> <span class="sc">+</span> utm_zone   <span class="co"># Northern Hemisphere</span></span>
+<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a>    <span class="dv">32700</span> <span class="sc">+</span> utm_zone   <span class="co"># Southern Hemisphere</span></span>
+<span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb13-34"><a href="#cb13-34" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Return the calculated EPSG code</span></span>
+<span id="cb13-35"><a href="#cb13-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(epsg_code)</span>
+<span id="cb13-36"><a href="#cb13-36" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb13-37"><a href="#cb13-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-38"><a href="#cb13-38" aria-hidden="true" tabindex="-1"></a><span class="co"># Obtain EPSG code for UTM for Liberia</span></span>
+<span id="cb13-39"><a href="#cb13-39" aria-hidden="true" tabindex="-1"></a><span class="fu">get_epsg_utm</span>(liberia_sf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 32629</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Reproject the vector data </span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>liberia_sf_utm <span class="ot">&lt;-</span> <span class="fu">st_transform</span>(liberia_sf, <span class="at">crs =</span> <span class="fu">get_epsg_utm</span>(liberia_sf))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Reprojecting raster data is more complex than reprojecting vector data due to the continuous nature of raster grids. The process involves recalculating cell values to fit a new grid based on the new CRS, which can lead to challenges like resampling, distortion, and data loss. When reprojecting a raster, the grid must adjust to the new CRS, often requiring resampling of cell values. The method you choose depends on the data type: <strong>nearest neighbor</strong> is best for categorical data like land use while <strong>bilinear or cubic interpolation</strong> is good for continuous data like temperature, where smooth transitions are needed.</p>
+<p>The function <code>project()</code> from the <code>terra</code> package can be used to reproject a raster.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>lbr_pop_100_utm <span class="ot">&lt;-</span> <span class="fu">project</span>(lbr_pop_100, </span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>                           <span class="fu">crs</span>(liberia_sf_utm),</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>                           <span class="at">method =</span> <span class="st">"bilinear"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Reprojecting a raster may alter its resolution. For example, reprojecting from geographic (degrees) to projected (meters) CRS can result in a mismatch between the original and new cell sizes. Moreover, distortion can occur when converting between projections, especially at high latitudes. Some cells may be stretched or compressed, leading to potential loss of information or edge artifacts. These distortions arise because the Earth is not flat, and projecting the curved surface of the Earth onto a flat plane (or vice versa) leads to trade-offs. For example, the Mercator projection preserves angles and shapes but distorts area, particularly near the poles.</p>
+<p>For these reasons, it’s often better to reproject vectors rather than rasters when both data types are used together and avoid as much as possible to change the CRS of raster. One way to achieve this is to work with WGS84 when performing all spatial operations like extraction of covariates from rasters and then transform only the point data to a projected CRS before fitting the model.</p>
+</section>
+</section>
+<section id="common-issues-and-considerations" class="level3" data-number="2.5.7">
+<h3 data-number="2.5.7" class="anchored" data-anchor-id="common-issues-and-considerations"><span class="header-section-number">2.5.7</span> Common Issues and Considerations</h3>
+<p>#NOT SURE ABOUT THIS, MAYBE EXPAND OR REMOVE</p>
+<ul>
+<li><p><strong>CRS Mismatch</strong>: One of the most common issues in spatial analysis is the mismatch of CRSs between datasets. Always check and reproject datasets if necessary before performing spatial operations like overlays or extractions.</p></li>
+<li><p><strong>Datum Transformations</strong>: In some cases, especially when working with datasets from different regions, a simple projection transformation may not be enough. You might need to handle datum shifts (e.g., from NAD83 to WGS84). R can handle these transformations, but it's important to be aware of them.</p></li>
+<li><p><strong>Choosing the Right CRS</strong>: The choice of CRS depends on your study area and the type of analysis. For global studies, WGS84 is often used. For regional studies, <strong>UTM</strong> or other local projections may be more appropriate to preserve accuracy in distances and areas.</p></li>
+</ul>
+</section>
+</section>
+<section id="extracting-covariate-data" class="level2" data-number="2.6">
+<h2 data-number="2.6" class="anchored" data-anchor-id="extracting-covariate-data"><span class="header-section-number">2.6</span> Extracting covariate data</h2>
+<p>In geostatistical models, the inclusion of relevant covariates (environmental, demographic, or climatic) can potentially enhances predictive accuracy. Covariate data often come from raster or polygon sources, and extracting these values for point locations is essential to link spatial context to point-referenced data. These covariates could include variables like temperature, elevation, land cover, or population density, which influence the spatial distribution of diseases. In this section, we will cover how to extract covariates at point locations from both polygon layers raster layers.</p>
+<section id="extracting-covariates-from-polygon-layers" class="level4" data-number="2.6.0.1">
+<h4 data-number="2.6.0.1" class="anchored" data-anchor-id="extracting-covariates-from-polygon-layers"><span class="header-section-number">2.6.0.1</span> Extracting covariates from polygon layers</h4>
+<p>Polygon layers contain discrete spatial entities, such as administrative boundaries or land use areas, with associated attributes. Extracting covariates from polygon layers involves associating point data with the attributes of the polygon in which they fall. Here is an example with…..NEED SOME DATA FOR THIS</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Perform a spatial join to transfer polygon attributes to the points</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>points_with_admin <span class="ot">&lt;-</span> <span class="fu">st_join</span>(liberia_sf, liberia_admin1[<span class="st">"shapeName"</span>])</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co"># View the results, points now include covariates from the polygon layer</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(points_with_admin)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["ntest"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["npos"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["elevation"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["log_elevation"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["shapeName"],"name":[5],"type":["chr"],"align":["left"]},{"label":["geometry"],"name":[6],"type":["sf_POINT"],"align":["right"]}],"data":[{"1":"50","2":"14","3":"17.82621","4":"2.880670","5":"Margibi","6":"<sf_POINT>","_rn_":"1"},{"1":"46","2":"10","3":"104.85070","4":"4.652537","5":"Montserrado","6":"<sf_POINT>","_rn_":"2"},{"1":"43","2":"11","3":"119.09543","4":"4.779925","5":"Margibi","6":"<sf_POINT>","_rn_":"3"},{"1":"50","2":"10","3":"144.10921","4":"4.970571","5":"Margibi","6":"<sf_POINT>","_rn_":"4"},{"1":"48","2":"9","3":"19.03508","4":"2.946283","5":"Grand Bassa","6":"<sf_POINT>","_rn_":"5"},{"1":"50","2":"13","3":"16.99954","4":"2.833186","5":"Grand Bassa","6":"<sf_POINT>","_rn_":"6"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+<p>This spatial join operation adds attributes (in this case the admin1 names) from the polygons to the points. These attributes can now be used in geostatistical models to explain spatial variation in disease risk based on the regions they fall into.</p>
+</section>
+<section id="extracting-covariates-from-raster-layers" class="level3" data-number="2.6.1">
+<h3 data-number="2.6.1" class="anchored" data-anchor-id="extracting-covariates-from-raster-layers"><span class="header-section-number">2.6.1</span> Extracting covariates from raster layers</h3>
+<p>Raster data provides continuous spatial information, such as elevation, climate data, or population density. Covariate values from raster layers can be extracted for specific points using the <strong><code>extract()</code></strong> function from the <code>terra</code> package. Each point will receive the value of the raster cell it overlaps.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract raster values at the point locations</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>covariate_values <span class="ot">&lt;-</span> <span class="fu">extract</span>(lbr_pop_100, liberia_sf)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine the extracted values with the point data</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>liberia_sf<span class="sc">$</span>pop_total <span class="ot">&lt;-</span> covariate_values[, <span class="dv">2</span>]</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="co"># View the updated dataset</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(liberia_sf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["ntest"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["npos"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["elevation"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["log_elevation"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["geometry"],"name":[5],"type":["sf_POINT"],"align":["right"]},{"label":["pop_total"],"name":[6],"type":["dbl"],"align":["right"]}],"data":[{"1":"50","2":"14","3":"17.82621","4":"2.880670","5":"<sf_POINT>","6":"0.2914019","_rn_":"1"},{"1":"46","2":"10","3":"104.85070","4":"4.652537","5":"<sf_POINT>","6":"0.6087928","_rn_":"2"},{"1":"43","2":"11","3":"119.09543","4":"4.779925","5":"<sf_POINT>","6":"0.2044306","_rn_":"3"},{"1":"50","2":"10","3":"144.10921","4":"4.970571","5":"<sf_POINT>","6":"0.5078438","_rn_":"4"},{"1":"48","2":"9","3":"19.03508","4":"2.946283","5":"<sf_POINT>","6":"0.1767686","_rn_":"5"},{"1":"50","2":"13","3":"16.99954","4":"2.833186","5":"<sf_POINT>","6":"1.6693381","_rn_":"6"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+<p>In this example, the <code>extract()</code> function assigns the raster value from the population density layer to each point in the dataset. This allows the point data to include population density as a covariate in the analysis.</p>
+<p>Instead of extracting values for exact point locations, it can sometimes be useful to aggregate covariate values within a defined area around each point. This is often done by creating a buffer around each point and calculating summary statistics (e.g., mean, sum) of the raster values within that buffer. For instance, you might want to calculate the average population density or temperature within a 2 km radius around each point to smooth out fine-scale variation.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create buffers around each point (e.g., 2 km radius)</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>buffered_points <span class="ot">&lt;-</span> <span class="fu">st_buffer</span>(liberia_sf_utm, <span class="at">dist =</span> <span class="dv">1000</span>)  </span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the buffers for visualization</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">st_geometry</span>(buffered_points), <span class="at">col =</span> <span class="st">"blue"</span>, <span class="at">border =</span> <span class="st">"black"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="02_handling-spatial-data_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract raster values within the buffer areas and calculate the </span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="co"># mean or sum. Note that since we used the utm data to work on the</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="co"># meter scale we need to convert them back to WGS84</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>mean_pop_density <span class="ot">&lt;-</span> <span class="fu">extract</span>(lbr_pop_100, </span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>                            <span class="fu">st_transform</span>(buffered_points, <span class="at">crs =</span> <span class="dv">4326</span>),</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>                            <span class="at">fun =</span> mean, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Add the averaged values to the points dataset</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>liberia_sf<span class="sc">$</span>pop_mean2km <span class="ot">&lt;-</span> mean_pop_density[,<span class="dv">2</span>]</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a><span class="co"># View the updated dataset</span></span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(liberia_sf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["ntest"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["npos"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["elevation"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["log_elevation"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["geometry"],"name":[5],"type":["sf_POINT"],"align":["right"]},{"label":["pop_total"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["pop_mean2km"],"name":[7],"type":["dbl"],"align":["right"]}],"data":[{"1":"50","2":"14","3":"17.82621","4":"2.880670","5":"<sf_POINT>","6":"0.2914019","7":"0.3239253","_rn_":"1"},{"1":"46","2":"10","3":"104.85070","4":"4.652537","5":"<sf_POINT>","6":"0.6087928","7":"0.5534695","_rn_":"2"},{"1":"43","2":"11","3":"119.09543","4":"4.779925","5":"<sf_POINT>","6":"0.2044306","7":"0.2254926","_rn_":"3"},{"1":"50","2":"10","3":"144.10921","4":"4.970571","5":"<sf_POINT>","6":"0.5078438","7":"0.4708411","_rn_":"4"},{"1":"48","2":"9","3":"19.03508","4":"2.946283","5":"<sf_POINT>","6":"0.1767686","7":"0.2419380","_rn_":"5"},{"1":"50","2":"13","3":"16.99954","4":"2.833186","5":"<sf_POINT>","6":"1.6693381","7":"3.7534250","_rn_":"6"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+<p>You can modify the <code>fun</code> argument to calculate other summary statistics, such as the sum, min or max of the raster values within the buffer. This approach is particularly useful when the phenomenon being modeled (e.g., disease transmission) is influenced by broader spatial factors around the observation point, rather than just the value at the exact point location.</p>
+</section>
+</section>
+<section id="creating-a-predictive-grid" class="level2" data-number="2.7">
+<h2 data-number="2.7" class="anchored" data-anchor-id="creating-a-predictive-grid"><span class="header-section-number">2.7</span> Creating a predictive grid</h2>
+<p>A predictive grid is a regularly spaced set of points or cells that spans the study region. This grid serves as the basis for predictions made by your model. The density of the grid (i.e., the distance between grid points) affects both the resolution of the prediction and the computational cost. For point-based predictions, we can generate a grid of points over a polygon (e.g., administrative boundary) using the <code>sf</code> package and the <code>st_make_grid</code> function.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># First we convert the Liberia boundaries to the UTM CRS</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="co"># because we want our grid in meters</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>liberia_admin0_utm <span class="ot">&lt;-</span> liberia_admin0 <span class="sc">|&gt;</span> </span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(<span class="at">crs =</span> <span class="fu">get_epsg_utm</span>(liberia_sf))</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate prediction grid at 5km resolution</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>pred_locations <span class="ot">&lt;-</span> <span class="fu">st_make_grid</span>(liberia_admin0_utm, </span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>                               <span class="at">cellsize =</span> <span class="dv">5000</span>, </span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>                               <span class="at">what =</span> <span class="st">"centers"</span>)</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Exclude locations that fall outside the study area</span></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>pred_locations <span class="ot">&lt;-</span> <span class="fu">st_intersection</span>(pred_locations, liberia_admin0_utm)</span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualize the result</span></span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(liberia_admin0_utm<span class="sc">$</span>geometry, <span class="at">col =</span> <span class="st">"white"</span>)</span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(pred_locations, <span class="at">cex =</span> .<span class="dv">01</span>, <span class="at">col =</span> <span class="st">"red"</span>, <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">add =</span> T)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="02_handling-spatial-data_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="visualizing-spatial-data" class="level2" data-number="2.8">
+<h2 data-number="2.8" class="anchored" data-anchor-id="visualizing-spatial-data"><span class="header-section-number">2.8</span> Visualizing spatial data</h2>
+<p>Visualization is a key part of spatial data analysis, as it allows you to explore and communicate spatial patterns and relationships effectively. R provides a lot of functionalities to visualize spatial data and create very beautiful maps. Until now we have used basic plotting functions. Here we introduce the <code>ggplot2</code> package that allows to combine different types of geographic data in a map. The <code>ggplot2</code> package in R provides a flexible and powerful framework for creating both simple and complex visualizations, including maps of point data, polygons, and rasters. With the help of extensions like <code>geom_sf()</code> and <code>geom_raster()</code>, <code>ggplot2</code> makes it easy to visualize spatial data, whether you’re working with point locations, polygons, or continuous raster data.</p>
+<section id="visualizing-point-data" class="level3" data-number="2.8.1">
+<h3 data-number="2.8.1" class="anchored" data-anchor-id="visualizing-point-data"><span class="header-section-number">2.8.1</span> Visualizing point data</h3>
+<p>Point data often represents the locations of observations (e.g., disease cases, sampling sites). <code>ggplot2</code> allows you to plot these points and optionally color them by a covariate (e.g., disease prevalence or population density). Here is an example that uses the Liberia data.</p>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load necessary libraries</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a new variable with prevalence in the dataset</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>liberia_sf<span class="sc">$</span>prevalence <span class="ot">&lt;-</span> liberia<span class="sc">$</span>npos <span class="sc">/</span> liberia<span class="sc">$</span>ntest</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot only the locations</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> liberia_sf) <span class="sc">+</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">col =</span> <span class="st">"black"</span>) <span class="sc">+</span>  </span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Survey locations"</span>)</span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Color the points according to prevalence</span></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> liberia_sf) <span class="sc">+</span></span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="fu">aes</span>(<span class="at">color =</span> prevalence)) <span class="sc">+</span>  </span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_viridis_c</span>(<span class="at">labels =</span> scales<span class="sc">::</span><span class="fu">label_percent</span>()) <span class="sc">+</span>  </span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Onchocerciasis in Liberia"</span>,</span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>       <span class="at">color =</span> <span class="st">"Prevalence (%)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="02_handling-spatial-data_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="02_handling-spatial-data_files/figure-html/unnamed-chunk-16-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</div>
+<p>Here <code>geom_sf()</code> is used to plot the spatial points. <code>aes(color = prevalence)</code> specifies that the points should be colored based on the <code>prevalence</code> covariate, providing a visual representation of spatial variation in disease risk. The <code>scale_color_viridis_c()</code> function applies the Viridis color scale, which is well-suited for continuous data and is friendly for those with color blindness. The <code>labels = scales::label_percent()</code> argument ensures that the color scale's labels are displayed as percentages (e.g., 5, 10%) rather than raw decimal values. To make the plot visually clean and minimal, <code>theme_minimal()</code> is applied, stripping away unnecessary background elements and keeping the focus on the data. Finally, the <code>labs()</code> defines the plot title and the color legend label.</p>
+</section>
+<section id="visualizing-polygon-data" class="level3" data-number="2.8.2">
+<h3 data-number="2.8.2" class="anchored" data-anchor-id="visualizing-polygon-data"><span class="header-section-number">2.8.2</span> Visualizing polygon data</h3>
+<p>Polygon data typically represents administrative boundaries, land use, or other regional divisions. We can still use <code>geom_sf()</code> to create maps of polygons, optionally filling them by a covariate.</p>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot Liberia admin 1 level boundaries </span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> liberia_admin1) <span class="sc">+</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>() <span class="sc">+</span> </span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>()</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="co"># We compute the area of each polygon</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>liberia_admin1<span class="sc">$</span>area <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">st_area</span>(liberia_admin1) <span class="sc">/</span> <span class="dv">1000</span> <span class="sc">^</span> <span class="dv">2</span>)</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Color the polygons according tis new variable</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> liberia_admin1) <span class="sc">+</span></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="fu">aes</span>(<span class="at">fill =</span> area), <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span> </span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_distiller</span>(<span class="at">direction =</span> <span class="sc">-</span><span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">fill =</span> <span class="st">"Area km^2"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="02_handling-spatial-data_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="02_handling-spatial-data_files/figure-html/unnamed-chunk-17-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</div>
+<p>In this code, <code>aes(fill = area)</code> is used to fill each polygon with colors corresponding to its area. The <code>color = "black"</code> argument outlines the polygons in black, and you could set <code>fill = NA</code> to make the polygons transparent while still displaying the borders. The <code>scale_fill_distiller(direction = -1)</code> function applies a color gradient from ColorBrewer, with the <code>direction = -1</code> argument reversing the gradient (e.g., darker colors for larger areas).</p>
+</section>
+<section id="visualizing-raster-data" class="level3" data-number="2.8.3">
+<h3 data-number="2.8.3" class="anchored" data-anchor-id="visualizing-raster-data"><span class="header-section-number">2.8.3</span> Visualizing raster data</h3>
+<p>In <code>ggplot2</code>, you can visualize raster data by converting it into a data frame of coordinates and values. You can convert raster data into a format that <code>ggplot2</code> can handle by using the <code>as.data.frame()</code> function from <code>terra</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert the raster to a data frame for ggplot2</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>raster_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(lbr_pop_100, <span class="at">xy =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot raster using ggplot2</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> raster_df) <span class="sc">+</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_raster</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y, <span class="at">fill =</span> lbr_ppp_2014)) <span class="sc">+</span> </span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_c</span>() <span class="sc">+</span>                      </span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Population Density"</span>,</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="st">"Density"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="02_handling-spatial-data_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>In this example <code>as.data.frame()</code> converts the raster into a data frame with x and y coordinates and their corresponding raster values and <code>geom_raster()</code> is used to plot the raster cells, coloring them based on the population density.</p>
+</section>
+<section id="combining-multiple-spatial-data-types" class="level3" data-number="2.8.4">
+<h3 data-number="2.8.4" class="anchored" data-anchor-id="combining-multiple-spatial-data-types"><span class="header-section-number">2.8.4</span> Combining Multiple Spatial Data Types</h3>
+<p>In many cases, it's useful to combine different spatial data types (points, polygons, and rasters) in a single visualization. <code>ggplot2</code> allows you to overlay these layers, providing a more comprehensive view of your spatial data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine points, polygons, and raster data in one plot</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>combined_map <span class="ot">&lt;-</span> <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_raster</span>(<span class="at">data =</span> raster_df, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y, <span class="at">fill =</span> lbr_ppp_2014)) <span class="sc">+</span> </span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> liberia_admin1, <span class="at">fill =</span> <span class="cn">NA</span>, <span class="at">color =</span> <span class="st">"grey"</span>) <span class="sc">+</span>    </span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> liberia_sf, <span class="at">shape =</span> <span class="dv">21</span>, <span class="at">col =</span> <span class="st">"black"</span>, <span class="at">fill =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_c</span>() <span class="sc">+</span>  </span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Combined Spatial Data: Points, Polygons, and Raster"</span>,</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="st">"Population Density"</span>,</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">""</span>, <span class="at">y =</span> <span class="st">""</span>)</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>combined_map</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="02_handling-spatial-data_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>To enhance spatial visualizations in <code>ggplot2</code>, adding a scale bar and a north arrow improves map readability and professionalism. The <code>ggspatial</code> package offers tools to easily integrate these elements into your maps. Below is an example that demonstrates how to use <code>ggspatial</code> to add a scale bar and north arrow to a map that includes raster, polygon, and point data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load necessary libraries</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggspatial)</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Add scale bar and north arrow</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>combined_map <span class="sc">+</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotation_scale</span>(<span class="at">location =</span> <span class="st">"bl"</span>, <span class="at">width_hint =</span> <span class="fl">0.5</span>) <span class="sc">+</span>  </span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotation_north_arrow</span>(<span class="at">location =</span> <span class="st">"tr"</span>, <span class="at">which_north =</span> <span class="st">"true"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="02_handling-spatial-data_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
@@ -317,10 +984,27 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
-  function tippyHover(el, contentFn) {
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -330,8 +1014,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -343,7 +1036,130 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -387,6 +1203,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -412,6 +1229,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -473,17 +1316,18 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./01_intro.html" class="pagination-link">
+      <a href="./01_intro.html" class="pagination-link" aria-label="Introduction">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./03_model-fitting.html" class="pagination-link">
+      <a href="./03_model-fitting.html" class="pagination-link" aria-label="Model formulation and parameter estimation">
         <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Model formulation and parameter estimation</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
 </div> <!-- /content -->
+
 
 
 
