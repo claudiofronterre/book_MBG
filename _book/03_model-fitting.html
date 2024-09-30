@@ -115,6 +115,9 @@ div.csl-indent {
   }
 }</script>
 
+<link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
+<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
@@ -227,7 +230,7 @@ div.csl-indent {
   <li><a href="#generalized-linear-geostatistical-models" id="toc-generalized-linear-geostatistical-models" class="nav-link" data-scroll-target="#generalized-linear-geostatistical-models"><span class="header-section-number">3.3</span> Generalized linear geostatistical models</a>
   <ul class="collapse">
   <li><a href="#sec-liberia-estim1" id="toc-sec-liberia-estim1" class="nav-link" data-scroll-target="#sec-liberia-estim1"><span class="header-section-number">3.3.1</span> Example: river-blindness in Liberia</a></li>
-  <li><a href="#sec-liberia-estim1" id="toc-sec-liberia-estim1" class="nav-link" data-scroll-target="#sec-liberia-estim1"><span class="header-section-number">3.3.2</span> Example: <em>Anopheles Gambiae</em> mosquitoes in Cameroon</a></li>
+  <li><a href="#example-anopheles-gambiae-mosquitoes-in-cameroon" id="toc-example-anopheles-gambiae-mosquitoes-in-cameroon" class="nav-link" data-scroll-target="#example-anopheles-gambiae-mosquitoes-in-cameroon"><span class="header-section-number">3.3.2</span> Example: <em>Anopheles Gambiae</em> mosquitoes in Cameroon</a></li>
   </ul></li>
   <li><a href="#theory" id="toc-theory" class="nav-link" data-scroll-target="#theory"><span class="header-section-number">3.4</span> Theory</a>
   <ul class="collapse">
@@ -490,15 +493,15 @@ l_{\mathcal{C}} = \log\left\{\frac{\sum_{i \in \mathcal{C}} y_{i} + 0.5}{|\mathc
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>glm_age_gender_no_interaction <span class="ot">&lt;-</span> <span class="fu">glm</span>(RDT <span class="sc">~</span> Age <span class="sc">+</span>  <span class="fu">pmax</span>(Age<span class="dv">-15</span>, <span class="dv">0</span>) <span class="sc">+</span> <span class="fu">pmax</span>(Age<span class="dv">-40</span>, <span class="dv">0</span>),</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>                              <span class="at">data =</span> malkenya_comm, <span class="at">family =</span> binomial)</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(glm_age_gender_no_interaction, glm_age_gender_interaction, <span class="at">test =</span> <span class="st">"Chisq"</span>)</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="do">## Analysis of Deviance Table</span></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="do">## Model 1: RDT ~ Age + pmax(Age - 15, 0) + pmax(Age - 40, 0)</span></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="do">## Model 2: RDT ~ Age + Gender:Age + pmax(Age - 15, 0) + Gender:pmax(Age - </span></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="do">##     15, 0) + pmax(Age - 40, 0) + Gender:pmax(Age - 40, 0)</span></span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="do">##   Resid. Df Resid. Dev Df Deviance Pr(&gt;Chi)</span></span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="do">## 1      3348     2675.6                     </span></span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="do">## 2      3345     2673.8  3   1.8051   0.6138</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(glm_age_gender_no_interaction, glm_age_gender_interaction, <span class="at">test =</span> <span class="st">"Chisq"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Resid. Df"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Resid. Dev"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["Df"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Deviance"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["Pr(>Chi)"],"name":[5],"type":["dbl"],"align":["right"]}],"data":[{"1":"3348","2":"2675.620","3":"NA","4":"NA","5":"NA","_rn_":"1"},{"1":"3345","2":"2673.815","3":"3","4":"1.805058","5":"0.6138348","_rn_":"2"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
 </div>
 <p>To carry out the likelihood ratio test to assess the null hypothesis that <span class="math inline">\(\beta_{1}^*=\beta_{2}^*=\beta_{3}^*=0\)</span>, we first fit the simplified nested model under this null hypothesis. The likelihood ratio test can then be carried out using the <code>anova</code> command as shown. The p-value indicates that the we do not find evidence against the null hypothesis, hence in our analysis of the data we might favour the simplified model that does not assumes an interaction between the two genders.</p>
 <p>The approach just illustrated, can also be applied to explore the association with other continuous variables that are a property of the household and not of the individual. Let us, for example, consider the variable <code>elevation</code> from the <code>malkenya</code> data-set.</p>
@@ -1184,25 +1187,15 @@ Y_{ij} = \beta_0 + \overbrace{\beta_1 d(x_i) + S(x_i)}^\text{Location-level effe
 </div>
 <p>The function <code>to_table</code> from the <code>RiskMap</code> package can be used to obtain the Latex or HTML code directly from a fit of the model. Here is an example.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">to_table</span>(italy_fit, <span class="at">digits =</span> <span class="dv">3</span>)</span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="do">## % latex table generated in R 4.1.2 by xtable 1.8-4 package</span></span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="do">## % Fri Sep 13 14:27:34 2024</span></span>
-<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a><span class="do">## \begin{table}[ht]</span></span>
-<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a><span class="do">## \centering</span></span>
-<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a><span class="do">## \begin{tabular}{rrrr}</span></span>
-<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a><span class="do">##   \hline</span></span>
-<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a><span class="do">##  &amp; Estimate &amp; Lower limit &amp; Upper limit \\ </span></span>
-<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a><span class="do">##   \hline</span></span>
-<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a><span class="do">## (Intercept) &amp; -1.074 &amp; -2.032 &amp; -0.117 \\ </span></span>
-<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a><span class="do">##   log(pop\_dens) &amp; 1.373 &amp; 1.352 &amp; 1.394 \\ </span></span>
-<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a><span class="do">##   Spatial process var. &amp; 0.917 &amp; 0.595 &amp; 1.414 \\ </span></span>
-<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a><span class="do">##   Spatial corr. scale &amp; 214.520 &amp; 153.608 &amp; 299.587 \\ </span></span>
-<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a><span class="do">##   region (random eff. var.) &amp; 0.241 &amp; 0.146 &amp; 0.398 \\ </span></span>
-<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a><span class="do">##   province (random eff. var.) &amp; 1.457 &amp; 1.379 &amp; 1.540 \\ </span></span>
-<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a><span class="do">##   Measuremment error var. &amp; 0.196 &amp; 0.194 &amp; 0.199 \\ </span></span>
-<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a><span class="do">##    \hline</span></span>
-<span id="cb33-18"><a href="#cb33-18" aria-hidden="true" tabindex="-1"></a><span class="do">## \end{tabular}</span></span>
-<span id="cb33-19"><a href="#cb33-19" aria-hidden="true" tabindex="-1"></a><span class="do">## \end{table}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">to_table</span>(italy_fit, <span class="at">digits =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Estimate"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Lower limit"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["Upper limit"],"name":[3],"type":["dbl"],"align":["right"]}],"data":[{"1":"-1.0744513","2":"-2.0316905","3":"-0.1172122","_rn_":"(Intercept)"},{"1":"1.3728765","2":"1.3520182","3":"1.3937349","_rn_":"log(pop_dens)"},{"1":"0.9170206","2":"0.5946974","3":"1.4140413","_rn_":"Spatial process var."},{"1":"214.5198003","2":"153.6075106","3":"299.5865535","_rn_":"Spatial corr. scale"},{"1":"0.2405342","2":"0.1455287","3":"0.3975623","_rn_":"region (random eff. var.)"},{"1":"1.4569174","2":"1.3785123","3":"1.5397819","_rn_":"province (random eff. var.)"},{"1":"0.1961582","2":"0.1936131","3":"0.1987367","_rn_":"Measuremment error var."}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
 </div>
 </section>
 </section>
@@ -1229,7 +1222,7 @@ Y_{ij} = \beta_0 + \overbrace{\beta_1 d(x_i) + S(x_i)}^\text{Location-level effe
 <div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
 <span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>fit_liberia <span class="ot">&lt;-</span> </span>
 <span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="fu">glgpm</span>(npos <span class="sc">~</span> <span class="fu">log</span>(elevation) <span class="sc">+</span> <span class="fu">gp</span>(long, lat, <span class="at">nugget =</span> <span class="cn">NULL</span>),</span>
-<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>      <span class="at">distr_offset =</span> ntest, <span class="at">data =</span> liberia,</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>      <span class="at">den =</span> ntest, <span class="at">data =</span> liberia,</span>
 <span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">crs =</span> <span class="dv">4326</span>,</span>
 <span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">convert_to_crs =</span> <span class="dv">32629</span>,</span>
 <span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">family =</span> <span class="st">"binomial"</span>, <span class="at">messages =</span> <span class="cn">FALSE</span>)</span>
@@ -1260,11 +1253,11 @@ Variance of the nugget  0.101348    0.071311      0.1440
  Log-likelihood: 39.78642</code></pre>
 </div>
 </div>
-<p>When using the <code>glgpm</code> function to fit a Binomial model, we need to specify the Binomial denominators, i.e.&nbsp;the number of tested at a location in this case, through the argument <code>distr_offset</code>. Other arguments of <code>glgpm</code> that are used for carrying out MCML are <code>control_mcmc</code>, that defines the setting parameters of the Monte Carlo Markov Chain algorithm, and <code>par0</code>, which represents our best guess for the unknown parameters of the Binomial geostatistical model. For more information on how the default values of these two arguments, we refer the reader the to the help page of the <code>glgpm</code> function. To understand how to change the default parameters in order to improve the MCML estimation, we advise you to read <a href="#sec-mcml"><span>Section&nbsp;3.4.2.1</span></a>. Also, remember that to enable the estimation of the nugget effect, <span class="math inline">\(Z_i\)</span>, you should set <code>nugget=NULL</code> in the <code>gp</code> function, since by default the <code>glgpm</code> function excludes <span class="math inline">\(Z_i\)</span> when the out is non-Gaussian.</p>
+<p>When using the <code>glgpm</code> function to fit a Binomial model, we need to specify the Binomial denominators, i.e.&nbsp;the number of tested at a location in this case, through the argument <code>den</code>. Other arguments of <code>glgpm</code> that are used for carrying out MCML are <code>control_mcmc</code>, that defines the setting parameters of the Monte Carlo Markov Chain algorithm, and <code>par0</code>, which represents our best guess for the unknown parameters of the Binomial geostatistical model. For more information on how the default values of these two arguments, we refer the reader the to the help page of the <code>glgpm</code> function. To understand how to change the default parameters in order to improve the MCML estimation, we advise you to read <a href="#sec-mcml"><span>Section&nbsp;3.4.2.1</span></a>. Also, remember that to enable the estimation of the nugget effect, <span class="math inline">\(Z_i\)</span>, you should set <code>nugget=NULL</code> in the <code>gp</code> function, since by default the <code>glgpm</code> function excludes <span class="math inline">\(Z_i\)</span> when the out is non-Gaussian.</p>
 <p>In the above summary of the model, the interpretation of the regression coefficients is the same as in a standard logistic regression model. Hence, by taking the exponential of the estimate for the regression coefficient <span class="math inline">\(\beta_1\)</span>, we could then express the effect for a unit increase in the covariate – in this case the log-transformed elevation – on the odds of disease prevalence. Finally, the interpretation of estimates of the covariance parameters is not affected by the type of distribution used to model the main outcome. From the above summary, we note the larger estimates of <span class="math inline">\(\sigma^2\)</span> than <span class="math inline">\(\tau^2\)</span> which suggest the dominance of spatial variation over the unstructured variation in the unexplained variation of disease prevalence. Finally, the estimate of <span class="math inline">\(\phi\)</span> indicates a relatively large spatial correlation with a <em>practical range</em> close to (<span class="math inline">\(58.67 \times 3 \approx\)</span>)180km.</p>
 </section>
-<section id="sec-liberia-estim1" class="level3" data-number="3.3.2">
-<h3 data-number="3.3.2" class="anchored" data-anchor-id="sec-liberia-estim1"><span class="header-section-number">3.3.2</span> Example: <em>Anopheles Gambiae</em> mosquitoes in Cameroon</h3>
+<section id="example-anopheles-gambiae-mosquitoes-in-cameroon" class="level3" data-number="3.3.2">
+<h3 data-number="3.3.2" class="anchored" data-anchor-id="example-anopheles-gambiae-mosquitoes-in-cameroon"><span class="header-section-number">3.3.2</span> Example: <em>Anopheles Gambiae</em> mosquitoes in Cameroon</h3>
 <p>In <a href="#sec-agg-count-exp"><span>Section&nbsp;3.1.1.1</span></a>, we explored the association between elevation and the number of mosquitoes and found that the data showed that on average, the number of “Anopheles Gambiae* (A. Gambiae) decreases for increasing elevation. We now fit a log-linear Poisson geostatistical model, with linear predictor <span id="eq-anopheles"><span class="math display">\[
 \lambda(x_i) = \beta_0 + \beta_1 d(x_i) + S(x_i)
 \tag{3.25}\]</span></span> where <span class="math inline">\(d(x_i)\)</span> correspond to the elevation in meters at location <span class="math inline">\(x_i\)</span>. This time, we first convert the data frame <code>anopheles</code> into an <code>sf</code> object. This step is optional but recommended as it allows us to simply the code syntax.</p>
@@ -1377,7 +1370,7 @@ L_{MC}(\theta) = \frac{1}{B} \sum_{j=1}^B \frac{[W_{(j)}, Y; \theta]}{[W_{(j)}, 
 </section>
 <section id="sec-mcmc-mala" class="level4" data-number="3.4.2.2">
 <h4 data-number="3.4.2.2" class="anchored" data-anchor-id="sec-mcmc-mala"><span class="header-section-number">3.4.2.2</span> Monte Carlo Markov Chain: sampling from the predictive distribution of the spatial Gaussian process</h4>
-<p>Building on the outline of the MCML method from the previous section, we now address the task of sampling from the distribution <span class="math inline">\([W \mid Y]\)</span> to generate the samples <span class="math inline">\(W_{(j)}\)</span> used in equation <a href="#eq-mcml2">Equation&nbsp;<span>3.30</span></a>. To simplify the notation, we will use <span class="math inline">\([W \mid Y]\)</span> in place of <span class="math inline">\([W \mid Y; \theta_0]\)</span>, but it is important to emphasize that the parameters <span class="math inline">\(\theta_0\)</span> are considered fixed when sampling from <span class="math inline">\([W \mid Y]\)</span>. Since direct simulation from <span class="math inline">\([W \mid Y]\)</span> is not feasible, we must rely on Markov chain Monte Carlo (MCMC) methods, which we briefly introduce next.</p>
+<p>Building on the outline of the MCML method from the previous section, we now address the task of sampling from the distribution <span class="math inline">\([W \mid Y]\)</span> to generate the samples <span class="math inline">\(W_{(j)}\)</span> used in equation <a href="#eq-mcml2">Equation&nbsp;<span>3.30</span></a>. To simplify the notation, we will use $[W Y]$$ in place of <span class="math inline">\([W \mid Y; \theta_0]\)</span>, but it is important to emphasize that the parameters <span class="math inline">\(\theta_0\)</span> are considered fixed when sampling from <span class="math inline">\([W \mid Y]\)</span>. Since direct simulation from <span class="math inline">\([W \mid Y]\)</span> is not feasible, we must rely on Markov chain Monte Carlo (MCMC) methods, which we briefly introduce next.</p>
 <p>The is a foundational technique in the field of MCMC methods, which are widely used for sampling from complex probability distributions. The primary goal of MCMC methods is to generate a sequence of samples from a target distribution where direct sampling is challenging, such as the distribution of <span class="math inline">\([W | Y]\)</span>. The Metropolis-Hastings algorithm, first introduced by <span class="citation" data-cites="metropolis1953equation">Metropolis et al. (<a href="references.html#ref-metropolis1953equation" role="doc-biblioref">1953</a>)</span> and later generalized by <span class="citation" data-cites="hastings1970monte">Hastings (<a href="references.html#ref-hastings1970monte" role="doc-biblioref">1970</a>)</span>, achieves this by constructing a Markov chain that has $[W | Y]$$ as its stationary distribution. In what follows, we shall use <span class="math inline">\(\pi(W)\)</span> to denote the density function of <span class="math inline">\([W | Y]\)</span> up to a constant of proportionality.</p>
 <p>Given a current realization <span class="math inline">\(W_{(k)}\)</span> of the distribution <span class="math inline">\([W | Y]\)</span> in the Markov chain, the algorithm proceeds as follows.</p>
 <ul>
@@ -1430,7 +1423,7 @@ W_{(k+1)} = W_{(k)} + \frac{\epsilon^2}{2} \nabla \log \pi(W_{(k)}) + \epsilon \
 <li><p>Monitor the estimates for convergence. If strict convergence criteria are set, Monte Carlo error may cause fluctuations, making it harder to achieve convergence.</p></li>
 <li><p>Perform additional iterations, if necessary. For inference on model parameters, continue iterating to reduce Monte Carlo error. For spatial prediction, a pragmatic approach may involve stopping after a second iteration with 10,000 samples, as prediction is less affected by Monte Carlo error.</p></li>
 </ol>
-<p>In <code>RiskMap</code>, steps 1 to 3 are automated (with the exception of the check on the convervence of the MCMC algorithm in step 2), while steps 4 to 7 require manual implementation. In <a href="#sec-liberia-estim1"><span>Section&nbsp;3.3.2</span></a>, estimation is performed using a geostatistical model fitted to prevalence data. The <code>par0</code> argument in the <code>glgpm</code> function allows you to specify initial guesses for the model parameters <span class="math inline">\(\theta_0\)</span>. If no values are provided for <code>par0</code> (as in <a href="#sec-liberia-estim1"><span>Section&nbsp;3.3.2</span></a>), the following defaults are used:</p>
+<p>In <code>RiskMap</code>, steps 1 to 3 are automated (with the exception of the check on the convervence of the MCMC algorithm in step 2), while steps 4 to 7 require manual implementation. In <a href="#sec-liberia-estim1"><span>Section&nbsp;3.3.1</span></a>, estimation is performed using a geostatistical model fitted to prevalence data. The <code>par0</code> argument in the <code>glgpm</code> function allows you to specify initial guesses for the model parameters <span class="math inline">\(\theta_0\)</span>. If no values are provided for <code>par0</code> (as in <a href="#sec-liberia-estim1"><span>Section&nbsp;3.3.1</span></a>), the following defaults are used:</p>
 <ul>
 <li>The initial guess for the regression coefficients <span class="math inline">\(\beta\)</span> is set to the maximum likelihood estimates obtained from a standard generalized linear model (GLM), i.e., a GLM without random effects or overdispersion.</li>
 <li>The initial values for both <span class="math inline">\(\sigma^2\)</span> (the variance of the spatial Gaussian process) and <span class="math inline">\(\tau^2\)</span> (the variance of the nugget term, if included) are set to 1.</li>
@@ -1438,7 +1431,7 @@ W_{(k+1)} = W_{(k)} + \frac{\epsilon^2}{2} \nabla \log \pi(W_{(k)}) + \epsilon \
 </ul>
 <p>In our experience, this set of initial guesses works reasonably well. However, more iterations of the MCMC algorithm, as suggested in the step 7 above, are generally recommended.</p>
 <p>An alternative approach for setting initial guesses for the covariance parameters <span class="math inline">\(\sigma^2\)</span>, <span class="math inline">\(\tau^2\)</span>, and <span class="math inline">\(\phi\)</span> is to apply an interpolation technique to the variogram, as proposed in the seminal work by <span class="citation" data-cites="cressie1985">Cressie (<a href="references.html#ref-cressie1985" role="doc-biblioref">1985</a>)</span>. However, in our experience, this approach does not consistently provide better approximations of the likelihood function compared to the method mentioned above. This may be due to the instability in estimating the variogram based on residuals from mixed models, as well as the sensitivity of empirical variogram estimation to the chosen distance bins.</p>
-<p>To better illustrate some of the points above, we continue the analysis of the Liberia data from <a href="#sec-liberia-estim1"><span>Section&nbsp;3.3.2</span></a>. Diagnostic summaries on the convergence of the MCMC algorithm can be obtained with the <code>check_mcmc</code> function by passing the fitting model <code>fit_liberia</code> to the function.</p>
+<p>To better illustrate some of the points above, we continue the analysis of the Liberia data from <a href="#sec-liberia-estim1"><span>Section&nbsp;3.3.1</span></a>. Diagnostic summaries on the convergence of the MCMC algorithm can be obtained with the <code>check_mcmc</code> function by passing the fitting model <code>fit_liberia</code> to the function.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_mcmc</span>(fit_liberia)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
@@ -1470,7 +1463,7 @@ W_{(k+1)} = W_{(k)} + \frac{\epsilon^2}{2} \nabla \log \pi(W_{(k)}) + \epsilon \
 <span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Refit the model and increase the MCMC samples</span></span>
 <span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>fit_liberia2 <span class="ot">&lt;-</span> </span>
 <span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a><span class="fu">glgpm</span>(npos <span class="sc">~</span> <span class="fu">log</span>(elevation) <span class="sc">+</span> <span class="fu">gp</span>(long, lat, <span class="at">nugget =</span> <span class="cn">NULL</span>),</span>
-<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">distr_offset =</span> ntest, <span class="at">data =</span> liberia,</span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">den =</span> ntest, <span class="at">data =</span> liberia,</span>
 <span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">crs =</span> <span class="dv">4326</span>,</span>
 <span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">convert_to_crs =</span> <span class="dv">32629</span>,</span>
 <span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">par0 =</span> par0_liberia, </span>
