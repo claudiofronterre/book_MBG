@@ -3,35 +3,125 @@
 ## List of the main functions used in the chapter {.unnumbered}
 
 | Function           | R Package | Used for                                                                                                              |
-|-------------------------|------------------|------------------------------|
+|-------------------------|------------------|-----------------------------|
 | `pred_over_grid`   | `RiskMap` | Predicting the different component of the linear predictor over a grid: the covariates effects and the random effects |
 | `pred_target_grid` | `RiskMap` | Predictions of target defined at pixel-level                                                                          |
 | `pred_target_shp`  | `RiskMap` | Predictions of targets defined at areal level                                                                         |
 
 ## Introduction
 
-Geostatistics was originally developed to address operational issues in the mining industry, where it was primarily adopted as a predictive tool. In the seminar paper on model-based geostatistics (MBG) [@diggle1998], the authors begin by stating:
+Geostatistics was originally developed and applied as a predictive tool for improving mining operations and planning. In the seminal paper on model-based geostatistics (MBG) [@diggle1998], the authors begin by stating:
 
 > *"Conventional geostatistical methodology solves the problem of predicting the realized value of a linear functional of a Gaussian spatial stochastic process $S(x)$ based on observations $Y_i= S(x_i) + Z_i$ at sampling locations $x_i$, where the $Z_i$ are mutually independent, zero-mean Gaussian random variables."*
 
-It is no coincidence that, although MBG represents a broad class of statistical models applicable to both estimation and prediction, the majority of its applications have focused on prediction. This is evident in many scientific fields where MBG has been used, including global public health, which is the primary application focus in this book. In line with the quote above, for most of the examples considered in this book, the analysis aims to use a finite set of locations $x_i$---typically corresponding to households or villages---to make inferences about an observed prevalence surface. Having performed estimation of MBG models in @sec-estimation, we can now interrogate our models to address critical public health questions, such as identifying hot-spots and cold-spots --- areas of unusually high or low disease risk, respectively --- or determining whether the average prevalence across a region exceeds a predefined policy threshold.
+It is no coincidence that, although MBG represents a broad class of statistical models applicable to both estimation and prediction problems, the majority of its applications have focused on prediction. This is evident in many scientific fields where MBG has been used, including global public health, which is the primary application focus in this book. In line with the quote above, for most of the examples considered in this book, the analyses we illustrate aim to use a finite set of locations $x_i$ --- typically corresponding to households or villages --- to make inferences about an observed disease risk surface. Having performed estimation of MBG models in @sec-estimation, we can now carry out spatial prediction to answer critical public health questions, such as identifying hot-spots and cold-spots --- areas of unusually high or low disease risk, respectively --- or determining whether the average prevalence across a region exceeds a predefined policy threshold.
 
 In this chapter, we will explore these issues, beginning with a formal statistical formulation of the spatial prediction problem and a description of the necessary steps for its implementation. We will then demonstrate how spatial prediction is performed when considering predictive targets at both the *pixel-level* and *areal-level*. Finally, we will conclude the chapter by presenting methods for comparing the predictive performance of different models, with some insights into their relative strengths and weaknesses.
 
-## Spatial prediction: defining targets and predictive summaries
+## Spatial prediction using geostatistical models {#sec-spat-pred-target}
 
-Let us consider the class of generalized linear geostatistical models (GLGM) as in @sec-geostat-models. To formulate our prediction problem, the first step consists of defining our predictive target, which we denote as $T(x)$. In order to draw inferences on $T(x)$, we first need to obtain its *predictive distribution*, i.e. the distribution of $T(x)$ conditioned to the data, denoted by $[T(x) \: \mid \: y]$. More importantly, by incorporating the information provided by the data, the predictive distribution of the target enables us to quantify the uncertainty stemming from the stochastic nature of the process we are modeling. In other words, the predictive distribution reflects the range of possible values that the target $T(x)$ can take and their likelihoods based on the model we have fitted to the data. As we shall see in our examples, we can use the predictive distribution of $T(x)$ both to provide what is our "best guess" for $T(x)$ and a summary of uncertainty which quantifies how much concentrated is the predictive distribution around that guess. However, providing a single "best guess" for $T(x)$ is not always the answer to our research question. For example in the analysis of the riverblindness in Liberia, our interest lies in identifying areas where disease prevalence exceeds 20$\%$, a threshold that use been used in the past to identify areas in need of mass drug administration due to the potential for significant disease burden and transmission [@amazigo2008]. Hence, we define $T(x)$ is disease prevalence and the predictive distribution of $T(x)$ can then be used to quantify the likelihood that $T(x)$ is above 0.2 at any given location $x$.
+Let us consider the class of generalized linear geostatistical models (GLGM) as in @sec-geostat-models. In the formulation of prediction problems, the first step consists of defining our predictive target, which we denote as $T(x)$ where $x$ denotes any locations within the study, which is usually not part of the sampled data. For example in the analysis of the riverblindness in Liberia, our interest lies in identifying areas where disease prevalence exceeds 20$\%$, a threshold that use been used in the past to identify areas in need of mass drug administration due to the potential for significant disease burden and transmission [@amazigo2008]. Hence, in this case, disease prevalence corresponds to our predictive target $T(x)$. To draw inferences on $T(x)$ and allow us to answer the question of where $T(x)$ exceeds a 20$\%$ threshold, we first need to obtain the so called *predictive distribution* of $T(x)$. More specifically, the *predictive distribution* of $T(x)$ is the distribution of $T(x)$ conditioned to the data, which we denote by $[T(x) \: \mid \: y]$. More importantly, by incorporating the information provided by the data, the predictive distribution of the target enables us to quantify the uncertainty stemming from the stochastic nature of the process we are modeling. In other words, the predictive distribution reflects the range of possible values that the target $T(x)$ can take and their likelihoods based on the model we have fitted to the data. As we shall see in our examples, we can use the predictive distribution of $T(x)$ both to provide what is our "best guess" for $T(x)$ and a summary of uncertainty which quantifies how much concentrated is the predictive distribution around that guess. However, providing a single "best guess" for $T(x)$ is not always the answer to our research question. In the example on riverblindness mentioned at the start of the this section, a more natural way to use the predictive distribution would be to compute the likelihood that $T(x)$ exceeds 0.2 at any given location $x$. 
 
-Focusing on the more technical aspects of spatial prediction, a key question that we must address is "How do I obtain the predictive distribution of $T(x)$ and how do I use it?". For a mathematical derivation of the predictive distribution and the form that this takes in the special case of a Gaussian distribution, you can read @sec-theory-prediction. In what follows, we shall assume that we can simulate directly from $[T(x) \: \mid \: y]$ either using direct simulation or Markov Chains Monte Carlo (see @sec-mcmc-mala).
+In summary, the first two steps of spatial prediction are:
 
-### Pixel-level predictive targets
+- Step 1. define the predictive target $T(x)$; 
 
-### Area-level predictive targets
+- Step 2. obtain the predictive distribution of $T(x)$ and use this to compute summaries that helps to answer your original research question. 
+
+This begs two practical questions: "How do we obtain the predictive distribution of $T(x)$?" and "How do we use the predictive distribution to compute our summaries?". For a mathematical derivation of the predictive distribution and the form that this takes in the special case of a linear geostatistical model, you can read @sec-theory-prediction. In what follows, we shall assume that we can simulate directly from $[T(x) \: \mid \: y]$ either using direct simulation or Markov Chains Monte Carlo (see @sec-mcmc-mala).
+
+In our exposition so far, we have also made the implicit assumption that prediction is required for our predictive target at a single, unsampled, location $x$ and for this reason we have denote our predictive target simply as $T(x)$. However, this is almost never the case, since in most cases, our predictive target correspond to either of the following. 
+
+- **Spatially continuous targets** correspond to an unobserved spatially continuous surface (e.g. disease prevalence), formally denoted by $\mathcal{T} = \{T(x), x \in A\}$, where $A$ is our region of interest. 
+
+- **Areal-level targets**, usually defined as transformation of the spatially continuous surface $\mathcal{T}$, defined previously, and which we denote as $\mathcal{T}_{A} = F(\mathcal{T}, A)$. For example, the average of $T(x)$ over $A$ is an areal-level target, formally defined as $F(\mathcal{T}, A) = \int_{A} T(x) \: dx / |A|$, where $|A|$ is the area of $A$.
+
+Before we consider these two types of prediction targets more in detail, we first explain the preliminary steps that need to be performed and are common to both. Whether our goal is predict a spatially continuous or areal-level target, the initial task is to draw Monte Carlo samples from the predictive distribution of the spatial process $S(x)$[^05_geostatistical-prediction-1]. Next, we define a set of prediction locations, say $q$ in total, denoted as $\tilde{X} = {\tilde{x}_1, \ldots, \tilde{x}_q}$. These locations correspond to a regular grid that spans our region of interest, $A$. the predictive distribution of the spatial process over the grid, represented as $[S(\tilde{X}) | y]$. This distribution allows us to generate Monte Carlo samples for $S(\tilde{X})$, which will later be used for computing our target. 
+
+At this stage, we need to consider which of the two following types of predictions from $[S(\tilde{X}) | y]$ are required.
+
+- **Marginal predictions** are obtained by simulating independently from the $q$ marginal predictive distributions of $[S(\tilde{X}) | y]$. In other words, we consider a prediction location $\tilde{x}_j$, simulate from $[S(\tilde{x}_j) | y]$ say $B$ samples, and repeat this for $j=1,\ldots,q$
+
+- **Joint predictions** are obtained by simulating from the joint distribution of $[S(\tilde{X}) | y]$. Unlike marginal predictions, joint predictions take into account the correlation between the different components of $[S(\tilde{X}) | y]$.
+
+[^05_geostatistical-prediction-1]: Here, we are overlooking the fact that when $T(x)$ is a linear transformation of $S(x)$ and the the model fitted to the data is a linear geostatistical model, then we can derive any summary of the predictive distribution analytically, without the need of carrying out any simulation. Although this may displease some of our fellow statisticians who care about computational efficiency, for pedagogical reasons, here we have chosen to explain only the Monte Carlo based approach, which works in all scenarios.
+
+To better understand the technical differences between marginal and joint predictions, we refer you to @sec-pred-distr-theory. However, in practice, the two following facts are important. 
+
+ - *Fact 1*. Joint predictions are computationally more intensive than marginal predictions. 
+
+ - *Fact 2*. Joint predictions are required when the predictive target is at areal-level.
+
+ - *Fact 3*. For spatially continuous targets, both marginal and joint predictions can be used but, in light of *Fact 1*, we might prefer using the former.
+```{r, echo=FALSE, message=FALSE, collapse=TRUE}
+library(sf)
+library(RiskMap)
+load("./data/fit_liberia.RData")
+```
+```{r, collapse = TRUE, message=FALSE}
+# Liberia boundaries 
+library(rgeoboundaries)
+liberia_adm0 <- geoboundaries("liberia", adm_lvl = "adm0")
+liberia_adm0 <- st_transform(liberia_adm0, crs = 32629)
+
+# Create the grid at 5 km resolution
+liberia_grid <- create_grid(liberia_adm0, spat_res = 5)
+
+# Extract elevation
+library(elevatr)
+liberia_elev <- get_elev_raster(locations = liberia_adm0, 
+                                z = 5, clip = "locations")
+
+lb_predictors <- data.frame(elevation = 
+                         terra::extract(liberia_elev,
+                                st_coordinates(liberia_grid)))
+
+# Predicting the spatial process S(x) over the grid, as well as
+# covariates effects
+lb_pred_S <- pred_over_grid(fit_liberia, 
+                            grid_pred = liberia_grid, 
+               predictors = lb_predictors, messages = FALSE)
+
+```
+
+```{r}
+# Visualize predictive distribution
+```
+
+###  Spatially continuous targets
+
+#### Spatial prediction with spatially referenced covariates
+
+#### Spatial prediction with non spatial covariates {#sec-non-spar-covariates}
+
+### Area-level targets
 
 ## Comparing the predictive performance of geostatistical models
 
 ## Theory {#sec-theory-prediction}
 
-### Derivation of the predictive distribution
+### Derivation of the predictive distribution {#sec-pred-distr-theory}
 
 ### Scoring rules
+
+## Common questions from users
+
+- *What should be the spatial resolution of the grid used for prediction?*
+
+- *I have covariates with different spatial resolutions. Which spatial resolution should I use?*
+
+- *My prediction map looks like noise. What could be the error?*
+
+- *The main goal of my analysis is to carry out predictions of the main outcome. However, can I also use the model to draw inferences on the association between the outcome and the covariates that I have included in the model?*
+
+- *In my model I have some covariates that are attached to the individual (e.g. age, gender, occupation, etc.). How do I specify them when doing prediction?* <br> Read @sec-non-spar-covariates.
+
+## Exercises
+
+ 1. *Review questions*.
+     - What are the steps that needs to taken when performing spatial prediction?
+     - Define the predictive distribution of a predictive target and explain how this is used to answer a research question. 
+     - Distinguish between spatially continuous and areal-level targets, giving at least two examples for each.
+     - Explain the difference between marginal and joint predictions, and for which targets each can be used.
+ 
+ 2. 

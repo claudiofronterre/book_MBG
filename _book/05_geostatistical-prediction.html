@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 /* CSS for citations */
 div.csl-bib-body { }
 div.csl-entry {
@@ -80,6 +114,9 @@ div.csl-indent {
     "search-label": "Search"
   }
 }</script>
+
+<link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
+<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
 
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
@@ -180,17 +217,19 @@ div.csl-indent {
   <ul>
   <li><a href="#list-of-the-main-functions-used-in-the-chapter" id="toc-list-of-the-main-functions-used-in-the-chapter" class="nav-link active" data-scroll-target="#list-of-the-main-functions-used-in-the-chapter">List of the main functions used in the chapter</a></li>
   <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction"><span class="header-section-number">5.1</span> Introduction</a></li>
-  <li><a href="#spatial-prediction-defining-targets-and-predictive-summaries" id="toc-spatial-prediction-defining-targets-and-predictive-summaries" class="nav-link" data-scroll-target="#spatial-prediction-defining-targets-and-predictive-summaries"><span class="header-section-number">5.2</span> Spatial prediction: defining targets and predictive summaries</a>
+  <li><a href="#sec-spat-pred-target" id="toc-sec-spat-pred-target" class="nav-link" data-scroll-target="#sec-spat-pred-target"><span class="header-section-number">5.2</span> Spatial prediction using geostatistical models</a>
   <ul class="collapse">
-  <li><a href="#pixel-level-predictive-targets" id="toc-pixel-level-predictive-targets" class="nav-link" data-scroll-target="#pixel-level-predictive-targets"><span class="header-section-number">5.2.1</span> Pixel-level predictive targets</a></li>
-  <li><a href="#area-level-predictive-targets" id="toc-area-level-predictive-targets" class="nav-link" data-scroll-target="#area-level-predictive-targets"><span class="header-section-number">5.2.2</span> Area-level predictive targets</a></li>
+  <li><a href="#spatially-continuous-targets" id="toc-spatially-continuous-targets" class="nav-link" data-scroll-target="#spatially-continuous-targets"><span class="header-section-number">5.2.1</span> Spatially continuous targets</a></li>
+  <li><a href="#area-level-targets" id="toc-area-level-targets" class="nav-link" data-scroll-target="#area-level-targets"><span class="header-section-number">5.2.2</span> Area-level targets</a></li>
   </ul></li>
   <li><a href="#comparing-the-predictive-performance-of-geostatistical-models" id="toc-comparing-the-predictive-performance-of-geostatistical-models" class="nav-link" data-scroll-target="#comparing-the-predictive-performance-of-geostatistical-models"><span class="header-section-number">5.3</span> Comparing the predictive performance of geostatistical models</a></li>
   <li><a href="#sec-theory-prediction" id="toc-sec-theory-prediction" class="nav-link" data-scroll-target="#sec-theory-prediction"><span class="header-section-number">5.4</span> Theory</a>
   <ul class="collapse">
-  <li><a href="#derivation-of-the-predictive-distribution" id="toc-derivation-of-the-predictive-distribution" class="nav-link" data-scroll-target="#derivation-of-the-predictive-distribution"><span class="header-section-number">5.4.1</span> Derivation of the predictive distribution</a></li>
+  <li><a href="#sec-pred-distr-theory" id="toc-sec-pred-distr-theory" class="nav-link" data-scroll-target="#sec-pred-distr-theory"><span class="header-section-number">5.4.1</span> Derivation of the predictive distribution</a></li>
   <li><a href="#scoring-rules" id="toc-scoring-rules" class="nav-link" data-scroll-target="#scoring-rules"><span class="header-section-number">5.4.2</span> Scoring rules</a></li>
   </ul></li>
+  <li><a href="#common-questions-from-users" id="toc-common-questions-from-users" class="nav-link" data-scroll-target="#common-questions-from-users"><span class="header-section-number">5.5</span> Common questions from users</a></li>
+  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">5.6</span> Exercises</a></li>
   </ul>
 </nav>
     </div>
@@ -219,8 +258,8 @@ div.csl-indent {
 <table class="table">
 <colgroup>
 <col style="width: 34%">
-<col style="width: 24%">
-<col style="width: 41%">
+<col style="width: 25%">
+<col style="width: 40%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -250,22 +289,77 @@ div.csl-indent {
 </section>
 <section id="introduction" class="level2" data-number="5.1">
 <h2 data-number="5.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">5.1</span> Introduction</h2>
-<p>Geostatistics was originally developed to address operational issues in the mining industry, where it was primarily adopted as a predictive tool. In the seminar paper on model-based geostatistics (MBG) <span class="citation" data-cites="diggle1998">(<a href="references.html#ref-diggle1998" role="doc-biblioref">Diggle, Tawn, and Moyeed 1998</a>)</span>, the authors begin by stating:</p>
+<p>Geostatistics was originally developed and applied as a predictive tool for improving mining operations and planning. In the seminal paper on model-based geostatistics (MBG) <span class="citation" data-cites="diggle1998">(<a href="references.html#ref-diggle1998" role="doc-biblioref">Diggle, Tawn, and Moyeed 1998</a>)</span>, the authors begin by stating:</p>
 <blockquote class="blockquote">
 <p><em>“Conventional geostatistical methodology solves the problem of predicting the realized value of a linear functional of a Gaussian spatial stochastic process <span class="math inline">\(S(x)\)</span> based on observations <span class="math inline">\(Y_i= S(x_i) + Z_i\)</span> at sampling locations <span class="math inline">\(x_i\)</span>, where the <span class="math inline">\(Z_i\)</span> are mutually independent, zero-mean Gaussian random variables.”</em></p>
 </blockquote>
-<p>It is no coincidence that, although MBG represents a broad class of statistical models applicable to both estimation and prediction, the majority of its applications have focused on prediction. This is evident in many scientific fields where MBG has been used, including global public health, which is the primary application focus in this book. In line with the quote above, for most of the examples considered in this book, the analysis aims to use a finite set of locations <span class="math inline">\(x_i\)</span>—typically corresponding to households or villages—to make inferences about an observed prevalence surface. Having performed estimation of MBG models in <a href="03_model-fitting.html"><span>Chapter&nbsp;3</span></a>, we can now interrogate our models to address critical public health questions, such as identifying hot-spots and cold-spots — areas of unusually high or low disease risk, respectively — or determining whether the average prevalence across a region exceeds a predefined policy threshold.</p>
+<p>It is no coincidence that, although MBG represents a broad class of statistical models applicable to both estimation and prediction problems, the majority of its applications have focused on prediction. This is evident in many scientific fields where MBG has been used, including global public health, which is the primary application focus in this book. In line with the quote above, for most of the examples considered in this book, the analyses we illustrate aim to use a finite set of locations <span class="math inline">\(x_i\)</span> — typically corresponding to households or villages — to make inferences about an observed disease risk surface. Having performed estimation of MBG models in <a href="03_model-fitting.html"><span>Chapter&nbsp;3</span></a>, we can now carry out spatial prediction to answer critical public health questions, such as identifying hot-spots and cold-spots — areas of unusually high or low disease risk, respectively — or determining whether the average prevalence across a region exceeds a predefined policy threshold.</p>
 <p>In this chapter, we will explore these issues, beginning with a formal statistical formulation of the spatial prediction problem and a description of the necessary steps for its implementation. We will then demonstrate how spatial prediction is performed when considering predictive targets at both the <em>pixel-level</em> and <em>areal-level</em>. Finally, we will conclude the chapter by presenting methods for comparing the predictive performance of different models, with some insights into their relative strengths and weaknesses.</p>
 </section>
-<section id="spatial-prediction-defining-targets-and-predictive-summaries" class="level2" data-number="5.2">
-<h2 data-number="5.2" class="anchored" data-anchor-id="spatial-prediction-defining-targets-and-predictive-summaries"><span class="header-section-number">5.2</span> Spatial prediction: defining targets and predictive summaries</h2>
-<p>Let us consider the class of generalized linear geostatistical models (GLGM) as in <a href="01_intro.html#sec-geostat-models"><span>Section&nbsp;1.5</span></a>. To formulate our prediction problem, the first step consists of defining our predictive target, which we denote as <span class="math inline">\(T(x)\)</span>. In order to draw inferences on <span class="math inline">\(T(x)\)</span>, we first need to obtain its <em>predictive distribution</em>, i.e.&nbsp;the distribution of <span class="math inline">\(T(x)\)</span> conditioned to the data, denoted by <span class="math inline">\([T(x) \: \mid \: y]\)</span>. More importantly, by incorporating the information provided by the data, the predictive distribution of the target enables us to quantify the uncertainty stemming from the stochastic nature of the process we are modeling. In other words, the predictive distribution reflects the range of possible values that the target <span class="math inline">\(T(x)\)</span> can take and their likelihoods based on the model we have fitted to the data. As we shall see in our examples, we can use the predictive distribution of <span class="math inline">\(T(x)\)</span> both to provide what is our “best guess” for <span class="math inline">\(T(x)\)</span> and a summary of uncertainty which quantifies how much concentrated is the predictive distribution around that guess. However, providing a single “best guess” for <span class="math inline">\(T(x)\)</span> is not always the answer to our research question. For example in the analysis of the riverblindness in Liberia, our interest lies in identifying areas where disease prevalence exceeds 20<span class="math inline">\(\%\)</span>, a threshold that use been used in the past to identify areas in need of mass drug administration due to the potential for significant disease burden and transmission <span class="citation" data-cites="amazigo2008">(<a href="references.html#ref-amazigo2008" role="doc-biblioref">Amazigo 2008</a>)</span>. Hence, we define <span class="math inline">\(T(x)\)</span> is disease prevalence and the predictive distribution of <span class="math inline">\(T(x)\)</span> can then be used to quantify the likelihood that <span class="math inline">\(T(x)\)</span> is above 0.2 at any given location <span class="math inline">\(x\)</span>.</p>
-<p>Focusing on the more technical aspects of spatial prediction, a key question that we must address is “How do I obtain the predictive distribution of <span class="math inline">\(T(x)\)</span> and how do I use it?”. For a mathematical derivation of the predictive distribution and the form that this takes in the special case of a Gaussian distribution, you can read <a href="#sec-theory-prediction"><span>Section&nbsp;5.4</span></a>. In what follows, we shall assume that we can simulate directly from <span class="math inline">\([T(x) \: \mid \: y]\)</span> either using direct simulation or Markov Chains Monte Carlo (see <a href="03_model-fitting.html#sec-mcmc-mala"><span>Section&nbsp;3.4.2.2</span></a>).</p>
-<section id="pixel-level-predictive-targets" class="level3" data-number="5.2.1">
-<h3 data-number="5.2.1" class="anchored" data-anchor-id="pixel-level-predictive-targets"><span class="header-section-number">5.2.1</span> Pixel-level predictive targets</h3>
+<section id="sec-spat-pred-target" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="sec-spat-pred-target"><span class="header-section-number">5.2</span> Spatial prediction using geostatistical models</h2>
+<p>Let us consider the class of generalized linear geostatistical models (GLGM) as in <a href="01_intro.html#sec-geostat-models"><span>Section&nbsp;1.5</span></a>. In the formulation of prediction problems, the first step consists of defining our predictive target, which we denote as <span class="math inline">\(T(x)\)</span> where <span class="math inline">\(x\)</span> denotes any locations within the study, which is usually not part of the sampled data. For example in the analysis of the riverblindness in Liberia, our interest lies in identifying areas where disease prevalence exceeds 20<span class="math inline">\(\%\)</span>, a threshold that use been used in the past to identify areas in need of mass drug administration due to the potential for significant disease burden and transmission <span class="citation" data-cites="amazigo2008">(<a href="references.html#ref-amazigo2008" role="doc-biblioref">Amazigo 2008</a>)</span>. Hence, in this case, disease prevalence corresponds to our predictive target <span class="math inline">\(T(x)\)</span>. To draw inferences on <span class="math inline">\(T(x)\)</span> and allow us to answer the question of where <span class="math inline">\(T(x)\)</span> exceeds a 20<span class="math inline">\(\%\)</span> threshold, we first need to obtain the so called <em>predictive distribution</em> of <span class="math inline">\(T(x)\)</span>. More specifically, the <em>predictive distribution</em> of <span class="math inline">\(T(x)\)</span> is the distribution of <span class="math inline">\(T(x)\)</span> conditioned to the data, which we denote by <span class="math inline">\([T(x) \: \mid \: y]\)</span>. More importantly, by incorporating the information provided by the data, the predictive distribution of the target enables us to quantify the uncertainty stemming from the stochastic nature of the process we are modeling. In other words, the predictive distribution reflects the range of possible values that the target <span class="math inline">\(T(x)\)</span> can take and their likelihoods based on the model we have fitted to the data. As we shall see in our examples, we can use the predictive distribution of <span class="math inline">\(T(x)\)</span> both to provide what is our “best guess” for <span class="math inline">\(T(x)\)</span> and a summary of uncertainty which quantifies how much concentrated is the predictive distribution around that guess. However, providing a single “best guess” for <span class="math inline">\(T(x)\)</span> is not always the answer to our research question. In the example on riverblindness mentioned at the start of the this section, a more natural way to use the predictive distribution would be to compute the likelihood that <span class="math inline">\(T(x)\)</span> exceeds 0.2 at any given location <span class="math inline">\(x\)</span>.</p>
+<p>In summary, the first two steps of spatial prediction are:</p>
+<ul>
+<li><p>Step 1. define the predictive target <span class="math inline">\(T(x)\)</span>;</p></li>
+<li><p>Step 2. obtain the predictive distribution of <span class="math inline">\(T(x)\)</span> and use this to compute summaries that helps to answer your original research question.</p></li>
+</ul>
+<p>This begs two practical questions: “How do we obtain the predictive distribution of <span class="math inline">\(T(x)\)</span>?” and “How do we use the predictive distribution to compute our summaries?”. For a mathematical derivation of the predictive distribution and the form that this takes in the special case of a linear geostatistical model, you can read <a href="#sec-theory-prediction"><span>Section&nbsp;5.4</span></a>. In what follows, we shall assume that we can simulate directly from <span class="math inline">\([T(x) \: \mid \: y]\)</span> either using direct simulation or Markov Chains Monte Carlo (see <a href="03_model-fitting.html#sec-mcmc-mala"><span>Section&nbsp;3.4.2.2</span></a>).</p>
+<p>In our exposition so far, we have also made the implicit assumption that prediction is required for our predictive target at a single, unsampled, location <span class="math inline">\(x\)</span> and for this reason we have denote our predictive target simply as <span class="math inline">\(T(x)\)</span>. However, this is almost never the case, since in most cases, our predictive target correspond to either of the following.</p>
+<ul>
+<li><p><strong>Spatially continuous targets</strong> correspond to an unobserved spatially continuous surface (e.g.&nbsp;disease prevalence), formally denoted by <span class="math inline">\(\mathcal{T} = \{T(x), x \in A\}\)</span>, where <span class="math inline">\(A\)</span> is our region of interest.</p></li>
+<li><p><strong>Areal-level targets</strong>, usually defined as transformation of the spatially continuous surface <span class="math inline">\(\mathcal{T}\)</span>, defined previously, and which we denote as <span class="math inline">\(\mathcal{T}_{A} = F(\mathcal{T}, A)\)</span>. For example, the average of <span class="math inline">\(T(x)\)</span> over <span class="math inline">\(A\)</span> is an areal-level target, formally defined as <span class="math inline">\(F(\mathcal{T}, A) = \int_{A} T(x) \: dx / |A|\)</span>, where <span class="math inline">\(|A|\)</span> is the area of <span class="math inline">\(A\)</span>.</p></li>
+</ul>
+<p>Before we consider these two types of prediction targets more in detail, we first explain the preliminary steps that need to be performed and are common to both. Whether our goal is predict a spatially continuous or areal-level target, the initial task is to draw Monte Carlo samples from the predictive distribution of the spatial process <span class="math inline">\(S(x)\)</span><a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>. Next, we define a set of prediction locations, say <span class="math inline">\(q\)</span> in total, denoted as <span class="math inline">\(\tilde{X} = {\tilde{x}_1, \ldots, \tilde{x}_q}\)</span>. These locations correspond to a regular grid that spans our region of interest, <span class="math inline">\(A\)</span>. the predictive distribution of the spatial process over the grid, represented as <span class="math inline">\([S(\tilde{X}) | y]\)</span>. This distribution allows us to generate Monte Carlo samples for <span class="math inline">\(S(\tilde{X})\)</span>, which will later be used for computing our target.</p>
+<p>At this stage, we need to consider which of the two following types of predictions from <span class="math inline">\([S(\tilde{X}) | y]\)</span> are required.</p>
+<ul>
+<li><p><strong>Marginal predictions</strong> are obtained by simulating independently from the <span class="math inline">\(q\)</span> marginal predictive distributions of <span class="math inline">\([S(\tilde{X}) | y]\)</span>. In other words, we consider a prediction location <span class="math inline">\(\tilde{x}_j\)</span>, simulate from <span class="math inline">\([S(\tilde{x}_j) | y]\)</span> say <span class="math inline">\(B\)</span> samples, and repeat this for <span class="math inline">\(j=1,\ldots,q\)</span></p></li>
+<li><p><strong>Joint predictions</strong> are obtained by simulating from the joint distribution of <span class="math inline">\([S(\tilde{X}) | y]\)</span>. Unlike marginal predictions, joint predictions take into account the correlation between the different components of <span class="math inline">\([S(\tilde{X}) | y]\)</span>.</p></li>
+</ul>
+<p>To better understand the technical differences between marginal and joint predictions, we refer you to <a href="#sec-pred-distr-theory"><span>Section&nbsp;5.4.1</span></a>. However, in practice, the two following facts are important.</p>
+<ul>
+<li><p><em>Fact 1</em>. Joint predictions are computationally more intensive than marginal predictions.</p></li>
+<li><p><em>Fact 2</em>. Joint predictions are required when the predictive target is at areal-level.</p></li>
+<li><p><em>Fact 3</em>. For spatially continuous targets, both marginal and joint predictions can be used but, in light of <em>Fact 1</em>, we might prefer using the former.</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Liberia boundaries </span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rgeoboundaries)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>liberia_adm0 <span class="ot">&lt;-</span> <span class="fu">geoboundaries</span>(<span class="st">"liberia"</span>, <span class="at">adm_lvl =</span> <span class="st">"adm0"</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>liberia_adm0 <span class="ot">&lt;-</span> <span class="fu">st_transform</span>(liberia_adm0, <span class="at">crs =</span> <span class="dv">32629</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the grid at 5 km resolution</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>liberia_grid <span class="ot">&lt;-</span> <span class="fu">create_grid</span>(liberia_adm0, <span class="at">spat_res =</span> <span class="dv">5</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract elevation</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(elevatr)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>liberia_elev <span class="ot">&lt;-</span> <span class="fu">get_elev_raster</span>(<span class="at">locations =</span> liberia_adm0, </span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>                                <span class="at">z =</span> <span class="dv">5</span>, <span class="at">clip =</span> <span class="st">"locations"</span>)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>lb_predictors <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">elevation =</span> </span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>                         terra<span class="sc">::</span><span class="fu">extract</span>(liberia_elev,</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>                                <span class="fu">st_coordinates</span>(liberia_grid)))</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Predicting the spatial process S(x) over the grid, as well as</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co"># covariates effects</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>lb_pred_S <span class="ot">&lt;-</span> <span class="fu">pred_over_grid</span>(fit_liberia, </span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>                            <span class="at">grid_pred =</span> liberia_grid, </span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>               <span class="at">predictors =</span> lb_predictors, <span class="at">messages =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualize predictive distribution</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="spatially-continuous-targets" class="level3" data-number="5.2.1">
+<h3 data-number="5.2.1" class="anchored" data-anchor-id="spatially-continuous-targets"><span class="header-section-number">5.2.1</span> Spatially continuous targets</h3>
+<section id="spatial-prediction-with-spatially-referenced-covariates" class="level4" data-number="5.2.1.1">
+<h4 data-number="5.2.1.1" class="anchored" data-anchor-id="spatial-prediction-with-spatially-referenced-covariates"><span class="header-section-number">5.2.1.1</span> Spatial prediction with spatially referenced covariates</h4>
 </section>
-<section id="area-level-predictive-targets" class="level3" data-number="5.2.2">
-<h3 data-number="5.2.2" class="anchored" data-anchor-id="area-level-predictive-targets"><span class="header-section-number">5.2.2</span> Area-level predictive targets</h3>
+<section id="sec-non-spar-covariates" class="level4" data-number="5.2.1.2">
+<h4 data-number="5.2.1.2" class="anchored" data-anchor-id="sec-non-spar-covariates"><span class="header-section-number">5.2.1.2</span> Spatial prediction with non spatial covariates</h4>
+</section>
+</section>
+<section id="area-level-targets" class="level3" data-number="5.2.2">
+<h3 data-number="5.2.2" class="anchored" data-anchor-id="area-level-targets"><span class="header-section-number">5.2.2</span> Area-level targets</h3>
 </section>
 </section>
 <section id="comparing-the-predictive-performance-of-geostatistical-models" class="level2" data-number="5.3">
@@ -273,11 +367,35 @@ div.csl-indent {
 </section>
 <section id="sec-theory-prediction" class="level2" data-number="5.4">
 <h2 data-number="5.4" class="anchored" data-anchor-id="sec-theory-prediction"><span class="header-section-number">5.4</span> Theory</h2>
-<section id="derivation-of-the-predictive-distribution" class="level3" data-number="5.4.1">
-<h3 data-number="5.4.1" class="anchored" data-anchor-id="derivation-of-the-predictive-distribution"><span class="header-section-number">5.4.1</span> Derivation of the predictive distribution</h3>
+<section id="sec-pred-distr-theory" class="level3" data-number="5.4.1">
+<h3 data-number="5.4.1" class="anchored" data-anchor-id="sec-pred-distr-theory"><span class="header-section-number">5.4.1</span> Derivation of the predictive distribution</h3>
 </section>
 <section id="scoring-rules" class="level3" data-number="5.4.2">
 <h3 data-number="5.4.2" class="anchored" data-anchor-id="scoring-rules"><span class="header-section-number">5.4.2</span> Scoring rules</h3>
+</section>
+</section>
+<section id="common-questions-from-users" class="level2" data-number="5.5">
+<h2 data-number="5.5" class="anchored" data-anchor-id="common-questions-from-users"><span class="header-section-number">5.5</span> Common questions from users</h2>
+<ul>
+<li><p><em>What should be the spatial resolution of the grid used for prediction?</em></p></li>
+<li><p><em>I have covariates with different spatial resolutions. Which spatial resolution should I use?</em></p></li>
+<li><p><em>My prediction map looks like noise. What could be the error?</em></p></li>
+<li><p><em>The main goal of my analysis is to carry out predictions of the main outcome. However, can I also use the model to draw inferences on the association between the outcome and the covariates that I have included in the model?</em></p></li>
+<li><p><em>In my model I have some covariates that are attached to the individual (e.g.&nbsp;age, gender, occupation, etc.). How do I specify them when doing prediction?</em> <br> Read <a href="#sec-non-spar-covariates"><span>Section&nbsp;5.2.1.2</span></a>.</p></li>
+</ul>
+</section>
+<section id="exercises" class="level2" data-number="5.6">
+<h2 data-number="5.6" class="anchored" data-anchor-id="exercises"><span class="header-section-number">5.6</span> Exercises</h2>
+<ol type="1">
+<li><em>Review questions</em>.
+<ul>
+<li>What are the steps that needs to taken when performing spatial prediction?</li>
+<li>Define the predictive distribution of a predictive target and explain how this is used to answer a research question.</li>
+<li>Distinguish between spatially continuous and areal-level targets, giving at least two examples for each.</li>
+<li>Explain the difference between marginal and joint predictions, and for which targets each can be used.</li>
+</ul></li>
+<li></li>
+</ol>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
@@ -289,6 +407,11 @@ Diggle, P. J., J. A. Tawn, and R. A. Moyeed. 1998. <span>“Model-Based Geostati
 </div>
 </div>
 </section>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1"><p>Here, we are overlooking the fact that when <span class="math inline">\(T(x)\)</span> is a linear transformation of <span class="math inline">\(S(x)\)</span> and the the model fitted to the data is a linear geostatistical model, then we can derive any summary of the predictive distribution analytically, without the need of carrying out any simulation. Although this may displease some of our fellow statisticians who care about computational efficiency, for pedagogical reasons, here we have chosen to explain only the Monte Carlo based approach, which works in all scenarios.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
 </section>
 
 </main> <!-- /main -->
