@@ -3,7 +3,7 @@
 ## List of the main functions used in the chapter {.unnumbered}
 
 | Function      | R Package | Used for                                                                                     |
-|-------------------|-------------------|----------------------------------|
+|------------|------------|------------------------------------------------|
 | `lmer`        | `lme4`    | Fitting linear mixed models                                                                  |
 | `glmer`       | `lme4`    | Fitting generalized linear mixed models                                                      |
 | `glgm`        | `RiskMap` | Fitting generalized linear geostatistical models                                             |
@@ -761,6 +761,7 @@ glgpm(npos ~ log(elevation) + gp(long, lat, nugget = NULL),
 summary(fit_liberia)
 
 ```
+
 ```{r, echo=FALSE, collapse=TRUE, message=FALSE}
 save(fit_liberia, file = "./data/fit_liberia.RData")
 ```
@@ -995,22 +996,24 @@ In the sections above, we focused specifically on the implementation of the Mont
 Alternative methods worth mentioning include the expectation-maximization algorithm for maximum likelihood estimation [@zhang2002], integrated nested Laplace approximation (INLA) [@rue2009], and implementations of the Metropolis-Adjusted Langevin Algorithm (MALA) for Bayesian inference [@christensen2006]. While these methods are valuable, explaining and comparing them is not our focus here, as it would detract from the practical orientation of this book.
 
 ## Exercises
- 1. *Review questions*.
-     - Define the theoretical and empirical varigroam, making appropriate use of equations.
-     - How do we use the empirical variogram to test for spatial correlation? What are the limiations of this approach?
-     
- 2.  Consider the Binomial mixed model with linear predictor as defined in @eq-linear-predictor-glmms-ch2. By editing the code for the simulation shown in @sec-overdispersion, generate a graph as in @fig-var-bin-glmm under the two following scenarios: $i$) $\tau^2 = 0.2$ and $n_i=100$; $ii$) $\tau^2 = 0.1$ and $n_i = 1$. How does the variance of $Y_i$ change under $i$) and $ii$) in comparison to @fig-var-bin-glmm? How do you explain the differences?
 
- 3.  Similarly to the previous exercise, consider a Poisson mixed model with linear predictor $$
-    \log\left\{\mu_i\right\} = \beta_0 + Z_i,
-    $$ where $Z_i$ are a set of mutually independent Gaussian variables with mean 0 and variance $\tau^2$. Using the code shown in @sec-overdispersion, carry out a simulation study to compute the variance of $Y_i$ and generate a graph similar to @fig-var-bin-glmm to compare the variance of the Poisson mixed model with that of a standard Poisson model. Generate the graph for different values of $\tau^2$ and summarize your findings. NOTE: In this simulation the offset $n_i$ can be set to 1.
+1.  *Review questions*.
 
- 4.  Create an R function that computes the *cloud variogram*. As explained in @sec-expl-spatial, the cloud variogram is obtained by plotting $\hat{V}_{ij}$ (see @eq-hat-squared-diff) against the distances $u_{ij}$. The function should take as input a data-set with three columns: the variable for which the cloud variogram is to be computed; and two columns corresponding to the location of the data. Then, use this function to create the cloud variogram for the model for river-blindness in @eq-liberia-bin-mixed-elev. How does this compare to empirical variogram that takes the averages within predefined distance classes, as shown in @fig-liberia-variog?
+    -   Define the theoretical and empirical varigroam, making appropriate use of equations.
+    -   How do we use the empirical variogram to test for spatial correlation? What are the limiations of this approach?
 
- 5.  Fit a Binomial mixed model to the Liberia data-set on river-blindness without any covariates, i.e. $$
-    \log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_0 + Z_i.
-    $$ Making use of the R code presented in @sec-empirical-variog-bin, use the function `s_variogram` to generate the empirical variogram for this model and compare this to the empirical variogram of @fig-liberia-variog. What differences do you observe?
+2.  Consider the Binomial mixed model with linear predictor as defined in @eq-linear-predictor-glmms-ch2. By editing the code for the simulation shown in @sec-overdispersion, generate a graph as in @fig-var-bin-glmm under the two following scenarios: $i$) $\tau^2 = 0.2$ and $n_i=100$; $ii$) $\tau^2 = 0.1$ and $n_i = 1$. How does the variance of $Y_i$ change under $i$) and $ii$) in comparison to @fig-var-bin-glmm? How do you explain the differences?
 
- 6.  Fit a Poisson mixed model to the anopheles mosquito data using elevation as a covariate, i.e. $$
-    \log\{\mu(x_i)\} = \beta_{0} + \beta_{1} d(x_i) + Z_i
-    $$ where $d(x_i)$ is the measured elevation at location $x_i$. How strong is the overdispersion in the data? After fitting the model, extract the estimates of the random effects $Z_i$ and compute the empirical variogram with the 95% envelope for spatial independence. Repeat this for different classes of distances by changing the input passed to `bins` in the `s_variogram` function. How do the different specifications of `bins` affect the results?
+3.  Similarly to the previous exercise, consider a Poisson mixed model with linear predictor $$
+        \log\left\{\mu_i\right\} = \beta_0 + Z_i,
+        $$ where $Z_i$ are a set of mutually independent Gaussian variables with mean 0 and variance $\tau^2$. Using the code shown in @sec-overdispersion, carry out a simulation study to compute the variance of $Y_i$ and generate a graph similar to @fig-var-bin-glmm to compare the variance of the Poisson mixed model with that of a standard Poisson model. Generate the graph for different values of $\tau^2$ and summarize your findings. NOTE: In this simulation the offset $n_i$ can be set to 1.
+
+4.  Create an R function that computes the *cloud variogram*. As explained in @sec-expl-spatial, the cloud variogram is obtained by plotting $\hat{V}_{ij}$ (see @eq-hat-squared-diff) against the distances $u_{ij}$. The function should take as input a data-set with three columns: the variable for which the cloud variogram is to be computed; and two columns corresponding to the location of the data. Then, use this function to create the cloud variogram for the model for river-blindness in @eq-liberia-bin-mixed-elev. How does this compare to empirical variogram that takes the averages within predefined distance classes, as shown in @fig-liberia-variog?
+
+5.  Fit a Binomial mixed model to the Liberia data-set on river-blindness without any covariates, i.e. $$
+        \log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_0 + Z_i.
+        $$ Making use of the R code presented in @sec-empirical-variog-bin, use the function `s_variogram` to generate the empirical variogram for this model and compare this to the empirical variogram of @fig-liberia-variog. What differences do you observe?
+
+6.  Fit a Poisson mixed model to the anopheles mosquito data using elevation as a covariate, i.e. $$
+        \log\{\mu(x_i)\} = \beta_{0} + \beta_{1} d(x_i) + Z_i
+        $$ where $d(x_i)$ is the measured elevation at location $x_i$. How strong is the overdispersion in the data? After fitting the model, extract the estimates of the random effects $Z_i$ and compute the empirical variogram with the 95% envelope for spatial independence. Repeat this for different classes of distances by changing the input passed to `bins` in the `s_variogram` function. How do the different specifications of `bins` affect the results?

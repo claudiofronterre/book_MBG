@@ -53,48 +53,77 @@ To better understand the technical differences between marginal and joint predic
  - *Fact 2*. Joint predictions are required when the predictive target is at areal-level.
 
  - *Fact 3*. For spatially continuous targets, both marginal and joint predictions can be used but, in light of *Fact 1*, we might prefer using the former.
+ 
+### Summary with example (continue from @sec-liberia-estim1)
+
+We now show how the ideas and concepts discussed above are put into practice in an geostatistical analysis, using the Liberia data example. Using the fitted model in @sec-liberia-estim1, we use the `predict_over_grid` function in `RiskMap`, to sample from the predictive distribution of the spatial Gaussian process $S(x)$ based on a regular grid spanning the country of Liberia. 
+
+The `pred_over_grid` function enables us to predict the the separate effects of the covariates, given by $d(x)^\top \beta$, and the spatial random effects, $S(x)$, at any desired location $x$. Hence, before we can use the `pred_over_grid` function, we need to do 1) obtain a shape file that defines the boundaries of our study area, 2) use that to create a regular grid and 3) extract the covariates values at those locations. The R script below performs all these steps.
 ```{r, echo=FALSE, message=FALSE, collapse=TRUE}
 library(sf)
 library(RiskMap)
 load("./data/fit_liberia.RData")
 ```
 ```{r, collapse = TRUE, message=FALSE}
-# Liberia boundaries 
+# 1) Obtaining Liberia boundaries 
 library(rgeoboundaries)
 liberia_adm0 <- geoboundaries("liberia", adm_lvl = "adm0")
 liberia_adm0 <- st_transform(liberia_adm0, crs = 32629)
 
-# Create the grid at 5 km resolution
+# 2) Create the grid at 5 km resolution
 liberia_grid <- create_grid(liberia_adm0, spat_res = 5)
 
-# Extract elevation
+# Download elevation data
 library(elevatr)
 liberia_elev <- get_elev_raster(locations = liberia_adm0, 
                                 z = 5, clip = "locations")
 
+# 3) Extracting elevation at the grid locations
 lb_predictors <- data.frame(elevation = 
                          terra::extract(liberia_elev,
                                 st_coordinates(liberia_grid)))
+```
 
+In the code above, we generated a prediction grid --- which, we recall, that we denote as $\tilde{X}$ --- with a spatial resolution of 5 km. Generally, a higher spatial resolution (note that a "higher spatial resolution" corresponds to a lower value for `spat_res`) yields more detailed prediction maps but also increases the computational cost. In this case, the choice of a 5 km grid strikes a balance between sufficient visualization clarity and manageable computation time.
+
+At this point, we have all the necessary inputs to execute the `pred_over_grid` function for both marginal and joint predictions, as demonstrated below.
+```{r, collapse=TRUE}
 # Predicting the spatial process S(x) over the grid, as well as
 # covariates effects
-lb_pred_S <- pred_over_grid(fit_liberia, 
+
+# Marginal predictions
+lb_pred_S_m <- pred_over_grid(fit_liberia, 
                             grid_pred = liberia_grid, 
-               predictors = lb_predictors, messages = FALSE)
+               predictors = lb_predictors, messages = FALSE,
+               type = "marginal")
 
+# Joint predictions
+lb_pred_S_j <- pred_over_grid(fit_liberia, 
+                            grid_pred = liberia_grid, 
+               predictors = lb_predictors, messages = FALSE,
+               type = "joint")
 ```
 
+
+Both `lb_pred_S_m` and `lb_pred_S_j` contain lists with the same arguments, with one key difference: the samples in the list element named `S_samples` for the former are drawn from the marginal predictive distributions of the components of $S(\tilde{X})$, while for the latter, they come from the joint predictive distribution of $S(\tilde{X})$.
+
+We can inspect the predictive distribution of any component $S(\tilde{X})$ through the Monte Carlo samples stored in `S_samples`. For example, the script below generates the histogram for the predictive distribution of the first component of $S(\tilde{X})$ (@fig-hist-first-comp-pd).
 ```{r}
-# Visualize predictive distribution
+#| label: fig-hist-first-comp-pd
+#| fig-cap: "Histrogram of the predictive distribution of the first component, $S(\\tilde{x}_1)$ of $S(\\tilde{X})$ for the Liberia data analysis."
+
+hist(lb_pred_S_m$S_samples[,1], main = "Predictive distribution",
+     xlab = expression(S(tilde(x)[1])))
 ```
 
-###  Spatially continuous targets
 
-#### Spatial prediction with spatially referenced covariates
+##  Spatially continuous targets
 
-#### Spatial prediction with non spatial covariates {#sec-non-spar-covariates}
+### Spatial prediction with spatially referenced covariates
 
-### Area-level targets
+### Spatial prediction with non spatial covariates {#sec-non-spar-covariates}
+
+## Areal-level targets
 
 ## Comparing the predictive performance of geostatistical models
 

@@ -219,17 +219,22 @@ div.csl-indent {
   <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction"><span class="header-section-number">5.1</span> Introduction</a></li>
   <li><a href="#sec-spat-pred-target" id="toc-sec-spat-pred-target" class="nav-link" data-scroll-target="#sec-spat-pred-target"><span class="header-section-number">5.2</span> Spatial prediction using geostatistical models</a>
   <ul class="collapse">
-  <li><a href="#spatially-continuous-targets" id="toc-spatially-continuous-targets" class="nav-link" data-scroll-target="#spatially-continuous-targets"><span class="header-section-number">5.2.1</span> Spatially continuous targets</a></li>
-  <li><a href="#area-level-targets" id="toc-area-level-targets" class="nav-link" data-scroll-target="#area-level-targets"><span class="header-section-number">5.2.2</span> Area-level targets</a></li>
+  <li><a href="#summary-with-example-continue-from-sec-liberia-estim1" id="toc-summary-with-example-continue-from-sec-liberia-estim1" class="nav-link" data-scroll-target="#summary-with-example-continue-from-sec-liberia-estim1"><span class="header-section-number">5.2.1</span> Summary with example (continue from <span>Section&nbsp;3.3.1</span>)</a></li>
   </ul></li>
-  <li><a href="#comparing-the-predictive-performance-of-geostatistical-models" id="toc-comparing-the-predictive-performance-of-geostatistical-models" class="nav-link" data-scroll-target="#comparing-the-predictive-performance-of-geostatistical-models"><span class="header-section-number">5.3</span> Comparing the predictive performance of geostatistical models</a></li>
-  <li><a href="#sec-theory-prediction" id="toc-sec-theory-prediction" class="nav-link" data-scroll-target="#sec-theory-prediction"><span class="header-section-number">5.4</span> Theory</a>
+  <li><a href="#spatially-continuous-targets" id="toc-spatially-continuous-targets" class="nav-link" data-scroll-target="#spatially-continuous-targets"><span class="header-section-number">5.3</span> Spatially continuous targets</a>
   <ul class="collapse">
-  <li><a href="#sec-pred-distr-theory" id="toc-sec-pred-distr-theory" class="nav-link" data-scroll-target="#sec-pred-distr-theory"><span class="header-section-number">5.4.1</span> Derivation of the predictive distribution</a></li>
-  <li><a href="#scoring-rules" id="toc-scoring-rules" class="nav-link" data-scroll-target="#scoring-rules"><span class="header-section-number">5.4.2</span> Scoring rules</a></li>
+  <li><a href="#spatial-prediction-with-spatially-referenced-covariates" id="toc-spatial-prediction-with-spatially-referenced-covariates" class="nav-link" data-scroll-target="#spatial-prediction-with-spatially-referenced-covariates"><span class="header-section-number">5.3.1</span> Spatial prediction with spatially referenced covariates</a></li>
+  <li><a href="#sec-non-spar-covariates" id="toc-sec-non-spar-covariates" class="nav-link" data-scroll-target="#sec-non-spar-covariates"><span class="header-section-number">5.3.2</span> Spatial prediction with non spatial covariates</a></li>
   </ul></li>
-  <li><a href="#common-questions-from-users" id="toc-common-questions-from-users" class="nav-link" data-scroll-target="#common-questions-from-users"><span class="header-section-number">5.5</span> Common questions from users</a></li>
-  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">5.6</span> Exercises</a></li>
+  <li><a href="#area-level-targets" id="toc-area-level-targets" class="nav-link" data-scroll-target="#area-level-targets"><span class="header-section-number">5.4</span> Area-level targets</a></li>
+  <li><a href="#comparing-the-predictive-performance-of-geostatistical-models" id="toc-comparing-the-predictive-performance-of-geostatistical-models" class="nav-link" data-scroll-target="#comparing-the-predictive-performance-of-geostatistical-models"><span class="header-section-number">5.5</span> Comparing the predictive performance of geostatistical models</a></li>
+  <li><a href="#sec-theory-prediction" id="toc-sec-theory-prediction" class="nav-link" data-scroll-target="#sec-theory-prediction"><span class="header-section-number">5.6</span> Theory</a>
+  <ul class="collapse">
+  <li><a href="#sec-pred-distr-theory" id="toc-sec-pred-distr-theory" class="nav-link" data-scroll-target="#sec-pred-distr-theory"><span class="header-section-number">5.6.1</span> Derivation of the predictive distribution</a></li>
+  <li><a href="#scoring-rules" id="toc-scoring-rules" class="nav-link" data-scroll-target="#scoring-rules"><span class="header-section-number">5.6.2</span> Scoring rules</a></li>
+  </ul></li>
+  <li><a href="#common-questions-from-users" id="toc-common-questions-from-users" class="nav-link" data-scroll-target="#common-questions-from-users"><span class="header-section-number">5.7</span> Common questions from users</a></li>
+  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">5.8</span> Exercises</a></li>
   </ul>
 </nav>
     </div>
@@ -304,7 +309,7 @@ div.csl-indent {
 <li><p>Step 1. define the predictive target <span class="math inline">\(T(x)\)</span>;</p></li>
 <li><p>Step 2. obtain the predictive distribution of <span class="math inline">\(T(x)\)</span> and use this to compute summaries that helps to answer your original research question.</p></li>
 </ul>
-<p>This begs two practical questions: “How do we obtain the predictive distribution of <span class="math inline">\(T(x)\)</span>?” and “How do we use the predictive distribution to compute our summaries?”. For a mathematical derivation of the predictive distribution and the form that this takes in the special case of a linear geostatistical model, you can read <a href="#sec-theory-prediction"><span>Section&nbsp;5.4</span></a>. In what follows, we shall assume that we can simulate directly from <span class="math inline">\([T(x) \: \mid \: y]\)</span> either using direct simulation or Markov Chains Monte Carlo (see <a href="03_model-fitting.html#sec-mcmc-mala"><span>Section&nbsp;3.4.2.2</span></a>).</p>
+<p>This begs two practical questions: “How do we obtain the predictive distribution of <span class="math inline">\(T(x)\)</span>?” and “How do we use the predictive distribution to compute our summaries?”. For a mathematical derivation of the predictive distribution and the form that this takes in the special case of a linear geostatistical model, you can read <a href="#sec-theory-prediction"><span>Section&nbsp;5.6</span></a>. In what follows, we shall assume that we can simulate directly from <span class="math inline">\([T(x) \: \mid \: y]\)</span> either using direct simulation or Markov Chains Monte Carlo (see <a href="03_model-fitting.html#sec-mcmc-mala"><span>Section&nbsp;3.4.2.2</span></a>).</p>
 <p>In our exposition so far, we have also made the implicit assumption that prediction is required for our predictive target at a single, unsampled, location <span class="math inline">\(x\)</span> and for this reason we have denote our predictive target simply as <span class="math inline">\(T(x)\)</span>. However, this is almost never the case, since in most cases, our predictive target correspond to either of the following.</p>
 <ul>
 <li><p><strong>Spatially continuous targets</strong> correspond to an unobserved spatially continuous surface (e.g.&nbsp;disease prevalence), formally denoted by <span class="math inline">\(\mathcal{T} = \{T(x), x \in A\}\)</span>, where <span class="math inline">\(A\)</span> is our region of interest.</p></li>
@@ -316,76 +321,105 @@ div.csl-indent {
 <li><p><strong>Marginal predictions</strong> are obtained by simulating independently from the <span class="math inline">\(q\)</span> marginal predictive distributions of <span class="math inline">\([S(\tilde{X}) | y]\)</span>. In other words, we consider a prediction location <span class="math inline">\(\tilde{x}_j\)</span>, simulate from <span class="math inline">\([S(\tilde{x}_j) | y]\)</span> say <span class="math inline">\(B\)</span> samples, and repeat this for <span class="math inline">\(j=1,\ldots,q\)</span></p></li>
 <li><p><strong>Joint predictions</strong> are obtained by simulating from the joint distribution of <span class="math inline">\([S(\tilde{X}) | y]\)</span>. Unlike marginal predictions, joint predictions take into account the correlation between the different components of <span class="math inline">\([S(\tilde{X}) | y]\)</span>.</p></li>
 </ul>
-<p>To better understand the technical differences between marginal and joint predictions, we refer you to <a href="#sec-pred-distr-theory"><span>Section&nbsp;5.4.1</span></a>. However, in practice, the two following facts are important.</p>
+<p>To better understand the technical differences between marginal and joint predictions, we refer you to <a href="#sec-pred-distr-theory"><span>Section&nbsp;5.6.1</span></a>. However, in practice, the two following facts are important.</p>
 <ul>
 <li><p><em>Fact 1</em>. Joint predictions are computationally more intensive than marginal predictions.</p></li>
 <li><p><em>Fact 2</em>. Joint predictions are required when the predictive target is at areal-level.</p></li>
 <li><p><em>Fact 3</em>. For spatially continuous targets, both marginal and joint predictions can be used but, in light of <em>Fact 1</em>, we might prefer using the former.</p></li>
 </ul>
+<section id="summary-with-example-continue-from-sec-liberia-estim1" class="level3" data-number="5.2.1">
+<h3 data-number="5.2.1" class="anchored" data-anchor-id="summary-with-example-continue-from-sec-liberia-estim1"><span class="header-section-number">5.2.1</span> Summary with example (continue from <a href="03_model-fitting.html#sec-liberia-estim1"><span>Section&nbsp;3.3.1</span></a>)</h3>
+<p>We now show how the ideas and concepts discussed above are put into practice in an geostatistical analysis, using the Liberia data example. Using the fitted model in <a href="03_model-fitting.html#sec-liberia-estim1"><span>Section&nbsp;3.3.1</span></a>, we use the <code>predict_over_grid</code> function in <code>RiskMap</code>, to sample from the predictive distribution of the spatial Gaussian process <span class="math inline">\(S(x)\)</span> based on a regular grid spanning the country of Liberia.</p>
+<p>The <code>pred_over_grid</code> function enables us to predict the the separate effects of the covariates, given by <span class="math inline">\(d(x)^\top \beta\)</span>, and the spatial random effects, <span class="math inline">\(S(x)\)</span>, at any desired location <span class="math inline">\(x\)</span>. Hence, before we can use the <code>pred_over_grid</code> function, we need to do 1) obtain a shape file that defines the boundaries of our study area, 2) use that to create a regular grid and 3) extract the covariates values at those locations. The R script below performs all these steps.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Liberia boundaries </span></span>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1) Obtaining Liberia boundaries </span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rgeoboundaries)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>liberia_adm0 <span class="ot">&lt;-</span> <span class="fu">geoboundaries</span>(<span class="st">"liberia"</span>, <span class="at">adm_lvl =</span> <span class="st">"adm0"</span>)</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>liberia_adm0 <span class="ot">&lt;-</span> <span class="fu">st_transform</span>(liberia_adm0, <span class="at">crs =</span> <span class="dv">32629</span>)</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the grid at 5 km resolution</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 2) Create the grid at 5 km resolution</span></span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>liberia_grid <span class="ot">&lt;-</span> <span class="fu">create_grid</span>(liberia_adm0, <span class="at">spat_res =</span> <span class="dv">5</span>)</span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract elevation</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Download elevation data</span></span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(elevatr)</span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>liberia_elev <span class="ot">&lt;-</span> <span class="fu">get_elev_raster</span>(<span class="at">locations =</span> liberia_adm0, </span>
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>                                <span class="at">z =</span> <span class="dv">5</span>, <span class="at">clip =</span> <span class="st">"locations"</span>)</span>
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>lb_predictors <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">elevation =</span> </span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>                         terra<span class="sc">::</span><span class="fu">extract</span>(liberia_elev,</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>                                <span class="fu">st_coordinates</span>(liberia_grid)))</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Predicting the spatial process S(x) over the grid, as well as</span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co"># covariates effects</span></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>lb_pred_S <span class="ot">&lt;-</span> <span class="fu">pred_over_grid</span>(fit_liberia, </span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>                            <span class="at">grid_pred =</span> liberia_grid, </span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>               <span class="at">predictors =</span> lb_predictors, <span class="at">messages =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co"># 3) Extracting elevation at the grid locations</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>lb_predictors <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">elevation =</span> </span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>                         terra<span class="sc">::</span><span class="fu">extract</span>(liberia_elev,</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>                                <span class="fu">st_coordinates</span>(liberia_grid)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>In the code above, we generated a prediction grid — which, we recall, that we denote as <span class="math inline">\(\tilde{X}\)</span> — with a spatial resolution of 5 km. Generally, a higher spatial resolution (note that a “higher spatial resolution” corresponds to a lower value for <code>spat_res</code>) yields more detailed prediction maps but also increases the computational cost. In this case, the choice of a 5 km grid strikes a balance between sufficient visualization clarity and manageable computation time.</p>
+<p>At this point, we have all the necessary inputs to execute the <code>pred_over_grid</code> function for both marginal and joint predictions, as demonstrated below.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualize predictive distribution</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Predicting the spatial process S(x) over the grid, as well as</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># covariates effects</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Marginal predictions</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>lb_pred_S_m <span class="ot">&lt;-</span> <span class="fu">pred_over_grid</span>(fit_liberia, </span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>                            <span class="at">grid_pred =</span> liberia_grid, </span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>               <span class="at">predictors =</span> lb_predictors, <span class="at">messages =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>               <span class="at">type =</span> <span class="st">"marginal"</span>)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Joint predictions</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>lb_pred_S_j <span class="ot">&lt;-</span> <span class="fu">pred_over_grid</span>(fit_liberia, </span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>                            <span class="at">grid_pred =</span> liberia_grid, </span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>               <span class="at">predictors =</span> lb_predictors, <span class="at">messages =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>               <span class="at">type =</span> <span class="st">"joint"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<section id="spatially-continuous-targets" class="level3" data-number="5.2.1">
-<h3 data-number="5.2.1" class="anchored" data-anchor-id="spatially-continuous-targets"><span class="header-section-number">5.2.1</span> Spatially continuous targets</h3>
-<section id="spatial-prediction-with-spatially-referenced-covariates" class="level4" data-number="5.2.1.1">
-<h4 data-number="5.2.1.1" class="anchored" data-anchor-id="spatial-prediction-with-spatially-referenced-covariates"><span class="header-section-number">5.2.1.1</span> Spatial prediction with spatially referenced covariates</h4>
-</section>
-<section id="sec-non-spar-covariates" class="level4" data-number="5.2.1.2">
-<h4 data-number="5.2.1.2" class="anchored" data-anchor-id="sec-non-spar-covariates"><span class="header-section-number">5.2.1.2</span> Spatial prediction with non spatial covariates</h4>
-</section>
-</section>
-<section id="area-level-targets" class="level3" data-number="5.2.2">
-<h3 data-number="5.2.2" class="anchored" data-anchor-id="area-level-targets"><span class="header-section-number">5.2.2</span> Area-level targets</h3>
-</section>
-</section>
-<section id="comparing-the-predictive-performance-of-geostatistical-models" class="level2" data-number="5.3">
-<h2 data-number="5.3" class="anchored" data-anchor-id="comparing-the-predictive-performance-of-geostatistical-models"><span class="header-section-number">5.3</span> Comparing the predictive performance of geostatistical models</h2>
-</section>
-<section id="sec-theory-prediction" class="level2" data-number="5.4">
-<h2 data-number="5.4" class="anchored" data-anchor-id="sec-theory-prediction"><span class="header-section-number">5.4</span> Theory</h2>
-<section id="sec-pred-distr-theory" class="level3" data-number="5.4.1">
-<h3 data-number="5.4.1" class="anchored" data-anchor-id="sec-pred-distr-theory"><span class="header-section-number">5.4.1</span> Derivation of the predictive distribution</h3>
-</section>
-<section id="scoring-rules" class="level3" data-number="5.4.2">
-<h3 data-number="5.4.2" class="anchored" data-anchor-id="scoring-rules"><span class="header-section-number">5.4.2</span> Scoring rules</h3>
+<p>Both <code>lb_pred_S_m</code> and <code>lb_pred_S_j</code> contain lists with the same arguments, with one key difference: the samples in the list element named <code>S_samples</code> for the former are drawn from the marginal predictive distributions of the components of <span class="math inline">\(S(\tilde{X})\)</span>, while for the latter, they come from the joint predictive distribution of <span class="math inline">\(S(\tilde{X})\)</span>.</p>
+<p>We can inspect the predictive distribution of any component <span class="math inline">\(S(\tilde{X})\)</span> through the Monte Carlo samples stored in <code>S_samples</code>. For example, the script below generates the histogram for the predictive distribution of the first component of <span class="math inline">\(S(\tilde{X})\)</span> (<a href="#fig-hist-first-comp-pd">Figure&nbsp;<span>5.1</span></a>).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(lb_pred_S_m<span class="sc">$</span>S_samples[,<span class="dv">1</span>], <span class="at">main =</span> <span class="st">"Predictive distribution"</span>,</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="fu">expression</span>(<span class="fu">S</span>(<span class="fu">tilde</span>(x)[<span class="dv">1</span>])))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-hist-first-comp-pd" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="05_geostatistical-prediction_files/figure-html/fig-hist-first-comp-pd-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="figure-caption">Figure&nbsp;5.1: Histrogram of the predictive distribution of the first component, <span class="math inline">\(S(\tilde{x}_1)\)</span> of <span class="math inline">\(S(\tilde{X})\)</span> for the Liberia data analysis.</figcaption>
+</figure>
+</div>
+</div>
+</div>
 </section>
 </section>
-<section id="common-questions-from-users" class="level2" data-number="5.5">
-<h2 data-number="5.5" class="anchored" data-anchor-id="common-questions-from-users"><span class="header-section-number">5.5</span> Common questions from users</h2>
+<section id="spatially-continuous-targets" class="level2" data-number="5.3">
+<h2 data-number="5.3" class="anchored" data-anchor-id="spatially-continuous-targets"><span class="header-section-number">5.3</span> Spatially continuous targets</h2>
+<section id="spatial-prediction-with-spatially-referenced-covariates" class="level3" data-number="5.3.1">
+<h3 data-number="5.3.1" class="anchored" data-anchor-id="spatial-prediction-with-spatially-referenced-covariates"><span class="header-section-number">5.3.1</span> Spatial prediction with spatially referenced covariates</h3>
+</section>
+<section id="sec-non-spar-covariates" class="level3" data-number="5.3.2">
+<h3 data-number="5.3.2" class="anchored" data-anchor-id="sec-non-spar-covariates"><span class="header-section-number">5.3.2</span> Spatial prediction with non spatial covariates</h3>
+</section>
+</section>
+<section id="area-level-targets" class="level2" data-number="5.4">
+<h2 data-number="5.4" class="anchored" data-anchor-id="area-level-targets"><span class="header-section-number">5.4</span> Area-level targets</h2>
+</section>
+<section id="comparing-the-predictive-performance-of-geostatistical-models" class="level2" data-number="5.5">
+<h2 data-number="5.5" class="anchored" data-anchor-id="comparing-the-predictive-performance-of-geostatistical-models"><span class="header-section-number">5.5</span> Comparing the predictive performance of geostatistical models</h2>
+</section>
+<section id="sec-theory-prediction" class="level2" data-number="5.6">
+<h2 data-number="5.6" class="anchored" data-anchor-id="sec-theory-prediction"><span class="header-section-number">5.6</span> Theory</h2>
+<section id="sec-pred-distr-theory" class="level3" data-number="5.6.1">
+<h3 data-number="5.6.1" class="anchored" data-anchor-id="sec-pred-distr-theory"><span class="header-section-number">5.6.1</span> Derivation of the predictive distribution</h3>
+</section>
+<section id="scoring-rules" class="level3" data-number="5.6.2">
+<h3 data-number="5.6.2" class="anchored" data-anchor-id="scoring-rules"><span class="header-section-number">5.6.2</span> Scoring rules</h3>
+</section>
+</section>
+<section id="common-questions-from-users" class="level2" data-number="5.7">
+<h2 data-number="5.7" class="anchored" data-anchor-id="common-questions-from-users"><span class="header-section-number">5.7</span> Common questions from users</h2>
 <ul>
 <li><p><em>What should be the spatial resolution of the grid used for prediction?</em></p></li>
 <li><p><em>I have covariates with different spatial resolutions. Which spatial resolution should I use?</em></p></li>
 <li><p><em>My prediction map looks like noise. What could be the error?</em></p></li>
 <li><p><em>The main goal of my analysis is to carry out predictions of the main outcome. However, can I also use the model to draw inferences on the association between the outcome and the covariates that I have included in the model?</em></p></li>
-<li><p><em>In my model I have some covariates that are attached to the individual (e.g.&nbsp;age, gender, occupation, etc.). How do I specify them when doing prediction?</em> <br> Read <a href="#sec-non-spar-covariates"><span>Section&nbsp;5.2.1.2</span></a>.</p></li>
+<li><p><em>In my model I have some covariates that are attached to the individual (e.g.&nbsp;age, gender, occupation, etc.). How do I specify them when doing prediction?</em> <br> Read <a href="#sec-non-spar-covariates"><span>Section&nbsp;5.3.2</span></a>.</p></li>
 </ul>
 </section>
-<section id="exercises" class="level2" data-number="5.6">
-<h2 data-number="5.6" class="anchored" data-anchor-id="exercises"><span class="header-section-number">5.6</span> Exercises</h2>
+<section id="exercises" class="level2" data-number="5.8">
+<h2 data-number="5.8" class="anchored" data-anchor-id="exercises"><span class="header-section-number">5.8</span> Exercises</h2>
 <ol type="1">
 <li><em>Review questions</em>.
 <ul>
