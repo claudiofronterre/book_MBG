@@ -12,7 +12,7 @@
 
 Geostatistics was originally developed and applied as a predictive tool for improving mining operations and planning. In the seminal paper on model-based geostatistics (MBG) [@diggle1998], the authors begin by stating:
 
-> *"Conventional geostatistical methodology solves the problem of predicting the realized value of a linear functional of a Gaussian spatial stochastic process $S(x)$ based on observations $Y_i= S(x_i) + Z_i$ at sampling locations $x_i$, where the $Z_i$ are mutually independent, zero-mean Gaussian random variables."*
+> \*"Conventional geostatistical methodology solves the problem of predicting the realized value of a linear functional of a Gaussian spatial stochastic process\* $S(x)$ based on observations $Y_i= S(x_i) + Z_i$ at sampling locations $x_i$, where the $Z_i$ are mutually independent, zero-mean Gaussian random variables."
 
 It is no coincidence that, although MBG represents a broad class of statistical models applicable to both estimation and prediction problems, the majority of its applications have focused on prediction. This is evident in many scientific fields where MBG has been used, including global public health, which is the primary application focus in this book. In line with the quote above, for most of the examples considered in this book, the analyses we illustrate aim to use a finite set of locations $x_i$ --- typically corresponding to households or villages --- to make inferences about an observed disease risk surface. Having performed estimation of MBG models in @sec-estimation, we can now carry out spatial prediction to answer critical public health questions, such as identifying hot-spots and cold-spots --- areas of unusually high or low disease risk, respectively --- or determining whether the average prevalence across a region exceeds a predefined policy threshold.
 
@@ -20,50 +20,52 @@ In this chapter, we will explore these issues, beginning with a formal statistic
 
 ## Spatial prediction using geostatistical models {#sec-spat-pred-target}
 
-Let us consider the class of generalized linear geostatistical models (GLGM) as in @sec-geostat-models. In the formulation of prediction problems, the first step consists of defining our predictive target, which we denote as $T(x)$ where $x$ denotes any locations within the study, which is usually not part of the sampled data. For example in the analysis of the riverblindness in Liberia, our interest lies in identifying areas where disease prevalence exceeds 20$\%$, a threshold that use been used in the past to identify areas in need of mass drug administration due to the potential for significant disease burden and transmission [@amazigo2008]. Hence, in this case, disease prevalence corresponds to our predictive target $T(x)$. To draw inferences on $T(x)$ and allow us to answer the question of where $T(x)$ exceeds a 20$\%$ threshold, we first need to obtain the so called *predictive distribution* of $T(x)$. More specifically, the *predictive distribution* of $T(x)$ is the distribution of $T(x)$ conditioned to the data, which we denote by $[T(x) \: \mid \: y]$. More importantly, by incorporating the information provided by the data, the predictive distribution of the target enables us to quantify the uncertainty stemming from the stochastic nature of the process we are modeling. In other words, the predictive distribution reflects the range of possible values that the target $T(x)$ can take and their likelihoods based on the model we have fitted to the data. As we shall see in our examples, we can use the predictive distribution of $T(x)$ both to provide what is our "best guess" for $T(x)$ and a summary of uncertainty which quantifies how much concentrated is the predictive distribution around that guess. However, providing a single "best guess" for $T(x)$ is not always the answer to our research question. In the example on riverblindness mentioned at the start of the this section, a more natural way to use the predictive distribution would be to compute the likelihood that $T(x)$ exceeds 0.2 at any given location $x$. 
+Let us consider the class of generalized linear geostatistical models (GLGM) as in @sec-geostat-models. In the formulation of prediction problems, the first step consists of defining our predictive target, which we denote as $T(x)$ where $x$ denotes any locations within the study, which is usually not part of the sampled data. For example in the analysis of the riverblindness in Liberia, our interest lies in identifying areas where disease prevalence exceeds 20$\%$, a threshold that use been used in the past to identify areas in need of mass drug administration due to the potential for significant disease burden and transmission [@amazigo2008]. Hence, in this case, disease prevalence corresponds to our predictive target $T(x)$. To draw inferences on $T(x)$ and allow us to answer the question of where $T(x)$ exceeds a 20$\%$ threshold, we first need to obtain the so called *predictive distribution* of $T(x)$. More specifically, the *predictive distribution* of $T(x)$ is the distribution of $T(x)$ conditioned to the data, which we denote by $[T(x) \: \mid \: y]$. More importantly, by incorporating the information provided by the data, the predictive distribution of the target enables us to quantify the uncertainty stemming from the stochastic nature of the process we are modeling. In other words, the predictive distribution reflects the range of possible values that the target $T(x)$ can take and their likelihoods based on the model we have fitted to the data. As we shall see in our examples, we can use the predictive distribution of $T(x)$ both to provide what is our "best guess" for $T(x)$ and a summary of uncertainty which quantifies how much concentrated is the predictive distribution around that guess. However, providing a single "best guess" for $T(x)$ is not always the answer to our research question. In the example on riverblindness mentioned at the start of the this section, a more natural way to use the predictive distribution would be to compute the likelihood that $T(x)$ exceeds 0.2 at any given location $x$.
 
 In summary, the first two steps of spatial prediction are:
 
-- Step 1. define the predictive target $T(x)$; 
+-   Step 1. define the predictive target $T(x)$;
 
-- Step 2. obtain the predictive distribution of $T(x)$ and use this to compute summaries that helps to answer your original research question. 
+-   Step 2. obtain the predictive distribution of $T(x)$ and use this to compute summaries that helps to answer your original research question.
 
 This begs two practical questions: "How do we obtain the predictive distribution of $T(x)$?" and "How do we use the predictive distribution to compute our summaries?". For a mathematical derivation of the predictive distribution and the form that this takes in the special case of a linear geostatistical model, you can read @sec-theory-prediction. In what follows, we shall assume that we can simulate directly from $[T(x) \: \mid \: y]$ either using direct simulation or Markov Chains Monte Carlo (see @sec-mcmc-mala).
 
-In our exposition so far, we have also made the implicit assumption that prediction is required for our predictive target at a single, unsampled, location $x$ and for this reason we have denote our predictive target simply as $T(x)$. However, this is almost never the case, since in most cases, our predictive target correspond to either of the following. 
+In our exposition so far, we have also made the implicit assumption that prediction is required for our predictive target at a single, unsampled, location $x$ and for this reason we have denote our predictive target simply as $T(x)$. However, this is almost never the case, since in most cases, our predictive target correspond to either of the following.
 
-- **Spatially continuous targets** correspond to an unobserved spatially continuous surface (e.g. disease prevalence), formally denoted by $\mathcal{T} = \{T(x), x \in A\}$, where $A$ is our region of interest. 
+-   **Spatially continuous targets** correspond to an unobserved spatially continuous surface (e.g. disease prevalence), formally denoted by $\mathcal{T} = \{T(x), x \in A\}$, where $A$ is our region of interest.
 
-- **Areal-level targets**, usually defined as transformation of the spatially continuous surface $\mathcal{T}$, defined previously, and which we denote as $\mathcal{T}_{A} = F(\mathcal{T}, A)$. For example, the average of $T(x)$ over $A$ is an areal-level target, formally defined as $F(\mathcal{T}, A) = \int_{A} T(x) \: dx / |A|$, where $|A|$ is the area of $A$.
+-   **Areal-level targets**, usually defined as transformation of the spatially continuous surface $\mathcal{T}$, defined previously, and which we denote as $\mathcal{T}_{A} = F(\mathcal{T}, A)$. For example, the average of $T(x)$ over $A$ is an areal-level target, formally defined as $F(\mathcal{T}, A) = \int_{A} T(x) \: dx / |A|$, where $|A|$ is the area of $A$.
 
-Before we consider these two types of prediction targets more in detail, we first explain the preliminary steps that need to be performed and are common to both. Whether our goal is predict a spatially continuous or areal-level target, the initial task is to draw Monte Carlo samples from the predictive distribution of the spatial process $S(x)$[^05_geostatistical-prediction-1]. Next, we define a set of prediction locations, say $q$ in total, denoted as $\tilde{X} = {\tilde{x}_1, \ldots, \tilde{x}_q}$. These locations correspond to a regular grid that spans our region of interest, $A$. the predictive distribution of the spatial process over the grid, represented as $[S(\tilde{X}) | y]$. This distribution allows us to generate Monte Carlo samples for $S(\tilde{X})$, which will later be used for computing our target. 
-
-At this stage, we need to consider which of the two following types of predictions from $[S(\tilde{X}) | y]$ are required.
-
-- **Marginal predictions** are obtained by simulating independently from the $q$ marginal predictive distributions of $[S(\tilde{X}) | y]$. In other words, we consider a prediction location $\tilde{x}_j$, simulate from $[S(\tilde{x}_j) | y]$ say $B$ samples, and repeat this for $j=1,\ldots,q$
-
-- **Joint predictions** are obtained by simulating from the joint distribution of $[S(\tilde{X}) | y]$. Unlike marginal predictions, joint predictions take into account the correlation between the different components of $[S(\tilde{X}) | y]$.
+Before we consider these two types of prediction targets more in detail, we first explain the preliminary steps that need to be performed and are common to both. Whether our goal is predict a spatially continuous or areal-level target, the initial task is to draw Monte Carlo samples from the predictive distribution of the spatial process $S(x)$[^05_geostatistical-prediction-1]. Next, we define a set of prediction locations, say $q$ in total, denoted as $\tilde{X} = {\tilde{x}_1, \ldots, \tilde{x}_q}$. These locations correspond to a regular grid that spans our region of interest, $A$. the predictive distribution of the spatial process over the grid, represented as $[S(\tilde{X}) \: |\: y]$. This distribution allows us to generate Monte Carlo samples for $S(\tilde{X})$, which will later be used for computing our target.
 
 [^05_geostatistical-prediction-1]: Here, we are overlooking the fact that when $T(x)$ is a linear transformation of $S(x)$ and the the model fitted to the data is a linear geostatistical model, then we can derive any summary of the predictive distribution analytically, without the need of carrying out any simulation. Although this may displease some of our fellow statisticians who care about computational efficiency, for pedagogical reasons, here we have chosen to explain only the Monte Carlo based approach, which works in all scenarios.
 
-To better understand the technical differences between marginal and joint predictions, we refer you to @sec-pred-distr-theory. However, in practice, the two following facts are important. 
+At this stage, we need to consider which of the two following types of predictions from $[S(\tilde{X}) \: |\: y]$ are required.
 
- - *Fact 1*. Joint predictions are computationally more intensive than marginal predictions. 
+-   **Marginal predictions** are obtained by simulating independently from the $q$ marginal predictive distributions of $[S(\tilde{X}) | y]$. In other words, we consider a prediction location $\tilde{x}_j$, simulate from $[S(\tilde{x}_j) \: |\: y]$ say $B$ samples, and repeat this for $j=1,\ldots,q$
 
- - *Fact 2*. Joint predictions are required when the predictive target is at areal-level.
+-   **Joint predictions** are obtained by simulating from the joint distribution of $[S(\tilde{X}) \: |\: y]$. Unlike marginal predictions, joint predictions take into account the correlation between the different components of $[S(\tilde{X}) \: |\: y]$.
 
- - *Fact 3*. For spatially continuous targets, both marginal and joint predictions can be used but, in light of *Fact 1*, we might prefer using the former.
- 
-### Summary with example (continue from @sec-liberia-estim1)
+To better understand the technical differences between marginal and joint predictions, we refer you to @sec-pred-distr-theory. However, in practice, the two following facts are important.
 
-We now show how the ideas and concepts discussed above are put into practice in an geostatistical analysis, using the Liberia data example. Using the fitted model in @sec-liberia-estim1, we use the `predict_over_grid` function in `RiskMap`, to sample from the predictive distribution of the spatial Gaussian process $S(x)$ based on a regular grid spanning the country of Liberia. 
+-   *Fact 1*. Joint predictions are computationally more intensive than marginal predictions.
+
+-   *Fact 2*. Joint predictions are required when the predictive target is at areal-level.
+
+-   *Fact 3*. For spatially continuous targets, both marginal and joint predictions can be used but, in light of *Fact 1*, we might prefer using the former.
+
+### Generating samples from the predictive distribution of $S(\tilde{X})$ (continue from @sec-liberia-estim1) {#sec-pred-samples}
+
+We now show how the ideas and concepts discussed above are put into practice in an geostatistical analysis, using the Liberia data example. Using the fitted model in @sec-liberia-estim1, we use the `predict_over_grid` function in `RiskMap`, to sample from the predictive distribution of the spatial Gaussian process $S(x)$ based on a regular grid spanning the country of Liberia.
 
 The `pred_over_grid` function enables us to predict the the separate effects of the covariates, given by $d(x)^\top \beta$, and the spatial random effects, $S(x)$, at any desired location $x$. Hence, before we can use the `pred_over_grid` function, we need to do 1) obtain a shape file that defines the boundaries of our study area, 2) use that to create a regular grid and 3) extract the covariates values at those locations. The R script below performs all these steps.
+
 ```{r, echo=FALSE, message=FALSE, collapse=TRUE}
 library(sf)
 library(RiskMap)
 load("./data/fit_liberia.RData")
 ```
+
 ```{r, collapse = TRUE, message=FALSE}
 # 1) Obtaining Liberia boundaries 
 library(rgeoboundaries)
@@ -87,6 +89,7 @@ lb_predictors <- data.frame(elevation =
 In the code above, we generated a prediction grid --- which, we recall, that we denote as $\tilde{X}$ --- with a spatial resolution of 5 km. Generally, a higher spatial resolution (note that a "higher spatial resolution" corresponds to a lower value for `spat_res`) yields more detailed prediction maps but also increases the computational cost. In this case, the choice of a 5 km grid strikes a balance between sufficient visualization clarity and manageable computation time.
 
 At this point, we have all the necessary inputs to execute the `pred_over_grid` function for both marginal and joint predictions, as demonstrated below.
+
 ```{r, collapse=TRUE}
 # Predicting the spatial process S(x) over the grid, as well as
 # covariates effects
@@ -104,10 +107,12 @@ lb_pred_S_j <- pred_over_grid(fit_liberia,
                type = "joint")
 ```
 
-
 Both `lb_pred_S_m` and `lb_pred_S_j` contain lists with the same arguments, with one key difference: the samples in the list element named `S_samples` for the former are drawn from the marginal predictive distributions of the components of $S(\tilde{X})$, while for the latter, they come from the joint predictive distribution of $S(\tilde{X})$.
 
+An important note is that in the code above we have used the default settings for the Markov Chain Monte Carlo (MCMC). To change these setting use the function `set_control_sim` whose output should be passed to the argument `contol_sim` of `pred_over_grid`. The diagnostic on the convergence of the MCMC can also be applying the `check_mcmc` function to either `lb_pred_S_m` or `lb_pred_S_j`; see @sec-summary for more details. 
+
 We can inspect the predictive distribution of any component $S(\tilde{X})$ through the Monte Carlo samples stored in `S_samples`. For example, the script below generates the histogram for the predictive distribution of the first component of $S(\tilde{X})$ (@fig-hist-first-comp-pd).
+
 ```{r}
 #| label: fig-hist-first-comp-pd
 #| fig-cap: "Histrogram of the predictive distribution of the first component, $S(\\tilde{x}_1)$ of $S(\\tilde{X})$ for the Liberia data analysis."
@@ -116,8 +121,65 @@ hist(lb_pred_S_m$S_samples[,1], main = "Predictive distribution",
      xlab = expression(S(tilde(x)[1])))
 ```
 
+## Spatially continuous targets
 
-##  Spatially continuous targets
+In the previous section, we explained and demonstrated how to obtain Monte Carlo samples from the predictive distribution of $S(\tilde{X})$, which we denoted by $[S(\tilde{X}) \: |\: y]$. Let $S_{(j)}(\tilde{X})$ and $[S(\tilde{X}) \: |\: y]$ represent the $j$-th Monte Carlo samples for the entire grid and the specific location $x_k$, respectively, for $j=1,\ldots,B$ and $k=1,\ldots,q$.
+
+We define our predictive target, $T(x)$, at any given location $x$, as a transformation of $S(x)$. Thus, we express it as $T(x) = f{S(x)}$. Note that $f(\cdot)$ can represent any type of non-linear transformation of $S(x)$ and may include covariate effects and other non-structured random effects. A list of common predictive targets frequently used in geostatistical analysis is provided in @tbl-spat-cont-pred-target.
+
+| Predictive target $T(x)$                                                  | Name of the predictive target | Generalized linear model (GLM) family |
+|----------------------------|----------------------|-----------------------|
+| $d(x)^\top \beta + S(x)$                                                  | Linear predictor              | Any GLM                               |
+| $\frac{\exp\{d(x)^\top \beta + S(x)\}}{1+\exp\{d(x)^\top \beta + S(x)\}}$ | Prevalence                    | Binomial                              |
+| $\exp\{d(x)^\top \beta + S(x)\}$                                          | Mean number of cases          | Poisson                               |
+| $S(x)$                                                                    | Spatial random effects        | Any GLM                               |
+| $d(x)^\top \beta$                                                         | Covariates effects            | Any GLM                               |
+
+: List of some of the most common spatially continuous predictive targets in a geostatistical analysis. For each target, we also indicate the generalized linear model (GLM) family for which these can be defined. Note that this list not exhaustive and different predictive other than those listed in the table could also be considered. {#tbl-spat-cont-pred-target}
+
+An important feature of the predictive targets listed in @tbl-spat-cont-pred-target is that none of them include the nugget effect, denoted by $Z_i$ in our linear predictor definition for generalized linear geostatistical models. The reason for excluding $Z_i$ from the predictive targets is that, in most cases, it lacks a clear, unambiguous scientific interpretation. However, $Z_i$ might be included, for example,  in environmental studies focusing on highly localized phenomena where measurement error or small-scale variability is of direct scientific interest; or in epidemiological studies where inferences at the individual level, rather than the population level, are required, and where $Z_i$ is introduced to account for unexplained individual-level variation. It is also worth noticing, the primary impact of including $Z_i$ in $T(x)$ would be an increase in the uncertainty of predictive inferences for $T(x)$, with minimal effect (or none at all, if $T(x)$ corresponds to the linear predictor) on the point predictions.
+
+The predictive targets in @tbl-spat-cont-pred-target corresponding to $d(x)^\top \beta$ or the spatial random effects $S(x)$ might be considered when the goal is to highlight the different contribution to the overall predictive inferences from the measured covariates.
+
+#### Example: mapping riverblidness prevalence in Liberia (continuing from @sec-pred-samples)
+
+Let us continue the geostatistical of the riverblindness data in Liberia. The predictive target we consider is prevalence, hence $T(x) = \frac{\exp\{ \beta_{0} + \beta_{1}\log\{e(x)\} + S(x)\}}{1+\exp\{\beta_{0} + \beta_{1}\log\{e(x)\} + S(x)\}}$, where $e(x)$ is the elevation in meters at location $x$.
+
+Through the `pred_target_grid` we can use the output in `lb_pred_S_m` (or `lb_pred_S_j` as well, in this case) to generate predictions of prevalence over the regular grid at 5 km we have created earlier. 
+```{r, collapse=TRUE}
+
+# Prediction of riverblindness prevalence
+lb_prev <- 
+pred_target_grid(
+  lb_pred_S_m, 
+  f_target = list(prev = function(lp) exp(lp)/(1+exp(lp))),
+  pd_summary = list(mean = function(Tx) mean(Tx), 
+                    cv = function(Tx) sd(Tx)/ mean(Tx),
+                    exceed20 = function(Tx) mean(Tx > 0.2))
+)
+```
+
+In the function above the argument `f_target` can take a list of functions, as multiple predictive targets can be defined. Here, we only specified prevalence (`prev`). Note that in defining the predictive target in `f_target`, we need to express that as a function of $d(x)^\top \beta + S(x)$. The argument `include_covariates` also allows us to define predictive target that do not use covariates from the model. By default `include_covariates = TRUE`, hence in the code above covariates are part of what is defined as `lp`. To predict the spatial random effects $S(x)$ only, for example, you can set `include_covariates = FALSE` and `f_target = list(Sx = function(lp) lp)`. In `pd_summary`, we define the summaries that we want to visualize from the predictive distribution. Here, we have specified the mean, coefficient of variation and the probability of exceeding a 20$\%$ prevalence threshold.
+
+We can then visualise the resuling maps as follows.
+
+```{r, collapse=TRUE}
+#| label: fig-lb-maps
+#| fig-cap: "Mapping riverblindness in Liberia. Plots of the mean (left panel), coefficient of variation (central panel) and exceedance probability (right panel) for a 20% prevalence threshold."
+
+# Displying the results
+par(mfrow = c(1,3))
+plot(lb_prev, which_target = "prev", 
+     which_summary = "mean", main = "Mean")
+plot(lb_prev, which_target = "prev", 
+     which_summary = "cv", main = "Coefficient of variation")
+plot(lb_prev, which_target = "prev", 
+     which_summary = "exceed20", main = "Exceedance probability")
+par(mfrow=c(1,1))
+```
+
+The maps in @fig-lb-maps indicate a higher prevalence as we move away from the coast and at higher altitudes. A very similar spatial pattern is observed in the likelihood of exceeding 20$\%$ prevalence. Also, based on the map of the coefficient of variation, the uncertainty around the point predictions of prevalence is higher along the coast and lower in the inland areas of Liberia.
+
 
 ### Spatial prediction with spatially referenced covariates
 
@@ -135,22 +197,21 @@ hist(lb_pred_S_m$S_samples[,1], main = "Predictive distribution",
 
 ## Common questions from users
 
-- *What should be the spatial resolution of the grid used for prediction?*
+-   *What should be the spatial resolution of the grid used for prediction?*
 
-- *I have covariates with different spatial resolutions. Which spatial resolution should I use?*
+-   *I have covariates with different spatial resolutions. Which spatial resolution should I use?*
 
-- *My prediction map looks like noise. What could be the error?*
+-   *My prediction map looks like noise. What could be the error?*
 
-- *The main goal of my analysis is to carry out predictions of the main outcome. However, can I also use the model to draw inferences on the association between the outcome and the covariates that I have included in the model?*
+-   *The main goal of my analysis is to carry out predictions of the main outcome. However, can I also use the model to draw inferences on the association between the outcome and the covariates that I have included in the model?*
 
-- *In my model I have some covariates that are attached to the individual (e.g. age, gender, occupation, etc.). How do I specify them when doing prediction?* <br> Read @sec-non-spar-covariates.
+-   *In my model I have some covariates that are attached to the individual (e.g. age, gender, occupation, etc.). How do I specify them when doing prediction?* <br> Read @sec-non-spar-covariates.
 
 ## Exercises
 
- 1. *Review questions*.
-     - What are the steps that needs to taken when performing spatial prediction?
-     - Define the predictive distribution of a predictive target and explain how this is used to answer a research question. 
-     - Distinguish between spatially continuous and areal-level targets, giving at least two examples for each.
-     - Explain the difference between marginal and joint predictions, and for which targets each can be used.
- 
- 2. 
+1.  *Review questions*.
+    -   What are the steps that needs to taken when performing spatial prediction?
+    -   Define the predictive distribution of a predictive target and explain how this is used to answer a research question.
+    -   Distinguish between spatially continuous and areal-level targets, giving at least two examples for each.
+    -   Explain the difference between marginal and joint predictions, and for which targets each can be used.
+2.  
