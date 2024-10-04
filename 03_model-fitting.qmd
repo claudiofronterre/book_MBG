@@ -3,7 +3,7 @@
 ## List of the main functions used in the chapter {.unnumbered}
 
 | Function      | R Package | Used for                                                                                     |
-|------------|------------|------------------------------------------------|
+|---------------|---------------|-------------------------------------------|
 | `lmer`        | `lme4`    | Fitting linear mixed models                                                                  |
 | `glmer`       | `lme4`    | Fitting generalized linear mixed models                                                      |
 | `glgm`        | `RiskMap` | Fitting generalized linear geostatistical models                                             |
@@ -111,7 +111,7 @@ ggplot(anopheles, aes(x = elevation, y = log_counts)) + geom_point() +
 
 The scatter plot of @fig-logcounts-elev-mosq shows that there is a negative, though weak, association, with the average number of mosquitoes decreasing for increasing elevation. In this instance, the assumption of a linear relationship with elevation would be a reasonable choice.
 
-#### When the outcome is an invidual-level binary indicator
+#### When the outcome is an invidual-level binary indicator {#sec-indiv-expl-analysis}
 
 We now consider the malaria data from Kenya (@sec-malaria-ch1) where the main outcome is the result from a rapid diagnostic test (RDT) for malaria from individuals within households. In this case, because the outcome only takes two values, 1 for a positive RDT test result and 0 otherwise, the direct application of the empirical logit from @eq-empirical-logit would not help us to generate informative scatter plots. Throughout the book, we will consider the data from the community survey only, hence we work with a subset of the data which we shall name `malkenya_comm`
 

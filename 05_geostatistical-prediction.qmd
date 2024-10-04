@@ -64,6 +64,14 @@ The `pred_over_grid` function enables us to predict the the separate effects of 
 library(sf)
 library(RiskMap)
 load("./data/fit_liberia.RData")
+data("malkenya")
+malkenya_comm <- malkenya[malkenya$Survey=="community", ]
+load("./data/fit_malkenya.RData")
+load("./data/pred_age15.RData")
+load("./data/pred_aver_pop.RData")
+load("./data/lb_pred_S_m.RData")
+load("./data/lb_pred_S_j.RData")
+
 ```
 
 ```{r, collapse = TRUE, message=FALSE}
@@ -90,7 +98,7 @@ In the code above, we generated a prediction grid --- which, we recall, that we 
 
 At this point, we have all the necessary inputs to execute the `pred_over_grid` function for both marginal and joint predictions, as demonstrated below.
 
-```{r, collapse=TRUE}
+```{r, eval = FALSE}
 # Predicting the spatial process S(x) over the grid, as well as
 # covariates effects
 
@@ -161,7 +169,7 @@ pred_target_grid(
 
 In the function above the argument `f_target` can take a list of functions, as multiple predictive targets can be defined. Here, we only specified prevalence (`prev`). Note that in defining the predictive target in `f_target`, we need to express that as a function of $d(x)^\top \beta + S(x)$. The argument `include_covariates` also allows us to define predictive target that do not use covariates from the model. By default `include_covariates = TRUE`, hence in the code above covariates are part of what is defined as `lp`. To predict the spatial random effects $S(x)$ only, for example, you can set `include_covariates = FALSE` and `f_target = list(Sx = function(lp) lp)`. In `pd_summary`, we define the summaries that we want to visualize from the predictive distribution. Here, we have specified the mean, coefficient of variation and the probability of exceeding a 20$\%$ prevalence threshold.
 
-We can then visualise the resuling maps as follows.
+We can then visualize the resulting maps as follows.
 
 ```{r, collapse=TRUE}
 #| label: fig-lb-maps
@@ -180,10 +188,122 @@ par(mfrow=c(1,1))
 
 The maps in @fig-lb-maps indicate a higher prevalence as we move away from the coast and at higher altitudes. A very similar spatial pattern is observed in the likelihood of exceeding 20$\%$ prevalence. Also, based on the map of the coefficient of variation, the uncertainty around the point predictions of prevalence is higher along the coast and lower in the inland areas of Liberia.
 
+### Example: mapping malaria using age and elevation as predictors {#sec-non-spar-covariates}
 
-### Spatial prediction with spatially referenced covariates
+We now consider an example on malaria mapping, where we use two different types 
+of covariates: a spatially referenced covariate corresponding to elevation; the individual age. We use the `malkenya_comm` subset of the `malkenya` data-set (see @sec-indiv-expl-analysis) and, to alleviate the computational burden, we further reduce this
+data-set by taking the first 1000 rows. Hence, we create our new data-set, `malkenya_comm1000`, using the followind code.
+```{r, collapse=TRUE}
+malkenya_comm1000 <- malkenya_comm[1:1000,]
 
-### Spatial prediction with non spatial covariates {#sec-non-spar-covariates}
+malkenya_comm1000 <- st_as_sf(malkenya_comm1000, coords = c("Long", "Lat"),
+                              crs = 4326)
+malkenya_comm1000 <- st_transform(malkenya_comm1000, crs = 32736)
+```
+
+Based on the exploratory analysis shown in @sec-indiv-expl-analysis, we consider a geostatistical model fitted to the individual binary outcomes, $Y_{ij}$, which correspond the rapid diagnostic test (RDT) results for the $j$-th individual in the $i$-th community, and take value $Y_{ij}=1$ if the RDT is positive and $Y_{ij}=0$ if the RDT is negative.
+Using a Binomial geostatistical model, we model the individual probability, $p_{ij}$ of a positive RDT using the following linear predictor.
+$$
+\log\left\{\frac{p_{ij}}{1-p_{ij}}\right\} = \beta_{0} + \beta_{1}a_{ij}+\beta_{2} \times\max\{a_{ij}-15, 0\} + \beta_{3}\max\{a_{ij}-40, 0\} + \beta_{4} e(x_i) + S(x_i),
+$$ {#eq-lp-malkenya}
+where $e(x_{i})$ and $a_{ij}$ are the elevation in meter and the age in years for the $j$-th individual residing at the $i$-th household, respectively. 
+
+When using the model in @eq-lp-malkenya to predict RDT prevalence, a key question arises: how should we handle the age variable, which, unlike elevation, is not available as a geo-referenced covariate at all locations in the study area? The answer depends on the research question being addressed.
+
+For instance, if the goal is to infer disease risk across different age groups, we can generate different maps for each group of interest. This can be easily achieved by fixing the value of $a_{ij}$ to a specific age for all prediction locations. Alternatively, if the objective is to generate a predictive map for the general population, rather than for a specific age group, we must employ a probabilistic model for age and integrate out its effect.
+
+Developing a credible probabilistic model for age is beyond the scope of this section. Instead, we demonstrate a simple yet reasonable solution which uses the empirical age distribution from the data. By random sampling from this distribution, we can then assign age values to prediction locations. The steps are as follows.
+
+ 1. Obtain the empirical distribution of age from the data. 
+ 2. Sample with replacement from such distribution (the `sample` function in R can be used for this purpose) as many times as the number of prediction locations, so that each grid location $\tilde{x}$ has a value of age assigned. 
+ 3. Generate a sample from the predictive distribution of the target $T(\tilde{x})$ at each of the grid locations $\tilde{x}$.
+ 4. Repeat 1 to 3, for as many times as the samples generates from $S(\tilde{X})$.
+ 
+This approach relies on two key assumptions. First, that the age distribution is spatially neutral, i.e., it does not vary across space. Second, that the data are representative of the age distribution in the target population. In the data used for this example, we believe these assumptions are reasonable, given the relatively small study area, where age is unlikely to exhibit significant spatial variation, and the fact that the data are a random sample from the community.
+
+In the scripts presented in the remainder of this section, we show how to generate a predictive map of prevalence for children age 15 years, and another map that instead uses the approach earlier described to remove the effect of age and generate a map of prevalence for the general population. 
+
+First, we fit the model. Note that the effect of age is not linear and we use linear splines to account for this, using the results of the exploratory analysis shown in @@sec-indiv-expl-analysis.
+```{r, eval=FALSE}
+fit_malkenya <- glgpm(RDT ~ Age +  pmax(Age-15, 0) + 
+                        pmax(Age-40, 0) + elevation +
+                        gp(),
+                      data = malkenya_comm1000,
+                      family = "binomial")
+```
+
+After fitting the model, we create a prediction grid at a spatial resolution of 500 meters and extract the values of elevation. In this analysis, due to the small size of the study area, we do not use administrative boundaries as they are too large. Instead, we use the convex hull[^ch] of the sample locations to define the boundaries of our study area. 
+
+[^ch]: The convex hull of a set of spatial locations is the smallest possible shape (usually a polygon) that completely encloses all the points, such that if you take any two points inside the shape, the straight line connecting them is also entirely inside the shape. In simple terms, it can be thought of as stretching a rubber band around the outermost points in a set, and the shape the rubber band forms is the convex hull.
+
+```{r, eval=FALSE}
+
+# Create grid from convex hull
+shp_ch <- convex_hull_sf(malkenya_comm1000)
+ken_grid <- create_grid(shp_ch, spat_res = 0.5)
+
+# Get elevation raster
+ken_elev <- 
+get_elev_raster(locations = shp_ch, 
+                z = 9, clip = "locations")
+```
+We then create the data frame of predictors where age is set to 15. 
+```{r,eval=FALSE}
+# Create the data fr
+ken_predictors <- data.frame(elevation = 
+                           extract(ken_elev, st_coordinates(ken_grid)),
+                         Age = 15)
+```
+We now have all the ingredients to carry out prediction. 
+```{r, eval=FALSE}
+pred_ken_S <- pred_over_grid(fit_malkenya, grid_pred = ken_grid,
+                             predictors = ken_predictors)
+
+pred_age15 <- 
+pred_target_grid(pred_ken_S, 
+                 f_target = list(prev = function(lp) exp(lp)/(1+exp(lp))),
+                 pd_summary = list(mean = function(Tx) mean(Tx)))
+```
+
+The code below shows how to perform the 4 steps described above to generate a predictive map for the general population. Below we use the function `update_predictors` to update the covariates effects that are stored in `mu_pred`, a list element generated as the output of `pred_over_grid`.
+
+```{r, eval=FALSE}
+# Number of Monte Carlo samples
+n_sim <- ncol(pred_age15$lp_samples)
+
+# Number of prediction locations
+n_pred <- nrow(predictors)
+
+# The create object `pred_ken_S_i` with the goal of changing the 
+# coviariates effects stored in `mu_pred` according the sample values of age
+pred_ken_S_i <- pred_ken_S
+pred_ken_S_i$mu_pred <- matrix(NA, nrow = n_pred, ncol = n_sim)
+
+for(i in 1:n_sim) {
+  # Generate n_pred samples from the empirical distribution of age
+  ken_predictors$Age <- sample(malkenya_comm1000$Age, n_pred, replace = TRUE)
+  # Generate the new covariates effects with `update_predictors` and store them in 
+  # `mu_pred`
+  pred_ken_S_i$mu_pred[,i] <- update_predictors(pred_ken_S, ken_predictors)$mu_pred
+}
+
+# Prediction of prevalence
+pred_aver_pop <- pred_target_grid(pred_ken_S_i, 
+               f_target = list(prev = function(lp) exp(lp)/(1+exp(lp))))
+```
+
+We can now plot the two maps and compare them.
+```{r, collapse=TRUE}
+#| label: fig-malaria-maps
+#| fig-cap: "Maps of the predictive mean of the rapid diagnostic test (RDT) prevalence for
+#| children of the age of 15 (left panel) and the general population (right panel)."
+par(mfrow = c(1,2))
+plot(pred_age15, which_target = "prev", which_summary = "mean", main = "Prevalence (15 years)", range = c(0,0.6))
+plot(pred_aver_pop, which_target = "prev", which_summary = "mean",  main = "Prevalence (General population)", range = c(0,0.6))
+par(mfrow = c(1,1))
+```
+The exploratory analysis of @sec-indiv-expl-analysis had shown that the prevalence around the age of 15 is higher than at other ages. This is also reflected in @fig-malaria-maps, when the left panel, corresponding to the RDT prevalence for children at the age of 15 years, shows a higher level of prevalence than the right panel, which is instead for the general population. 
+
 
 ## Areal-level targets
 
