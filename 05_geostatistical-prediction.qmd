@@ -117,7 +117,7 @@ lb_pred_S_j <- pred_over_grid(fit_liberia,
 
 Both `lb_pred_S_m` and `lb_pred_S_j` contain lists with the same arguments, with one key difference: the samples in the list element named `S_samples` for the former are drawn from the marginal predictive distributions of the components of $S(\tilde{X})$, while for the latter, they come from the joint predictive distribution of $S(\tilde{X})$.
 
-An important note is that in the code above we have used the default settings for the Markov Chain Monte Carlo (MCMC). To change these setting use the function `set_control_sim` whose output should be passed to the argument `contol_sim` of `pred_over_grid`. The diagnostic on the convergence of the MCMC can also be applying the `check_mcmc` function to either `lb_pred_S_m` or `lb_pred_S_j`; see @sec-summary for more details. 
+An important note is that in the code above we have used the default settings for the Markov Chain Monte Carlo (MCMC). To change these setting use the function `set_control_sim` whose output should be passed to the argument `contol_sim` of `pred_over_grid`. The diagnostic on the convergence of the MCMC can also be applying the `check_mcmc` function to either `lb_pred_S_m` or `lb_pred_S_j`; see @sec-summary for more details.
 
 We can inspect the predictive distribution of any component $S(\tilde{X})$ through the Monte Carlo samples stored in `S_samples`. For example, the script below generates the histogram for the predictive distribution of the first component of $S(\tilde{X})$ (@fig-hist-first-comp-pd).
 
@@ -133,7 +133,7 @@ hist(lb_pred_S_m$S_samples[,1], main = "Predictive distribution",
 
 In the previous section, we explained and demonstrated how to obtain Monte Carlo samples from the predictive distribution of $S(\tilde{X})$, which we denoted by $[S(\tilde{X}) \: |\: y]$. Let $S_{(j)}(\tilde{X})$ and $[S(\tilde{X}) \: |\: y]$ represent the $j$-th Monte Carlo samples for the entire grid and the specific location $x_k$, respectively, for $j=1,\ldots,B$ and $k=1,\ldots,q$.
 
-We define our predictive target, $T(x)$, at any given location $x$, as a transformation of $S(x)$. Thus, we express it as $T(x) = f{S(x)}$. Note that $f(\cdot)$ can represent any type of non-linear transformation of $S(x)$ and may include covariate effects and other non-structured random effects. A list of common predictive targets frequently used in geostatistical analysis is provided in @tbl-spat-cont-pred-target.
+We define our predictive target, $T(x)$, at any given location $x$, as a transformation of $S(x)$. Thus, we express it as $T(x) = f\{S(x)\}$. Note that $f(\cdot)$ can represent any type of non-linear transformation of $S(x)$ and may include covariate effects and other non-structured random effects. A list of common predictive targets frequently used in geostatistical analysis is provided in @tbl-spat-cont-pred-target.
 
 | Predictive target $T(x)$                                                  | Name of the predictive target | Generalized linear model (GLM) family |
 |----------------------------|----------------------|-----------------------|
@@ -145,15 +145,16 @@ We define our predictive target, $T(x)$, at any given location $x$, as a transfo
 
 : List of some of the most common spatially continuous predictive targets in a geostatistical analysis. For each target, we also indicate the generalized linear model (GLM) family for which these can be defined. Note that this list not exhaustive and different predictive other than those listed in the table could also be considered. {#tbl-spat-cont-pred-target}
 
-An important feature of the predictive targets listed in @tbl-spat-cont-pred-target is that none of them include the nugget effect, denoted by $Z_i$ in our linear predictor definition for generalized linear geostatistical models. The reason for excluding $Z_i$ from the predictive targets is that, in most cases, it lacks a clear, unambiguous scientific interpretation. However, $Z_i$ might be included, for example,  in environmental studies focusing on highly localized phenomena where measurement error or small-scale variability is of direct scientific interest; or in epidemiological studies where inferences at the individual level, rather than the population level, are required, and where $Z_i$ is introduced to account for unexplained individual-level variation. It is also worth noticing, the primary impact of including $Z_i$ in $T(x)$ would be an increase in the uncertainty of predictive inferences for $T(x)$, with minimal effect (or none at all, if $T(x)$ corresponds to the linear predictor) on the point predictions.
+An important feature of the predictive targets listed in @tbl-spat-cont-pred-target is that none of them include the nugget effect, denoted by $Z_i$ in our linear predictor definition for generalized linear geostatistical models. The reason for excluding $Z_i$ from the predictive targets is that, in most cases, it lacks a clear, unambiguous scientific interpretation. However, $Z_i$ might be included, for example, in environmental studies focusing on highly localized phenomena where measurement error or small-scale variability is of direct scientific interest; or in epidemiological studies where inferences at the individual level, rather than the population level, are required, and where $Z_i$ is introduced to account for unexplained individual-level variation. It is also worth noticing, the primary impact of including $Z_i$ in $T(x)$ would be an increase in the uncertainty of predictive inferences for $T(x)$, with minimal effect (or none at all, if $T(x)$ corresponds to the linear predictor) on the point predictions.
 
 The predictive targets in @tbl-spat-cont-pred-target corresponding to $d(x)^\top \beta$ or the spatial random effects $S(x)$ might be considered when the goal is to highlight the different contribution to the overall predictive inferences from the measured covariates.
 
 #### Example: mapping riverblidness prevalence in Liberia (continuing from @sec-pred-samples)
 
-Let us continue the geostatistical of the riverblindness data in Liberia. The predictive target we consider is prevalence, hence $T(x) = \frac{\exp\{ \beta_{0} + \beta_{1}\log\{e(x)\} + S(x)\}}{1+\exp\{\beta_{0} + \beta_{1}\log\{e(x)\} + S(x)\}}$, where $e(x)$ is the elevation in meters at location $x$.
+Let us continue the geostatistical of the riverblindness data in Liberia. The predictive target we consider is prevalence, hence $$T(x) = \frac{\exp\{ \beta_{0} + \beta_{1}\log\{e(x)\} + S(x)\}}{1+\exp\{\beta_{0} + \beta_{1}\log\{e(x)\} + S(x)\}}$$, where $e(x)$ is the elevation in meters at location $x$.
 
-Through the `pred_target_grid` we can use the output in `lb_pred_S_m` (or `lb_pred_S_j` as well, in this case) to generate predictions of prevalence over the regular grid at 5 km we have created earlier. 
+Through the `pred_target_grid` we can use the output in `lb_pred_S_m` (or `lb_pred_S_j` as well, in this case) to generate predictions of prevalence over the regular grid at 5 km we have created earlier.
+
 ```{r, collapse=TRUE}
 
 # Prediction of riverblindness prevalence
@@ -190,9 +191,8 @@ The maps in @fig-lb-maps indicate a higher prevalence as we move away from the c
 
 ### Example: mapping malaria using age and elevation as predictors {#sec-non-spar-covariates}
 
-We now consider an example on malaria mapping, where we use two different types 
-of covariates: a spatially referenced covariate corresponding to elevation; the individual age. We use the `malkenya_comm` subset of the `malkenya` data-set (see @sec-indiv-expl-analysis) and, to alleviate the computational burden, we further reduce this
-data-set by taking the first 1000 rows. Hence, we create our new data-set, `malkenya_comm1000`, using the followind code.
+We now consider an example on malaria mapping, where we use two different types of covariates: a spatially referenced covariate corresponding to elevation; the individual age. We use the `malkenya_comm` subset of the `malkenya` data-set (see @sec-indiv-expl-analysis) and, to alleviate the computational burden, we further reduce this data-set by taking the first 1000 rows. Hence, we create our new data-set, `malkenya_comm1000`, using the followind code.
+
 ```{r, collapse=TRUE}
 malkenya_comm1000 <- malkenya_comm[1:1000,]
 
@@ -201,12 +201,9 @@ malkenya_comm1000 <- st_as_sf(malkenya_comm1000, coords = c("Long", "Lat"),
 malkenya_comm1000 <- st_transform(malkenya_comm1000, crs = 32736)
 ```
 
-Based on the exploratory analysis shown in @sec-indiv-expl-analysis, we consider a geostatistical model fitted to the individual binary outcomes, $Y_{ij}$, which correspond the rapid diagnostic test (RDT) results for the $j$-th individual in the $i$-th community, and take value $Y_{ij}=1$ if the RDT is positive and $Y_{ij}=0$ if the RDT is negative.
-Using a Binomial geostatistical model, we model the individual probability, $p_{ij}$ of a positive RDT using the following linear predictor.
-$$
+Based on the exploratory analysis shown in @sec-indiv-expl-analysis, we consider a geostatistical model fitted to the individual binary outcomes, $Y_{ij}$, which correspond the rapid diagnostic test (RDT) results for the $j$-th individual in the $i$-th community, and take value $Y_{ij}=1$ if the RDT is positive and $Y_{ij}=0$ if the RDT is negative. Using a Binomial geostatistical model, we model the individual probability, $p_{ij}$ of a positive RDT using the following linear predictor. $$
 \log\left\{\frac{p_{ij}}{1-p_{ij}}\right\} = \beta_{0} + \beta_{1}a_{ij}+\beta_{2} \times\max\{a_{ij}-15, 0\} + \beta_{3}\max\{a_{ij}-40, 0\} + \beta_{4} e(x_i) + S(x_i),
-$$ {#eq-lp-malkenya}
-where $e(x_{i})$ and $a_{ij}$ are the elevation in meter and the age in years for the $j$-th individual residing at the $i$-th household, respectively. 
+$$ {#eq-lp-malkenya} where $e(x_{i})$ and $a_{ij}$ are the elevation in meter and the age in years for the $j$-th individual residing at the $i$-th household, respectively.
 
 When using the model in @eq-lp-malkenya to predict RDT prevalence, a key question arises: how should we handle the age variable, which, unlike elevation, is not available as a geo-referenced covariate at all locations in the study area? The answer depends on the research question being addressed.
 
@@ -214,16 +211,17 @@ For instance, if the goal is to infer disease risk across different age groups, 
 
 Developing a credible probabilistic model for age is beyond the scope of this section. Instead, we demonstrate a simple yet reasonable solution which uses the empirical age distribution from the data. By random sampling from this distribution, we can then assign age values to prediction locations. The steps are as follows.
 
- 1. Obtain the empirical distribution of age from the data. 
- 2. Sample with replacement from such distribution (the `sample` function in R can be used for this purpose) as many times as the number of prediction locations, so that each grid location $\tilde{x}$ has a value of age assigned. 
- 3. Generate a sample from the predictive distribution of the target $T(\tilde{x})$ at each of the grid locations $\tilde{x}$.
- 4. Repeat 1 to 3, for as many times as the samples generates from $S(\tilde{X})$.
- 
+1.  Obtain the empirical distribution of age from the data.
+2.  Sample with replacement from such distribution (the `sample` function in R can be used for this purpose) as many times as the number of prediction locations, so that each grid location $\tilde{x}$ has a value of age assigned.
+3.  Generate a sample from the predictive distribution of the target $T(\tilde{x})$ at each of the grid locations $\tilde{x}$.
+4.  Repeat 1 to 3, for as many times as the samples generates from $S(\tilde{X})$.
+
 This approach relies on two key assumptions. First, that the age distribution is spatially neutral, i.e., it does not vary across space. Second, that the data are representative of the age distribution in the target population. In the data used for this example, we believe these assumptions are reasonable, given the relatively small study area, where age is unlikely to exhibit significant spatial variation, and the fact that the data are a random sample from the community.
 
-In the scripts presented in the remainder of this section, we show how to generate a predictive map of prevalence for children age 15 years, and another map that instead uses the approach earlier described to remove the effect of age and generate a map of prevalence for the general population. 
+In the scripts presented in the remainder of this section, we show how to generate a predictive map of prevalence for children age 15 years, and another map that instead uses the approach earlier described to remove the effect of age and generate a map of prevalence for the general population.
 
-First, we fit the model. Note that the effect of age is not linear and we use linear splines to account for this, using the results of the exploratory analysis shown in @@sec-indiv-expl-analysis.
+First, we fit the model. Note that the effect of age is not linear and we use linear splines to account for this, using the results of the exploratory analysis shown in \@@sec-indiv-expl-analysis.
+
 ```{r, eval=FALSE}
 fit_malkenya <- glgpm(RDT ~ Age +  pmax(Age-15, 0) + 
                         pmax(Age-40, 0) + elevation +
@@ -232,9 +230,9 @@ fit_malkenya <- glgpm(RDT ~ Age +  pmax(Age-15, 0) +
                       family = "binomial")
 ```
 
-After fitting the model, we create a prediction grid at a spatial resolution of 500 meters and extract the values of elevation. In this analysis, due to the small size of the study area, we do not use administrative boundaries as they are too large. Instead, we use the convex hull[^ch] of the sample locations to define the boundaries of our study area. 
+After fitting the model, we create a prediction grid at a spatial resolution of 500 meters and extract the values of elevation. In this analysis, due to the small size of the study area, we do not use administrative boundaries as they are too large. Instead, we use the convex hull[^05_geostatistical-prediction-2] of the sample locations to define the boundaries of our study area.
 
-[^ch]: The convex hull of a set of spatial locations is the smallest possible shape (usually a polygon) that completely encloses all the points, such that if you take any two points inside the shape, the straight line connecting them is also entirely inside the shape. In simple terms, it can be thought of as stretching a rubber band around the outermost points in a set, and the shape the rubber band forms is the convex hull.
+[^05_geostatistical-prediction-2]: The convex hull of a set of spatial locations is the smallest possible shape (usually a polygon) that completely encloses all the points, such that if you take any two points inside the shape, the straight line connecting them is also entirely inside the shape. In simple terms, it can be thought of as stretching a rubber band around the outermost points in a set, and the shape the rubber band forms is the convex hull.
 
 ```{r, eval=FALSE}
 
@@ -247,14 +245,18 @@ ken_elev <-
 get_elev_raster(locations = shp_ch, 
                 z = 9, clip = "locations")
 ```
-We then create the data frame of predictors where age is set to 15. 
+
+We then create the data frame of predictors where age is set to 15.
+
 ```{r,eval=FALSE}
 # Create the data fr
 ken_predictors <- data.frame(elevation = 
                            extract(ken_elev, st_coordinates(ken_grid)),
                          Age = 15)
 ```
-We now have all the ingredients to carry out prediction. 
+
+We now have all the ingredients to carry out prediction.
+
 ```{r, eval=FALSE}
 pred_ken_S <- pred_over_grid(fit_malkenya, grid_pred = ken_grid,
                              predictors = ken_predictors)
@@ -293,6 +295,7 @@ pred_aver_pop <- pred_target_grid(pred_ken_S_i,
 ```
 
 We can now plot the two maps and compare them.
+
 ```{r, collapse=TRUE}
 #| label: fig-malaria-maps
 #| fig-cap: "Maps of the predictive mean of the rapid diagnostic test (RDT) prevalence for
@@ -302,10 +305,54 @@ plot(pred_age15, which_target = "prev", which_summary = "mean", main = "Prevalen
 plot(pred_aver_pop, which_target = "prev", which_summary = "mean",  main = "Prevalence (General population)", range = c(0,0.6))
 par(mfrow = c(1,1))
 ```
-The exploratory analysis of @sec-indiv-expl-analysis had shown that the prevalence around the age of 15 is higher than at other ages. This is also reflected in @fig-malaria-maps, when the left panel, corresponding to the RDT prevalence for children at the age of 15 years, shows a higher level of prevalence than the right panel, which is instead for the general population. 
 
+The exploratory analysis of @sec-indiv-expl-analysis had shown that the prevalence around the age of 15 is higher than at other ages. This is also reflected in @fig-malaria-maps, when the left panel, corresponding to the RDT prevalence for children at the age of 15 years, shows a higher level of prevalence than the right panel, which is instead for the general population.
 
 ## Areal-level targets
+
+When determining areal-level targets, we must first address the following questions:
+
+1. What spatially continuous target, $T(x)$, are we seeking to aggregate?
+2. What are the spatial units, denoted as $A_i$ for $i = 1, \dots, N$, over which the aggregation is required?
+3. What aggregating function should be applied?
+4. Should spatial weights be incorporated in the aggregation, and if so, what weights are appropriate?
+
+The first question was discussed in earlier sections, where examples of predictive targets that define $T(x)$ can be found in @tbl-spat-cont-pred-target. The answers to the remaining questions are context-dependent and closely linked to the primary research objectives. In public health settings, the areas $A_i$ often correspond to administrative units or regions where decisions are made and resources are allocated. 
+
+A common aggregating function for $T(x)$ is the mean, which is formally defined as:
+
+$$
+\mathcal{M}_i = \frac{1}{|A_i|}\int_{A_i} T(x) \: dx.
+$${#eq-mean-alt}
+
+In addition to the mean, several other aggregating functions can be applied depending on the context of the analysis.
+
+For instance, in the study of Anopheles mosquitoes in Cameroon, we may be interested in estimating the total number of mosquitoes trapped within the study area ($A_i$ represents a single region in this case). If $T(x)$ denotes the number of mosquitoes trapped at location $x$, the areal-level target can be expressed as:
+  $$
+  \mathcal{S}_i = \int_{A_i} T(x) \: dx.
+  $$
+
+Additionally, to capture the heterogeneity of $T(x)$ within an area, variance-based measures can be used. The variance of $T(x)$ in $A_i$ is given by:
+   $$
+   \mathcal{V}_i = \frac{1}{|A_i|}\int_{A_i} \left(T(x) - \mathcal{M}_i\right)^2 \: dx,
+   $$
+where $\mathcal{M}_i$ is the mean of $T(x)$ in $A_i$.
+
+The formulation of the areal-level targets given so far assumes equal weighting for all locations within the area. Alternatively, if the we consider for example the areal level target in @eq-mean-alt, one could use spatial weights, $w(x) > 0$,  and redefine $\mathcal{M}_i$ as:
+
+$$
+\mathcal{M}_i = \frac{\int_{A_i} w(x) T(x) \: dx}{\int_{A_i} w(x) \: dx}.
+$$
+
+Selecting appropriate spatial weights is crucial, as it reflects the significance of different locations within the area. We can define three types of weighting: population-density, risk-based, and distance-based. We point out that this distinction is not always clear cut (population could indeed be a risk factor in our analysis) but this classification is made only for the sake of making the explanation clearer.
+
+For example, if the goal is to prioritize areas with higher populations, weights $w(x)$ could be proportional to population density at location $x$. This approach gives greater importance to locations where more people reside, which can be particularly relevant when aggregating disease prevalence data for resource allocation.
+
+In cases where certain sub-regions within $A_i$ are at higher risk for disease (e.g., proximity to environmental hazards or areas with lower access to healthcare), risk-based weights could be applied. Here, $w(x)$ would be higher in regions identified as higher risk, providing a more targeted aggregation of disease prevalence. For example, populations in rural areas may face higher exposure to infectious diseases than those in urban areas, making it important to assign greater weight to these higher-risk regions in the aggregation process.
+
+If the objective is to account for proximity effects (such as the spread of an infectious disease or contamination from a known source), distance-based weights could be used. Locations closer to a known disease outbreak area or source of exposure could be given more weight to reflect the spatial dynamics of disease transmission.
+
+Using spatial weights in these ways ensures that the aggregation of disease prevalence $T(x)$ reflects not only the distribution of the disease but also the underlying population, risk, or spatial characteristics relevant to the public health problem under investigation.
 
 ## Comparing the predictive performance of geostatistical models
 
