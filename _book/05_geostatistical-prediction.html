@@ -225,7 +225,11 @@ div.csl-indent {
   <ul class="collapse">
   <li><a href="#sec-non-spar-covariates" id="toc-sec-non-spar-covariates" class="nav-link" data-scroll-target="#sec-non-spar-covariates"><span class="header-section-number">5.3.1</span> Example: mapping malaria using age and elevation as predictors</a></li>
   </ul></li>
-  <li><a href="#areal-level-targets" id="toc-areal-level-targets" class="nav-link" data-scroll-target="#areal-level-targets"><span class="header-section-number">5.4</span> Areal-level targets</a></li>
+  <li><a href="#areal-level-targets" id="toc-areal-level-targets" class="nav-link" data-scroll-target="#areal-level-targets"><span class="header-section-number">5.4</span> Areal-level targets</a>
+  <ul class="collapse">
+  <li><a href="#example-predicting-the-average-riverblindness-prevalence-at-admin-level-1-in-liberia" id="toc-example-predicting-the-average-riverblindness-prevalence-at-admin-level-1-in-liberia" class="nav-link" data-scroll-target="#example-predicting-the-average-riverblindness-prevalence-at-admin-level-1-in-liberia"><span class="header-section-number">5.4.1</span> Example: predicting the average riverblindness prevalence at admin level 1 in Liberia</a></li>
+  <li><a href="#example-predicting-the-total-number-of-anopheles-mosquitoes" id="toc-example-predicting-the-total-number-of-anopheles-mosquitoes" class="nav-link" data-scroll-target="#example-predicting-the-total-number-of-anopheles-mosquitoes"><span class="header-section-number">5.4.2</span> Example: predicting the total number of Anopheles mosquitoes</a></li>
+  </ul></li>
   <li><a href="#comparing-the-predictive-performance-of-geostatistical-models" id="toc-comparing-the-predictive-performance-of-geostatistical-models" class="nav-link" data-scroll-target="#comparing-the-predictive-performance-of-geostatistical-models"><span class="header-section-number">5.5</span> Comparing the predictive performance of geostatistical models</a></li>
   <li><a href="#sec-theory-prediction" id="toc-sec-theory-prediction" class="nav-link" data-scroll-target="#sec-theory-prediction"><span class="header-section-number">5.6</span> Theory</a>
   <ul class="collapse">
@@ -606,6 +610,134 @@ div.csl-indent {
 <p>In cases where certain sub-regions within <span class="math inline">\(A_i\)</span> are at higher risk for disease (e.g., proximity to environmental hazards or areas with lower access to healthcare), risk-based weights could be applied. Here, <span class="math inline">\(w(x)\)</span> would be higher in regions identified as higher risk, providing a more targeted aggregation of disease prevalence. For example, populations in rural areas may face higher exposure to infectious diseases than those in urban areas, making it important to assign greater weight to these higher-risk regions in the aggregation process.</p>
 <p>If the objective is to account for proximity effects (such as the spread of an infectious disease or contamination from a known source), distance-based weights could be used. Locations closer to a known disease outbreak area or source of exposure could be given more weight to reflect the spatial dynamics of disease transmission.</p>
 <p>Using spatial weights in these ways ensures that the aggregation of disease prevalence <span class="math inline">\(T(x)\)</span> reflects not only the distribution of the disease but also the underlying population, risk, or spatial characteristics relevant to the public health problem under investigation.</p>
+<section id="example-predicting-the-average-riverblindness-prevalence-at-admin-level-1-in-liberia" class="level3" data-number="5.4.1">
+<h3 data-number="5.4.1" class="anchored" data-anchor-id="example-predicting-the-average-riverblindness-prevalence-at-admin-level-1-in-liberia"><span class="header-section-number">5.4.1</span> Example: predicting the average riverblindness prevalence at admin level 1 in Liberia</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Admin level 2 boundaries</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rgeoboundaries)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>lb_adm1 <span class="ot">&lt;-</span> <span class="fu">geoboundaries</span>(<span class="at">country =</span> <span class="st">"Liberia"</span>, <span class="at">adm_lvl =</span> <span class="st">"adm1"</span>)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>pred_shp <span class="ot">&lt;-</span> <span class="fu">pred_target_shp</span>(lb_pred_S_j, <span class="at">shp =</span> lb_adm1,</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>                            <span class="at">shp_target =</span> <span class="cf">function</span>(Tx) <span class="fu">mean</span>(Tx),</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>                            <span class="at">f_target =</span> <span class="fu">list</span>(<span class="at">prev =</span> </span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>                                       <span class="cf">function</span>(lp) <span class="fu">exp</span>(lp)<span class="sc">/</span>(<span class="dv">1</span><span class="sc">+</span><span class="fu">exp</span>(lp))),</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>                            <span class="at">pd_summary =</span> <span class="fu">list</span>(<span class="at">mean =</span> mean),</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>                            <span class="at">col_names =</span> <span class="st">"shapeName"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Obtaining population density</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(wpgpDownloadR)</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>lbr_url <span class="ot">&lt;-</span> <span class="fu">wpgpGetCountryDataset</span>(<span class="at">ISO3 =</span> <span class="st">"LBR"</span>, <span class="at">covariate =</span> <span class="st">"ppp_2014"</span>)</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra)</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>lbr_pop <span class="ot">&lt;-</span> <span class="fu">rast</span>(lbr_url)</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>lbr_pop <span class="ot">&lt;-</span> <span class="fu">project</span>(lbr_pop, <span class="st">"EPSG:32629"</span>)</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>weights_pred <span class="ot">&lt;-</span> <span class="fu">extract</span>(lbr_pop, <span class="fu">st_coordinates</span>(liberia_grid))<span class="sc">$</span>lbr_ppp_2014</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>pred_shp_w <span class="ot">&lt;-</span> <span class="fu">pred_target_shp</span>(lb_pred_S_j, <span class="at">shp =</span> lb_adm1,</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>                            <span class="at">shp_target =</span> <span class="cf">function</span>(Tx) <span class="fu">sum</span>(Tx),</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>                            <span class="at">f_target =</span> <span class="fu">list</span>(<span class="at">prev =</span> </span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>                                       <span class="cf">function</span>(lp) <span class="fu">exp</span>(lp)<span class="sc">/</span>(<span class="dv">1</span><span class="sc">+</span><span class="fu">exp</span>(lp))),</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>                            <span class="at">pd_summary =</span> <span class="fu">list</span>(<span class="at">mean =</span> mean),</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>                            <span class="at">weights =</span> weights_pred,</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>                            <span class="at">standardize_weights =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>                            <span class="at">col_names =</span> <span class="st">"shapeName"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>plot_1 <span class="ot">&lt;-</span> </span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(pred_shp, <span class="at">which_target =</span> <span class="st">"prev"</span>, <span class="at">which_summary =</span> <span class="st">"mean"</span>,</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">palette =</span> <span class="st">"RdYlGn"</span>,</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">limits =</span> <span class="fu">c</span>(<span class="fl">0.1</span>, <span class="fl">0.30</span>),</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="fl">0.1</span>,<span class="fl">0.30</span>, <span class="at">by =</span> <span class="fl">0.05</span>)) <span class="sc">+</span> </span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">guides</span>(<span class="at">fill=</span><span class="fu">guide_legend</span>(<span class="at">title=</span><span class="st">"Prevalence"</span>)) <span class="sc">+</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Average prevalence </span><span class="sc">\n</span><span class="st"> (no weights)"</span>)</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>plot_2  <span class="ot">&lt;-</span> </span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot</span>(pred_shp_w, <span class="at">which_target =</span> <span class="st">"prev"</span>, <span class="at">which_summary =</span> <span class="st">"mean"</span>,</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>     <span class="at">palette =</span> <span class="st">"RdYlGn"</span>,</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">limits =</span> <span class="fu">c</span>(<span class="fl">0.1</span>, <span class="fl">0.30</span>),</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="fl">0.1</span>,<span class="fl">0.30</span>, <span class="at">by =</span> <span class="fl">0.05</span>)) <span class="sc">+</span> </span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">guides</span>(<span class="at">fill=</span><span class="fu">guide_legend</span>(<span class="at">title=</span><span class="st">"Prevalence"</span>)) <span class="sc">+</span></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Average prevalence </span><span class="sc">\n</span><span class="st"> (population weighted)"</span>)</span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gridExtra)</span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a><span class="fu">grid.arrange</span>(plot_1, plot_2, <span class="at">ncol =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-average-prev-Liberia" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="05_geostatistical-prediction_files/figure-html/fig-average-prev-Liberia-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="figure-caption">Figure&nbsp;5.4: Maps of the predictive mean for the admin level 1 average prevalence in Liberia. The left panel uses a standard average of locations within an admin level 1 region, whilst in the right panel each location is weighted according to population density.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="example-predicting-the-total-number-of-anopheles-mosquitoes" class="level3" data-number="5.4.2">
+<h3 data-number="5.4.2" class="anchored" data-anchor-id="example-predicting-the-total-number-of-anopheles-mosquitoes"><span class="header-section-number">5.4.2</span> Example: predicting the total number of Anopheles mosquitoes</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create grid from convex hull</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>shp_ch <span class="ot">&lt;-</span> <span class="fu">convex_hull_sf</span>(an_fit<span class="sc">$</span>data_sf)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>an_grid <span class="ot">&lt;-</span> <span class="fu">create_grid</span>(shp_ch, <span class="at">spat_res =</span> <span class="dv">2</span>)</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>an_elev <span class="ot">&lt;-</span> <span class="fu">get_elev_raster</span>(<span class="at">locations =</span> shp_ch, </span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>                                <span class="at">z =</span> <span class="dv">9</span>, <span class="at">clip =</span> <span class="st">"locations"</span>)</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>predictors <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">elevation=</span> terra<span class="sc">::</span><span class="fu">extract</span>(an_elev,</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>                                                   <span class="fu">st_coordinates</span>(an_grid)))</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>pred_an_S <span class="ot">&lt;-</span> <span class="fu">pred_over_grid</span>(an_fit, <span class="at">grid =</span> an_grid, </span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>               <span class="at">predictors =</span> predictors,</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>               <span class="at">type =</span> <span class="st">"joint"</span>)</span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>pred_n_mosq_grid <span class="ot">&lt;-</span> </span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a><span class="fu">pred_target_grid</span>(pred_an_S, </span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>                 <span class="at">f_target =</span> <span class="fu">list</span>(<span class="at">n_mosq =</span> <span class="cf">function</span>(lp) <span class="fu">exp</span>(lp)),</span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>                 <span class="at">pd_summary =</span> <span class="fu">list</span>(<span class="at">mean =</span> <span class="cf">function</span>(Tx) <span class="fu">mean</span>(Tx)))</span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>an_weights <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">*</span>(predictors<span class="sc">$</span>elevation <span class="sc">&gt;</span> <span class="dv">390</span> <span class="sc">&amp;</span> predictors<span class="sc">$</span>elevation <span class="sc">&lt;</span> <span class="dv">837</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(pred_n_mosq_grid, <span class="at">which_target =</span> <span class="st">"n_mosq"</span>, <span class="at">which_summary =</span> <span class="st">"mean"</span>,</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Number of mosquitoes"</span>)</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(an_grid, <span class="at">pch =</span> <span class="dv">20</span>, <span class="at">cex =</span> <span class="dv">1</span>, <span class="at">col =</span> an_weights<span class="sc">+</span><span class="dv">1</span>, <span class="at">main =</span> <span class="st">"Weights"</span>)</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-mosq-map" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="05_geostatistical-prediction_files/figure-html/fig-mosq-map-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="figure-caption">Figure&nbsp;5.5: Maps of the predicted averae number of mosqutoes (left panel). The right panel shows prediction locations in red if they have an elevation between 390 and 837 meters, or black otherwise.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>pred_n_mosq_shp <span class="ot">&lt;-</span> </span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">pred_target_shp</span>(pred_an_S, <span class="at">shp =</span> shp_ch, </span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">weights =</span> an_weights,</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>                 <span class="at">shp_target =</span> sum,</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>                 <span class="at">f_target =</span> <span class="fu">list</span>(<span class="at">n_mosq =</span> <span class="cf">function</span>(lp) <span class="fu">exp</span>(lp)),</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>                 <span class="at">pd_summary =</span> <span class="fu">list</span>(<span class="at">mean =</span> <span class="cf">function</span>(Tx) <span class="fu">mean</span>(Tx),</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">q025 =</span> <span class="cf">function</span>(Tx) <span class="fu">quantile</span>(Tx, <span class="fl">0.025</span>),</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">q075 =</span> <span class="cf">function</span>(Tx) <span class="fu">quantile</span>(Tx, <span class="fl">0.975</span>)))</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="do">## Computing predictive target for:reg1</span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>pred_n_mosq_shp<span class="sc">$</span>target<span class="sc">$</span>reg1<span class="sc">$</span>n_mosq</span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a><span class="do">## $mean</span></span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 17729.73</span></span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a><span class="do">## $q025</span></span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a><span class="do">##     2.5% </span></span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a><span class="do">## 14946.93 </span></span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a><span class="do">## $q075</span></span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a><span class="do">##    97.5% </span></span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a><span class="do">## 20740.16</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
 </section>
 <section id="comparing-the-predictive-performance-of-geostatistical-models" class="level2" data-number="5.5">
 <h2 data-number="5.5" class="anchored" data-anchor-id="comparing-the-predictive-performance-of-geostatistical-models"><span class="header-section-number">5.5</span> Comparing the predictive performance of geostatistical models</h2>
