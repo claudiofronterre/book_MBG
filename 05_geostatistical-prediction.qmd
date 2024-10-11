@@ -63,6 +63,7 @@ The `pred_over_grid` function enables us to predict the the separate effects of 
 ```{r, echo=FALSE, message=FALSE, collapse=TRUE}
 library(sf)
 library(RiskMap)
+library(ggplot2)
 load("./data/fit_liberia.RData")
 data("malkenya")
 malkenya_comm <- malkenya[malkenya$Survey=="community", ]
@@ -71,7 +72,7 @@ load("./data/pred_age15.RData")
 load("./data/pred_aver_pop.RData")
 load("./data/lb_pred_S_m.RData")
 load("./data/lb_pred_S_j.RData")
-
+liberia_grid <- lb_pred_S_j$grid_pred
 ```
 
 ```{r, collapse = TRUE, message=FALSE}
@@ -354,6 +355,51 @@ If the objective is to account for proximity effects (such as the spread of an i
 
 Using spatial weights in these ways ensures that the aggregation of disease prevalence $T(x)$ reflects not only the distribution of the disease but also the underlying population, risk, or spatial characteristics relevant to the public health problem under investigation.
 
+### Example: predicting the average riverblindness prevalence at admin level 1 in Liberia
+
+```{r, message=FALSE}
+# Admin level 2 boundaries
+library(rgeoboundaries)
+lb_adm1 <- geoboundaries(country = "Liberia", adm_lvl = "adm1")
+
+pred_shp <- pred_target_shp(lb_pred_S_j, shp = lb_adm1,
+                            shp_target = function(Tx) mean(Tx),
+                            f_target = list(prev = 
+                                       function(lp) exp(lp)/(1+exp(lp))),
+                            pd_summary = list(mean = mean),
+                            col_names = "shapeName")
+
+
+```
+
+```{r, collapse=TRUE}
+
+# Obtaining population density
+library(wpgpDownloadR)
+lbr_url <- wpgpGetCountryDataset(ISO3 = "LBR", covariate = "ppp_2014")
+library(terra)
+lbr_pop <- rast(lbr_url)
+lbr_pop <- project(lbr_pop, "EPSG:32629")
+weights_pred <- extract(lbr_pop, st_coordinates(liberia_grid))$lbr_ppp_2014
+```
+```{r, collapse=TRUE}
+pred_shp_w <- pred_target_shp(lb_pred_S_j, shp = lb_adm1,
+                            shp_target = function(Tx) mean(Tx),
+                            f_target = list(prev = 
+                                       function(lp) exp(lp)/(1+exp(lp))),
+                            pd_summary = list(mean = mean),
+                            weights = weights_pred,
+                            standardize_weights = TRUE,
+                            col_names = "shapeName")
+```
+```{r, collapse=TRUE}
+par(mfrow = c(1,2))
+plot(pred_shp, which_target = "prev", which_summary = "mean") + 
+  guides(fill=guide_legend(title="Prevalence"))
+plot(pred_shp_w, which_target = "prev", which_summary = "mean") + 
+  guides(fill=guide_legend(title="Prevalence"))
+par(mfrow=c(1,1))
+```
 ## Comparing the predictive performance of geostatistical models
 
 ## Theory {#sec-theory-prediction}
