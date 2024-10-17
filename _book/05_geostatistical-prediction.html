@@ -223,12 +223,13 @@ div.csl-indent {
   </ul></li>
   <li><a href="#spatially-continuous-targets" id="toc-spatially-continuous-targets" class="nav-link" data-scroll-target="#spatially-continuous-targets"><span class="header-section-number">5.3</span> Spatially continuous targets</a>
   <ul class="collapse">
-  <li><a href="#sec-non-spar-covariates" id="toc-sec-non-spar-covariates" class="nav-link" data-scroll-target="#sec-non-spar-covariates"><span class="header-section-number">5.3.1</span> Example: mapping malaria using age and elevation as predictors</a></li>
+  <li><a href="#sec-liberia-prediction-1" id="toc-sec-liberia-prediction-1" class="nav-link" data-scroll-target="#sec-liberia-prediction-1"><span class="header-section-number">5.3.1</span> Example: mapping riverblidness prevalence in Liberia (continuing from <span>Section&nbsp;5.2.1</span>)</a></li>
+  <li><a href="#sec-non-spar-covariates" id="toc-sec-non-spar-covariates" class="nav-link" data-scroll-target="#sec-non-spar-covariates"><span class="header-section-number">5.3.2</span> Example: mapping malaria using age and elevation as predictors</a></li>
   </ul></li>
   <li><a href="#areal-level-targets" id="toc-areal-level-targets" class="nav-link" data-scroll-target="#areal-level-targets"><span class="header-section-number">5.4</span> Areal-level targets</a>
   <ul class="collapse">
-  <li><a href="#example-predicting-the-average-riverblindness-prevalence-at-admin-level-1-in-liberia" id="toc-example-predicting-the-average-riverblindness-prevalence-at-admin-level-1-in-liberia" class="nav-link" data-scroll-target="#example-predicting-the-average-riverblindness-prevalence-at-admin-level-1-in-liberia"><span class="header-section-number">5.4.1</span> Example: predicting the average riverblindness prevalence at admin level 1 in Liberia</a></li>
-  <li><a href="#example-predicting-the-total-number-of-anopheles-mosquitoes" id="toc-example-predicting-the-total-number-of-anopheles-mosquitoes" class="nav-link" data-scroll-target="#example-predicting-the-total-number-of-anopheles-mosquitoes"><span class="header-section-number">5.4.2</span> Example: predicting the total number of Anopheles mosquitoes</a></li>
+  <li><a href="#sec-liberia-prediction-2" id="toc-sec-liberia-prediction-2" class="nav-link" data-scroll-target="#sec-liberia-prediction-2"><span class="header-section-number">5.4.1</span> Example: predicting the average riverblindness prevalence at admin level 1 in Liberia (continuing from <span>Section&nbsp;5.3.1</span>)</a></li>
+  <li><a href="#sec-anopheles-pred" id="toc-sec-anopheles-pred" class="nav-link" data-scroll-target="#sec-anopheles-pred"><span class="header-section-number">5.4.2</span> Example: predicting the total number of Anopheles gambiae mosquitoes (continuing from <span>Section&nbsp;3.3.2</span>)</a></li>
   </ul></li>
   <li><a href="#comparing-the-predictive-performance-of-geostatistical-models" id="toc-comparing-the-predictive-performance-of-geostatistical-models" class="nav-link" data-scroll-target="#comparing-the-predictive-performance-of-geostatistical-models"><span class="header-section-number">5.5</span> Comparing the predictive performance of geostatistical models</a></li>
   <li><a href="#sec-theory-prediction" id="toc-sec-theory-prediction" class="nav-link" data-scroll-target="#sec-theory-prediction"><span class="header-section-number">5.6</span> Theory</a>
@@ -236,8 +237,9 @@ div.csl-indent {
   <li><a href="#sec-pred-distr-theory" id="toc-sec-pred-distr-theory" class="nav-link" data-scroll-target="#sec-pred-distr-theory"><span class="header-section-number">5.6.1</span> Derivation of the predictive distribution</a></li>
   <li><a href="#scoring-rules" id="toc-scoring-rules" class="nav-link" data-scroll-target="#scoring-rules"><span class="header-section-number">5.6.2</span> Scoring rules</a></li>
   </ul></li>
-  <li><a href="#common-questions-from-users" id="toc-common-questions-from-users" class="nav-link" data-scroll-target="#common-questions-from-users"><span class="header-section-number">5.7</span> Common questions from users</a></li>
-  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">5.8</span> Exercises</a></li>
+  <li><a href="#faqs" id="toc-faqs" class="nav-link" data-scroll-target="#faqs"><span class="header-section-number">5.7</span> FAQs</a></li>
+  <li><a href="#review-questions" id="toc-review-questions" class="nav-link" data-scroll-target="#review-questions"><span class="header-section-number">5.8</span> Review questions</a></li>
+  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">5.9</span> Exercises</a></li>
   </ul>
 </nav>
     </div>
@@ -438,9 +440,9 @@ div.csl-indent {
 </div>
 <p>An important feature of the predictive targets listed in <a href="#tbl-spat-cont-pred-target">Table&nbsp;<span>5.1</span></a> is that none of them include the nugget effect, denoted by <span class="math inline">\(Z_i\)</span> in our linear predictor definition for generalized linear geostatistical models. The reason for excluding <span class="math inline">\(Z_i\)</span> from the predictive targets is that, in most cases, it lacks a clear, unambiguous scientific interpretation. However, <span class="math inline">\(Z_i\)</span> might be included, for example, in environmental studies focusing on highly localized phenomena where measurement error or small-scale variability is of direct scientific interest; or in epidemiological studies where inferences at the individual level, rather than the population level, are required, and where <span class="math inline">\(Z_i\)</span> is introduced to account for unexplained individual-level variation. It is also worth noticing, the primary impact of including <span class="math inline">\(Z_i\)</span> in <span class="math inline">\(T(x)\)</span> would be an increase in the uncertainty of predictive inferences for <span class="math inline">\(T(x)\)</span>, with minimal effect (or none at all, if <span class="math inline">\(T(x)\)</span> corresponds to the linear predictor) on the point predictions.</p>
 <p>The predictive targets in <a href="#tbl-spat-cont-pred-target">Table&nbsp;<span>5.1</span></a> corresponding to <span class="math inline">\(d(x)^\top \beta\)</span> or the spatial random effects <span class="math inline">\(S(x)\)</span> might be considered when the goal is to highlight the different contribution to the overall predictive inferences from the measured covariates.</p>
-<section id="example-mapping-riverblidness-prevalence-in-liberia-continuing-from-sec-pred-samples" class="level4" data-number="5.3.0.1">
-<h4 data-number="5.3.0.1" class="anchored" data-anchor-id="example-mapping-riverblidness-prevalence-in-liberia-continuing-from-sec-pred-samples"><span class="header-section-number">5.3.0.1</span> Example: mapping riverblidness prevalence in Liberia (continuing from <a href="#sec-pred-samples"><span>Section&nbsp;5.2.1</span></a>)</h4>
-<p>Let us continue the geostatistical of the riverblindness data in Liberia. The predictive target we consider is prevalence, hence <span class="math display">\[T(x) = \frac{\exp\{ \beta_{0} + \beta_{1}\log\{e(x)\} + S(x)\}}{1+\exp\{\beta_{0} + \beta_{1}\log\{e(x)\} + S(x)\}}\]</span>, where <span class="math inline">\(e(x)\)</span> is the elevation in meters at location <span class="math inline">\(x\)</span>.</p>
+<section id="sec-liberia-prediction-1" class="level3" data-number="5.3.1">
+<h3 data-number="5.3.1" class="anchored" data-anchor-id="sec-liberia-prediction-1"><span class="header-section-number">5.3.1</span> Example: mapping riverblidness prevalence in Liberia (continuing from <a href="#sec-pred-samples"><span>Section&nbsp;5.2.1</span></a>)</h3>
+<p>Let us continue the geostatistical of the riverblindness data in Liberia. The predictive target we consider is prevalence, hence <span id="eq-rb-prev-target"><span class="math display">\[T(x) = \frac{\exp\{ \beta_{0} + \beta_{1}\log\{e(x)\} + S(x)\}}{1+\exp\{\beta_{0} + \beta_{1}\log\{e(x)\} + S(x)\}}, \tag{5.1}\]</span></span> where <span class="math inline">\(e(x)\)</span> is the elevation in meters at location <span class="math inline">\(x\)</span>.</p>
 <p>Through the <code>pred_target_grid</code> we can use the output in <code>lb_pred_S_m</code> (or <code>lb_pred_S_j</code> as well, in this case) to generate predictions of prevalence over the regular grid at 5 km we have created earlier.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a></span>
@@ -477,8 +479,8 @@ div.csl-indent {
 </div>
 <p>The maps in <a href="#fig-lb-maps">Figure&nbsp;<span>5.2</span></a> indicate a higher prevalence as we move away from the coast and at higher altitudes. A very similar spatial pattern is observed in the likelihood of exceeding 20<span class="math inline">\(\%\)</span> prevalence. Also, based on the map of the coefficient of variation, the uncertainty around the point predictions of prevalence is higher along the coast and lower in the inland areas of Liberia.</p>
 </section>
-<section id="sec-non-spar-covariates" class="level3" data-number="5.3.1">
-<h3 data-number="5.3.1" class="anchored" data-anchor-id="sec-non-spar-covariates"><span class="header-section-number">5.3.1</span> Example: mapping malaria using age and elevation as predictors</h3>
+<section id="sec-non-spar-covariates" class="level3" data-number="5.3.2">
+<h3 data-number="5.3.2" class="anchored" data-anchor-id="sec-non-spar-covariates"><span class="header-section-number">5.3.2</span> Example: mapping malaria using age and elevation as predictors</h3>
 <p>We now consider an example on malaria mapping, where we use two different types of covariates: a spatially referenced covariate corresponding to elevation; the individual age. We use the <code>malkenya_comm</code> subset of the <code>malkenya</code> data-set (see <a href="03_model-fitting.html#sec-indiv-expl-analysis"><span>Section&nbsp;3.1.1.2</span></a>) and, to alleviate the computational burden, we further reduce this data-set by taking the first 1000 rows. Hence, we create our new data-set, <code>malkenya_comm1000</code>, using the followind code.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>malkenya_comm1000 <span class="ot">&lt;-</span> malkenya_comm[<span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>,]</span>
@@ -489,8 +491,8 @@ div.csl-indent {
 </div>
 <p>Based on the exploratory analysis shown in <a href="03_model-fitting.html#sec-indiv-expl-analysis"><span>Section&nbsp;3.1.1.2</span></a>, we consider a geostatistical model fitted to the individual binary outcomes, <span class="math inline">\(Y_{ij}\)</span>, which correspond the rapid diagnostic test (RDT) results for the <span class="math inline">\(j\)</span>-th individual in the <span class="math inline">\(i\)</span>-th community, and take value <span class="math inline">\(Y_{ij}=1\)</span> if the RDT is positive and <span class="math inline">\(Y_{ij}=0\)</span> if the RDT is negative. Using a Binomial geostatistical model, we model the individual probability, <span class="math inline">\(p_{ij}\)</span> of a positive RDT using the following linear predictor. <span id="eq-lp-malkenya"><span class="math display">\[
 \log\left\{\frac{p_{ij}}{1-p_{ij}}\right\} = \beta_{0} + \beta_{1}a_{ij}+\beta_{2} \times\max\{a_{ij}-15, 0\} + \beta_{3}\max\{a_{ij}-40, 0\} + \beta_{4} e(x_i) + S(x_i),
-\tag{5.1}\]</span></span> where <span class="math inline">\(e(x_{i})\)</span> and <span class="math inline">\(a_{ij}\)</span> are the elevation in meter and the age in years for the <span class="math inline">\(j\)</span>-th individual residing at the <span class="math inline">\(i\)</span>-th household, respectively.</p>
-<p>When using the model in <a href="#eq-lp-malkenya">Equation&nbsp;<span>5.1</span></a> to predict RDT prevalence, a key question arises: how should we handle the age variable, which, unlike elevation, is not available as a geo-referenced covariate at all locations in the study area? The answer depends on the research question being addressed.</p>
+\tag{5.2}\]</span></span> where <span class="math inline">\(e(x_{i})\)</span> and <span class="math inline">\(a_{ij}\)</span> are the elevation in meter and the age in years for the <span class="math inline">\(j\)</span>-th individual residing at the <span class="math inline">\(i\)</span>-th household, respectively.</p>
+<p>When using the model in <a href="#eq-lp-malkenya">Equation&nbsp;<span>5.2</span></a> to predict RDT prevalence, a key question arises: how should we handle the age variable, which, unlike elevation, is not available as a geo-referenced covariate at all locations in the study area? The answer depends on the research question being addressed.</p>
 <p>For instance, if the goal is to infer disease risk across different age groups, we can generate different maps for each group of interest. This can be easily achieved by fixing the value of <span class="math inline">\(a_{ij}\)</span> to a specific age for all prediction locations. Alternatively, if the objective is to generate a predictive map for the general population, rather than for a specific age group, we must employ a probabilistic model for age and integrate out its effect.</p>
 <p>Developing a credible probabilistic model for age is beyond the scope of this section. Instead, we demonstrate a simple yet reasonable solution which uses the empirical age distribution from the data. By random sampling from this distribution, we can then assign age values to prediction locations. The steps are as follows.</p>
 <ol type="1">
@@ -593,15 +595,15 @@ div.csl-indent {
 <p>A common aggregating function for <span class="math inline">\(T(x)\)</span> is the mean, which is formally defined as:</p>
 <p><span id="eq-mean-alt"><span class="math display">\[
 \mathcal{M}_i = \frac{1}{|A_i|}\int_{A_i} T(x) \: dx.
-\tag{5.2}\]</span></span></p>
-<p>In addition to the mean, several other aggregating functions can be applied depending on the context of the analysis.</p>
+\tag{5.3}\]</span></span></p>
+<p>In addition to the mean, several other aggregating functions can be applied depending on the context of the analysis. We also note that computing the integral in <a href="#eq-mean-alt">Equation&nbsp;<span>5.3</span></a> requires some approximations. Our approach utilizes the regular grid <span class="math inline">\(\tilde{X}\)</span>, previously defined when dealing with spatially continuous targets. This grid covers the area <span class="math inline">\(A_i\)</span>, allowing us to approximate <span class="math inline">\(M_i\)</span> as: <span id="eq-mean-alt-approx"><span class="math display">\[\mathcal{M}_i \approx \frac{1}{\#\{j : \tilde{x}_j \in A_i\}} \sum_{\tilde{x}_j \in A_i} T(\tilde{x}_j),  \tag{5.4}\]</span></span> where <span class="math inline">\(\#\{j : \tilde{x}_j \in A_i\}\)</span> denotes the number of grid locations <span class="math inline">\(\tilde{x}_j\)</span> that fall within <span class="math inline">\(A_i\)</span>. The same approximation will be applied to other areal-level targets discussed in this section. However, for simplicity, we will omit the detailed explanation of this step and instead express the predictive target as an integral.</p>
 <p>For instance, in the study of Anopheles mosquitoes in Cameroon, we may be interested in estimating the total number of mosquitoes trapped within the study area (<span class="math inline">\(A_i\)</span> represents a single region in this case). If <span class="math inline">\(T(x)\)</span> denotes the number of mosquitoes trapped at location <span class="math inline">\(x\)</span>, the areal-level target can be expressed as: <span class="math display">\[
   \mathcal{S}_i = \int_{A_i} T(x) \: dx.
   \]</span></p>
 <p>Additionally, to capture the heterogeneity of <span class="math inline">\(T(x)\)</span> within an area, variance-based measures can be used. The variance of <span class="math inline">\(T(x)\)</span> in <span class="math inline">\(A_i\)</span> is given by: <span class="math display">\[
    \mathcal{V}_i = \frac{1}{|A_i|}\int_{A_i} \left(T(x) - \mathcal{M}_i\right)^2 \: dx,
    \]</span> where <span class="math inline">\(\mathcal{M}_i\)</span> is the mean of <span class="math inline">\(T(x)\)</span> in <span class="math inline">\(A_i\)</span>.</p>
-<p>The formulation of the areal-level targets given so far assumes equal weighting for all locations within the area. Alternatively, if the we consider for example the areal level target in <a href="#eq-mean-alt">Equation&nbsp;<span>5.2</span></a>, one could use spatial weights, <span class="math inline">\(w(x) &gt; 0\)</span>, and redefine <span class="math inline">\(\mathcal{M}_i\)</span> as:</p>
+<p>The formulation of the areal-level targets given so far assumes equal weighting for all locations within the area. Alternatively, if the we consider for example the areal level target in <a href="#eq-mean-alt">Equation&nbsp;<span>5.3</span></a>, one could use spatial weights, <span class="math inline">\(w(x) &gt; 0\)</span>, and redefine <span class="math inline">\(\mathcal{M}_i\)</span> as:</p>
 <p><span class="math display">\[
 \mathcal{M}_i = \frac{\int_{A_i} w(x) T(x) \: dx}{\int_{A_i} w(x) \: dx}.
 \]</span></p>
@@ -610,20 +612,31 @@ div.csl-indent {
 <p>In cases where certain sub-regions within <span class="math inline">\(A_i\)</span> are at higher risk for disease (e.g., proximity to environmental hazards or areas with lower access to healthcare), risk-based weights could be applied. Here, <span class="math inline">\(w(x)\)</span> would be higher in regions identified as higher risk, providing a more targeted aggregation of disease prevalence. For example, populations in rural areas may face higher exposure to infectious diseases than those in urban areas, making it important to assign greater weight to these higher-risk regions in the aggregation process.</p>
 <p>If the objective is to account for proximity effects (such as the spread of an infectious disease or contamination from a known source), distance-based weights could be used. Locations closer to a known disease outbreak area or source of exposure could be given more weight to reflect the spatial dynamics of disease transmission.</p>
 <p>Using spatial weights in these ways ensures that the aggregation of disease prevalence <span class="math inline">\(T(x)\)</span> reflects not only the distribution of the disease but also the underlying population, risk, or spatial characteristics relevant to the public health problem under investigation.</p>
-<section id="example-predicting-the-average-riverblindness-prevalence-at-admin-level-1-in-liberia" class="level3" data-number="5.4.1">
-<h3 data-number="5.4.1" class="anchored" data-anchor-id="example-predicting-the-average-riverblindness-prevalence-at-admin-level-1-in-liberia"><span class="header-section-number">5.4.1</span> Example: predicting the average riverblindness prevalence at admin level 1 in Liberia</h3>
+<section id="sec-liberia-prediction-2" class="level3" data-number="5.4.1">
+<h3 data-number="5.4.1" class="anchored" data-anchor-id="sec-liberia-prediction-2"><span class="header-section-number">5.4.1</span> Example: predicting the average riverblindness prevalence at admin level 1 in Liberia (continuing from <a href="#sec-liberia-prediction-1"><span>Section&nbsp;5.3.1</span></a>)</h3>
+<p>We continue our analysis of the Liberia data and consider areal-level targets. More specifically, we aim to predict the average prevalence over the regions which give the administrative level 1 of Liberia. By denoting with <span class="math inline">\(A_i\)</span> the i-th out of the 15 regions in Liberia. By denoting with <span class="math inline">\(T(x)\)</span> reiverblindness prevalence as defined in <a href="#eq-rb-prev-target">Equation&nbsp;<span>5.1</span></a>, we define our predictive target as <span class="math display">\[
+T_{i} = \frac{1}{|A_i|} \int_{A_i} T(x) \: dx.
+\]</span> The R code below shows how predictions for <span class="math inline">\(T_i\)</span> can be performed using the <code>pred_target_shp</code> function.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Admin level 2 boundaries</span></span>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Admin level 1 boundaries</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rgeoboundaries)</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>lb_adm1 <span class="ot">&lt;-</span> <span class="fu">geoboundaries</span>(<span class="at">country =</span> <span class="st">"Liberia"</span>, <span class="at">adm_lvl =</span> <span class="st">"adm1"</span>)</span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>pred_shp <span class="ot">&lt;-</span> <span class="fu">pred_target_shp</span>(lb_pred_S_j, <span class="at">shp =</span> lb_adm1,</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>                            <span class="at">shp_target =</span> <span class="cf">function</span>(Tx) <span class="fu">mean</span>(Tx),</span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>                            <span class="at">f_target =</span> <span class="fu">list</span>(<span class="at">prev =</span> </span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>                                       <span class="cf">function</span>(lp) <span class="fu">exp</span>(lp)<span class="sc">/</span>(<span class="dv">1</span><span class="sc">+</span><span class="fu">exp</span>(lp))),</span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>                            <span class="at">pd_summary =</span> <span class="fu">list</span>(<span class="at">mean =</span> mean),</span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>                            <span class="at">col_names =</span> <span class="st">"shapeName"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Prediction of prevalence </span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>pred_shp <span class="ot">&lt;-</span> <span class="fu">pred_target_shp</span>(lb_pred_S_j, <span class="at">shp =</span> lb_adm1,</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>                            <span class="at">shp_target =</span> <span class="cf">function</span>(Tx) <span class="fu">mean</span>(Tx),</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>                            <span class="at">f_target =</span> <span class="fu">list</span>(<span class="at">prev =</span> </span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>                                       <span class="cf">function</span>(lp) <span class="fu">exp</span>(lp)<span class="sc">/</span>(<span class="dv">1</span><span class="sc">+</span><span class="fu">exp</span>(lp))),</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>                            <span class="at">pd_summary =</span> <span class="fu">list</span>(<span class="at">mean =</span> mean),</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>                            <span class="at">col_names =</span> <span class="st">"shapeName"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>The argument <code>shp_target</code> is used define the type of aggregation function over the region <span class="math inline">\(A_i\)</span>, in this case the mean of the target <span class="math inline">\(T(x)\)</span>. Also note that, like for spatially continuous targets, we can define any summary of the predictive distribution of <span class="math inline">\(\mathcal{M}_i\)</span> through the argument <code>pd_summary</code>. Here, we chose to compute only the mean of the predictive distribution but other summaries, such as exceedance probabilities, standard error, quantiles and so on, can be specified if needed.</p>
+<p>Before we plot the results on a map, let us also consider the population-density weighted target, defined as <span class="math display">\[
+T_{i}^* = \frac{ \int_{A_i} w(x) T(x) \: dx}{\int_{A_i} w(x) \: dx}.
+\]</span> To aid the explanation of the R code script, we first rewrite the above areal-level target as <span class="math display">\[
+T_{i}^* = \int_{A_i} \tilde{w_i}(x) T(x) \: dx.
+\]</span> where <span class="math inline">\(\tilde{w}_{i}(x)\)</span> are the standardized weights that integrate to 1 in <span class="math inline">\(A_i\)</span> (i.e.&nbsp;<span class="math inline">\(\int_{A_i} \tilde{w}_i(x) \: dx = 1\)</span>).</p>
+<p>We first retrieve the population density data from the World Pop database (see <a href="02_handling-spatial-data.html#sec-pop-data"><span>Section&nbsp;2.4.2</span></a>) and use these to derive the un-standardized weights <span class="math inline">\(w(x)\)</span>.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Obtaining population density</span></span>
@@ -632,8 +645,11 @@ div.csl-indent {
 <span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra)</span>
 <span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>lbr_pop <span class="ot">&lt;-</span> <span class="fu">rast</span>(lbr_url)</span>
 <span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>lbr_pop <span class="ot">&lt;-</span> <span class="fu">project</span>(lbr_pop, <span class="st">"EPSG:32629"</span>)</span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>weights_pred <span class="ot">&lt;-</span> <span class="fu">extract</span>(lbr_pop, <span class="fu">st_coordinates</span>(liberia_grid))<span class="sc">$</span>lbr_ppp_2014</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Extra pop density weights at the prediction grid</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>weights_pred <span class="ot">&lt;-</span> <span class="fu">extract</span>(lbr_pop, <span class="fu">st_coordinates</span>(liberia_grid))<span class="sc">$</span>lbr_ppp_2014</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>In the code above the population density weights are extracted at the locations of the prediction grid. In the <code>pred_target_shp</code> function, in order to use the weights for our predictive target, we need to specify two additional arguments: <code>weights</code> to which we pass the population density values (in our case these are stored in <code>weights_pred</code>); <code>standardize_weights</code>, which is a logical argument taking value <code>TRUE</code> if the weights to be standardized so that the sum over the grid covering a region <span class="math inline">\(A_i\)</span> adds up to one.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>pred_shp_w <span class="ot">&lt;-</span> <span class="fu">pred_target_shp</span>(lb_pred_S_j, <span class="at">shp =</span> lb_adm1,</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>                            <span class="at">shp_target =</span> <span class="cf">function</span>(Tx) <span class="fu">sum</span>(Tx),</span>
@@ -644,6 +660,7 @@ div.csl-indent {
 <span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>                            <span class="at">standardize_weights =</span> <span class="cn">TRUE</span>,</span>
 <span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>                            <span class="at">col_names =</span> <span class="st">"shapeName"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>We can then finally plot the results from the prediction at admin level 1, without using any weights and by weighing according to population density.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>plot_1 <span class="ot">&lt;-</span> </span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(pred_shp, <span class="at">which_target =</span> <span class="st">"prev"</span>, <span class="at">which_summary =</span> <span class="st">"mean"</span>,</span>
@@ -672,9 +689,19 @@ div.csl-indent {
 </div>
 </div>
 </div>
+<p>In <a href="#fig-average-prev-Liberia">Figure&nbsp;<span>5.4</span></a>, we observe that the differences between the two predictive targets, with and without weights, are not substantial. However, we observe that the predicted average prevalence shows slightly greater variation in coastal regions, particularly in Montserrado County, where the majority of the population residing in the capital of Monrovia. This concentration of population likely accounts for the more noticeable differences in this area.</p>
 </section>
-<section id="example-predicting-the-total-number-of-anopheles-mosquitoes" class="level3" data-number="5.4.2">
-<h3 data-number="5.4.2" class="anchored" data-anchor-id="example-predicting-the-total-number-of-anopheles-mosquitoes"><span class="header-section-number">5.4.2</span> Example: predicting the total number of Anopheles mosquitoes</h3>
+<section id="sec-anopheles-pred" class="level3" data-number="5.4.2">
+<h3 data-number="5.4.2" class="anchored" data-anchor-id="sec-anopheles-pred"><span class="header-section-number">5.4.2</span> Example: predicting the total number of Anopheles gambiae mosquitoes (continuing from <a href="03_model-fitting.html#sec-anopheles-fit"><span>Section&nbsp;3.3.2</span></a>)</h3>
+<p>For the analysis on Anopheles gambiae mosquitoes, we consider the prediction of the total number of mosquitoes within the study area. In this case, because there is not a natural definition of the study area borders as in the previous analysis, we consider the convex hull as representing those borders. To pursue this let us first, visualize the predictive map of the number of mosquitoes on a regular grid cover the study area. In other words, we first consider the spatially continuous target <span class="math display">\[
+T(x) = \exp\{\beta_0 + \beta_1 e(x) + S(x)\},
+\]</span> where, we recall, <span class="math inline">\(e(x)\)</span> is the elevation in meters at location <span class="math inline">\(x\)</span>. In the code below in addition to generate prediction for <span class="math inline">\(T(x)\)</span>, we also create a binary indicator defined as <span class="math display">\[
+w(x) =
+\begin{cases}
+1 &amp; \text{if  } 390 &lt; e(x) &lt; 837 \\
+0 &amp; \text{otherwise.}
+\end{cases}
+\]</span> The values of 390 and 837 meters correspond to the minimum and maximum values of elevation observed in the data.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create grid from convex hull</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>shp_ch <span class="ot">&lt;-</span> <span class="fu">convex_hull_sf</span>(an_fit<span class="sc">$</span>data_sf)</span>
@@ -698,6 +725,9 @@ div.csl-indent {
 <span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>an_weights <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">*</span>(predictors<span class="sc">$</span>elevation <span class="sc">&gt;</span> <span class="dv">390</span> <span class="sc">&amp;</span> predictors<span class="sc">$</span>elevation <span class="sc">&lt;</span> <span class="dv">837</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>We now define our predictive target corresponding to the total number of mosquitoes within the study area <span class="math inline">\(A\)</span>, given by the convex hull of the observed locations, as <span id="eq-tot-mosq"><span class="math display">\[
+T = \int_{A} w(x) T(x) \: dx
+\tag{5.5}\]</span></span> The rationale is to estimate the total number of mosquitoes in the study area while restricting predictions to locations within the observed range of elevation. This approach helps avoid the risk of predicting in ecological areas that may not be suitable for mosquito presence. It is also important to note that in <a href="#eq-tot-mosq">Equation&nbsp;<span>5.5</span></a>, we do not standardize the weights in this case.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(pred_n_mosq_grid, <span class="at">which_target =</span> <span class="st">"n_mosq"</span>, <span class="at">which_summary =</span> <span class="st">"mean"</span>,</span>
@@ -713,6 +743,7 @@ div.csl-indent {
 </div>
 </div>
 </div>
+<p><a href="#fig-mosq-map">Figure&nbsp;<span>5.5</span></a> shows the prediction map for the number of mosquitoes at each prediction location, indicating a relatively high spatial heterogeneity as was also indicated by the low value for the estimate of the scale of the spatial correction (parameter <span class="math inline">\(\phi\)</span>). The right panel, we have an image of the weights <span class="math inline">\(w(x)\)</span>, with locations that will not contribute to the prediction of the total number of mosquitoes denoted in black.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>pred_n_mosq_shp <span class="ot">&lt;-</span> </span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">pred_target_shp</span>(pred_an_S, <span class="at">shp =</span> shp_ch, </span>
@@ -727,16 +758,17 @@ div.csl-indent {
 <span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>pred_n_mosq_shp<span class="sc">$</span>target<span class="sc">$</span>reg1<span class="sc">$</span>n_mosq</span>
 <span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a><span class="do">## $mean</span></span>
-<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 17729.73</span></span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 17670.78</span></span>
 <span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
 <span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a><span class="do">## $q025</span></span>
 <span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a><span class="do">##     2.5% </span></span>
-<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a><span class="do">## 14946.93 </span></span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a><span class="do">## 15108.81 </span></span>
 <span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
 <span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a><span class="do">## $q075</span></span>
 <span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a><span class="do">##    97.5% </span></span>
-<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a><span class="do">## 20740.16</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a><span class="do">## 21031.77</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>Since we are not standardizing the weights, there is no need to specify <code>standardize_weights</code>, as it is set to <code>FALSE</code> by default. In the code above, we printed the mean of the predictive distribution of <span class="math inline">\(T\)</span> along with the 95% prediction interval. The point estimate of approximately 17,719 mosquitoes is likely an underestimate of the total number of Anopheles gambiae in the area, as the trap used to count the mosquitoes may not capture all of them, particularly those outside the immediate trapping zone or those active at different times.</p>
 </section>
 </section>
 <section id="comparing-the-predictive-performance-of-geostatistical-models" class="level2" data-number="5.5">
@@ -751,28 +783,25 @@ div.csl-indent {
 <h3 data-number="5.6.2" class="anchored" data-anchor-id="scoring-rules"><span class="header-section-number">5.6.2</span> Scoring rules</h3>
 </section>
 </section>
-<section id="common-questions-from-users" class="level2" data-number="5.7">
-<h2 data-number="5.7" class="anchored" data-anchor-id="common-questions-from-users"><span class="header-section-number">5.7</span> Common questions from users</h2>
+<section id="faqs" class="level2" data-number="5.7">
+<h2 data-number="5.7" class="anchored" data-anchor-id="faqs"><span class="header-section-number">5.7</span> FAQs</h2>
 <ul>
 <li><p><em>What should be the spatial resolution of the grid used for prediction?</em></p></li>
 <li><p><em>I have covariates with different spatial resolutions. Which spatial resolution should I use?</em></p></li>
 <li><p><em>My prediction map looks like noise. What could be the error?</em></p></li>
 <li><p><em>The main goal of my analysis is to carry out predictions of the main outcome. However, can I also use the model to draw inferences on the association between the outcome and the covariates that I have included in the model?</em></p></li>
-<li><p><em>In my model I have some covariates that are attached to the individual (e.g.&nbsp;age, gender, occupation, etc.). How do I specify them when doing prediction?</em> <br> Read <a href="#sec-non-spar-covariates"><span>Section&nbsp;5.3.1</span></a>.</p></li>
+<li><p><em>In my model I have some covariates that are attached to the individual (e.g.&nbsp;age, gender, occupation, etc.). How do I specify them when doing prediction?</em> <br> Read <a href="#sec-non-spar-covariates"><span>Section&nbsp;5.3.2</span></a>.</p></li>
 </ul>
 </section>
-<section id="exercises" class="level2" data-number="5.8">
-<h2 data-number="5.8" class="anchored" data-anchor-id="exercises"><span class="header-section-number">5.8</span> Exercises</h2>
-<ol type="1">
-<li><em>Review questions</em>.
-<ul>
-<li>What are the steps that needs to taken when performing spatial prediction?</li>
-<li>Define the predictive distribution of a predictive target and explain how this is used to answer a research question.</li>
-<li>Distinguish between spatially continuous and areal-level targets, giving at least two examples for each.</li>
-<li>Explain the difference between marginal and joint predictions, and for which targets each can be used.</li>
-</ul></li>
-<li></li>
-</ol>
+<section id="review-questions" class="level2" data-number="5.8">
+<h2 data-number="5.8" class="anchored" data-anchor-id="review-questions"><span class="header-section-number">5.8</span> Review questions</h2>
+<pre><code>-   What are the steps that needs to taken when performing spatial prediction?
+-   Define the predictive distribution of a predictive target and explain how this is used to answer a research question.
+-   Distinguish between spatially continuous and areal-level targets, giving at least two examples for each.
+-   Explain the difference between marginal and joint predictions, and for which targets each can be used.</code></pre>
+</section>
+<section id="exercises" class="level2" data-number="5.9">
+<h2 data-number="5.9" class="anchored" data-anchor-id="exercises"><span class="header-section-number">5.9</span> Exercises</h2>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
