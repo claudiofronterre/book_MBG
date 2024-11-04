@@ -1,3 +1,12 @@
+---
+filters:
+  - line-highlight
+execute: 
+  freeze: auto
+fig-width: 5
+fig-asp: 0.75
+---
+
 # Geostatistical prediction {#sec-geo-prediction}
 
 This is a book created from markdown and executable code.

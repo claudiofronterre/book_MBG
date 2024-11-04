@@ -1,7 +1,10 @@
 ---
-output: html_document
-editor_options: 
-  chunk_output_type: console
+filters:
+  - line-highlight
+execute: 
+  freeze: auto
+fig-width: 5
+fig-asp: 0.75
 ---
 
 # Handling of spatial data in R {#sec-handling-data}
@@ -51,7 +54,7 @@ A wide range of open-access spatial datasets provide covariates for disease mapp
 MENTION RSPATIAL DATA WEBSITE?? https://rspatialdata.github.io/
 
 | **Source**              | **Data Type**                   | **Description**                              | **R Package**        |
-|-----------------|-----------------|---------------------|-----------------|
+|-------------------------|---------------------------------|----------------------------------------------|----------------------|
 | **WorldClim**           | Climate (temperature, rainfall) | Global climate data                          | `geodata`            |
 | **MODIS**               | Remote Sensing                  | Satellite imagery (e.g., vegetation indices) | `MODIStsp`           |
 | **OpenStreetMap (OSM)** | Human settlements, roads        | Global geographic features                   | `osmdata`            |
@@ -72,6 +75,7 @@ Administrative boundaries provide an essential spatial structure for many types 
 #| fig-subcap:
 #|   - "Adimin level 0"
 #|   - "Admin level 1"
+par(mar = c(0, 0, 0, 0))
 # Load the rgeoboundaries package
 library(rgeoboundaries)
 
@@ -84,7 +88,6 @@ liberia_admin1 <- gb_adm1("Liberia")
 # Plot the administrative boundaries
 plot(liberia_admin0$geometry)
 plot(liberia_admin1$geometry)
-
 ```
 
 ### Example: Download population data {#sec-pop-data}
@@ -101,11 +104,9 @@ library(wpgpDownloadR)
 # Search for datasets available for Liberia 
 # usign the ISO3 country code
 lbr_datasets <- wpgpListCountryDatasets(ISO3 = "LBR")
-lbr_datasets
-
 ```
 
-We can check the description column to see what datasets are available. Let\'s download the population data for Liberia for the year 2014 at a 100m resolution. The `wpgpGetCountryDataset` function will then download a raster dataset based on ISO3 code and covariate name.
+We can check the description column to see what datasets are available. Let's download the population data for Liberia for the year 2014 at a 100m resolution. The `wpgpGetCountryDataset` function will then download a raster dataset based on ISO3 code and covariate name.
 
 ```{r}
 #| warning: false
@@ -116,7 +117,7 @@ This will download a raster file locally in a temporary directory. The path to t
 
 ## Importing and standardizing spatial data
 
-In geostatistical analysis, importing and standardizing spatial data is a critical step to ensure that data from different sources align and can be used effectively. Spatial data, whether it\'s vector data (points, lines, polygons) or raster data (grids), can come in various formats and may use different **Coordinate Reference Systems (CRS)**. To perform accurate spatial analyses, it\'s essential to import data correctly and ensure consistency in terms of projection and format. This section will cover how to import vector and raster data into R, explain the concept of CRS and sensure that different datasets align properly for subsequent geostatistical analysis.
+In geostatistical analysis, importing and standardizing spatial data is a critical step to ensure that data from different sources align and can be used effectively. Spatial data, whether it's vector data (points, lines, polygons) or raster data (grids), can come in various formats and may use different **Coordinate Reference Systems (CRS)**. To perform accurate spatial analyses, it's essential to import data correctly and ensure consistency in terms of projection and format. This section will cover how to import vector and raster data into R, explain the concept of CRS and sensure that different datasets align properly for subsequent geostatistical analysis.
 
 ### Importing vector data
 
@@ -218,7 +219,7 @@ When working with data from multiple sources, such as environmental layers, popu
 
 #### Checking the CRS of Spatial Data
 
-Before performing any spatial operation, it\'s crucial to check the CRS of your spatial datasets. Knowing whether your data uses geographic coordinates (e.g., WGS84) or a projected coordinate system (e.g., UTM) helps ensure that they are aligned and ready for analysis. Both `sf` and `terra` provide functions to retrieve and inspect the CRS, ensuring datasets are spatially aligned before analysis. The `st_crs()` function retrieves the CRS information for vector data.
+Before performing any spatial operation, it's crucial to check the CRS of your spatial datasets. Knowing whether your data uses geographic coordinates (e.g., WGS84) or a projected coordinate system (e.g., UTM) helps ensure that they are aligned and ready for analysis. Both `sf` and `terra` provide functions to retrieve and inspect the CRS, ensuring datasets are spatially aligned before analysis. The `st_crs()` function retrieves the CRS information for vector data.
 
 ```{r}
 # Check the CRS of the vector data
@@ -302,7 +303,7 @@ For these reasons, it's often better to reproject vectors rather than rasters wh
 
 -   **CRS Mismatch**: One of the most common issues in spatial analysis is the mismatch of CRSs between datasets. Always check and reproject datasets if necessary before performing spatial operations like overlays or extractions.
 
--   **Datum Transformations**: In some cases, especially when working with datasets from different regions, a simple projection transformation may not be enough. You might need to handle datum shifts (e.g., from NAD83 to WGS84). R can handle these transformations, but it\'s important to be aware of them.
+-   **Datum Transformations**: In some cases, especially when working with datasets from different regions, a simple projection transformation may not be enough. You might need to handle datum shifts (e.g., from NAD83 to WGS84). R can handle these transformations, but it's important to be aware of them.
 
 -   **Choosing the Right CRS**: The choice of CRS depends on your study area and the type of analysis. For global studies, WGS84 is often used. For regional studies, **UTM** or other local projections may be more appropriate to preserve accuracy in distances and areas.
 
@@ -310,7 +311,7 @@ For these reasons, it's often better to reproject vectors rather than rasters wh
 
 In geostatistical models, the inclusion of relevant covariates (environmental, demographic, or climatic) can potentially enhances predictive accuracy. Covariate data often come from raster or polygon sources, and extracting these values for point locations is essential to link spatial context to point-referenced data. These covariates could include variables like temperature, elevation, land cover, or population density, which influence the spatial distribution of diseases. In this section, we will cover how to extract covariates at point locations from both polygon layers raster layers.
 
-####  Extracting covariates from polygon layers
+#### Extracting covariates from polygon layers
 
 Polygon layers contain discrete spatial entities, such as administrative boundaries or land use areas, with associated attributes. Extracting covariates from polygon layers involves associating point data with the attributes of the polygon in which they fall. Here is an example with.....NEED SOME DATA FOR THIS
 
@@ -422,7 +423,7 @@ ggplot(data = liberia_sf) +
        color = "Prevalence (%)")
 ```
 
-Here `geom_sf()` is used to plot the spatial points. `aes(color = prevalence)` specifies that the points should be colored based on the `prevalence` covariate, providing a visual representation of spatial variation in disease risk. The `scale_color_viridis_c()` function applies the Viridis color scale, which is well-suited for continuous data and is friendly for those with color blindness. The `labels = scales::label_percent()` argument ensures that the color scale\'s labels are displayed as percentages (e.g., 5, 10%) rather than raw decimal values. To make the plot visually clean and minimal, `theme_minimal()` is applied, stripping away unnecessary background elements and keeping the focus on the data. Finally, the `labs()` defines the plot title and the color legend label.
+Here `geom_sf()` is used to plot the spatial points. `aes(color = prevalence)` specifies that the points should be colored based on the `prevalence` covariate, providing a visual representation of spatial variation in disease risk. The `scale_color_viridis_c()` function applies the Viridis color scale, which is well-suited for continuous data and is friendly for those with color blindness. The `labels = scales::label_percent()` argument ensures that the color scale's labels are displayed as percentages (e.g., 5, 10%) rather than raw decimal values. To make the plot visually clean and minimal, `theme_minimal()` is applied, stripping away unnecessary background elements and keeping the focus on the data. Finally, the `labs()` defines the plot title and the color legend label.
 
 ### Visualizing polygon data
 
@@ -472,7 +473,7 @@ In this example `as.data.frame()` converts the raster into a data frame with x a
 
 ### Combining Multiple Spatial Data Types
 
-In many cases, it\'s useful to combine different spatial data types (points, polygons, and rasters) in a single visualization. `ggplot2` allows you to overlay these layers, providing a more comprehensive view of your spatial data.
+In many cases, it's useful to combine different spatial data types (points, polygons, and rasters) in a single visualization. `ggplot2` allows you to overlay these layers, providing a more comprehensive view of your spatial data.
 
 ```{r}
 # Combine points, polygons, and raster data in one plot

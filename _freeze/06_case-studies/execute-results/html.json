@@ -1,0 +1,19 @@
+{
+  "hash": "2c769a2ea2499a02e1e8fb244cca90c6",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\nfilters:\n  - line-highlight\nexecute: \n  freeze: auto\nfig-width: 5\nfig-asp: 0.75\n---\n\n\n\n\n\n\n# Case studies {#sec-case-studies}\n\nThis is a book created from markdown and executable code.\n\nSee @knuth84 for additional discussion of literate programming.\n\n\n\n\n\n\n::: {.cell}\n\n```{.r .cell-code}\n1 + 1\n```\n\n::: {.cell-output .cell-output-stdout}\n\n```\n[1] 2\n```\n\n\n:::\n:::\n\n\n\n\n\n\n## Mapping stunting risk in Ghan\n\n## Mapping river blindness in Malawi\n\n## Mapping mosquitoes abundance in Cameroon\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {
+      "include-in-header": [
+        "<link href=\"site_libs/pagedtable-1.1/css/pagedtable.css\" rel=\"stylesheet\" />\n<script src=\"site_libs/pagedtable-1.1/js/pagedtable.js\"></script>\n"
+      ]
+    },
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

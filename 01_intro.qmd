@@ -1,3 +1,12 @@
+---
+filters:
+  - line-highlight
+execute: 
+  freeze: auto
+fig-width: 5
+fig-asp: 0.75
+---
+
 # Introduction
 
 The book shows how to carry out model-based geostatistical analysis of public health data using the `RiskMap` R package. In this introductory chapter, we explain what are the pre-requisites for using this book and its learning objectives. We also explain what software should be installed and how. Finally, we give a brief overview of the class of models covered in this book, and the examples that will be used to illustrate the methods and use of software.
@@ -44,7 +53,7 @@ It is advised that you obtain the latest 64-bit version of R in order to run the
 The list of the R packages used in this book is provided in @tbl-packages.
 
 | R packages      | Used for                                                   |
-|-----------------|------------------------------------------------------------|
+|------------------|------------------------------------------------------|
 | `RiskMap` (E)   | Estimating of geostatistical models and spatial prediction |
 | `sf` (E)        | Handling of spatial data in R                              |
 | `terra` (E)     | Handling of raster files in R                              |
@@ -72,7 +81,7 @@ data(NAME_OF_THE_DATASET)
 where in place of `NAME_OF_THE_DATASET` you should type of the name of one of the data-sets listed in @tbl-data-sets.
 
 | Names of the data-set | Short description                                                                     | Used in this book as |
-|-----------------------|---------------------------------------------------------------------------------------|----------------------|
+|---------------|-------------------------------------------|---------------|
 | `galicia`             | Lead concentration m from moss samples collected in Galicia, Northern Spain           | Example              |
 | `liberia`             | Prevalence data on river-blindness from Liberia                                       | Example              |
 | `malkenya`            | Malaria prevalence data from a community and school survey conducted in Western Kenya | Example              |
@@ -260,7 +269,7 @@ $$ {#eq-linear-predictor-ch1}
 where $d(x_i)$ is a vector of spatially referenced covariates with associated regression coefficients $\beta$. Finally, the quantity $m_i$, which appears in the formulation of the Binomial and Poisson distributions, is an offset quantity and is used to account for the number of *tests* or the population size at a given location $x_i$.
 
 | Distribution | Range of $Y_i$       | Mean of $[Y_i | S(x_i)]$ | Variance of $[Y_i | S(x_i)]$ | Canonical link                         |
-|--------------|----------------------|--------------------------|------------------------------|----------------------------------------|
+|--------------|--------------|--------------|--------------|-----------------|
 | Gaussian     | $(-\infty, +\infty)$ | $\mu_i$                  | $\tau^2$                     | $g(\mu_i) = \mu_i$                     |
 | Binomial     | $1,\dots,m_i$        | $m_i\mu_i$               | $m_i\mu_i(1-\mu_i)$          | $g(\mu_i) = \log\{ \mu_i/(1-\mu_i) \}$ |
 | Poisson      | $1,2,\ldots,\infty$  | $m_i\mu_i$               | $m_i\mu_i$                   | $g(\mu_i) = \log\{ \mu_i \}$           |
