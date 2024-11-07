@@ -7,6 +7,7 @@
 | `pred_over_grid`   | `RiskMap` | Predicting the different component of the linear predictor over a grid: the covariates effects and the random effects |
 | `pred_target_grid` | `RiskMap` | Predictions of target defined at pixel-level                                                                          |
 | `pred_target_shp`  | `RiskMap` | Predictions of targets defined at areal level                                                                         |
+| `score_model`      | `RiskMap` | Computing scoring rules using spatial cross validation                                                                |
 
 ## Introduction
 
@@ -443,20 +444,16 @@ In @fig-average-prev-Liberia, we observe that the differences between the two pr
 
 ### Example: predicting the total number of Anopheles gambiae mosquitoes (continuing from @sec-anopheles-fit) {#sec-anopheles-pred}
 
-For the analysis on Anopheles gambiae mosquitoes, we consider the prediction of the total number of mosquitoes within the study area. In this case, because there is not a natural definition of the study area borders as in the previous analysis, we consider the convex hull as representing those borders. 
-To pursue this let us first, visualize the predictive map of the number of mosquitoes on a regular grid cover the study area. In other words, we first consider the spatially continuous target 
-$$
+For the analysis on Anopheles gambiae mosquitoes, we consider the prediction of the total number of mosquitoes within the study area. In this case, because there is not a natural definition of the study area borders as in the previous analysis, we consider the convex hull as representing those borders. To pursue this let us first, visualize the predictive map of the number of mosquitoes on a regular grid cover the study area. In other words, we first consider the spatially continuous target $$
 T(x) = \exp\{\beta_0 + \beta_1 e(x) + S(x)\},
-$$
-where, we recall, $e(x)$ is the elevation in meters at location $x$. In the code below in addition to generate prediction for $T(x)$, we also create a binary indicator defined as
-$$
+$$ where, we recall, $e(x)$ is the elevation in meters at location $x$. In the code below in addition to generate prediction for $T(x)$, we also create a binary indicator defined as $$
 w(x) = 
 \begin{cases}
 1 & \text{if  } 390 < e(x) < 837 \\
 0 & \text{otherwise.}
 \end{cases}
-$$
-The values of 390 and 837 meters correspond to the minimum and maximum values of elevation observed in the data. 
+$$ The values of 390 and 837 meters correspond to the minimum and maximum values of elevation observed in the data.
+
 ```{r, message=FALSE, collapse=TRUE}
 # Create grid from convex hull
 shp_ch <- convex_hull_sf(an_fit$data_sf)
@@ -480,11 +477,10 @@ pred_target_grid(pred_an_S,
 
 an_weights <- 1*(predictors$elevation > 390 & predictors$elevation < 837)
 ```
-We now define our predictive target corresponding to the total number of mosquitoes within the study area $A$, given by the convex hull of the observed locations, as
-$$
+
+We now define our predictive target corresponding to the total number of mosquitoes within the study area $A$, given by the convex hull of the observed locations, as $$
 T = \int_{A} w(x) T(x) \: dx
-$$ {#eq-tot-mosq}
-The rationale is to estimate the total number of mosquitoes in the study area while restricting predictions to locations within the observed range of elevation. This approach helps avoid the risk of predicting in ecological areas that may not be suitable for mosquito presence. It is also important to note that in @eq-tot-mosq, we do not standardize the weights in this case.
+$$ {#eq-tot-mosq} The rationale is to estimate the total number of mosquitoes in the study area while restricting predictions to locations within the observed range of elevation. This approach helps avoid the risk of predicting in ecological areas that may not be suitable for mosquito presence. It is also important to note that in @eq-tot-mosq, we do not standardize the weights in this case.
 
 ```{r, collapse=TRUE}
 #| label: fig-mosq-map
@@ -495,7 +491,9 @@ plot(pred_n_mosq_grid, which_target = "n_mosq", which_summary = "mean",
 plot(an_grid, pch = 20, cex = 1, col = an_weights+1, main = "Weights")
 par(mfrow = c(1,1))
 ```
-@fig-mosq-map shows the prediction map for the number of mosquitoes at each prediction location, indicating a relatively high spatial heterogeneity as was also indicated by the low value for the estimate of the scale of the spatial correction (parameter $\phi$). The right panel, we have an image of the weights $w(x)$, with locations that will not contribute to the prediction of the total number of mosquitoes denoted in black. 
+
+@fig-mosq-map shows the prediction map for the number of mosquitoes at each prediction location, indicating a relatively high spatial heterogeneity as was also indicated by the low value for the estimate of the scale of the spatial correction (parameter $\phi$). The right panel, we have an image of the weights $w(x)$, with locations that will not contribute to the prediction of the total number of mosquitoes denoted in black.
+
 ```{r, collapse=TRUE}
 pred_n_mosq_shp <- 
 pred_target_shp(pred_an_S, shp = shp_ch, 
@@ -508,6 +506,7 @@ pred_target_shp(pred_an_S, shp = shp_ch,
 
 pred_n_mosq_shp$target$reg1$n_mosq
 ```
+
 Since we are not standardizing the weights, there is no need to specify `standardize_weights`, as it is set to `FALSE` by default. In the code above, we printed the mean of the predictive distribution of $T$ along with the 95% prediction interval. The point estimate of approximately 17,719 mosquitoes is likely an underestimate of the total number of Anopheles gambiae in the area, as the trap used to count the mosquitoes may not capture all of them, particularly those outside the immediate trapping zone or those active at different times.
 
 ## Comparing the predictive performance of geostatistical models
