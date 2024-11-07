@@ -1,7 +1,10 @@
 ---
-output: html_document
-editor_options: 
-  chunk_output_type: console
+filters:
+  - line-highlight
+execute: 
+  freeze: auto
+fig-width: 5
+fig-asp: 0.75
 ---
 
 # Handling of spatial data in R {#sec-handling-data}
@@ -51,7 +54,7 @@ A wide range of open-access spatial datasets provide covariates for disease mapp
 MENTION RSPATIAL DATA WEBSITE?? https://rspatialdata.github.io/
 
 | **Source**              | **Data Type**                   | **Description**                              | **R Package**        |
-|------------------|------------------|--------------------|------------------|
+|-------------------------|---------------------------------|----------------------------------------------|----------------------|
 | **WorldClim**           | Climate (temperature, rainfall) | Global climate data                          | `geodata`            |
 | **MODIS**               | Remote Sensing                  | Satellite imagery (e.g., vegetation indices) | `MODIStsp`           |
 | **OpenStreetMap (OSM)** | Human settlements, roads        | Global geographic features                   | `osmdata`            |
@@ -72,6 +75,7 @@ Administrative boundaries provide an essential spatial structure for many types 
 #| fig-subcap:
 #|   - "Adimin level 0"
 #|   - "Admin level 1"
+par(mar = c(0, 0, 0, 0))
 # Load the rgeoboundaries package
 library(rgeoboundaries)
 
@@ -84,7 +88,6 @@ liberia_admin1 <- gb_adm1("Liberia")
 # Plot the administrative boundaries
 plot(liberia_admin0$geometry)
 plot(liberia_admin1$geometry)
-
 ```
 
 ### Example: Download population data {#sec-pop-data}
@@ -101,8 +104,6 @@ library(wpgpDownloadR)
 # Search for datasets available for Liberia 
 # usign the ISO3 country code
 lbr_datasets <- wpgpListCountryDatasets(ISO3 = "LBR")
-lbr_datasets
-
 ```
 
 We can check the description column to see what datasets are available. Let's download the population data for Liberia for the year 2014 at a 100m resolution. The `wpgpGetCountryDataset` function will then download a raster dataset based on ISO3 code and covariate name.

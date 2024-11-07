@@ -1,3 +1,12 @@
+---
+filters:
+  - line-highlight
+execute: 
+  freeze: auto
+fig-width: 5
+fig-asp: 0.75
+---
+
 # Geostatistical prediction {#sec-geo-prediction}
 
 ## List of the main functions used in the chapter {.unnumbered}

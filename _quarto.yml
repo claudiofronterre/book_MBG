@@ -1,15 +1,32 @@
 project:
   type: book
+  output-dir: docs
+  render:
+    - "*.qmd"
+    - "!drafts/"
+execute:
+  eval: true
+  echo: true
+  warning: false
+fig-align: center
+fig-height: 4
+fig-width: 6
+appendix-style: plain
+
+bibliography: references.bib
+nocite: |
+  @*
 
 book:
   title: "Model-based geostatistics for global public health using R"
-  author:
-    - Emanuele Giorgi
-    - Claudio Fronterre
-  date: "03/03/2023"
+  author: "Emanuele Giorgi \\\nClaudio Fronterre"
+  date: "20/09/2024"
   search: true
+  output-file: "Manuscript"
+  
   chapters:
     - index.qmd
+    - author.qmd
     - 01_intro.qmd
     - 02_handling-spatial-data.qmd
     - 03_model-fitting.qmd
@@ -17,20 +34,49 @@ book:
     - 05_geostatistical-prediction.qmd
     - 06_case-studies.qmd
     - references.qmd
+    - appendix.qmd
 
-bibliography: references.bib
 
+  
 format:
   html:
     theme: cosmo
     df-print: paged
+    code-link: true
+    toc-title: "Contents"
+    highlight-style: tango
+    default-image-extension: png
+    fig-width: 5
+    fig-asp: 0.67
+    fig-align: center
+    fig-dpi: 300
+    fig-format: png
   pdf:
     documentclass: krantz
-    keep-tex: true
-    include-in-header: preamble.tex
-
-execute: 
-  cache: false
-
-editor: visual
-
+    number-depth: 3
+    toc-depth: 3
+    toc-title: "Contents"
+    linkcolor: "black"
+    urlcolor: "black"
+    citecolor: "black"
+    highlight-style: tango
+    fig-width: 5
+    fig-asp: 0.67
+    fig-align: center
+    fig-dpi: 300
+    include-in-header:
+      - file: preamble.tex
+    include-before-body:
+        text: |
+           \pagestyle{plain}
+           \pagenumbering{roman}
+           \RecustomVerbatimEnvironment{verbatim}{Verbatim}{
+             showspaces = false,
+             showtabs = false,
+             breaksymbolleft={},
+             breaklines,
+             breakanywhere
+           }
+    include-after-body:
+      text: |
+        \printindex

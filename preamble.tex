@@ -1,4 +1,3 @@
-\renewcommand{\and}{\\}
 \newtheorem{theorem}{Theorem}[chapter]
 \newtheorem{exercise}{Exercise}[chapter]
 \newtheorem{example}{Example}[chapter]
@@ -8,3 +7,9 @@
 %  \topsep6\p@\@plus6\p@ \trivlist
 {\par\addvspace{6pt}\normalfont {\bfseries #1}\hskip\labelsep\ignorespaces\itshape}
 {\par\addvspace{6pt}}
+
+\usepackage{fvextra}
+    \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,breakanywhere,commandchars=\\\{\}}
+\usepackage[titles]{tocloft}
+\usepackage{imakeidx}
+\makeindex[intoc]
