@@ -520,6 +520,13 @@ Since we are not standardizing the weights, there is no need to specify `standar
 
 ## Comparing the predictive performance of geostatistical models
 
+In this section, we address the problem of identifying the geostatistical model that offers the best predictive performance among a set of candidates. However, we first need a clear definition of predictive performance which can be used to select suitable metrics  that can be used to quantify it. Broadly speaking, predictive performance is defined by how well a model’s predictive distribution aligns with observed data. Evaluating predictive performance thus requires examining two key characteristics of the predictive distribution: *sharpness* and *calibration*.
+
+A model is considered well-calibrated if its predictions accurately reflect the true uncertainty of the data.  To assess a model's calibration, we can examine the agreement between the point predictions, say \( \hat{y}_i \), and the observed outcomes \( y_i \), commonly referred to as *accuracy*. The mean squared error (MSE), defined as $\text{MSE} = \frac{1}{n} \sum_{i=1}^n (y_i - \hat{y}_i)^2$, is an example of a commonly used metric to evaluate the accuracy of a model. To characterize calibration more fully, it is also essential to quantify the spread of the predictive distributions, which defines the *precision* of predictions. For example, prediction intervals generated from the predictive distribution for $y_i$ can help assess the precision of a geostatistical model.
+
+Sharpness, the other aspect of predictive performance mentioned above, refers to the concentration or narrowness of the predictive distribution around $y_i$. A sharp predictive distribution has a narrow spread, indicating that the model is highly confident in its predictions. Importantly, sharpness does not depend on how close predictions are to the true values (i.e., it is independent of accuracy). A model with high sharpness will produce predictions with low variance, but this sharpness is only meaningful if the model is well-calibrated, ensuring that the high confidence aligns with observed values. For example, a geostatistical model for disease prevalence mapping that predicts a very tight range of possible prevalence values for a location is producing sharp predictions. However, if the actual prevalence often falls outside this range, then the predictions may be sharp but poorly calibrated, thus limiting the value of quantifying sharpness alone. It is important to distinguish between sharpness and precision, as they are similar but subtly different concepts. When considering precision, we are interested in the reliability of the indicators of uncertainty generated from the predictive distribution, such as ensuring that the nominal coverage of prediction intervals matches the actual coverage. Sharpness, instead, refers strictly to the spread of the predictive distribution without regard to accuracy. In other words, while precision generally describes the reproducibility of model predictions across multiple outcomes $y_i$, sharpness purely reflects the model’s spread around its point predictions.
+
+
 ## Theory {#sec-theory-prediction}
 
 ### Derivation of the predictive distribution {#sec-pred-distr-theory}
@@ -540,11 +547,10 @@ Since we are not standardizing the weights, there is no need to specify `standar
 
 ## Review questions
 
-```         
 -   What are the steps that needs to taken when performing spatial prediction?
 -   Define the predictive distribution of a predictive target and explain how this is used to answer a research question.
 -   Distinguish between spatially continuous and areal-level targets, giving at least two examples for each.
 -   Explain the difference between marginal and joint predictions, and for which targets each can be used.
-```
+
 
 ## Exercises
