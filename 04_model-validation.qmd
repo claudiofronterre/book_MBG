@@ -7,18 +7,12 @@ fig-width: 5
 fig-asp: 0.75
 ---
 
-# Model validation {#sec-validation}
+# Model validation through residuals analysis {#sec-validation}
 
-This is a book created from markdown and executable code.
 
-See @knuth84 for additional discussion of literate programming.
 
-```{r}
-1 + 1
-```
+## Which residuals?
 
-## How to simulate geostatistical data from a fitted model
+## Standard diagnostic checks on the residuals
 
-## Validating the calibration of the model
-
-## Validating the spatial correlation of the model
+## Does our model adequalty explain the spatial correlation of the data?

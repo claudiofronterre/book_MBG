@@ -435,7 +435,8 @@ plot(pred_shp, which_target = "prev", which_summary = "mean",
     limits = c(0.1, 0.30),
     breaks = seq(0.1,0.30, by = 0.05)) + 
   guides(fill=guide_legend(title="Prevalence")) +
-  ggtitle("Average prevalence \n (no weights)")
+  ggtitle("Average prevalence \n (no weights)") + 
+   theme(plot.title = element_text(size = 15))
 
 plot_2  <- 
   plot(pred_shp_w, which_target = "prev", which_summary = "mean",
@@ -443,7 +444,8 @@ plot_2  <-
     limits = c(0.1, 0.30),
     breaks = seq(0.1,0.30, by = 0.05)) + 
   guides(fill=guide_legend(title="Prevalence")) +
-  ggtitle("Average prevalence \n (population weighted)")
+  ggtitle("Average prevalence \n (population weighted)") + 
+  theme(plot.title = element_text(size = 15))
 
 library(gridExtra)
 grid.arrange(plot_1, plot_2, ncol = 2)
@@ -518,13 +520,169 @@ pred_n_mosq_shp$target$reg1$n_mosq
 
 Since we are not standardizing the weights, there is no need to specify `standardize_weights`, as it is set to `FALSE` by default. In the code above, we printed the mean of the predictive distribution of $T$ along with the 95% prediction interval. The point estimate of approximately 17,719 mosquitoes is likely an underestimate of the total number of Anopheles gambiae in the area, as the trap used to count the mosquitoes may not capture all of them, particularly those outside the immediate trapping zone or those active at different times.
 
+## Simulation-based assessment of predictive performance
+
+### How to simulate from a geostatistical model
+
+Before we discuss more in detail how to perform a simulation study, it is important to understand how data can be simulated from a geostatistical model. 
+
+The way we have formulated geostatistical models in @sec-geostat-models provides a hint as to what step should be followed when simulating from a geostatistical model. Using the same notation of @sec-geostat-models, these are the steps.
+
+  1. For a given set of predefined locations $X$ compute the covariance matrix $\Sigma$ with $(i,j)-$th entry $\sigma^2 \rho(u_{ij})$. 
+
+  2. Compute the covariates effects $d(x)^\top$ for all the locations in $X$.
+  
+  3. Simulate $B$-time from a multivariate Gaussian distribution with mean vector 0 and covariance $\Sigma$ as previously defined. We denote the output form this step as $S_{(j)}(x)$, for $j=1,\ldots,B$.
+  
+  4. Compute the linear predictor at each locations of $X$, by adding the covariates effects in 3 to the simulated random effects in 4, hence $g\{\mu_{(j)}(x)\} = d(x)^\top + S_{(j)}(x)$.
+  
+Note that before performing the steps above, the values of the model parameters must be fixed. For example, if simulating from a model fitted to the data, the values of the model parameters should be the maximum likelihood estimates. 
+At this point, if the goal is to simulate actual observations for the outcome $Y$ at the locations $X$. Then we need to add the following two steps. 
+  5A. If the nugget term is included in the model then, draw samples $Z_{(j)}$ for each location in $X$ from a Gaussian distribution with mean 0 and variance $\tau^2$. Finally add the simulated values $Z_{(j)}$ to $g\{\mu_{(j)}(x)\}$.
+  6A. Compute $\mu_{(j)}(x)$ by applying the inverse link function $g^{-1}(\cdot)$ to the samples of the linear predictor previously computed. 
+  7A. Simulate from the distribution of $Y$ given $\mu_{(j)}(x)$, according the chosen model, for $j=1,\ldots,B$.
+
+These steps, from 1 to 7A, have been implemented in the `glgpm_sim` function. For example, using the fitted Binomial geostatistical model from the example on riverblindness in Liberia, we simulate a single data-set as follows
+```{r, eval = FALSE}
+liberia_sim <- glgpm_sim(n_sim = 1, model_fit = fit_liberia)
+```
+
+The output `liberia_sim` is a list with as many components as indicated by `n_sim`. In this this case, we can access the simulated data-set as `liberia_sim[[1]]`. For example, we could refit the same model to the simulated data as
+```{r, eval = FALSE}
+fit_liberia_sim <- 
+glgpm(formula = npos ~ log(elevation) + gp(long, lat, nugget = NULL), 
+    data = liberia_sim[[1]], family = "binomial", den = ntest, 
+    crs = 32629)
+```
+Note that if the data's CRS has been converted, the simulated dataset will inherit the new CRS rather than the original. This means that any transformation applied to the CRS before simulation (e.g., from geographic to projected coordinates) will affect the spatial scale and interpretation of the simulated data.
+
+In other cases, as in @sec-sim-assessmen, the locations $X$ correspond to a regular grid and the steps that we want to carry out on completion of step 4 above depend on the objective of the simulation. We explain this more in detail in the next section. 
+
+
+
+
+### Setting up and carrying out a simulation study
+
+### Assessessment of threshold-based classification of spatial units using geostatistical models {#sec-sim-assessment}
+
 ## Comparing the predictive performance of geostatistical models
 
-In this section, we address the problem of identifying the geostatistical model that offers the best predictive performance among a set of candidates. However, we first need a clear definition of predictive performance which can be used to select suitable metrics  that can be used to quantify it. Broadly speaking, predictive performance is defined by how well a model’s predictive distribution aligns with observed data. Evaluating predictive performance thus requires examining two key characteristics of the predictive distribution: *sharpness* and *calibration*.
+In this section, we address the problem of identifying the geostatistical model that offers the best predictive performance among a set of candidates. However, we first need a clear definition of predictive performance which can be used to select suitable statistical tools that can be to used to evaluate it. Broadly speaking, predictive performance is defined by how well a model's predictive distribution aligns with observed data. Evaluating predictive performance requires examining two key characteristics of the predictive distribution: *sharpness* and *calibration*.
 
-A model is considered well-calibrated if its predictions accurately reflect the true uncertainty of the data.  To assess a model's calibration, we can examine the agreement between the point predictions, say \( \hat{y}_i \), and the observed outcomes \( y_i \), commonly referred to as *accuracy*. The mean squared error (MSE), defined as $\text{MSE} = \frac{1}{n} \sum_{i=1}^n (y_i - \hat{y}_i)^2$, is an example of a commonly used metric to evaluate the accuracy of a model. To characterize calibration more fully, it is also essential to quantify the spread of the predictive distributions, which defines the *precision* of predictions. For example, prediction intervals generated from the predictive distribution for $y_i$ can help assess the precision of a geostatistical model.
+| Diagnostic/Metric                          | Performance characteristic | Descritpion |
+|--------------------------------------------|----------------------------|-------------|
+| Probability integral transform (PIT)       | Calibration                |             |
+| Nonrandomized PIT                          | Calibration                |             |
+| Mean square error                          | Calibration                |             |
+| Continuous ranked probability score (CRPS) | Calibration and sharpness  |             |
+| Scaled CRPS                                | Calibration and sharpness  |             |
 
-Sharpness, the other aspect of predictive performance mentioned above, refers to the concentration or narrowness of the predictive distribution around $y_i$. A sharp predictive distribution has a narrow spread, indicating that the model is highly confident in its predictions. Importantly, sharpness does not depend on how close predictions are to the true values (i.e., it is independent of accuracy). A model with high sharpness will produce predictions with low variance, but this sharpness is only meaningful if the model is well-calibrated, ensuring that the high confidence aligns with observed values. For example, a geostatistical model for disease prevalence mapping that predicts a very tight range of possible prevalence values for a location is producing sharp predictions. However, if the actual prevalence often falls outside this range, then the predictions may be sharp but poorly calibrated, thus limiting the value of quantifying sharpness alone. It is important to distinguish between sharpness and precision, as they are similar but subtly different concepts. When considering precision, we are interested in the reliability of the indicators of uncertainty generated from the predictive distribution, such as ensuring that the nominal coverage of prediction intervals matches the actual coverage. Sharpness, instead, refers strictly to the spread of the predictive distribution without regard to accuracy. In other words, while precision generally describes the reproducibility of model predictions across multiple outcomes $y_i$, sharpness purely reflects the model’s spread around its point predictions.
+: Summary of the different diagnostic tools and metrics, discussed in this chapter, that are used to assess the predictive performance of a geostatistical model. {#tbl-summary-pp-diag}
+
+### Assessing calibration
+
+A model is considered *well-calibrated* if its predictions adequately reflect the true uncertainty of the data. Assessment of a model's calibration can be carried out in several ways. We can examine the agreement between the point predictions, say $\hat{y}\_i$, and the observed outcomes $y_i $, commonly referred to as *accuracy*. The mean squared error (MSE), defined as $\text{MSE} = \frac{1}{n} \sum_{i=1}^n (y_i - \hat{y}_i)^2$, is an example of a commonly used metric to evaluate the accuracy of a model. To characterize calibration more fully, it is also essential to quantify the spread of the predictive distributions, which also defines the *precision* of predictions. For example, prediction intervals generated from the predictive distribution for $y_i$ can help assess the precision of a geostatistical model. In summary, a well-calibrated model is both accurate and precise.
+
+Assessment of the calibration of the model should precede the assessment of sharpness, since, as we shall see in the next section, this relies on the model being well-calibrated. The probability integral transform (PIT) was originally proposed by @dawid1984 as a way to assess the calibration of a model. The PIT is based on the simple observation that if we consider a variable $Y$ and apply the transformation $Y^* = F_{Y}(Y)$, where $F_{Y}(\cdot)$ is the cumulative density function of $Y$, it then follows that $Y^*$ follows a uniform distribution in the unit interval. The fundamental problem and the reason why statistical modelling exists is that we do not $F_{Y}$ but we would like to propose a model $M$ that we believe adequately approximates $F_{Y}$ with $F_{M}$. The main advantage of using the PIT is that assessment of whether $M$ is well calibrated reduces to assessing whether the transform set of data $F_{M}(y_1), \ldots, F_{M}(y_n)$ follows a uniform distribution. To illustrate this, let us a consider a simple simulated example. 
+
+We first create a function that can compute the PIT. 
+```{r, collapse=TRUE}
+# Define a function for the PIT
+# F_M is the cumulative density function generated by the adopted model
+pit_transform <- function(data, F_M) {
+  # Apply the model CDF to the data
+  pit_values <- F_M(data)
+  return(pit_values)
+}
+```
+
+We then apply this function to show how the assessment of calibration through the PIT is carried out under two scenarios: 1) $F_{Y}$ is a Gamma distribution with shape 2 and scale parameter 1; 2) $F_{Y}$ is Student's T distribution with 3 degrees of freedom. In each of the two scenarios, we show how the PIT behaves when our model coincides with the the true model (i.e. $F_{M} = F_{Y}$) and when instead our model $M$ is a Gaussian distribution, with mean and variance estimated from the data. 
+
+```{r, collapse=TRUE}
+#| label: fig-hist-pit
+#| fig-cap: "Histograms of the probability integral transform applied to simulated data. The top panels show the histograma of the PIT when the fitted model coincides with the true data generating model. The lower panels show how the PIT histrograms deviate from a uniform distribution. For more details, we refer to main text."
+
+# Generate data from a skewed (gamma) distribution
+n <- 1000
+shape <- 2
+rate <- 1
+data_gamma <- rgamma(n, shape = shape, rate = rate)
+
+# Define correct and incorrect model CDFs for gamma data
+# Correct CDF
+model_cdf_correct_gamma <- function(x) pgamma(x, shape = shape, rate = rate)
+# Incorrect CDF: Assume data is normal (wrong model)
+model_cdf_incorrect_gamma <- function(x) pnorm(x, mean = mean(data_gamma), sd = sd(data_gamma))
+
+# Compute PIT values for gamma data under both models
+pit_correct_gamma <- pit_transform(data_gamma, model_cdf_correct_gamma)
+pit_incorrect_gamma <- pit_transform(data_gamma, model_cdf_incorrect_gamma)
+
+# Generate data from a heavy-tailed (t) distribution
+df <- 3
+data_t <- rt(n, df = df)
+
+# Define correct and incorrect model CDFs for t data
+# Correct CDF
+model_cdf_correct_t <- function(x) pt(x, df = df)
+# Incorrect CDF: Assume data is normal (wrong model)
+model_cdf_incorrect_t <- function(x) pnorm(x, mean = mean(data_t), sd = sd(data_t))
+
+# Compute PIT values for t data under both models
+pit_correct_t <- pit_transform(data_t, model_cdf_correct_t)
+pit_incorrect_t <- pit_transform(data_t, model_cdf_incorrect_t)
+
+# Combine results into a data frame for plotting
+df_plot <- data.frame(
+  PIT = c(pit_correct_gamma, pit_incorrect_gamma, pit_correct_t, pit_incorrect_t),
+  Model = rep(c("Correct Gamma Model", "Incorrect Normal Model for Gamma", 
+                "Correct t Model", "Incorrect Normal Model for t"), each = n)
+)
+
+# Plot PIT distributions
+hist_plot <- ggplot(df_plot, aes(x = PIT)) +
+  geom_histogram(aes(y = ..density..), bins = 20, fill = "skyblue", color = "black", alpha = 0.7) +
+  geom_hline(yintercept = 1, linetype = "dashed", color = "red") +
+  facet_wrap(~ Model, scales = "free") +
+  labs(title = "Probability Integral Transform (PIT) Distributions",
+       x = "PIT Values",
+       y = "Density") +
+  theme_minimal()
+
+# Display the plot
+print(hist_plot)
+```
+
+In @fig-hist-pit, we assess whether the PIT transformed data follow a uniform distribution if the bars of the histogram are all approximately at the same height as indicated by the dashed line. Our preference to this diagnostic plot, is to use a qq-plot for a uniform distribution as shown below.
+
+```{r, collapse=TRUE}
+#| label: fig-qqplot-pit
+#| fig-cap: "QQ-plots of the probability integral transform applied to simulated data. The top panels show the histograma of the PIT when the fitted model coincides with the true data generating model. The lower panels show how the PIT qq-plots deviate from a uniform distribution. The red line is the identity line For more details, we refer to main text."
+# QQ plot to check uniformity of PIT values
+qq_plot <- ggplot(df_plot, aes(sample = PIT)) +
+  stat_qq(distribution = qunif) +
+  stat_qq_line(distribution = qunif, color = "red") +
+  facet_wrap(~ Model, scales = "free") +
+  labs(title = "QQ Plot of PIT Values against Uniform Distribution",
+       x = "Theoretical Quantiles (Uniform)",
+       y = "Sample Quantiles (PIT Values)") +
+  theme_minimal()
+
+# Display both plot
+print(qq_plot)
+```
+
+In the results of @fig-qqplot-pit, we consider a model well-calibrated if the qq-plot is as close as possible to the identity line. It is clear that in the first case the use of Gaussian distribution is violated by the skewness of the data generated from a Gamma distribution, and in the second scenario by the heavier tail of the Student's T distribution. 
+
+In the simulated example, the PIT might seem unnecessary because we can directly assess if the data follow the assumed distribution (Gamma, Gaussian, or Student's T) by comparing empirical and theoretical distributions. In these simple models, the marginal distribution of the data is analytically available, so assessing goodness-of-fit is straightforward.
+
+However, in the case of Binomial and Poisson geostatistical models, the marginal distribution of the data $Y$ -- unconditioned on the spatial random effects $S(x)$ -- cannot be obtained analytically. Specifically, geostatistical models for count data assume that YY, conditioned on $S(x)$, follows either a Binomial or Poisson distribution. But once we integrate out $S(x)$ to obtain the marginal (i.e., unconditioned) distribution of YY, this distribution is no longer Poisson or Binomial. Instead, it becomes an overdispersed count distribution that lacks a closed-form expression.
+
+In such cases, the PIT becomes valuable for evaluating model adequacy, as it allows for assessing the uniformity of PIT values against the assumed model distribution, even when the marginal distribution is intractable.
+
+### Assessing sharpness
+
+Sharpness, the other aspect of predictive performance mentioned above, refers to the concentration or narrowness of the predictive distribution around $y_i$. A sharp predictive distribution has a narrow spread, indicating that the model is highly confident in its predictions. Importantly, sharpness does not depend on how close predictions are to the true values (i.e., it is independent of accuracy). A model with high sharpness will produce predictions with low variance, but this sharpness is only meaningful if the model is well-calibrated, ensuring that the high confidence aligns with observed values. For example, a geostatistical model for disease prevalence mapping that predicts a very tight range of possible prevalence values for a location is producing sharp predictions. However, if the actual prevalence often falls outside this range, then the predictions may be sharp but poorly calibrated, thus limiting the value of quantifying sharpness alone. It is important to distinguish between sharpness and precision, as they are similar but subtly different concepts. When considering precision, we are interested in the reliability of the indicators of uncertainty generated from the predictive distribution, such as ensuring that the nominal coverage of prediction intervals matches the actual coverage. Sharpness, instead, refers strictly to the spread of the predictive distribution without regard to accuracy. In other words, while precision generally describes the reproducibility of model predictions across multiple outcomes $y_i$, sharpness purely reflects the model's spread around its point predictions.
 
 
 ## Theory {#sec-theory-prediction}
@@ -551,6 +709,10 @@ Sharpness, the other aspect of predictive performance mentioned above, refers to
 -   Define the predictive distribution of a predictive target and explain how this is used to answer a research question.
 -   Distinguish between spatially continuous and areal-level targets, giving at least two examples for each.
 -   Explain the difference between marginal and joint predictions, and for which targets each can be used.
-
+-  Define predictive performance in terms of calibration and sharpness. -  Explain how calibration can be assessed using graphical tolls.
+-  Give examples of metrics that can be used to evaluate calibration and sharpness.
 
 ## Exercises
+
+
+1. *Parametric bootstrap.* Using the model fitted to the Anopheles gambiae mosquitoes in @sec-anopheles-fit, simulate 1000 data-sets using the `glgpm_sim` function and estimate the model to each of the simulated data-set. Use the resulting 1000 estimates to compute 95$\%$ confidence intervals for each of the model parameters and compare this with the confidence intervals obtained from the model summary.
