@@ -227,7 +227,7 @@ div.csl-indent {
 <a href="#areal-level-targets" id="toc-areal-level-targets" class="nav-link" data-scroll-target="#areal-level-targets"><span class="header-section-number">5.4</span> Areal-level targets</a>
   <ul class="collapse">
 <li><a href="#sec-liberia-prediction-2" id="toc-sec-liberia-prediction-2" class="nav-link" data-scroll-target="#sec-liberia-prediction-2"><span class="header-section-number">5.4.1</span> Example: predicting the average riverblindness prevalence at admin level 1 in Liberia (continuing from <span>Section&nbsp;5.3.1</span>)</a></li>
-  <li><a href="#sec-anopheles-pred" id="toc-sec-anopheles-pred" class="nav-link" data-scroll-target="#sec-anopheles-pred"><span class="header-section-number">5.4.2</span> Example: predicting the total number of Anopheles gambiae mosquitoes (continuing from <span class="quarto-unresolved-ref">sec-anopheles-fit</span>)</a></li>
+  <li><a href="#sec-anopheles-pred" id="toc-sec-anopheles-pred" class="nav-link" data-scroll-target="#sec-anopheles-pred"><span class="header-section-number">5.4.2</span> Example: predicting the total number of Anopheles gambiae mosquitoes (continuing from <span>Section&nbsp;3.3.2</span>)</a></li>
   </ul>
 </li>
   <li>
@@ -239,7 +239,7 @@ div.csl-indent {
   </ul>
 </li>
   <li>
-<a href="#comparing-the-predictive-performance-of-geostatistical-models" id="toc-comparing-the-predictive-performance-of-geostatistical-models" class="nav-link" data-scroll-target="#comparing-the-predictive-performance-of-geostatistical-models"><span class="header-section-number">5.6</span> Comparing the predictive performance of geostatistical models</a>
+<a href="#compare-pp" id="toc-compare-pp" class="nav-link" data-scroll-target="#compare-pp"><span class="header-section-number">5.6</span> Comparing the predictive performance of geostatistical models</a>
   <ul class="collapse">
 <li><a href="#assessing-calibration" id="toc-assessing-calibration" class="nav-link" data-scroll-target="#assessing-calibration"><span class="header-section-number">5.6.1</span> Assessing calibration</a></li>
   <li><a href="#assessing-sharpness" id="toc-assessing-sharpness" class="nav-link" data-scroll-target="#assessing-sharpness"><span class="header-section-number">5.6.2</span> Assessing sharpness</a></li>
@@ -301,9 +301,9 @@ div.csl-indent {
 <td>Predictions of targets defined at areal level</td>
 </tr>
 <tr class="even">
-<td><code>score_model</code></td>
+<td><code>assess_pp</code></td>
 <td><code>RiskMap</code></td>
-<td>Computing scoring rules using spatial cross validation</td>
+<td>Assessing the predictive performance of geostatistical models</td>
 </tr>
 </tbody>
 </table></section><section id="introduction" class="level2" data-number="5.1"><h2 data-number="5.1" class="anchored" data-anchor-id="introduction">
@@ -687,7 +687,7 @@ T_{i}^* = \int_{A_i} \tilde{w_i}(x) T(x) \: dx.
 </div>
 <p>In <a href="#fig-average-prev-Liberia">Figure&nbsp;<span>5.4</span></a>, we observe that the differences between the two predictive targets, with and without weights, are not substantial. However, we observe that the predicted average prevalence shows slightly greater variation in coastal regions, particularly in Montserrado County, where the majority of the population residing in the capital of Monrovia. This concentration of population likely accounts for the more noticeable differences in this area.</p>
 </section><section id="sec-anopheles-pred" class="level3" data-number="5.4.2"><h3 data-number="5.4.2" class="anchored" data-anchor-id="sec-anopheles-pred">
-<span class="header-section-number">5.4.2</span> Example: predicting the total number of Anopheles gambiae mosquitoes (continuing from <span class="quarto-unresolved-ref">?sec-anopheles-fit</span>)</h3>
+<span class="header-section-number">5.4.2</span> Example: predicting the total number of Anopheles gambiae mosquitoes (continuing from <a href="03_model-fitting.html#sec-anopheles-fit"><span>Section&nbsp;3.3.2</span></a>)</h3>
 <p>For the analysis on Anopheles gambiae mosquitoes, we consider the prediction of the total number of mosquitoes within the study area. In this case, because there is not a natural definition of the study area borders as in the previous analysis, we consider the convex hull as representing those borders. To pursue this let us first, visualize the predictive map of the number of mosquitoes on a regular grid cover the study area. In other words, we first consider the spatially continuous target <span class="math display">\[
 T(x) = \exp\{\beta_0 + \beta_1 e(x) + S(x)\},
 \]</span> where, we recall, <span class="math inline">\(e(x)\)</span> is the elevation in meters at location <span class="math inline">\(x\)</span>. In the code below in addition to generate prediction for <span class="math inline">\(T(x)\)</span>, we also create a binary indicator defined as <span class="math display">\[
@@ -749,15 +749,15 @@ T = \int_{A} w(x) T(x) \: dx
 <span></span>
 <span><span class="va">pred_n_mosq_shp</span><span class="op">$</span><span class="va">target</span><span class="op">$</span><span class="va">reg1</span><span class="op">$</span><span class="va">n_mosq</span></span>
 <span><span class="co">## $mean</span></span>
-<span><span class="co">## [1] 17755.46</span></span>
+<span><span class="co">## [1] 17763.76</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $q025</span></span>
 <span><span class="co">##     2.5% </span></span>
-<span><span class="co">## 15069.17 </span></span>
+<span><span class="co">## 15248.16 </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $q075</span></span>
 <span><span class="co">##    97.5% </span></span>
-<span><span class="co">## 20942.29</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span><span class="co">## 21086.19</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Since we are not standardizing the weights, there is no need to specify <code>standardize_weights</code>, as it is set to <code>FALSE</code> by default. In the code above, we printed the mean of the predictive distribution of <span class="math inline">\(T\)</span> along with the 95% prediction interval. The point estimate of approximately 17,719 mosquitoes is likely an underestimate of the total number of Anopheles gambiae in the area, as the trap used to count the mosquitoes may not capture all of them, particularly those outside the immediate trapping zone or those active at different times.</p>
 </section></section><section id="simulation-based-assessment-of-predictive-performance" class="level2" data-number="5.5"><h2 data-number="5.5" class="anchored" data-anchor-id="simulation-based-assessment-of-predictive-performance">
@@ -790,16 +790,16 @@ T = \int_{A} w(x) T(x) \: dx
 <span class="header-section-number">5.5.2</span> Setting up and carrying out a simulation study</h3>
 </section><section id="sec-sim-assessment" class="level3" data-number="5.5.3"><h3 data-number="5.5.3" class="anchored" data-anchor-id="sec-sim-assessment">
 <span class="header-section-number">5.5.3</span> Assessessment of threshold-based classification of spatial units using geostatistical models</h3>
-</section></section><section id="comparing-the-predictive-performance-of-geostatistical-models" class="level2" data-number="5.6"><h2 data-number="5.6" class="anchored" data-anchor-id="comparing-the-predictive-performance-of-geostatistical-models">
+</section></section><section id="compare-pp" class="level2" data-number="5.6"><h2 data-number="5.6" class="anchored" data-anchor-id="compare-pp">
 <span class="header-section-number">5.6</span> Comparing the predictive performance of geostatistical models</h2>
 <p>In this section, we address the problem of identifying the geostatistical model that offers the best predictive performance among a set of candidates. However, we first need a clear definition of predictive performance which can be used to select suitable statistical tools that can be to used to evaluate it. Broadly speaking, predictive performance is defined by how well a model’s predictive distribution aligns with observed data. Evaluating predictive performance requires examining two key characteristics of the predictive distribution: <em>sharpness</em> and <em>calibration</em>.</p>
 <div id="tbl-summary-pp-diag" class="anchored">
 <table class="table">
 <caption>Table&nbsp;5.2: Summary of the different diagnostic tools and metrics, discussed in this chapter, that are used to assess the predictive performance of a geostatistical model.</caption>
 <colgroup>
-<col style="width: 51%">
-<col style="width: 32%">
-<col style="width: 15%">
+<col style="width: 47%">
+<col style="width: 30%">
+<col style="width: 22%">
 </colgroup>
 <thead><tr class="header">
 <th>Diagnostic/Metric</th>
@@ -838,7 +838,7 @@ T = \int_{A} w(x) T(x) \: dx
 <section id="assessing-calibration" class="level3" data-number="5.6.1"><h3 data-number="5.6.1" class="anchored" data-anchor-id="assessing-calibration">
 <span class="header-section-number">5.6.1</span> Assessing calibration</h3>
 <p>A model is considered <em>well-calibrated</em> if its predictions adequately reflect the true uncertainty of the data. Assessment of a model’s calibration can be carried out in several ways. We can examine the agreement between the point predictions, say <span class="math inline">\(\hat{y}\_i\)</span>, and the observed outcomes $y_i $, commonly referred to as <em>accuracy</em>. The mean squared error (MSE), defined as <span class="math inline">\(\text{MSE} = \frac{1}{n} \sum_{i=1}^n (y_i - \hat{y}_i)^2\)</span>, is an example of a commonly used metric to evaluate the accuracy of a model. To characterize calibration more fully, it is also essential to quantify the spread of the predictive distributions, which also defines the <em>precision</em> of predictions. For example, prediction intervals generated from the predictive distribution for <span class="math inline">\(y_i\)</span> can help assess the precision of a geostatistical model. In summary, a well-calibrated model is both accurate and precise.</p>
-<p>Assessment of the calibration of the model should precede the assessment of sharpness, since, as we shall see in the next section, this relies on the model being well-calibrated. The probability integral transform (PIT) was originally proposed by <span class="citation" data-cites="dawid1984">Dawid (<a href="references.html#ref-dawid1984" role="doc-biblioref">1984</a>)</span> as a way to assess the calibration of a model. The PIT is based on the simple observation that if we consider a variable <span class="math inline">\(Y\)</span> and apply the transformation <span class="math inline">\(Y^* = F_{Y}(Y)\)</span>, where <span class="math inline">\(F_{Y}(\cdot)\)</span> is the cumulative density function of <span class="math inline">\(Y\)</span>, it then follows that <span class="math inline">\(Y^*\)</span> follows a uniform distribution in the unit interval. The fundamental problem and the reason why statistical modelling exists is that we do not <span class="math inline">\(F_{Y}\)</span> but we would like to propose a model <span class="math inline">\(M\)</span> that we believe adequately approximates <span class="math inline">\(F_{Y}\)</span> with <span class="math inline">\(F_{M}\)</span>. The main advantage of using the PIT is that assessment of whether <span class="math inline">\(M\)</span> is well calibrated reduces to assessing whether the transform set of data <span class="math inline">\(F_{M}(y_1), \ldots, F_{M}(y_n)\)</span> follows a uniform distribution. To illustrate this, let us a consider a simple simulated example.</p>
+<p>Assessment of the calibration of the model should precede the assessment of sharpness, since, as we shall see in the next section, this relies on the model being well-calibrated. The probability integral transform (PIT) was originally proposed by <span class="citation" data-cites="dawid1984">Dawid (<a href="references.html#ref-dawid1984" role="doc-biblioref">1984</a>)</span> as a way to assess the calibration of a model. The PIT is based on the simple observation that if we consider a variable <span class="math inline">\(Y\)</span> and apply the transformation <span class="math inline">\(Y^* = F_{Y}(Y)\)</span>, where <span class="math inline">\(F_{Y}(\cdot)\)</span> is the cumulative density function (or cumulative distribution if <span class="math inline">\(Y\)</span> is discrete) of <span class="math inline">\(Y\)</span>, it then follows that <span class="math inline">\(Y^*\)</span> follows a uniform distribution in the unit interval. The fundamental problem and the reason why statistical modelling exists is that we do not <span class="math inline">\(F_{Y}\)</span> but we would like to propose a model <span class="math inline">\(M\)</span> that we believe adequately approximates <span class="math inline">\(F_{Y}\)</span> with <span class="math inline">\(F_{M}\)</span>. The main advantage of using the PIT is that assessment of whether <span class="math inline">\(M\)</span> is well calibrated reduces to assessing whether the transform set of data <span class="math inline">\(F_{M}(y_1), \ldots, F_{M}(y_n)\)</span> follows a uniform distribution. To illustrate this, let us a consider a simple simulated example.</p>
 <p>We first create a function that can compute the PIT.</p>
 <div class="cell">
 <div class="sourceCode" id="cb22" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Define a function for the PIT</span></span>
@@ -929,9 +929,85 @@ T = \int_{A} w(x) T(x) \: dx
 </div>
 </div>
 <p>In the results of <a href="#fig-qqplot-pit">Figure&nbsp;<span>5.7</span></a>, we consider a model well-calibrated if the qq-plot is as close as possible to the identity line. It is clear that in the first case the use of Gaussian distribution is violated by the skewness of the data generated from a Gamma distribution, and in the second scenario by the heavier tail of the Student’s T distribution.</p>
-<p>In the simulated example, the PIT might seem unnecessary because we can directly assess if the data follow the assumed distribution (Gamma, Gaussian, or Student’s T) by comparing empirical and theoretical distributions. In these simple models, the marginal distribution of the data is analytically available, so assessing goodness-of-fit is straightforward.</p>
-<p>However, in the case of Binomial and Poisson geostatistical models, the marginal distribution of the data <span class="math inline">\(Y\)</span> – unconditioned on the spatial random effects <span class="math inline">\(S(x)\)</span> – cannot be obtained analytically. Specifically, geostatistical models for count data assume that YY, conditioned on <span class="math inline">\(S(x)\)</span>, follows either a Binomial or Poisson distribution. But once we integrate out <span class="math inline">\(S(x)\)</span> to obtain the marginal (i.e., unconditioned) distribution of YY, this distribution is no longer Poisson or Binomial. Instead, it becomes an overdispersed count distribution that lacks a closed-form expression.</p>
-<p>In such cases, the PIT becomes valuable for evaluating model adequacy, as it allows for assessing the uniformity of PIT values against the assumed model distribution, even when the marginal distribution is intractable.</p>
+<p>In the simulated example, the PIT might seem unnecessary because we can directly assess if the data follow the assumed distribution (Gamma, Gaussian, or Student’s T) by comparing empirical and theoretical distributions. In these simple models, including linear Gaussian geostatistical models, the marginal distribution of the data is analytically available, so assessing goodness-of-fit is straightforward.</p>
+<p>However, in the case of Binomial and Poisson geostatistical models, the marginal distribution of the data <span class="math inline">\(Y\)</span> – unconditioned on the spatial random effects <span class="math inline">\(S(x)\)</span> – cannot be obtained analytically. Specifically, geostatistical models for count data assume that <span class="math inline">\(Y\)</span>, conditioned on <span class="math inline">\(S(x)\)</span>, follows either a Binomial or Poisson distribution. But once we integrate out <span class="math inline">\(S(x)\)</span> to obtain the marginal (i.e., unconditioned) distribution of <span class="math inline">\(Y\)</span>, this distribution is no longer Poisson or Binomial. Instead, it becomes an overdispersed count distribution that lacks a closed-form expression.</p>
+<p>In such cases, the PIT becomes valuable for evaluating model adequacy, as it allows for assessing the uniformity of PIT values against the assumed model distribution, even when the marginal distribution is intractable. However, direct application of the PIT raises the issue that the the transformation <span class="math inline">\(F_{Y}(Y)\)</span> does not follow a uniform distribution, because of the discrete nature of the random variable <span class="math inline">\(Y\)</span>. Hence, for a given discrete-outcome model <span class="math inline">\(M\)</span>, we use a modified version of the PIT, referred to as nonrandomized PIT (henceforth, nPIT), originally proposed by <span class="citation" data-cites="czado2009">Czado, Gneiting, and Held (<a href="references.html#ref-czado2009" role="doc-biblioref">2009</a>)</span>, taking the form <span class="math display">\[
+\text{nPIT}(u,y) =
+\begin{cases}
+0, &amp; u \leq F_{M}(y-1) \\
+\frac{u - F_{M}(y-1)}{P_x - F_{M}(y-1)}, &amp; F_{M}(y-1) \leq u \leq F_{M}(y) \\
+1, &amp; u \geq F_{M}(y)
+\end{cases}.
+\]</span> We then take the average nPIT over the observed outcomes <span class="math inline">\(y_{1}, \ldots, y_{n}\)</span>, hence <span class="math display">\[
+\text{AnPIT}(u) = \frac{1}{n} \sum_{i=1}^n \text{nPIT}(u, y_{i}).
+\]</span> Assessment of calibration is then carried out by checking wether the AnPIT is as close as possible to the identity function, i.e.&nbsp;<span class="math inline">\(\text{AnPIT}(u) = u\)</span>. Hence, by plotting <span class="math inline">\(\text{AnPIT}(u)\)</span> against <span class="math inline">\(u\)</span>, we can consider any deviations from the identity line as evidence that the model is not well-calibrated.</p>
+<p>We now illustrate the use of the AnPIT through a simulated example. We simulate data from a negative Binomial distribution, with mean <span class="math inline">\(\lambda = 5\)</span> and dispersion parameter <span class="math inline">\(\alpha = 1/2\)</span>, hence <span class="math inline">\(E[Y] = \lambda\)</span> and <span class="math inline">\(\text{Var}[Y] = \lambda \times (1 + \alpha \lambda)\)</span>.</p>
+<div class="cell">
+<div class="sourceCode" id="cb25" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Parameters for the Negative Binomial distribution</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
+<span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">200</span>                <span class="co"># number of simulations</span></span>
+<span><span class="va">lambda</span> <span class="op">&lt;-</span> <span class="fl">5</span>             <span class="co"># mean</span></span>
+<span><span class="va">dispersion</span> <span class="op">&lt;-</span> <span class="fl">0.5</span>       <span class="co"># dispersion parameter</span></span>
+<span><span class="va">size</span> <span class="op">&lt;-</span> <span class="fl">1</span> <span class="op">/</span> <span class="va">dispersion</span>  <span class="co"># size parameter for negative binomial</span></span>
+<span></span>
+<span><span class="co"># Simulate data from the Negative Binomial distribution</span></span>
+<span><span class="va">sim_data_nb</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/NegBinomial.html">rnbinom</a></span><span class="op">(</span><span class="va">n</span>, size <span class="op">=</span> <span class="va">size</span>, mu <span class="op">=</span> <span class="va">lambda</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Define the nonrandomized PIT function</span></span>
+<span><span class="va">compute_npit</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">y</span>, <span class="va">u</span>, <span class="va">cdf_func</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="co"># Calculate cumulative probabilities F_M(y-1) and F_M(y) using the provided CDF function</span></span>
+<span>  <span class="va">f_y_minus_1</span> <span class="op">&lt;-</span> <span class="fu">cdf_func</span><span class="op">(</span><span class="va">y</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span></span>
+<span>  <span class="va">f_y</span> <span class="op">&lt;-</span> <span class="fu">cdf_func</span><span class="op">(</span><span class="va">y</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co"># Apply the piecewise formula for nPIT</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="va">u</span> <span class="op">&lt;=</span> <span class="va">f_y_minus_1</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span>
+<span>  <span class="op">}</span> <span class="kw">else</span> <span class="kw">if</span> <span class="op">(</span><span class="va">u</span> <span class="op">&lt;=</span> <span class="va">f_y</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="op">(</span><span class="va">u</span> <span class="op">-</span> <span class="va">f_y_minus_1</span><span class="op">)</span> <span class="op">/</span> <span class="op">(</span><span class="va">f_y</span> <span class="op">-</span> <span class="va">f_y_minus_1</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co"># Generate a sequence of u values from 0 to 1</span></span>
+<span><span class="va">u_values</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, length.out <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Calculate the average nPIT for each u value for both models</span></span>
+<span><span class="va">AnPIT_nb</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span><span class="op">(</span><span class="va">u_values</span>, <span class="kw">function</span><span class="op">(</span><span class="va">u</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rspatial.github.io/terra/reference/summarize-generics.html">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span><span class="op">(</span><span class="va">sim_data_nb</span>, <span class="va">compute_npit</span>, u <span class="op">=</span> <span class="va">u</span>, cdf_func <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">k</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/NegBinomial.html">pnbinom</a></span><span class="op">(</span><span class="va">k</span>, size <span class="op">=</span> <span class="va">size</span>, mu <span class="op">=</span> <span class="va">lambda</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">AnPIT_poisson</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span><span class="op">(</span><span class="va">u_values</span>, <span class="kw">function</span><span class="op">(</span><span class="va">u</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rspatial.github.io/terra/reference/summarize-generics.html">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span><span class="op">(</span><span class="va">sim_data_nb</span>, <span class="va">compute_npit</span>, u <span class="op">=</span> <span class="va">u</span>, cdf_func <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">k</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/Poisson.html">ppois</a></span><span class="op">(</span><span class="va">k</span>, lambda <span class="op">=</span> <span class="va">lambda</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Combine the results into a data frame for plotting</span></span>
+<span><span class="va">AnPIT_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span></span>
+<span>  u <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="va">u_values</span>, times <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>,</span>
+<span>  AnPIT <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">AnPIT_nb</span>, <span class="va">AnPIT_poisson</span><span class="op">)</span>,</span>
+<span>  Model <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Negative Binomial (correct model)"</span>, <span class="st">"Poisson (wrong model)"</span><span class="op">)</span>, each <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">u_values</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Plotting the average nPIT as a function of u for both models</span></span>
+<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">AnPIT_data</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">u</span>, y <span class="op">=</span> <span class="va">AnPIT</span>, color <span class="op">=</span> <span class="va">Model</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_line</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_abline</span><span class="op">(</span>slope <span class="op">=</span> <span class="fl">1</span>, intercept <span class="op">=</span> <span class="fl">0</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span>, color <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span> <span class="op">+</span>  <span class="co"># Identity line</span></span>
+<span>  <span class="fu">facet_wrap</span><span class="op">(</span><span class="op">~</span> <span class="va">Model</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">coord_cartesian</span><span class="op">(</span>xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>  </span>
+<span>  <span class="fu">xlab</span><span class="op">(</span><span class="st">"u"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">ylab</span><span class="op">(</span><span class="st">"AnPIT"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme_minimal</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span>  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-anpit" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure"><p><img src="05_geostatistical-prediction_files/figure-html/fig-anpit-1.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Figure&nbsp;5.8: Average nonrandomized Probability Integral Transform (AnPIT) applied to simulated data from a Negative Binomial distribution. The left plot shows the AnPIT when the model is correctly specified. The right panel shows the AnPIT when a Poisson model is instead used. For more details we refer to the main text.</figcaption></figure>
+</div>
+</div>
+</div>
+<p><a href="#fig-anpit">Figure&nbsp;<span>5.8</span></a> shows clear evidence that the Poisson model is not adequately accounting for the overdispersion of the simulated data from the Negative Binomial distribution.</p>
+<p>How can we adapt this approach to generalized linear geostatistical models (GLGMs)? The concept is straightforward, though the implementation is less so (but fortunately, we have already done this in <code>RiskMap</code>). Essentially, in all relevant equations above, we need to replace <span class="math inline">\(M\)</span> with the predictive distribution of the fitted geostatistical model.</p>
+<p>To explain further, suppose we have fitted our model using data <span class="math inline">\(Y^{(1)} = \left( y^{(1)}_{1}, \ldots, y^{(1)}_{n} \right)\)</span>, and we want to use another set of data <span class="math inline">\(Y^{(2)} = \left( y^{(2)}_{1}, \ldots, y^{(2)}_{m} \right)\)</span> to assess calibration. Our model <span class="math inline">\(M\)</span>in the equations above corresponds to the distribution of <span class="math inline">\(\left[ Y^{(1)} \mid Y^{(2)} \right]\)</span>, derived from our geostatistical model. Since its derivation cannot be done analytically, we use Monte Carlo methods to approximate <span class="math inline">\(\left[ Y^{(1)} \mid Y^{(2)} \right]\)</span>. We discuss this in more detail in <a href="#sec-theory-prediction"><span>Section&nbsp;5.7</span></a>. However, the key point here is to understand why we perform this assessment and how to interpret the results.</p>
 </section><section id="assessing-sharpness" class="level3" data-number="5.6.2"><h3 data-number="5.6.2" class="anchored" data-anchor-id="assessing-sharpness">
 <span class="header-section-number">5.6.2</span> Assessing sharpness</h3>
 <p>Sharpness, the other aspect of predictive performance mentioned above, refers to the concentration or narrowness of the predictive distribution around <span class="math inline">\(y_i\)</span>. A sharp predictive distribution has a narrow spread, indicating that the model is highly confident in its predictions. Importantly, sharpness does not depend on how close predictions are to the true values (i.e., it is independent of accuracy). A model with high sharpness will produce predictions with low variance, but this sharpness is only meaningful if the model is well-calibrated, ensuring that the high confidence aligns with observed values. For example, a geostatistical model for disease prevalence mapping that predicts a very tight range of possible prevalence values for a location is producing sharp predictions. However, if the actual prevalence often falls outside this range, then the predictions may be sharp but poorly calibrated, thus limiting the value of quantifying sharpness alone. It is important to distinguish between sharpness and precision, as they are similar but subtly different concepts. When considering precision, we are interested in the reliability of the indicators of uncertainty generated from the predictive distribution, such as ensuring that the nominal coverage of prediction intervals matches the actual coverage. Sharpness, instead, refers strictly to the spread of the predictive distribution without regard to accuracy. In other words, while precision generally describes the reproducibility of model predictions across multiple outcomes <span class="math inline">\(y_i\)</span>, sharpness purely reflects the model’s spread around its point predictions.</p>
@@ -956,13 +1032,14 @@ T = \int_{A} w(x) T(x) \: dx
 <li>Define the predictive distribution of a predictive target and explain how this is used to answer a research question.</li>
 <li>Distinguish between spatially continuous and areal-level targets, giving at least two examples for each.</li>
 <li>Explain the difference between marginal and joint predictions, and for which targets each can be used.</li>
-<li>Define predictive performance in terms of calibration and sharpness. - Explain how calibration can be assessed using graphical tolls.</li>
+<li>Define predictive performance in terms of calibration and sharpness.</li>
+<li>Explain how calibration can be assessed using graphical tools, by distinguishing between continuous and count outcomes.</li>
 <li>Give examples of metrics that can be used to evaluate calibration and sharpness.</li>
 </ul></section><section id="exercises" class="level2" data-number="5.10"><h2 data-number="5.10" class="anchored" data-anchor-id="exercises">
 <span class="header-section-number">5.10</span> Exercises</h2>
 <ol type="1">
-<li>
-<em>Parametric bootstrap.</em> Using the model fitted to the Anopheles gambiae mosquitoes in <span class="quarto-unresolved-ref">?sec-anopheles-fit</span>, simulate 1000 data-sets using the <code>glgpm_sim</code> function and estimate the model to each of the simulated data-set. Use the resulting 1000 estimates to compute 95<span class="math inline">\(\%\)</span> confidence intervals for each of the model parameters and compare this with the confidence intervals obtained from the model summary.</li>
+<li><p><em>Parametric bootstrap.</em> Using the model fitted to the Anopheles gambiae mosquitoes in <a href="03_model-fitting.html#sec-anopheles-fit"><span>Section&nbsp;3.3.2</span></a>, simulate 1000 data-sets using the <code>glgpm_sim</code> function and estimate the model to each of the simulated data-set. Use the resulting 1000 estimates to compute 95<span class="math inline">\(\%\)</span> confidence intervals for each of the model parameters and compare this with the confidence intervals obtained from the model summary.</p></li>
+<li><p>Using the code from <span class="citation" data-cites="compare-pp">(<a href="references.html#ref-compare-pp" role="doc-biblioref"><strong>compare-pp?</strong></a>)</span>, redraw the plot of <a href="#fig-anpit">Figure&nbsp;<span>5.8</span></a> by choosing different values for the dispersion parameter of the Negative Binomial distribution. What happens when <span class="math inline">\(\alpha\)</span> is close to 0 and why?</p></li>
 </ol>
 
 
