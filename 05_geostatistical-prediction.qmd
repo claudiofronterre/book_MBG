@@ -187,7 +187,7 @@ In the function above the argument `f_target` can take a list of functions, as m
 
 We can then visualize the resulting maps as follows.
 
-```{r, collapse=TRUE}
+```{r, collapse=TRUE, fig.width=18, fig.height=6}
 #| label: fig-lb-maps
 #| fig-cap: "Mapping riverblindness in Liberia. Plots of the mean (left panel), coefficient of variation (central panel) and exceedance probability (right panel) for a 20% prevalence threshold."
 
@@ -311,7 +311,7 @@ pred_aver_pop <- pred_target_grid(pred_ken_S_i,
 
 We can now plot the two maps and compare them.
 
-```{r, collapse=TRUE}
+```{r, collapse=TRUE, fig.width=12, fig.height=6}
 #| label: fig-malaria-maps
 #| fig-cap: "Maps of the predictive mean of the rapid diagnostic test (RDT) prevalence for
 #| children of the age of 15 (left panel) and the general population (right panel)."
@@ -426,7 +426,7 @@ pred_shp_w <- pred_target_shp(lb_pred_S_j, shp = lb_adm1,
 
 We can then finally plot the results from the prediction at admin level 1, without using any weights and by weighing according to population density.
 
-```{r, collapse=TRUE}
+```{r, collapse=TRUE, fig.width=12, fig.height=6}
 #| label: fig-average-prev-Liberia
 #| fig-cap: "Maps of the predictive mean for the admin level 1 average prevalence in Liberia. The left panel uses a standard average of locations within an admin level 1 region, whilst in the right panel each location is weighted according to population density."
 plot_1 <- 
@@ -555,28 +555,82 @@ glgpm(formula = npos ~ log(elevation) + gp(long, lat, nugget = NULL),
 
 Note that if the data's CRS has been converted, the simulated dataset will inherit the new CRS rather than the original. This means that any transformation applied to the CRS before simulation (e.g., from geographic to projected coordinates) will affect the spatial scale and interpretation of the simulated data.
 
-In other cases, as in @sec-sim-assessmen, the locations $X$ correspond to a regular grid and the steps that we want to carry out on completion of step 4 above depend on the objective of the simulation. We explain this more in detail in the next section.
+In other cases, as in @sec-sim-assessment, the locations $X$ correspond to a regular grid and the steps that we want to carry out on completion of step 4 above depend on the objective of the simulation. We explain this more in detail in the next section.
 
 ### Setting up and carrying out a simulation study
 
 ### Assessessment of threshold-based classification of spatial units using geostatistical models {#sec-sim-assessment}
 
-## Comparing the predictive performance of geostatistical models {#compare-pp}
+## Comparing the predictive performance of geostatistical models {#sec-compare-pp}
 
 In this section, we address the problem of identifying the geostatistical model that offers the best predictive performance among a set of candidates. However, we first need a clear definition of predictive performance which can be used to select suitable statistical tools that can be to used to evaluate it. Broadly speaking, predictive performance is defined by how well a model's predictive distribution aligns with observed data. Evaluating predictive performance requires examining two key characteristics of the predictive distribution: *sharpness* and *calibration*.
 
-| Diagnostic/Metric                          | Performance characteristic | Descritpion |
-|----------------------------------|----------------------|----------------|
-| Probability integral transform (PIT)       | Calibration                |             |
-| Nonrandomized PIT                          | Calibration                |             |
-| Mean square error                          | Calibration                |             |
-| Continuous ranked probability score (CRPS) | Calibration and sharpness  |             |
-| Scaled CRPS                                | Calibration and sharpness  |             |
 
-: Summary of the different diagnostic tools and metrics, discussed in this chapter, that are used to assess the predictive performance of a geostatistical model. {#tbl-summary-pp-diag}
+### How to split geostatistical data for model performance comparisons
+
+To carry out the assessment and comparison of the predictive performance of geostatistical models using the methods illustrated in the following sections, the first crucial step to decide which approach to use to use split the data-set into a *training set* and *test set*. In the context of geostatistical analysis, the *training set* is the subset of the original data-set that is used to estimate the model parameters and then predict at the locations of the *test set*, which is used to assess how well the model can predict unseen data.
+
+When splitting geostatistical data-sets for model performance evaluation, it is essential to consider the objective of the spatial prediction. Here, we consider two main prediction objectives: 1) predicting in areas disjoint from the study area where there are no data; 2) inferring the spatial surface of disease risk within a given study area. Let us give an example to better explain the difference between these two objectives. Under objective 1), if survey data exist for a specific country, say Kenya, but not for a neighboring country, say Somalia, a model trained on Kenyan data might then be used to predict disease prevalence in Somalia. In objective 2), instead, high-resolution risk maps of a health outcome might be required within a single country. The splitting of geostatistical data for predictive performance assessment should align with the intended application of the model and reflect whether the goal is to predict in entirely disjoint areas with no data (objective 1) ) or to infer the spatial surface of interest within the same study area (objective 2) ). Below, we elaborate on suitable methods for each of these two.
+
+In the first scenario (objective 1) ), splitting the data using k-fold cross-validation with spatially coherent folds is more appropriate. These folds can be created using clustering methods such as k-means or hierarchical clustering (see @yin2024 for review of the main clustering methods). These methods group spatial locations based on their coordinates or covariates, ensuring each fold represents a distinct spatial region. This approach mimics the challenge of predicting in disjoint areas by withholding entire spatial clusters from the training data. For instance, k-means minimizes within-cluster variance to produce compact, non-overlapping groups, while hierarchical clustering organizes data into nested clusters based on a linkage criterion like geographic distance. In the code below we show an example of the use of these methods for data splitting, using the `spatial_clusterin_cv` function from the `spatialsample` package [@mahoney2023].
+```{r, collapse = TRUE, fig.width=12, fig.height=6}
+#| label: fig-clus-loc
+#| fig-cap: "Examples un the use of spatial clustering methods for the splitting of the Liberia data on riverblindness."
+library(spatialsample)
+set.seed(123)
+liberia_sf <- liberia %>%
+              st_as_sf(., coords = c("long", "lat"),
+                       crs = 4326) %>%
+              st_transform(.,crs = 32629)
 
 
-### How to split the data for model validation
+# K-means
+kmeans_liberia <- spatial_clustering_cv(liberia_sf,
+                      v = 10, cluster_function = "kmeans")
+kmeans_plot <- autoplot(kmeans_liberia) + ggtitle("K-means")
+
+# Hierarchical clustering
+hclust_liberia <- spatial_clustering_cv(liberia_sf,
+                      v = 10, cluster_function = "hclust") 
+                   
+
+hclust_plot <- autoplot(hclust_liberia) +
+  ggtitle("Hierarchical clustering")
+
+library(gridExtra)
+grid.arrange(kmeans_plot, hclust_plot, ncol = 2)
+```
+The results of the splitting are shown in @fig-clus-loc, where we have generated 10 folds using the k-means and hierarchical clustering methods with the default options. We can observe that the test sets are very similar, with fold 3 from the k-means and fold 7 from hierarchical clustering being identical. If using only the distance between locations to cluster the data into different folds, the choice of clustering method should have much impact on the model assessment as long as we repeat the split and assessment of the methods multiple times as we will show later in the next sections.
+
+Before proceeding further, it is important to highlight that when the objective is predicting an outcome in entirely disjoint areas, the risks and limitations of this assessment should be carefully considered. In such cases, predictions are predominantly driven by covariates because the spatial Gaussian  process $S(x)$ cannot extrapolate spatial patterns across regions with no connecting data. When the disjoint region requiring predictions is far from the sampled data, the Gaussian process contributes primarily to inflating prediction uncertainty and has no tangible impact on the point predictions, reflecting the lack of ground data in the area. Consequently, this validation approach primarily assesses the predictive power of the covariates rather than the geostatistical model as a whole. This limitation may lead to overestimating the model’s generalization capabilities, especially if the model is being used to predict areas that are far away from the study area. Hence, the results of this validation should be interpreted cautiously, emphasizing the critical role of covariates in driving predictions under such conditions.
+
+We now consider the second prediction objective of inferring the spatial surface within the study area. In this case, a random sampling approach can be employed. However, to preserve a good spatial coverage of the study area, a minimum distance can be imposed between selected locations. For example, methods such as spatial thinning or stratified sampling can be adapted to enforce a minimum spatial separation. This can be done in R using the `subsample.distance` function from the `spatialEco` package [@evans2021].
+
+```{r, collapse = TRUE, fig.width=12, fig.height=6}
+#| label: fig-reg-loc
+#| fig-cap: "Examples un the use of spatialky regularized thinning for the splitting of the Liberia data on riverblindness into training and test set. The plots show the resulting test sets by randomly selecting 20 locations from the original data-set and imposing a minimum distance of 30km (left panel) and 40km (right panel)."
+library(spatialEco)
+set.seed(123)
+
+# Regulirized spatial sampling: 30km
+dist30_liberia <- subsample.distance(liberia_sf,
+                      size = 20, d = 30000)
+dist30_plot <- ggplot(dist30_liberia) + geom_sf() +
+               theme_minimal() + 
+               ggtitle("Minimum distance: 30km")
+
+# Regulirized spatial sampling: 40km
+dist40_liberia <- subsample.distance(liberia_sf,
+                      size = 20, d = 40000)
+dist40_plot <- ggplot(dist40_liberia) + geom_sf() +
+               theme_minimal() + 
+               ggtitle("Minimum distance: 40km")
+
+grid.arrange(dist30_plot, dist40_plot, ncol = 2)
+```
+In the code above, we randomly selected 20 locations from the original data-set, enforcing minimum distances of 30 km and 40 km between points. The results are presented in @fig-reg-loc. The choice of the minimum distance for the test sample should ideally consider the spatial correlation scale (previously denoted by $\phi$) of the spatial Gaussian process $S(X)$. To minimize correlation within the test set, the minimum distance could be set to a value greater than $\phi$. However, increasing the minimum distance makes it more challenging to obtain a test set of the desired sample size. Reducing correlation within the test set is important for ensuring that the assessment of predictive performance is as robust as possible.
+
+A key challenge in both approaches is the potential lack of independence between the training and test data-sets due to spatial correlation. This can lead to an overly optimistic evaluation of model performance, as the training set may already contain information that is correlated with the test set. However, if we assume that all models benefit equally from this correlation during performance evaluation, the methods we illustrate next can still provide a reliable comparison of model performance in relative terms, even if the considered performance metrics may be somewhat biased.
 
 ### Assessing calibration
 
@@ -764,6 +818,18 @@ To explain further, suppose we have fitted our model using data $Y^{(1)} = \left
 
 Sharpness, the other aspect of predictive performance mentioned above, refers to the concentration or narrowness of the predictive distribution around $y_i$. A sharp predictive distribution has a narrow spread, indicating that the model is highly confident in its predictions. Importantly, sharpness does not depend on how close predictions are to the true values (i.e., it is independent of accuracy). A model with high sharpness will produce predictions with low variance, but this sharpness is only meaningful if the model is well-calibrated, ensuring that the high confidence aligns with observed values. For example, a geostatistical model for disease prevalence mapping that predicts a very tight range of possible prevalence values for a location is producing sharp predictions. However, if the actual prevalence often falls outside this range, then the predictions may be sharp but poorly calibrated, thus limiting the value of quantifying sharpness alone. It is important to distinguish between sharpness and precision, as they are similar but subtly different concepts. When considering precision, we are interested in the reliability of the indicators of uncertainty generated from the predictive distribution, such as ensuring that the nominal coverage of prediction intervals matches the actual coverage. Sharpness, instead, refers strictly to the spread of the predictive distribution without regard to accuracy. In other words, while precision generally describes the reproducibility of model predictions across multiple outcomes $y_i$, sharpness purely reflects the model's spread around its point predictions.
 
+### Summary
+
+| Diagnostic/Metric                          | Performance characteristic | Descritpion |
+|----------------------------------|----------------------|----------------|
+| Probability integral transform (PIT)       | Calibration                |             |
+| Nonrandomized PIT                          | Calibration                |             |
+| Mean square error                          | Calibration                |             |
+| Continuous ranked probability score (CRPS) | Calibration and sharpness  |             |
+| Scaled CRPS                                | Calibration and sharpness  |             |
+
+: Summary of the different diagnostic tools and metrics, discussed in this chapter, that are used to assess the predictive performance of a geostatistical model. {#tbl-summary-pp-diag}
+
 ## Theory {#sec-theory-prediction}
 
 ### Derivation of the predictive distribution {#sec-pred-distr-theory}
@@ -796,5 +862,5 @@ Sharpness, the other aspect of predictive performance mentioned above, refers to
 
 1.  *Parametric bootstrap.* Using the model fitted to the Anopheles gambiae mosquitoes in @sec-anopheles-fit, simulate 1000 data-sets using the `glgpm_sim` function and estimate the model to each of the simulated data-set. Use the resulting 1000 estimates to compute 95$\%$ confidence intervals for each of the model parameters and compare this with the confidence intervals obtained from the model summary.
 
-2. Using the code from @compare-pp, redraw the plot of @fig-anpit by choosing different values for the dispersion parameter of the Negative Binomial distribution. What happens when $\alpha$ is close to 0 and why?
+2. Using the code from @sec-compare-pp, redraw the plot of @fig-anpit by choosing different values for the dispersion parameter of the Negative Binomial distribution. What happens when $\alpha$ is close to 0 and why?
 
