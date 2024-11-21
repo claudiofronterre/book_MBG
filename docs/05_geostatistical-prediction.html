@@ -239,19 +239,19 @@ div.csl-indent {
   </ul>
 </li>
   <li>
-<a href="#sec-compare-pp" id="toc-sec-compare-pp" class="nav-link" data-scroll-target="#sec-compare-pp"><span class="header-section-number">5.6</span> Comparing the predictive performance of geostatistical models</a>
+<a href="#sec-compare-pp" id="toc-sec-compare-pp" class="nav-link" data-scroll-target="#sec-compare-pp"><span class="header-section-number">5.6</span> Assessing the predictive performance of geostatistical models with cross-validation</a>
   <ul class="collapse">
-<li><a href="#how-to-split-geostatistical-data-for-model-performance-comparisons" id="toc-how-to-split-geostatistical-data-for-model-performance-comparisons" class="nav-link" data-scroll-target="#how-to-split-geostatistical-data-for-model-performance-comparisons"><span class="header-section-number">5.6.1</span> How to split geostatistical data for model performance comparisons</a></li>
-  <li><a href="#assessing-calibration" id="toc-assessing-calibration" class="nav-link" data-scroll-target="#assessing-calibration"><span class="header-section-number">5.6.2</span> Assessing calibration</a></li>
-  <li><a href="#assessing-sharpness" id="toc-assessing-sharpness" class="nav-link" data-scroll-target="#assessing-sharpness"><span class="header-section-number">5.6.3</span> Assessing sharpness</a></li>
-  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">5.6.4</span> Summary</a></li>
+<li><a href="#sec-split-data" id="toc-sec-split-data" class="nav-link" data-scroll-target="#sec-split-data"><span class="header-section-number">5.6.1</span> How to split geostatistical data for model performance comparisons</a></li>
+  <li><a href="#assessing-calibration-using-graphical-tools" id="toc-assessing-calibration-using-graphical-tools" class="nav-link" data-scroll-target="#assessing-calibration-using-graphical-tools"><span class="header-section-number">5.6.2</span> Assessing calibration using graphical tools</a></li>
+  <li><a href="#assessing-calibration-and-sharpness-using-metrics-of-predictive-performance" id="toc-assessing-calibration-and-sharpness-using-metrics-of-predictive-performance" class="nav-link" data-scroll-target="#assessing-calibration-and-sharpness-using-metrics-of-predictive-performance"><span class="header-section-number">5.6.3</span> Assessing calibration and sharpness using metrics of predictive performance</a></li>
   </ul>
 </li>
   <li>
 <a href="#sec-theory-prediction" id="toc-sec-theory-prediction" class="nav-link" data-scroll-target="#sec-theory-prediction"><span class="header-section-number">5.7</span> Theory</a>
   <ul class="collapse">
-<li><a href="#sec-pred-distr-theory" id="toc-sec-pred-distr-theory" class="nav-link" data-scroll-target="#sec-pred-distr-theory"><span class="header-section-number">5.7.1</span> Derivation of the predictive distribution</a></li>
-  <li><a href="#scoring-rules" id="toc-scoring-rules" class="nav-link" data-scroll-target="#scoring-rules"><span class="header-section-number">5.7.2</span> Scoring rules</a></li>
+<li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">5.7.1</span> Summary</a></li>
+  <li><a href="#sec-pred-distr-theory" id="toc-sec-pred-distr-theory" class="nav-link" data-scroll-target="#sec-pred-distr-theory"><span class="header-section-number">5.7.2</span> Derivation of the predictive distribution</a></li>
+  <li><a href="#scoring-rules" id="toc-scoring-rules" class="nav-link" data-scroll-target="#scoring-rules"><span class="header-section-number">5.7.3</span> Scoring rules</a></li>
   </ul>
 </li>
   <li><a href="#faqs" id="toc-faqs" class="nav-link" data-scroll-target="#faqs"><span class="header-section-number">5.8</span> FAQs</a></li>
@@ -336,7 +336,7 @@ div.csl-indent {
 <li><p><strong>Marginal predictions</strong> are obtained by simulating independently from the <span class="math inline">\(q\)</span> marginal predictive distributions of <span class="math inline">\([S(\tilde{X}) | y]\)</span>. In other words, we consider a prediction location <span class="math inline">\(\tilde{x}_j\)</span>, simulate from <span class="math inline">\([S(\tilde{x}_j) \: |\: y]\)</span> say <span class="math inline">\(B\)</span> samples, and repeat this for <span class="math inline">\(j=1,\ldots,q\)</span></p></li>
 <li><p><strong>Joint predictions</strong> are obtained by simulating from the joint distribution of <span class="math inline">\([S(\tilde{X}) \: |\: y]\)</span>. Unlike marginal predictions, joint predictions take into account the correlation between the different components of <span class="math inline">\([S(\tilde{X}) \: |\: y]\)</span>.</p></li>
 </ul>
-<p>To better understand the technical differences between marginal and joint predictions, we refer you to <a href="#sec-pred-distr-theory"><span>Section&nbsp;5.7.1</span></a>. However, in practice, the two following facts are important.</p>
+<p>To better understand the technical differences between marginal and joint predictions, we refer you to <a href="#sec-pred-distr-theory"><span>Section&nbsp;5.7.2</span></a>. However, in practice, the two following facts are important.</p>
 <ul>
 <li><p><em>Fact 1</em>. Joint predictions are computationally more intensive than marginal predictions.</p></li>
 <li><p><em>Fact 2</em>. Joint predictions are required when the predictive target is at areal-level.</p></li>
@@ -751,15 +751,15 @@ T = \int_{A} w(x) T(x) \: dx
 <span></span>
 <span><span class="va">pred_n_mosq_shp</span><span class="op">$</span><span class="va">target</span><span class="op">$</span><span class="va">reg1</span><span class="op">$</span><span class="va">n_mosq</span></span>
 <span><span class="co">## $mean</span></span>
-<span><span class="co">## [1] 17707.52</span></span>
+<span><span class="co">## [1] 17658.66</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $q025</span></span>
 <span><span class="co">##     2.5% </span></span>
-<span><span class="co">## 15020.76 </span></span>
+<span><span class="co">## 15048.24 </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $q075</span></span>
-<span><span class="co">##    97.5% </span></span>
-<span><span class="co">## 21008.32</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span><span class="co">##   97.5% </span></span>
+<span><span class="co">## 21049.5</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Since we are not standardizing the weights, there is no need to specify <code>standardize_weights</code>, as it is set to <code>FALSE</code> by default. In the code above, we printed the mean of the predictive distribution of <span class="math inline">\(T\)</span> along with the 95% prediction interval. The point estimate of approximately 17,719 mosquitoes is likely an underestimate of the total number of Anopheles gambiae in the area, as the trap used to count the mosquitoes may not capture all of them, particularly those outside the immediate trapping zone or those active at different times.</p>
 </section></section><section id="simulation-based-assessment-of-predictive-performance" class="level2" data-number="5.5"><h2 data-number="5.5" class="anchored" data-anchor-id="simulation-based-assessment-of-predictive-performance">
@@ -793,9 +793,9 @@ T = \int_{A} w(x) T(x) \: dx
 </section><section id="sec-sim-assessment" class="level3" data-number="5.5.3"><h3 data-number="5.5.3" class="anchored" data-anchor-id="sec-sim-assessment">
 <span class="header-section-number">5.5.3</span> Assessessment of threshold-based classification of spatial units using geostatistical models</h3>
 </section></section><section id="sec-compare-pp" class="level2" data-number="5.6"><h2 data-number="5.6" class="anchored" data-anchor-id="sec-compare-pp">
-<span class="header-section-number">5.6</span> Comparing the predictive performance of geostatistical models</h2>
+<span class="header-section-number">5.6</span> Assessing the predictive performance of geostatistical models with cross-validation</h2>
 <p>In this section, we address the problem of identifying the geostatistical model that offers the best predictive performance among a set of candidates. However, we first need a clear definition of predictive performance which can be used to select suitable statistical tools that can be to used to evaluate it. Broadly speaking, predictive performance is defined by how well a model’s predictive distribution aligns with observed data. Evaluating predictive performance requires examining two key characteristics of the predictive distribution: <em>sharpness</em> and <em>calibration</em>.</p>
-<section id="how-to-split-geostatistical-data-for-model-performance-comparisons" class="level3" data-number="5.6.1"><h3 data-number="5.6.1" class="anchored" data-anchor-id="how-to-split-geostatistical-data-for-model-performance-comparisons">
+<section id="sec-split-data" class="level3" data-number="5.6.1"><h3 data-number="5.6.1" class="anchored" data-anchor-id="sec-split-data">
 <span class="header-section-number">5.6.1</span> How to split geostatistical data for model performance comparisons</h3>
 <p>To carry out the assessment and comparison of the predictive performance of geostatistical models using the methods illustrated in the following sections, the first crucial step to decide which approach to use to use split the data-set into a <em>training set</em> and <em>test set</em>. In the context of geostatistical analysis, the <em>training set</em> is the subset of the original data-set that is used to estimate the model parameters and then predict at the locations of the <em>test set</em>, which is used to assess how well the model can predict unseen data.</p>
 <p>When splitting geostatistical data-sets for model performance evaluation, it is essential to consider the objective of the spatial prediction. Here, we consider two main prediction objectives: 1) predicting in areas disjoint from the study area where there are no data; 2) inferring the spatial surface of disease risk within a given study area. Let us give an example to better explain the difference between these two objectives. Under objective 1), if survey data exist for a specific country, say Kenya, but not for a neighboring country, say Somalia, a model trained on Kenyan data might then be used to predict disease prevalence in Somalia. In objective 2), instead, high-resolution risk maps of a health outcome might be required within a single country. The splitting of geostatistical data for predictive performance assessment should align with the intended application of the model and reflect whether the goal is to predict in entirely disjoint areas with no data (objective 1) ) or to infer the spatial surface of interest within the same study area (objective 2) ). Below, we elaborate on suitable methods for each of these two.</p>
@@ -861,9 +861,9 @@ T = \int_{A} w(x) T(x) \: dx
 </div>
 </div>
 <p>In the code above, we randomly selected 20 locations from the original data-set, enforcing minimum distances of 30 km and 40 km between points. The results are presented in <a href="#fig-reg-loc">Figure&nbsp;<span>5.7</span></a>. The choice of the minimum distance for the test sample should ideally consider the spatial correlation scale (previously denoted by <span class="math inline">\(\phi\)</span>) of the spatial Gaussian process <span class="math inline">\(S(X)\)</span>. To minimize correlation within the test set, the minimum distance could be set to a value greater than <span class="math inline">\(\phi\)</span>. However, increasing the minimum distance makes it more challenging to obtain a test set of the desired sample size. Reducing correlation within the test set is important for ensuring that the assessment of predictive performance is as robust as possible.</p>
-<p>A key challenge in both approaches is the potential lack of independence between the training and test data-sets due to spatial correlation. This can lead to an overly optimistic evaluation of model performance, as the training set may already contain information that is correlated with the test set. However, if we assume that all models benefit equally from this correlation during performance evaluation, the methods we illustrate next can still provide a reliable comparison of model performance in relative terms, even if absolute performance metrics may be biased.</p>
-</section><section id="assessing-calibration" class="level3" data-number="5.6.2"><h3 data-number="5.6.2" class="anchored" data-anchor-id="assessing-calibration">
-<span class="header-section-number">5.6.2</span> Assessing calibration</h3>
+<p>A key challenge in both approaches is the potential lack of independence between the training and test data-sets due to spatial correlation. This can lead to an overly optimistic evaluation of model performance, as the training set may already contain information that is correlated with the test set. However, if we assume that all models benefit equally from this correlation during performance evaluation, the methods we illustrate next can still provide a reliable comparison of model performance in relative terms, even if the considered performance metrics may be somewhat biased.</p>
+</section><section id="assessing-calibration-using-graphical-tools" class="level3" data-number="5.6.2"><h3 data-number="5.6.2" class="anchored" data-anchor-id="assessing-calibration-using-graphical-tools">
+<span class="header-section-number">5.6.2</span> Assessing calibration using graphical tools</h3>
 <p>A model is considered <em>well-calibrated</em> if its predictions adequately reflect the true uncertainty of the data. Assessment of a model’s calibration can be carried out in several ways. We can examine the agreement between the point predictions, say <span class="math inline">\(\hat{y}\_i\)</span>, and the observed outcomes $y_i $, commonly referred to as <em>accuracy</em>. The mean squared error (MSE), defined as <span class="math inline">\(\text{MSE} = \frac{1}{n} \sum_{i=1}^n (y_i - \hat{y}_i)^2\)</span>, is an example of a commonly used metric to evaluate the accuracy of a model. To characterize calibration more fully, it is also essential to quantify the spread of the predictive distributions, which also defines the <em>precision</em> of predictions. For example, prediction intervals generated from the predictive distribution for <span class="math inline">\(y_i\)</span> can help assess the precision of a geostatistical model. In summary, a well-calibrated model is both accurate and precise.</p>
 <p>Assessment of the calibration of the model should precede the assessment of sharpness, since, as we shall see in the next section, this relies on the model being well-calibrated. The probability integral transform (PIT) was originally proposed by <span class="citation" data-cites="dawid1984">Dawid (<a href="references.html#ref-dawid1984" role="doc-biblioref">1984</a>)</span> as a way to assess the calibration of a model. The PIT is based on the simple observation that if we consider a variable <span class="math inline">\(Y\)</span> and apply the transformation <span class="math inline">\(Y^* = F_{Y}(Y)\)</span>, where <span class="math inline">\(F_{Y}(\cdot)\)</span> is the cumulative density function (or cumulative distribution if <span class="math inline">\(Y\)</span> is discrete) of <span class="math inline">\(Y\)</span>, it then follows that <span class="math inline">\(Y^*\)</span> follows a uniform distribution in the unit interval. The fundamental problem and the reason why statistical modelling exists is that we do not <span class="math inline">\(F_{Y}\)</span> but we would like to propose a model <span class="math inline">\(M\)</span> that we believe adequately approximates <span class="math inline">\(F_{Y}\)</span> with <span class="math inline">\(F_{M}\)</span>. The main advantage of using the PIT is that assessment of whether <span class="math inline">\(M\)</span> is well calibrated reduces to assessing whether the transform set of data <span class="math inline">\(F_{M}(y_1), \ldots, F_{M}(y_n)\)</span> follows a uniform distribution. To illustrate this, let us a consider a simple simulated example.</p>
 <p>We first create a function that can compute the PIT.</p>
@@ -1034,19 +1034,89 @@ T = \int_{A} w(x) T(x) \: dx
 </div>
 <p><a href="#fig-anpit">Figure&nbsp;<span>5.10</span></a> shows clear evidence that the Poisson model is not adequately accounting for the overdispersion of the simulated data from the Negative Binomial distribution.</p>
 <p>How can we adapt this approach to generalized linear geostatistical models (GLGMs)? The concept is straightforward, though the implementation is less so (but fortunately, we have already done this in <code>RiskMap</code>). Essentially, in all relevant equations above, we need to replace <span class="math inline">\(M\)</span> with the predictive distribution of the fitted geostatistical model.</p>
-<p>To explain further, suppose we have fitted our model using data <span class="math inline">\(Y^{(1)} = \left( y^{(1)}_{1}, \ldots, y^{(1)}_{n} \right)\)</span>, and we want to use another set of data <span class="math inline">\(Y^{(2)} = \left( y^{(2)}_{1}, \ldots, y^{(2)}_{m} \right)\)</span> to assess calibration. Our model <span class="math inline">\(M\)</span>in the equations above corresponds to the distribution of <span class="math inline">\(\left[ Y^{(1)} \mid Y^{(2)} \right]\)</span>, derived from our geostatistical model. Since its derivation cannot be done analytically, we use Monte Carlo methods to approximate <span class="math inline">\(\left[ Y^{(1)} \mid Y^{(2)} \right]\)</span>. We discuss this in more detail in <a href="#sec-theory-prediction"><span>Section&nbsp;5.7</span></a>. However, the key point here is to understand why we perform this assessment and how to interpret the results.</p>
-</section><section id="assessing-sharpness" class="level3" data-number="5.6.3"><h3 data-number="5.6.3" class="anchored" data-anchor-id="assessing-sharpness">
-<span class="header-section-number">5.6.3</span> Assessing sharpness</h3>
+<p>To explain further, suppose we have fitted our model using data <span class="math inline">\(Y^{(1)} = \left( y^{(1)}_{1}, \ldots, y^{(1)}_{n} \right)\)</span> (the training data-set), and we want to use another set of data <span class="math inline">\(Y^{(2)} = \left( y^{(2)}_{1}, \ldots, y^{(2)}_{m} \right)\)</span> (the test data-set) to assess calibration; the selection of <span class="math inline">\(Y^{(1)}\)</span> and <span class="math inline">\(Y^{(2)}\)</span> can be done using the methods described in <a href="#sec-split-data"><span>Section&nbsp;5.6.1</span></a>. Our model <span class="math inline">\(M\)</span> in the equations above corresponds to the distribution of <span class="math inline">\(\left[ Y^{(2)} \mid Y^{(1)} \right]\)</span> – the distribution of <span class="math inline">\(Y^{(2)}\)</span> conditioned to <span class="math inline">\(Y^{(1)}\)</span> derived from our geostatistical model. Since its derivation cannot be done analytically, we use Monte Carlo methods to approximate <span class="math inline">\(\left[ Y^{(1)} \mid Y^{(2)} \right]\)</span>. We discuss this in more detail in <a href="#sec-theory-prediction"><span>Section&nbsp;5.7</span></a>. However, the key point here is to understand why we perform this assessment and how to interpret the results. We next show the application of the AnPIT diagnostic to the example on riverblindess mapping in Liberia.</p>
+<section id="sec-liberia-anpit" class="level4" data-number="5.6.2.1"><h4 data-number="5.6.2.1" class="anchored" data-anchor-id="sec-liberia-anpit">
+<span class="header-section-number">5.6.2.1</span> Example: assessing the calibration of two geostatistical models for riverblindness mapping</h4>
+<p>In our example on riverblindness mapping, we now consider two models. A mode, which we call <span class="math inline">\(M_{0}\)</span>, which is an intercept only geostatistical model, with linear predictor <span class="math display">\[
+M_{0} \: : \: \log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_0 + S(x_i) ,
+\]</span> and a geostatistical model, which we denote as <span class="math inline">\(M_{1}\)</span>, which uses a linear spline with a not in 150 meters, and has linear predictor <span class="math display">\[
+M_{1} \: : \: \log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_0 + \beta_{1}e(x_i) + \beta_{2}\max\{e(x_i) - 150, 0\} + S(x_i).
+\]</span> The reason for using this type of linear spline in <span class="math inline">\(M_{1}\)</span> is explained in <a href="03_model-fitting.html#sec-expl-assoc"><span>Section&nbsp;3.1.1</span></a>.</p>
+<p>Hence, we first fit the two models.</p>
+<div class="cell">
+<div class="sourceCode" id="cb28" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Fitting M0</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
+<span><span class="va">M0_fit</span> <span class="op">&lt;-</span> </span>
+<span><span class="fu">glgpm</span><span class="op">(</span><span class="va">npos</span> <span class="op">~</span>  <span class="fu">gp</span><span class="op">(</span><span class="va">long</span>, <span class="va">lat</span>, nugget <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span>,</span>
+<span>      den <span class="op">=</span> <span class="va">ntest</span>, data <span class="op">=</span> <span class="va">liberia</span>,</span>
+<span>      crs <span class="op">=</span> <span class="fl">4326</span>,</span>
+<span>      convert_to_crs <span class="op">=</span> <span class="fl">32629</span>,</span>
+<span>      family <span class="op">=</span> <span class="st">"binomial"</span>, messages <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Fitting M1</span></span>
+<span><span class="va">M1_fit</span> <span class="op">&lt;-</span> </span>
+<span><span class="fu">glgpm</span><span class="op">(</span><span class="va">npos</span> <span class="op">~</span>  <span class="va">elevation</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">pmax</a></span><span class="op">(</span><span class="va">elevation</span> <span class="op">-</span> <span class="fl">150</span>, <span class="fl">0</span><span class="op">)</span> <span class="op">+</span></span>
+<span>      <span class="fu">gp</span><span class="op">(</span><span class="va">long</span>, <span class="va">lat</span>, nugget <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span>,</span>
+<span>      den <span class="op">=</span> <span class="va">ntest</span>, data <span class="op">=</span> <span class="va">liberia</span>,</span>
+<span>      crs <span class="op">=</span> <span class="fl">4326</span>,</span>
+<span>      convert_to_crs <span class="op">=</span> <span class="fl">32629</span>,</span>
+<span>      family <span class="op">=</span> <span class="st">"binomial"</span>, messages <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Since the main goal of this analysis is to draw predictive inference on riverblindness prevalence within Liberia, it would be more appropriate to use a regulirized subsampling scheme to split the data. To generate the AnPIT diagnostic plot in R, we can use the <code>assess_pp</code> function in <code>RiskMap</code></p>
+<div class="cell">
+<div class="sourceCode" id="cb29" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">regularized</span> <span class="op">&lt;-</span> </span>
+<span><span class="fu">assess_pp</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>M0 <span class="op">=</span> <span class="va">M0_fit</span>, M1 <span class="op">=</span> <span class="va">M1_fit</span><span class="op">)</span>,</span>
+<span>          which_metric <span class="op">=</span> <span class="st">"AnPIT"</span>, </span>
+<span>          method <span class="op">=</span> <span class="st">"regularized"</span>, min_dist <span class="op">=</span> <span class="fl">20</span>,</span>
+<span>          n_size <span class="op">=</span> <span class="fl">9</span>, iter <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" width="16">
+<div class="sourceCode" id="cb30" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu">plot_AnPIT</span><span class="op">(</span><span class="va">regularized</span>, combine_panels <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">p2</span> <span class="op">&lt;-</span> <span class="fu">plot_AnPIT</span><span class="op">(</span><span class="va">regularized</span>, mode <span class="op">=</span> <span class="st">"all"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/gridExtra/man/arrangeGrob.html">grid.arrange</a></span><span class="op">(</span><span class="va">p1</span>, <span class="va">p2</span>, nrow <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-anpit-reg" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure"><p><img src="05_geostatistical-prediction_files/figure-html/fig-anpit-reg-1.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Figure&nbsp;5.11: The average nonrandomized probability integral transform (AnPIT) averaged across 10 test sets of size 9 (upper panel) and for each of the 10 tests sets (lower panel). The test sets are generated using a spatially regularized sampling scheme.</figcaption></figure>
+</div>
+</div>
+</div>
+<p>In the above function, we have used a spatially regularized sampling scheme (<code>method = "clusterized"</code>), where the locations are at least 20 kilometers (<code>min_dist = 20</code>) apart from each other to create 10 test sets (<code>iter = 10</code>) each of size 9 (<code>n_size = 9</code>) which corresponds to 10% of the original data-set. The results reported in <a href="#fig-anpit-reg">Figure&nbsp;<span>5.11</span></a>, show both the AnPIT for each of the 10 test sets and the averaged AnPIT across the 10 test sets, for both <span class="math inline">\(M_0\)</span> and <span class="math inline">\(M_1\)</span>. The AnPIT plots show curves that are not too far from the identity line, which leads us to conclude that both <span class="math inline">\(M_0\)</span> and <span class="math inline">\(M_1\)</span> can be considered to be approximately well calibrated models.</p>
+<p>Let us how if these results would change if we were to split the data using a clustering algorithm approach. We then use the <code>assess_pp</code>, to create 10 folds and set <code>method = "cluster"</code>.</p>
+<div class="cell">
+<div class="sourceCode" id="cb31" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">cluster</span> <span class="op">&lt;-</span> </span>
+<span><span class="fu">assess_pp</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>M0 <span class="op">=</span> <span class="va">M0_fit</span>, M1 <span class="op">=</span> <span class="va">M1_fit</span><span class="op">)</span>,</span>
+<span>          which_metric <span class="op">=</span> <span class="st">"AnPIT"</span>, </span>
+<span>          method <span class="op">=</span> <span class="st">"cluster"</span>, fold <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" width="14">
+<div class="sourceCode" id="cb32" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu">plot_AnPIT</span><span class="op">(</span><span class="va">cluster</span>, combine_panels <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">p2</span> <span class="op">&lt;-</span> <span class="fu">plot_AnPIT</span><span class="op">(</span><span class="va">cluster</span>, mode <span class="op">=</span> <span class="st">"all"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/gridExtra/man/arrangeGrob.html">grid.arrange</a></span><span class="op">(</span><span class="va">p1</span>, <span class="va">p2</span>, nrow <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-anpit-clus" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure"><p><img src="05_geostatistical-prediction_files/figure-html/fig-anpit-clus-1.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Figure&nbsp;5.12: The average nonrandomized probability integral transform (AnPIT) averaged across 10 test sets of size 9 (upper panel) and for each of the 10 tests sets (lower panel). The test sets are generated using a clustering algorithm based on the locations of the data.</figcaption></figure>
+</div>
+</div>
+</div>
+<p>The AnPIT from <a href="#fig-anpit-clus">Figure&nbsp;<span>5.12</span></a> show very similar results to those of <a href="#fig-anpit-reg">Figure&nbsp;<span>5.11</span></a>, hence similar conclusions are drawn.</p>
+</section></section><section id="assessing-calibration-and-sharpness-using-metrics-of-predictive-performance" class="level3" data-number="5.6.3"><h3 data-number="5.6.3" class="anchored" data-anchor-id="assessing-calibration-and-sharpness-using-metrics-of-predictive-performance">
+<span class="header-section-number">5.6.3</span> Assessing calibration and sharpness using metrics of predictive performance</h3>
 <p>Sharpness, the other aspect of predictive performance mentioned above, refers to the concentration or narrowness of the predictive distribution around <span class="math inline">\(y_i\)</span>. A sharp predictive distribution has a narrow spread, indicating that the model is highly confident in its predictions. Importantly, sharpness does not depend on how close predictions are to the true values (i.e., it is independent of accuracy). A model with high sharpness will produce predictions with low variance, but this sharpness is only meaningful if the model is well-calibrated, ensuring that the high confidence aligns with observed values. For example, a geostatistical model for disease prevalence mapping that predicts a very tight range of possible prevalence values for a location is producing sharp predictions. However, if the actual prevalence often falls outside this range, then the predictions may be sharp but poorly calibrated, thus limiting the value of quantifying sharpness alone. It is important to distinguish between sharpness and precision, as they are similar but subtly different concepts. When considering precision, we are interested in the reliability of the indicators of uncertainty generated from the predictive distribution, such as ensuring that the nominal coverage of prediction intervals matches the actual coverage. Sharpness, instead, refers strictly to the spread of the predictive distribution without regard to accuracy. In other words, while precision generally describes the reproducibility of model predictions across multiple outcomes <span class="math inline">\(y_i\)</span>, sharpness purely reflects the model’s spread around its point predictions.</p>
-</section><section id="summary" class="level3" data-number="5.6.4"><h3 data-number="5.6.4" class="anchored" data-anchor-id="summary">
-<span class="header-section-number">5.6.4</span> Summary</h3>
+</section></section><section id="sec-theory-prediction" class="level2" data-number="5.7"><h2 data-number="5.7" class="anchored" data-anchor-id="sec-theory-prediction">
+<span class="header-section-number">5.7</span> Theory</h2>
+<section id="summary" class="level3" data-number="5.7.1"><h3 data-number="5.7.1" class="anchored" data-anchor-id="summary">
+<span class="header-section-number">5.7.1</span> Summary</h3>
 <div id="tbl-summary-pp-diag" class="anchored">
 <table class="table">
 <caption>Table&nbsp;5.2: Summary of the different diagnostic tools and metrics, discussed in this chapter, that are used to assess the predictive performance of a geostatistical model.</caption>
 <colgroup>
-<col style="width: 47%">
+<col style="width: 45%">
 <col style="width: 30%">
-<col style="width: 22%">
+<col style="width: 24%">
 </colgroup>
 <thead><tr class="header">
 <th>Diagnostic/Metric</th>
@@ -1082,12 +1152,10 @@ T = \int_{A} w(x) T(x) \: dx
 </tbody>
 </table>
 </div>
-</section></section><section id="sec-theory-prediction" class="level2" data-number="5.7"><h2 data-number="5.7" class="anchored" data-anchor-id="sec-theory-prediction">
-<span class="header-section-number">5.7</span> Theory</h2>
-<section id="sec-pred-distr-theory" class="level3" data-number="5.7.1"><h3 data-number="5.7.1" class="anchored" data-anchor-id="sec-pred-distr-theory">
-<span class="header-section-number">5.7.1</span> Derivation of the predictive distribution</h3>
-</section><section id="scoring-rules" class="level3" data-number="5.7.2"><h3 data-number="5.7.2" class="anchored" data-anchor-id="scoring-rules">
-<span class="header-section-number">5.7.2</span> Scoring rules</h3>
+</section><section id="sec-pred-distr-theory" class="level3" data-number="5.7.2"><h3 data-number="5.7.2" class="anchored" data-anchor-id="sec-pred-distr-theory">
+<span class="header-section-number">5.7.2</span> Derivation of the predictive distribution</h3>
+</section><section id="scoring-rules" class="level3" data-number="5.7.3"><h3 data-number="5.7.3" class="anchored" data-anchor-id="scoring-rules">
+<span class="header-section-number">5.7.3</span> Scoring rules</h3>
 </section></section><section id="faqs" class="level2" data-number="5.8"><h2 data-number="5.8" class="anchored" data-anchor-id="faqs">
 <span class="header-section-number">5.8</span> FAQs</h2>
 <ul>
@@ -1111,6 +1179,9 @@ T = \int_{A} w(x) T(x) \: dx
 <ol type="1">
 <li><p><em>Parametric bootstrap.</em> Using the model fitted to the Anopheles gambiae mosquitoes in <a href="03_model-fitting.html#sec-anopheles-fit"><span>Section&nbsp;3.3.2</span></a>, simulate 1000 data-sets using the <code>glgpm_sim</code> function and estimate the model to each of the simulated data-set. Use the resulting 1000 estimates to compute 95<span class="math inline">\(\%\)</span> confidence intervals for each of the model parameters and compare this with the confidence intervals obtained from the model summary.</p></li>
 <li><p>Using the code from <a href="#sec-compare-pp"><span>Section&nbsp;5.6</span></a>, redraw the plot of <a href="#fig-anpit">Figure&nbsp;<span>5.10</span></a> by choosing different values for the dispersion parameter of the Negative Binomial distribution. What happens when <span class="math inline">\(\alpha\)</span> is close to 0 and why?</p></li>
+<li><p>Consider the example in <a href="#sec-liberia-anpit"><span>Section&nbsp;5.6.2.1</span></a>. Fit a third model, that extends <span class="math inline">\(M1\)</span> by adding a nugget effect, hence <span class="math display">\[
+M_{2} \: : \: \log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_0 + \beta_{1}e(x_i) + \beta_{2}\max\{e(x_i) - 150, 0\} + S(x_i) + Z_i.
+\]</span> Generate the AnPIT plot for <span class="math inline">\(M_2\)</span> and compare it to those of <span class="math inline">\(M_0\)</span> and <span class="math inline">\(M_1\)</span>. Make sure to apply the function <code>assess_pp</code> to all three models so that the same test sets are used. Is <span class="math inline">\(M_2\)</span> showing a better calibration? Why?</p></li>
 </ol>
 
 
