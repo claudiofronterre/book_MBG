@@ -11,12 +11,12 @@ fig-asp: 0.75
 
 ## List of the main functions used in the chapter {.unnumbered}
 
-| Function           | R Package | Used for                                                                                                              |
+| Function | R Package | Used for |
 |-------------------------|------------------|-----------------------------|
-| `pred_over_grid`   | `RiskMap` | Predicting the different component of the linear predictor over a grid: the covariates effects and the random effects |
-| `pred_target_grid` | `RiskMap` | Predictions of target defined at pixel-level                                                                          |
-| `pred_target_shp`  | `RiskMap` | Predictions of targets defined at areal level                                                                         |
-| `assess_pp`        | `RiskMap` | Assessing the predictive performance of geostatistical models                                                         |
+| `pred_over_grid` | `RiskMap` | Predicting the different component of the linear predictor over a grid: the covariates effects and the random effects |
+| `pred_target_grid` | `RiskMap` | Predictions of target defined at pixel-level |
+| `pred_target_shp` | `RiskMap` | Predictions of targets defined at areal level |
+| `assess_pp` | `RiskMap` | Assessing the predictive performance of geostatistical models |
 
 ## Introduction
 
@@ -151,13 +151,13 @@ In the previous section, we explained and demonstrated how to obtain Monte Carlo
 
 We define our predictive target, $T(x)$, at any given location $x$, as a transformation of $S(x)$. Thus, we express it as $T(x) = f\{S(x)\}$. Note that $f(\cdot)$ can represent any type of non-linear transformation of $S(x)$ and may include covariate effects and other non-structured random effects. A list of common predictive targets frequently used in geostatistical analysis is provided in @tbl-spat-cont-pred-target.
 
-| Predictive target $T(x)$                                                  | Name of the predictive target | Generalized linear model (GLM) family |
+| Predictive target $T(x)$ | Name of the predictive target | Generalized linear model (GLM) family |
 |----------------------------|----------------------|-----------------------|
-| $d(x)^\top \beta + S(x)$                                                  | Linear predictor              | Any GLM                               |
-| $\frac{\exp\{d(x)^\top \beta + S(x)\}}{1+\exp\{d(x)^\top \beta + S(x)\}}$ | Prevalence                    | Binomial                              |
-| $\exp\{d(x)^\top \beta + S(x)\}$                                          | Mean number of cases          | Poisson                               |
-| $S(x)$                                                                    | Spatial random effects        | Any GLM                               |
-| $d(x)^\top \beta$                                                         | Covariates effects            | Any GLM                               |
+| $d(x)^\top \beta + S(x)$ | Linear predictor | Any GLM |
+| $\frac{\exp\{d(x)^\top \beta + S(x)\}}{1+\exp\{d(x)^\top \beta + S(x)\}}$ | Prevalence | Binomial |
+| $\exp\{d(x)^\top \beta + S(x)\}$ | Mean number of cases | Poisson |
+| $S(x)$ | Spatial random effects | Any GLM |
+| $d(x)^\top \beta$ | Covariates effects | Any GLM |
 
 : List of some of the most common spatially continuous predictive targets in a geostatistical analysis. For each target, we also indicate the generalized linear model (GLM) family for which these can be defined. Note that this list not exhaustive and different predictive other than those listed in the table could also be considered. {#tbl-spat-cont-pred-target}
 
@@ -635,7 +635,7 @@ In the code above, we randomly selected 20 locations from the original data-set,
 
 A key challenge in both approaches is the potential lack of independence between the training and test data-sets due to spatial correlation. This can lead to an overly optimistic evaluation of model performance, as the training set may already contain information that is correlated with the test set. However, if we assume that all models benefit equally from this correlation during performance evaluation, the methods we illustrate next can still provide a reliable comparison of model performance in relative terms, even if the considered performance metrics may be somewhat biased.
 
-### Assessing calibration using graphical tools
+### Assessing calibration using graphical diagnostic tools
 
 A model is considered *well-calibrated* if its predictions adequately reflect the true uncertainty of the data. Assessment of a model's calibration can be carried out in several ways. We can examine the agreement between the point predictions, say $\hat{y}\_i$, and the observed outcomes \$y_i \$, commonly referred to as *accuracy*. The mean squared error (MSE), defined as $\text{MSE} = \frac{1}{n} \sum_{i=1}^n (y_i - \hat{y}_i)^2$, is an example of a commonly used metric to evaluate the accuracy of a model. To characterize calibration more fully, it is also essential to quantify the spread of the predictive distributions, which also defines the *precision* of predictions. For example, prediction intervals generated from the predictive distribution for $y_i$ can help assess the precision of a geostatistical model. In summary, a well-calibrated model is both accurate and precise.
 
@@ -819,18 +819,14 @@ To explain further, suppose we have fitted our model using data $Y^{(1)} = \left
 
 #### Example: assessing the calibration of two geostatistical models for riverblindness mapping {#sec-liberia-anpit}
 
-In our example on riverblindness mapping, we now consider two models. 
-A mode, which we call $M_{0}$, which is an intercept only geostatistical model, with linear predictor
-$$
+In our example on riverblindness mapping, we now consider two models. A mode, which we call $M_{0}$, which is an intercept only geostatistical model, with linear predictor $$
 M_{0} \: : \: \log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_0 + S(x_i) ,
-$$
-and a geostatistical model, which we denote as $M_{1}$, which uses a linear spline with a not in 150 meters, and has linear predictor
-$$
+$$ and a geostatistical model, which we denote as $M_{1}$, which uses a linear spline with a not in 150 meters, and has linear predictor $$
 M_{1} \: : \: \log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_0 + \beta_{1}e(x_i) + \beta_{2}\max\{e(x_i) - 150, 0\} + S(x_i).
-$$
-The reason for using this type of linear spline in $M_{1}$ is explained in @sec-expl-assoc. 
+$$ The reason for using this type of linear spline in $M_{1}$ is explained in @sec-expl-assoc.
 
 Hence, we first fit the two models.
+
 ```{r, eval = FALSE}
 # Fitting M0
 set.seed(123)
@@ -850,7 +846,9 @@ glgpm(npos ~  elevation + pmax(elevation - 150, 0) +
       convert_to_crs = 32629,
       family = "binomial", messages = FALSE)
 ```
+
 Since the main goal of this analysis is to draw predictive inference on riverblindness prevalence within Liberia, it would be more appropriate to use a regulirized subsampling scheme to split the data. To generate the AnPIT diagnostic plot in R, we can use the `assess_pp` function in `RiskMap`
+
 ```{r, eval = FALSE}
 
 regularized <- 
@@ -860,18 +858,24 @@ assess_pp(list(M0 = M0_fit, M1 = M1_fit),
           n_size = 9, iter = 10)
 
 ```
-```{r, collapse=TRUE, fig.height=8, width=16}
+
+```{r, collapse=TRUE, fig.height=10, fig.width=14}
 #| label: fig-anpit-reg
 #| fig-cap: "The average nonrandomized probability integral transform (AnPIT) averaged across 10 test sets of size 9 (upper panel) and for each of the 10 tests sets (lower panel). The test sets are generated using a spatially regularized sampling scheme."
 
-p1 <- plot_AnPIT(regularized, combine_panels = TRUE)
-p2 <- plot_AnPIT(regularized, mode = "all")
+p1 <- plot_AnPIT(regularized, combine_panels = TRUE) +
+      theme(plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "lines")) 
 
-grid.arrange(p1, p2, nrow = 2)
+p2 <- plot_AnPIT(regularized, mode = "all") +
+      theme(plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "lines")) 
+
+grid.arrange(p1, p2, nrow = 2, heights = c(1, 1))
 ```
-In the above function, we have used a spatially regularized sampling scheme (`method = "clusterized"`), where the locations are at least 20 kilometers (`min_dist = 20`) apart from each other to create 10 test sets (`iter = 10`) each of size 9 (`n_size = 9`) which corresponds to  10\% of the original data-set. The results reported in @fig-anpit-reg, show both the AnPIT for each of the 10 test sets and the averaged AnPIT across the 10 test sets, for both $M_0$ and $M_1$. The AnPIT plots show curves that are not too far from the identity line, which leads us to conclude that both $M_0$ and $M_1$ can be considered to be approximately well calibrated models. 
+
+In the above function, we have used a spatially regularized sampling scheme (`method = "clusterized"`), where the locations are at least 20 kilometers (`min_dist = 20`) apart from each other to create 10 test sets (`iter = 10`) each of size 9 (`n_size = 9`) which corresponds to 10% of the original data-set. The results reported in @fig-anpit-reg, show both the AnPIT for each of the 10 test sets and the averaged AnPIT across the 10 test sets, for both $M_0$ and $M_1$. The AnPIT plots show curves that are not too far from the identity line, which leads us to conclude that both $M_0$ and $M_1$ can be considered to be approximately well calibrated models.
 
 Let us how if these results would change if we were to split the data using a clustering algorithm approach. We then use the `assess_pp`, to create 10 folds and set `method = "cluster"`.
+
 ```{r, eval = FALSE}
 
 cluster <- 
@@ -880,33 +884,57 @@ assess_pp(list(M0 = M0_fit, M1 = M1_fit),
           method = "cluster", fold = 10)
 
 ```
-```{r, collapse=TRUE, fig.height=8, width=14}
+
+```{r, collapse=TRUE, fig.height=10, fig.width=14}
 #| label: fig-anpit-clus
-#| fig-cap: "The average nonrandomized probability integral transform (AnPIT) averaged across 10 test sets of size 9 (upper panel) and for each of the 10 tests sets (lower panel). The test sets are generated using a clustering algorithm based on the locations of the data."
+#| fig-cap: "The average nonrandomized probability integral transform (AnPIT) averaged across 10 test sets of size 9 (upper panel) and for each of the 10 test sets (lower panel). The test sets are generated using a clustering algorithm based on the locations of the data."
 
-p1 <- plot_AnPIT(cluster, combine_panels = TRUE)
-p2 <- plot_AnPIT(cluster, mode = "all")
+p1 <- plot_AnPIT(cluster, combine_panels = TRUE) +
+      theme(plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "lines")) # Tighter margins
 
-grid.arrange(p1, p2, nrow = 2)
+p2 <- plot_AnPIT(cluster, mode = "all") +
+      theme(plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "lines")) # Tighter margins
+
+grid.arrange(p1, p2, nrow = 2, heights = c(1, 1)) # Equal heights
 ```
-The AnPIT from @fig-anpit-clus show very similar results to those of @fig-anpit-reg, hence similar conclusions are drawn. 
 
+The AnPIT from @fig-anpit-clus show very similar results to those of @fig-anpit-reg, hence similar conclusions are drawn.
 
 ### Assessing calibration and sharpness using metrics of predictive performance
 
-Sharpness, the other aspect of predictive performance mentioned above, refers to the concentration or narrowness of the predictive distribution around $y_i$. A sharp predictive distribution has a narrow spread, indicating that the model is highly confident in its predictions. Importantly, sharpness does not depend on how close predictions are to the true values (i.e., it is independent of accuracy). A model with high sharpness will produce predictions with low variance, but this sharpness is only meaningful if the model is well-calibrated, ensuring that the high confidence aligns with observed values. For example, a geostatistical model for disease prevalence mapping that predicts a very tight range of possible prevalence values for a location is producing sharp predictions. However, if the actual prevalence often falls outside this range, then the predictions may be sharp but poorly calibrated, thus limiting the value of quantifying sharpness alone. It is important to distinguish between sharpness and precision, as they are similar but subtly different concepts. When considering precision, we are interested in the reliability of the indicators of uncertainty generated from the predictive distribution, such as ensuring that the nominal coverage of prediction intervals matches the actual coverage. Sharpness, instead, refers strictly to the spread of the predictive distribution without regard to accuracy. In other words, while precision generally describes the reproducibility of model predictions across multiple outcomes $y_i$, sharpness purely reflects the model's spread around its point predictions.
+We now consider another important aspect that helps to describe the predictive performance of a geostatistical model, namely sharpness. As the name suggests, sharpness refers to the concentration or narrowness of the predictive distribution around the observation $y_i$ which we aim to predict. A sharp predictive distribution has a narrow spread, indicating that the model is highly confident in its predictions. Importantly, sharpness does not depend on how close predictions are to the true values (i.e., it is independent of accuracy). A model with high sharpness will produce predictions with low variance, but this sharpness is only meaningful if the model is well-calibrated, ensuring that the high confidence aligns with observed values. For example, a geostatistical model for disease prevalence mapping that predicts a very tight range of possible prevalence values for a location is producing sharp predictions. However, if the actual prevalence often falls outside this range, then the predictions may be sharp but poorly calibrated, thus limiting the value of quantifying sharpness alone.
+
+To assess predictive performance while considering both sharpness and calibration, we introduce the *continuous ranked probability score (CRPS)* [@gneiting2007] and its scaled variant, the *scaled CRPS (SCRPS)* [@bolin2023]. The CRPS evaluates the agreement between the predicted cumulative distribution function of the model $M$, which we denote as in the previous section as $F_M$, and the observed value $y_i$. The CRPS is formally defined as
+$$
+\text{CRPS}(F_M, y_i) = \int_{-\infty}^\infty \left[ F_M(y) - \mathbf{1}(y \geq y_i) \right]^2 dy,
+$$
+The CRPS balances sharpness and calibration, penalizing deviations of the predictive distribution from the observation, with smaller CRPS value indicating better predictive performance.
+
+The *scaled CRPS (SCRPS)*, proposed by @bolin2023, refines this further by addressing the issue of scale dependence, which  in observations with varying uncertainty. This is formally defined as
+$$
+\text{SCRPS}(F, y_i) = -\frac{1}{2} \left[ 1 + \frac{\text{CRPS}(F_M, y_i)}{\text{CRPS}(F_M, F_M)} + \log\left\{2 \text{CRPS}(F_M, F_M)\right\} \right],
+$$
+
+where $\text{CRPS}(F_M, F_M)$ is the expectation of $\text{CRPS}(F_M, Y)$ when $Y$ follows the distribution $F_M$. 
+
+The expressions for the CRPS and SCRPS may initially appear complex, but their appropriate application and interpretation lie in understanding their differences and the contexts in which each is more suitable. These differences become more intuitive when considering the more familiar concept of the standard error. The standard error of a predictive distribution represents its uncertainty, but it is not inherently standardized. In many cases, there exists a mean-variance relationship, where the variance increases with the mean. For instance, in Poisson-distributed data, higher mean values correspond to larger variances. This lack of standardization means that directly comparing predictive uncertainties across different scales can be misleading. Similarly, the CRPS is sensitive to the scale of the predictive distribution, as it penalizes errors in absolute terms, often giving disproportionate weight to observations with larger predictive uncertainty.
+
+The SCRPS addresses this issue by standardizing predictive errors relative to the expected spread of the predictive distribution, ensuring *local scale invariance*. This means that the penalty for an incorrect prediction is adjusted proportionally to the scale of the predictive distribution. As a result, the SCRPS enables meaningful comparisons across observations with varying levels of uncertainty. To draw an analogy, the SCRPS standardizes the CRPS in much the same way that the coefficient of variation (CV) standardizes the standard error. By dividing the standard error by the mean of the predictive distribution, the CV expresses variability relative to the mean. This property is particularly valuable in geostatistical applications, where uncertainty often varies spatially due to factors such as non-stationarity of the predictive distribution or irregularly spaced observations.
+
+However, while the SCRPS is more robust in settings where variability differs significantly across observations, there are contexts where the CRPS may be preferred. Specifically, in cases where greater emphasis should be placed on accurately predicting observations with larger uncertainty, the CRPS is more appropriate because it assigns greater weight to predictions with higher variance. For example, as highlighted in @bolin2023, when forecasting rare but impactful events (e.g., extreme weather conditions), the larger uncertainties associated with these events may naturally demand greater attention. In such scenarios, the CRPS’s sensitivity to scale can be an advantage, as it prioritizes minimizing errors for these high-variance predictions.
+
 
 ## Theory {#sec-theory-prediction}
 
 ### Summary
 
-| Diagnostic/Metric                          | Performance characteristic | Descritpion |
-|---------------------------------|----------------------|------------------|
-| Probability integral transform (PIT)       | Calibration                |             |
-| Nonrandomized PIT                          | Calibration                |             |
-| Mean square error                          | Calibration                |             |
-| Continuous ranked probability score (CRPS) | Calibration and sharpness  |             |
-| Scaled CRPS                                | Calibration and sharpness  |             |
+| Diagnostic/Metric | Performance characteristic | Descritpion |
+|--------------------------------|----------------------|------------------|
+| Probability integral transform (PIT) | Calibration |  |
+| Nonrandomized PIT | Calibration |  |
+| Mean square error | Calibration |  |
+| Continuous ranked probability score (CRPS) | Calibration and sharpness |  |
+| Scaled CRPS | Calibration and sharpness |  |
 
 : Summary of the different diagnostic tools and metrics, discussed in this chapter, that are used to assess the predictive performance of a geostatistical model. {#tbl-summary-pp-diag}
 
@@ -942,9 +970,6 @@ Sharpness, the other aspect of predictive performance mentioned above, refers to
 
 2.  Using the code from @sec-compare-pp, redraw the plot of @fig-anpit by choosing different values for the dispersion parameter of the Negative Binomial distribution. What happens when $\alpha$ is close to 0 and why?
 
-3. Consider the example in @sec-liberia-anpit. Fit a third model, that extends $M1$ by adding a nugget effect, hence
-$$
-M_{2} \: : \: \log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_0 + \beta_{1}e(x_i) + \beta_{2}\max\{e(x_i) - 150, 0\} + S(x_i) + Z_i.
-$$
-Generate the AnPIT plot for $M_2$ and compare it to those of $M_0$ and $M_1$. Make sure to apply the function `assess_pp` to all three models so that the same test sets are used. Is $M_2$ showing a better calibration? Why?
-
+3.  Consider the example in @sec-liberia-anpit. Fit a third model, that extends $M1$ by adding a nugget effect, hence $$
+    M_{2} \: : \: \log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_0 + \beta_{1}e(x_i) + \beta_{2}\max\{e(x_i) - 150, 0\} + S(x_i) + Z_i.
+    $$ Generate the AnPIT plot for $M_2$ and compare it to those of $M_0$ and $M_1$. Make sure to apply the function `assess_pp` to all three models so that the same test sets are used. Is $M_2$ showing a better calibration? Why?
