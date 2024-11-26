@@ -85,7 +85,9 @@ load("./data/lb_pred_S_j.RData")
 liberia_grid <- lb_pred_S_j$grid_pred
 load("./data/an_fit.RData")
 load("./data/regularized.RData")
+regularized_scores <- regularized
 load("./data/cluster.RData")
+cluster_scores <- cluster
 load("./data/pred_shp.RData")
 load("data/pred_shp_w.RData")
 ```
@@ -635,7 +637,7 @@ In the code above, we randomly selected 20 locations from the original data-set,
 
 A key challenge in both approaches is the potential lack of independence between the training and test data-sets due to spatial correlation. This can lead to an overly optimistic evaluation of model performance, as the training set may already contain information that is correlated with the test set. However, if we assume that all models benefit equally from this correlation during performance evaluation, the methods we illustrate next can still provide a reliable comparison of model performance in relative terms, even if the considered performance metrics may be somewhat biased.
 
-### Assessing calibration using graphical diagnostic tools
+### Assessing calibration using the nonrandomized probability integral transform
 
 A model is considered *well-calibrated* if its predictions adequately reflect the true uncertainty of the data. Assessment of a model's calibration can be carried out in several ways. We can examine the agreement between the point predictions, say $\hat{y}\_i$, and the observed outcomes \$y_i \$, commonly referred to as *accuracy*. The mean squared error (MSE), defined as $\text{MSE} = \frac{1}{n} \sum_{i=1}^n (y_i - \hat{y}_i)^2$, is an example of a commonly used metric to evaluate the accuracy of a model. To characterize calibration more fully, it is also essential to quantify the spread of the predictive distributions, which also defines the *precision* of predictions. For example, prediction intervals generated from the predictive distribution for $y_i$ can help assess the precision of a geostatistical model. In summary, a well-calibrated model is both accurate and precise.
 
@@ -900,7 +902,7 @@ grid.arrange(p1, p2, nrow = 2, heights = c(1, 1)) # Equal heights
 
 The AnPIT from @fig-anpit-clus show very similar results to those of @fig-anpit-reg, hence similar conclusions are drawn.
 
-### Assessing calibration and sharpness using metrics of predictive performance
+### Assessing calibration and sharpness using continuous ranked probability scores
 
 We now consider another important aspect that helps to describe the predictive performance of a geostatistical model, namely sharpness. As the name suggests, sharpness refers to the concentration or narrowness of the predictive distribution around the observation $y_i$ which we aim to predict. A sharp predictive distribution has a narrow spread, indicating that the model is highly confident in its predictions. Importantly, sharpness does not depend on how close predictions are to the true values (i.e., it is independent of accuracy). A model with high sharpness will produce predictions with low variance, but this sharpness is only meaningful if the model is well-calibrated, ensuring that the high confidence aligns with observed values. For example, a geostatistical model for disease prevalence mapping that predicts a very tight range of possible prevalence values for a location is producing sharp predictions. However, if the actual prevalence often falls outside this range, then the predictions may be sharp but poorly calibrated, thus limiting the value of quantifying sharpness alone.
 
@@ -924,6 +926,62 @@ The SCRPS addresses this issue by standardizing predictive errors relative to th
 However, while the SCRPS is more robust in settings where variability differs significantly across observations, there are contexts where the CRPS may be preferred. Specifically, in cases where greater emphasis should be placed on accurately predicting observations with larger uncertainty, the CRPS is more appropriate because it assigns greater weight to predictions with higher variance. For example, as highlighted in @bolin2023, when forecasting rare but impactful events (e.g., extreme weather conditions), the larger uncertainties associated with these events may naturally demand greater attention. In such scenarios, the CRPS’s sensitivity to scale can be an advantage, as it prioritizes minimizing errors for these high-variance predictions.
 
 
+#### Example: mapping riverblindness in Liberia (continuing from @sec-liberia-anpit)
+
+```{r, eval=FALSE}
+regularized_scores <- 
+assess_pp(list(M0 = M0_fit, M1 = M1_fit),
+          which_metric = c("CRSP", "SCRPS"), 
+          method = "regularized", min_dist = 20,
+          n_size = 9, iter = 10)
+
+cluster_scores <- 
+assess_pp(list(M0 = M0_fit, M1 = M1_fit),
+          which_metric = c("CRSP", "SCRPS"), 
+          method = "cluster", fold = 10)
+
+
+```
+
+```{r, collapse=TRUE}
+summary(regularized_scores, view_all = FALSE)
+
+summary(cluster_scores, view_all = FALSE)
+
+```
+
+
+```{r, collapse=TRUE, fig.height=12, fig.width=12}
+#| label: fig-scores-map
+#| fig-cap: "Point maps of the scores for model $M_{0}$ and $M_{1}$ across the test sets generated using a clusering approach for splitting the data. The upper panels are the map for the continuous ranked probability score (CRPS) and the lower panels for the scale CRPS (SCRPS). "
+
+# Define ranges for the color scales
+
+crps_range <- range(c(unlist(cluster_scores$model$M0$score$CRPS),
+                      unlist(cluster_scores$model$M1$score$CRPS)))  
+scrps_range <- range(c(unlist(cluster_scores$model$M0$score$SCRPS),
+                      unlist(cluster_scores$model$M1$score$SCRPS))) 
+
+# Generate the plots with consistent color scales
+p1 <- plot_score(cluster_scores, 
+                 which_score = "CRPS", which_model = "M0") +  
+      scale_color_viridis_c(option = "C", 
+      limits = crps_range, direction = 1) 
+p2 <- plot_score(cluster_scores, 
+                 which_score = "CRPS", which_model = "M1") +       
+      scale_color_viridis_c(option = "C", 
+      limits = crps_range, direction = 1) 
+p3 <- plot_score(cluster_scores, 
+                 which_score = "SCRPS", which_model = "M0") +  
+      scale_color_viridis_c(option = "C", 
+      limits = scrps_range, direction = 1) 
+p4 <- plot_score(cluster_scores, 
+                 which_score = "SCRPS", which_model = "M1") +
+      scale_color_viridis_c(option = "C", 
+      limits = scrps_range, direction = 1) 
+grid.arrange(p1, p2, p3, p4, nrow = 2, ncol = 2)
+
+```
 ## Theory {#sec-theory-prediction}
 
 ### Summary
