@@ -523,46 +523,6 @@ pred_n_mosq_shp$target$reg1$n_mosq
 
 Since we are not standardizing the weights, there is no need to specify `standardize_weights`, as it is set to `FALSE` by default. In the code above, we printed the mean of the predictive distribution of $T$ along with the 95% prediction interval. The point estimate of approximately 17,719 mosquitoes is likely an underestimate of the total number of Anopheles gambiae in the area, as the trap used to count the mosquitoes may not capture all of them, particularly those outside the immediate trapping zone or those active at different times.
 
-## Simulation-based assessment of predictive performance
-
-### How to simulate from a geostatistical model
-
-Before we discuss more in detail how to perform a simulation study, it is important to understand how data can be simulated from a geostatistical model.
-
-The way we have formulated geostatistical models in @sec-geostat-models provides a hint as to what step should be followed when simulating from a geostatistical model. Using the same notation of @sec-geostat-models, these are the steps.
-
-1.  For a given set of predefined locations $X$ compute the covariance matrix $\Sigma$ with $(i,j)-$th entry $\sigma^2 \rho(u_{ij})$.
-
-2.  Compute the covariates effects $d(x)^\top$ for all the locations in $X$.
-
-3.  Simulate $B$-time from a multivariate Gaussian distribution with mean vector 0 and covariance $\Sigma$ as previously defined. We denote the output form this step as $S_{(j)}(x)$, for $j=1,\ldots,B$.
-
-4.  Compute the linear predictor at each locations of $X$, by adding the covariates effects in 3 to the simulated random effects in 4, hence $g\{\mu_{(j)}(x)\} = d(x)^\top + S_{(j)}(x)$.
-
-Note that before performing the steps above, the values of the model parameters must be fixed. For example, if simulating from a model fitted to the data, the values of the model parameters should be the maximum likelihood estimates. At this point, if the goal is to simulate actual observations for the outcome $Y$ at the locations $X$. Then we need to add the following two steps. 5A. If the nugget term is included in the model then, draw samples $Z_{(j)}$ for each location in $X$ from a Gaussian distribution with mean 0 and variance $\tau^2$. Finally add the simulated values $Z_{(j)}$ to $g\{\mu_{(j)}(x)\}$. 6A. Compute $\mu_{(j)}(x)$ by applying the inverse link function $g^{-1}(\cdot)$ to the samples of the linear predictor previously computed. 7A. Simulate from the distribution of $Y$ given $\mu_{(j)}(x)$, according the chosen model, for $j=1,\ldots,B$.
-
-These steps, from 1 to 7A, have been implemented in the `glgpm_sim` function. For example, using the fitted Binomial geostatistical model from the example on riverblindness in Liberia, we simulate a single data-set as follows
-
-```{r, eval = FALSE}
-liberia_sim <- glgpm_sim(n_sim = 1, model_fit = fit_liberia)
-```
-
-The output `liberia_sim` is a list with as many components as indicated by `n_sim`. In this this case, we can access the simulated data-set as `liberia_sim[[1]]`. For example, we could refit the same model to the simulated data as
-
-```{r, eval = FALSE}
-fit_liberia_sim <- 
-glgpm(formula = npos ~ log(elevation) + gp(long, lat, nugget = NULL), 
-    data = liberia_sim[[1]], family = "binomial", den = ntest, 
-    crs = 32629)
-```
-
-Note that if the data's CRS has been converted, the simulated dataset will inherit the new CRS rather than the original. This means that any transformation applied to the CRS before simulation (e.g., from geographic to projected coordinates) will affect the spatial scale and interpretation of the simulated data.
-
-In other cases, as in @sec-sim-assessment, the locations $X$ correspond to a regular grid and the steps that we want to carry out on completion of step 4 above depend on the objective of the simulation. We explain this more in detail in the next section.
-
-### Setting up and carrying out a simulation study
-
-### Assessessment of threshold-based classification of spatial units using geostatistical models {#sec-sim-assessment}
 
 ## Assessing the predictive performance of geostatistical models with cross-validation {#sec-compare-pp}
 
@@ -637,7 +597,7 @@ In the code above, we randomly selected 20 locations from the original data-set,
 
 A key challenge in both approaches is the potential lack of independence between the training and test data-sets due to spatial correlation. This can lead to an overly optimistic evaluation of model performance, as the training set may already contain information that is correlated with the test set. However, if we assume that all models benefit equally from this correlation during performance evaluation, the methods we illustrate next can still provide a reliable comparison of model performance in relative terms, even if the considered performance metrics may be somewhat biased.
 
-### Assessing calibration using the nonrandomized probability integral transform
+### Assessing calibration using the nonrandomized probability integral transform {#sec-anpit}
 
 A model is considered *well-calibrated* if its predictions adequately reflect the true uncertainty of the data. Assessment of a model's calibration can be carried out in several ways. We can examine the agreement between the point predictions, say $\hat{y}\_i$, and the observed outcomes \$y_i \$, commonly referred to as *accuracy*. The mean squared error (MSE), defined as $\text{MSE} = \frac{1}{n} \sum_{i=1}^n (y_i - \hat{y}_i)^2$, is an example of a commonly used metric to evaluate the accuracy of a model. To characterize calibration more fully, it is also essential to quantify the spread of the predictive distributions, which also defines the *precision* of predictions. For example, prediction intervals generated from the predictive distribution for $y_i$ can help assess the precision of a geostatistical model. In summary, a well-calibrated model is both accurate and precise.
 
@@ -925,9 +885,19 @@ The SCRPS addresses this issue by standardizing predictive errors relative to th
 
 However, while the SCRPS is more robust in settings where variability differs significantly across observations, there are contexts where the CRPS may be preferred. Specifically, in cases where greater emphasis should be placed on accurately predicting observations with larger uncertainty, the CRPS is more appropriate because it assigns greater weight to predictions with higher variance. For example, as highlighted in @bolin2023, when forecasting rare but impactful events (e.g., extreme weather conditions), the larger uncertainties associated with these events may naturally demand greater attention. In such scenarios, the CRPS’s sensitivity to scale can be an advantage, as it prioritizes minimizing errors for these high-variance predictions.
 
+When evaluating the predictive performance of a model $M$, we proceed as follows. Let $\left(x_{1}^{(i)}, \ldots, x_{m_i}^{(i)}\right)$ represent the set of locations in the $i$-th test set, for $i=1, \ldots, T$. For each location, we compute the score—either CRPS or SCRPS—and denote it as $r_{M}\left(x_{j}^{(i)}\right)$.
+
+To assess the overall performance of model $M$, we calculate a weighted average of the scores across all test sets, where the weights are proportional to the sample size of each test set. The final score assigned to model $M$ is given by:
+$$
+\frac{1}{\sum_{i=1}^T m_i} \sum_{i=1}^{T} \sum_{j=1}^{m_i} r_{M}\left(x_{j}^{(i)}\right). $$ {#eq-average-score} 
+
+Models assumed to be well-calibrated and achieving a lower score based on the above expression are considered to provide sharper predictions and, consequently, better predictive performance.
 
 #### Example: mapping riverblindness in Liberia (continuing from @sec-liberia-anpit)
 
+In @sec-liberia-anpit, we have assessed the calibration of models $M_0$ and $M_0$ and found these to be reasonably well calibrated models. We now compare the predictive performance of the two, using both the CRPS and SCRPS metrics introduced previously. 
+
+The `assess_pp` function also allows the user to compute the CRPS and SCRPS through the argument `which_metric` as shown below. 
 ```{r, eval=FALSE}
 regularized_scores <- 
 assess_pp(list(M0 = M0_fit, M1 = M1_fit),
@@ -942,6 +912,9 @@ assess_pp(list(M0 = M0_fit, M1 = M1_fit),
 
 
 ```
+Note that that `assess_pp` can be run once in order to obtain both the AnPIT diagnostic, introduced in @sec-anpit; by default `which_metric = c("AnPIT", "CRSP", "SCRPS")` which computes all three diagnostic using the same test sets. The reason we have separated the AnPIT and the scores computations is only for pedagogical purposes. 
+
+By doing a `summary` of the output in `regularized_scores` and `cluster_scores`, we obtain the average score across all test sets as defined in @eq-average-score. 
 
 ```{r, collapse=TRUE}
 summary(regularized_scores, view_all = FALSE)
@@ -949,7 +922,8 @@ summary(regularized_scores, view_all = FALSE)
 summary(cluster_scores, view_all = FALSE)
 
 ```
-
+In the code above, we have set `view_all = FALSE` to display only the overall average. If `view_all = TRUE`, the scores are instead reported for each test set, in addition to the overall average. 
+The results from the `summary` suggest that the two models have a similar predictive performance in terms of both CRPS and SCRPS, regardless of the sampling scheme used to create the test sets. To examine this further we can plot a point map of the CRPS and SCRPS using the locations of the test sets. 
 
 ```{r, collapse=TRUE, fig.height=12, fig.width=12}
 #| label: fig-scores-map
@@ -982,9 +956,53 @@ p4 <- plot_score(cluster_scores,
 grid.arrange(p1, p2, p3, p4, nrow = 2, ncol = 2)
 
 ```
+In the code above, we evaluated the cross-validation results generated using a clustering algorithm to split the original data-set. The map reveals that the scores across most locations are generally similar, with only three locations near the coast of Liberia showing slightly lower CRPS and SCRPS values for $M_1$. This suggests a consistent predictive performance across the dataset, with some localized variations.
+
+
+## Simulation-based assessment of predictive performance
+
+### How to simulate from a geostatistical model
+
+Before we discuss more in detail how to perform a simulation study, it is important to understand how data can be simulated from a geostatistical model.
+
+The way we have formulated geostatistical models in @sec-geostat-models provides a hint as to what step should be followed when simulating from a geostatistical model. Using the same notation of @sec-geostat-models, these are the steps.
+
+1.  For a given set of predefined locations $X$ compute the covariance matrix $\Sigma$ with $(i,j)-$th entry $\sigma^2 \rho(u_{ij})$.
+
+2.  Compute the covariates effects $d(x)^\top$ for all the locations in $X$.
+
+3.  Simulate $B$-time from a multivariate Gaussian distribution with mean vector 0 and covariance $\Sigma$ as previously defined. We denote the output form this step as $S_{(j)}(x)$, for $j=1,\ldots,B$.
+
+4.  Compute the linear predictor at each locations of $X$, by adding the covariates effects in 3 to the simulated random effects in 4, hence $g\{\mu_{(j)}(x)\} = d(x)^\top + S_{(j)}(x)$.
+
+Note that before performing the steps above, the values of the model parameters must be fixed. For example, if simulating from a model fitted to the data, the values of the model parameters should be the maximum likelihood estimates. At this point, if the goal is to simulate actual observations for the outcome $Y$ at the locations $X$. Then we need to add the following two steps. 5A. If the nugget term is included in the model then, draw samples $Z_{(j)}$ for each location in $X$ from a Gaussian distribution with mean 0 and variance $\tau^2$. Finally add the simulated values $Z_{(j)}$ to $g\{\mu_{(j)}(x)\}$. 6A. Compute $\mu_{(j)}(x)$ by applying the inverse link function $g^{-1}(\cdot)$ to the samples of the linear predictor previously computed. 7A. Simulate from the distribution of $Y$ given $\mu_{(j)}(x)$, according the chosen model, for $j=1,\ldots,B$.
+
+These steps, from 1 to 7A, have been implemented in the `glgpm_sim` function. For example, using the fitted Binomial geostatistical model from the example on riverblindness in Liberia, we simulate a single data-set as follows
+
+```{r, eval = FALSE}
+liberia_sim <- glgpm_sim(n_sim = 1, model_fit = fit_liberia)
+```
+
+The output `liberia_sim` is a list with as many components as indicated by `n_sim`. In this this case, we can access the simulated data-set as `liberia_sim[[1]]`. For example, we could refit the same model to the simulated data as
+
+```{r, eval = FALSE}
+fit_liberia_sim <- 
+glgpm(formula = npos ~ log(elevation) + gp(long, lat, nugget = NULL), 
+    data = liberia_sim[[1]], family = "binomial", den = ntest, 
+    crs = 32629)
+```
+
+Note that if the data's CRS has been converted, the simulated dataset will inherit the new CRS rather than the original. This means that any transformation applied to the CRS before simulation (e.g., from geographic to projected coordinates) will affect the spatial scale and interpretation of the simulated data.
+
+In other cases, as in @sec-sim-assessment, the locations $X$ correspond to a regular grid and the steps that we want to carry out on completion of step 4 above depend on the objective of the simulation. We explain this more in detail in the next section.
+
+### Setting up and carrying out a simulation study
+
+### Assessessment of threshold-based classification of spatial units using geostatistical models {#sec-sim-assessment}
+
 ## Theory {#sec-theory-prediction}
 
-### Summary
+## Summary
 
 | Diagnostic/Metric | Performance characteristic | Descritpion |
 |--------------------------------|----------------------|------------------|
