@@ -1049,3 +1049,14 @@ In other cases, as in @sec-sim-assessment, the locations $X$ correspond to a reg
 3.  Consider the example in @sec-liberia-anpit. Fit a third model, that extends $M1$ by adding a nugget effect, hence $$
     M_{2} \: : \: \log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_0 + \beta_{1}e(x_i) + \beta_{2}\max\{e(x_i) - 150, 0\} + S(x_i) + Z_i.
     $$ Generate the AnPIT plot for $M_2$ and compare it to those of $M_0$ and $M_1$. Make sure to apply the function `assess_pp` to all three models so that the same test sets are used. Is $M_2$ showing a better calibration? Why?
+    
+4. In the analysis of the *Anopheles gambiae* moqsuitoes data, consider two models. One that uses elavation, with linear predictor
+$$
+M_1\: : \: \log\{\lambda(x_i)\} = \beta_0 + \beta_1 e(x_i) + S(x_i)
+$$
+where $e(x)$ is the elevation in meters at location $x$ and $S(x_i)$ is a stationary and isotropic Gaussian process with variance $\sigma^2$ and exponential correlation function $\rho(u) = \exp\{-u/\phi\}, \phi>0$.
+Consider also an intercept only model
+$$
+M_0\: : \: \log\{\lambda(x_i)\} = \beta_0 +  S(x_i).
+$$
+After fitting both models to the data, assess if they are well calibrated models using the average nonrandomized probability integral transform (AnPIT). Assuming both models are well-calibrated, compare the predictive performance using continuous ranked probability score (CRPS) and the scaled CRPS. In doing this, use different sampling schemes to split the data, as illustrated in @sec-split-data, and assess if and how the adopted approach to split the data affects the results.
