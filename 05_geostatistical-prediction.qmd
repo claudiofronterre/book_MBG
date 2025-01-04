@@ -17,6 +17,7 @@ fig-asp: 0.75
 | `pred_target_grid` | `RiskMap` | Predictions of target defined at pixel-level |
 | `pred_target_shp` | `RiskMap` | Predictions of targets defined at areal level |
 | `assess_pp` | `RiskMap` | Assessing the predictive performance of geostatistical models |
+| `surf_sim` | `RiskMap` | Simulating surfaces and data from geostatistical models |
 
 ## Introduction
 
@@ -524,7 +525,6 @@ pred_n_mosq_shp$target$reg1$n_mosq
 
 Since we are not standardizing the weights, there is no need to specify `standardize_weights`, as it is set to `FALSE` by default. In the code above, we printed the mean of the predictive distribution of $T$ along with the 95% prediction interval. The point estimate of approximately 17,719 mosquitoes is likely an underestimate of the total number of Anopheles gambiae in the area, as the trap used to count the mosquitoes may not capture all of them, particularly those outside the immediate trapping zone or those active at different times.
 
-
 ## Assessing the predictive performance of geostatistical models with cross-validation {#sec-compare-pp}
 
 In this section, we address the problem of identifying the geostatistical model that offers the best predictive performance among a set of candidates. However, we first need a clear definition of predictive performance which can be used to select suitable statistical tools that can be to used to evaluate it. Broadly speaking, predictive performance is defined by how well a model's predictive distribution aligns with observed data. Evaluating predictive performance requires examining two key characteristics of the predictive distribution: *sharpness* and *calibration*.
@@ -867,18 +867,15 @@ The AnPIT from @fig-anpit-clus show very similar results to those of @fig-anpit-
 
 We now consider another important aspect that helps to describe the predictive performance of a geostatistical model, namely sharpness. As the name suggests, sharpness refers to the concentration or narrowness of the predictive distribution around the observation $y_i$ which we aim to predict. A sharp predictive distribution has a narrow spread, indicating that the model is highly confident in its predictions. Importantly, sharpness does not depend on how close predictions are to the true values (i.e., it is independent of accuracy). A model with high sharpness will produce predictions with low variance, but this sharpness is only meaningful if the model is well-calibrated, ensuring that the high confidence aligns with observed values. For example, a geostatistical model for disease prevalence mapping that predicts a very tight range of possible prevalence values for a location is producing sharp predictions. However, if the actual prevalence often falls outside this range, then the predictions may be sharp but poorly calibrated, thus limiting the value of quantifying sharpness alone.
 
-To assess predictive performance while considering both sharpness and calibration, we introduce the *continuous ranked probability score (CRPS)* [@gneiting2007] and its scaled variant, the *scaled CRPS (SCRPS)* [@bolin2023]. The CRPS evaluates the agreement between the predicted cumulative distribution function of the model $M$, which we denote as in the previous section as $F_M$, and the observed value $y_i$. The CRPS is formally defined as
-$$
+To assess predictive performance while considering both sharpness and calibration, we introduce the *continuous ranked probability score (CRPS)* [@gneiting2007] and its scaled variant, the *scaled CRPS (SCRPS)* [@bolin2023]. The CRPS evaluates the agreement between the predicted cumulative distribution function of the model $M$, which we denote as in the previous section as $F_M$, and the observed value $y_i$. The CRPS is formally defined as $$
 \text{CRPS}(F_M, y_i) = \int_{-\infty}^\infty \left[ F_M(y) - \mathbf{1}(y \geq y_i) \right]^2 dy,
-$$
-The CRPS balances sharpness and calibration, penalizing deviations of the predictive distribution from the observation, with smaller CRPS value indicating better predictive performance.
+$$ The CRPS balances sharpness and calibration, penalizing deviations of the predictive distribution from the observation, with smaller CRPS value indicating better predictive performance.
 
-The *scaled CRPS (SCRPS)*, proposed by @bolin2023, refines this further by addressing the issue of scale dependence, which  in observations with varying uncertainty. This is formally defined as
-$$
+The *scaled CRPS (SCRPS)*, proposed by @bolin2023, refines this further by addressing the issue of scale dependence, which in observations with varying uncertainty. This is formally defined as $$
 \text{SCRPS}(F, y_i) = -\frac{1}{2} \left[ 1 + \frac{\text{CRPS}(F_M, y_i)}{\text{CRPS}(F_M, F_M)} + \log\left\{2 \text{CRPS}(F_M, F_M)\right\} \right],
 $$
 
-where $\text{CRPS}(F_M, F_M)$ is the expectation of $\text{CRPS}(F_M, Y)$ when $Y$ follows the distribution $F_M$. 
+where $\text{CRPS}(F_M, F_M)$ is the expectation of $\text{CRPS}(F_M, Y)$ when $Y$ follows the distribution $F_M$.
 
 The expressions for the CRPS and SCRPS may initially appear complex, but their appropriate application and interpretation lie in understanding their differences and the contexts in which each is more suitable. These differences become more intuitive when considering the more familiar concept of the standard error. The standard error of a predictive distribution represents its uncertainty, but it is not inherently standardized. In many cases, there exists a mean-variance relationship, where the variance increases with the mean. For instance, in Poisson-distributed data, higher mean values correspond to larger variances. This lack of standardization means that directly comparing predictive uncertainties across different scales can be misleading. Similarly, the CRPS is sensitive to the scale of the predictive distribution, as it penalizes errors in absolute terms, often giving disproportionate weight to observations with larger predictive uncertainty.
 
@@ -888,17 +885,17 @@ However, while the SCRPS is more robust in settings where variability differs si
 
 When evaluating the predictive performance of a model $M$, we proceed as follows. Let $\left(x_{1}^{(i)}, \ldots, x_{m_i}^{(i)}\right)$ represent the set of locations in the $i$-th test set, for $i=1, \ldots, T$. For each location, we compute the score—either CRPS or SCRPS—and denote it as $r_{M}\left(x_{j}^{(i)}\right)$.
 
-To assess the overall performance of model $M$, we calculate a weighted average of the scores across all test sets, where the weights are proportional to the sample size of each test set. The final score assigned to model $M$ is given by:
-$$
-\frac{1}{\sum_{i=1}^T m_i} \sum_{i=1}^{T} \sum_{j=1}^{m_i} r_{M}\left(x_{j}^{(i)}\right). $$ {#eq-average-score} 
+To assess the overall performance of model $M$, we calculate a weighted average of the scores across all test sets, where the weights are proportional to the sample size of each test set. The final score assigned to model $M$ is given by: $$
+\frac{1}{\sum_{i=1}^T m_i} \sum_{i=1}^{T} \sum_{j=1}^{m_i} r_{M}\left(x_{j}^{(i)}\right). $$ {#eq-average-score}
 
 Models assumed to be well-calibrated and achieving a lower score based on the above expression are considered to provide sharper predictions and, consequently, better predictive performance.
 
 #### Example: mapping riverblindness in Liberia (continuing from @sec-liberia-anpit)
 
-In @sec-liberia-anpit, we have assessed the calibration of models $M_0$ and $M_0$ and found these to be reasonably well calibrated models. We now compare the predictive performance of the two, using both the CRPS and SCRPS metrics introduced previously. 
+In @sec-liberia-anpit, we have assessed the calibration of models $M_0$ and $M_0$ and found these to be reasonably well calibrated models. We now compare the predictive performance of the two, using both the CRPS and SCRPS metrics introduced previously.
 
-The `assess_pp` function also allows the user to compute the CRPS and SCRPS through the argument `which_metric` as shown below. 
+The `assess_pp` function also allows the user to compute the CRPS and SCRPS through the argument `which_metric` as shown below.
+
 ```{r, eval=FALSE}
 regularized_scores <- 
 assess_pp(list(M0 = M0_fit, M1 = M1_fit),
@@ -913,9 +910,10 @@ assess_pp(list(M0 = M0_fit, M1 = M1_fit),
 
 
 ```
-Note that that `assess_pp` can be run once in order to obtain both the AnPIT diagnostic, introduced in @sec-anpit; by default `which_metric = c("AnPIT", "CRSP", "SCRPS")` which computes all three diagnostic using the same test sets. The reason we have separated the AnPIT and the scores computations is only for pedagogical purposes. 
 
-By doing a `summary` of the output in `regularized_scores` and `cluster_scores`, we obtain the average score across all test sets as defined in @eq-average-score. 
+Note that that `assess_pp` can be run once in order to obtain both the AnPIT diagnostic, introduced in @sec-anpit; by default `which_metric = c("AnPIT", "CRSP", "SCRPS")` which computes all three diagnostic using the same test sets. The reason we have separated the AnPIT and the scores computations is only for pedagogical purposes.
+
+By doing a `summary` of the output in `regularized_scores` and `cluster_scores`, we obtain the average score across all test sets as defined in @eq-average-score.
 
 ```{r, collapse=TRUE}
 summary(regularized_scores, view_all = FALSE)
@@ -923,8 +921,8 @@ summary(regularized_scores, view_all = FALSE)
 summary(cluster_scores, view_all = FALSE)
 
 ```
-In the code above, we have set `view_all = FALSE` to display only the overall average. If `view_all = TRUE`, the scores are instead reported for each test set, in addition to the overall average. 
-The results from the `summary` suggest that the two models have a similar predictive performance in terms of both CRPS and SCRPS, regardless of the sampling scheme used to create the test sets. To examine this further we can plot a point map of the CRPS and SCRPS using the locations of the test sets. 
+
+In the code above, we have set `view_all = FALSE` to display only the overall average. If `view_all = TRUE`, the scores are instead reported for each test set, in addition to the overall average. The results from the `summary` suggest that the two models have a similar predictive performance in terms of both CRPS and SCRPS, regardless of the sampling scheme used to create the test sets. To examine this further we can plot a point map of the CRPS and SCRPS using the locations of the test sets.
 
 ```{r, collapse=TRUE, fig.height=12, fig.width=12}
 #| label: fig-scores-map
@@ -957,8 +955,8 @@ p4 <- plot_score(cluster_scores,
 grid.arrange(p1, p2, p3, p4, nrow = 2, ncol = 2)
 
 ```
-In the code above, we evaluated the cross-validation results generated using a clustering algorithm to split the original data-set. The map reveals that the scores across most locations are generally similar, with only three locations near the coast of Liberia showing slightly lower CRPS and SCRPS values for $M_1$. This suggests a consistent predictive performance across the dataset, with some localized variations.
 
+In the code above, we evaluated the cross-validation results generated using a clustering algorithm to split the original data-set. The map reveals that the scores across most locations are generally similar, with only three locations near the coast of Liberia showing slightly lower CRPS and SCRPS values for $M_1$. This suggests a consistent predictive performance across the dataset, with some localized variations.
 
 ## Simulation-based assessment of predictive performance
 
@@ -966,11 +964,11 @@ In @sec-compare-pp, we illustrated how to evaluate predictive performance in rel
 
 ### Step 1: Define the aim of the simulation study
 
-As previously stated, one of the main reasons for carrying out a simulation study is the ability to generate spatial surfaces, which are typically unobservable in the real world. The purpose of the simulation is generally to evaluate how well a given geostatistical model can recover that surface and/or draw inferences on some of its properties. 
+As previously stated, one of the main reasons for carrying out a simulation study is the ability to generate spatial surfaces, which are typically unobservable in the real world. The purpose of the simulation is generally to evaluate how well a given geostatistical model can recover that surface and/or draw inferences on some of its properties.
 
 To fully understand the how to carry out a simulation study, it is essential to define its two main components: the *true model* and the *candidate models* (which can indeed include multiple options).
 
-The **true model** represents the underlying stochastic process that generates the data. In a simulation study, the true model is assumed to be known because it is explicitly specified by us. It serves as the benchmark against which other models are assessed. 
+The **true model** represents the underlying stochastic process that generates the data. In a simulation study, the true model is assumed to be known because it is explicitly specified by us. It serves as the benchmark against which other models are assessed.
 
 The **candidate models** are the geostatistical models that are tested or evaluated during the simulation study. These models are proposed alternatives to approximate or recover the true spatial surface or its properties. Candidate models may differ in terms of their assumptions and model complexity.
 
@@ -978,16 +976,14 @@ It is important to highlight that the true model not only serves as a benchmark 
 
 Consider an extreme example where the true model is a spatial Gaussian process $S(x)$ with a scale parameter of $\phi = 1$. If only a very small fraction of sampled locations are at distances below 1, estimating $\phi$ accurately becomes highly challenging, especially with a small sample size. In particular the sparsity of close pairs reduces the information available to estimate the spatial dependence structure, making the estimation of $\phi$ imprecise or even unreliable. In this case, a candidate model that does not attempt to explicitly estimate the spatial dependence (e.g., a model that relies solely on spatial covariates to interpolate the surface) might perform better in recovering the spatial structure. This example suggests that a simpler or alternative model can sometimes outperform the true model under specific sampling and data constraints.
 
-At this point, a natural question arises: how should we choose the true model for a simulation study? The answer depends on the specific objectives of the study and what we aim to demonstrate. We now provide an example to demonstrate this point. 
+At this point, a natural question arises: how should we choose the true model for a simulation study? The answer depends on the specific objectives of the study and what we aim to demonstrate. We now provide an example to demonstrate this point.
 
 #### Example
-In our analysis of the riverblindness data-set, we might be interested in assessing the usefulness of elevation as a spatial predictor. To this end, we can use a simulation study where we compare the performance of models that make use of elevation against models that do not use it for prediction of disease prevalence. 
 
-In this case, we can consider the following true model (henceforth $M_T$) for the simulation
-$$M_{T}: \:
+In our analysis of the river blindness dataset, we now aim to evaluate the effectiveness of using elevation as a spatial predictor. To achieve this, we conduct a simulation study to compare the performance of two geostatistical models: one that incorporates elevation as a predictor and another that excludes it. This example will be revisited throughout the steps outlined in this section on simulation. We can chose the following true model (henceforth $M_T$) for the simulation $$M_{T}: \:
 \log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_{0} + \beta_{1}e(x_i) + \beta_{2}\max\{e(x_i)-150, 0\} + S(x_i).
-$$ {#eq-true-model-lib}
-Hence, the true model expressed by the equation above assumes a non-linear relationship with elevation based on a linear spline that has a single change point in 150 meters, which we have previously considered in our analysis. In order to simulation from the the true model, which is the next step of the simulation study, we first need to define the values of the model parameters. A reasonable choice is to set the values to the maximum likelihood estimates obtained by fitting the binomial geostatistical model in @eq-true-model-lib. These can be obtained as shown below. 
+$$ {#eq-true-model-lib} The true model, described by the equation above, assumes a nonlinear relationship with elevation based on a linear spline with a single knot at 150 meters. To simulate data from the true model, which constitutes the next step in our simulation study, we must first define the model parameter values. A reasonable approach is to use the maximum likelihood estimates obtained by fitting the binomial geostatistical model specified in @eq-true-model-lib. These estimates can be derived as shown below.
+
 ```{r, eval=FALSE}
 set.seed(123)
 true_model <- glgpm(npos ~ elevation + pmax(elevation - 150, 0) + 
@@ -998,30 +994,86 @@ true_model <- glgpm(npos ~ elevation + pmax(elevation - 150, 0) +
                     family = "binomial",
                     data = liberia)
 ```
+
 ```{r}
 # The parameters of the true model
 coef(true_model)
 ```
-A natural candidate model to address the usefulness of using elevation as a covariate a an intercept only model (henceforth $M_C$), i.e.
-$$M_{C}: \:
+
+A natural candidate model to evaluate the usefulness of elevation as a covariate is an intercept-only model (referred to here as $M_C$). This model is defined as: $$M_{C}: \:
 \log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_{0} + S(x_i).
-$$ {#eq-true-model-lib}
-This model does not make use of any covariates and can be usually selected as a candidate model whenever the goal is to assess the usefulness of covariates for spatial prediction. 
+$$ where no covariates are included. This approach makes $M_C$ a suitable baseline model, commonly selected when the objective is to assess the contribution of covariates to spatial prediction.
 
 ### Step 2: Simulate the spatial surface and the data from the true model
 
+In @sec-bootstrap, we have shown how to simulate from a geostatistical model, when the goal is simulate data at the observed locations. When we want to simulate a spatial surface, a similar approach can be used. First of all, we need to generate a regular grid, say $\tilde{X}$, covering the study region of interest, say $A$. Based on the notation used so far, we use $X$ to denote the set of observed locations which are used to simulate the outcome data $Y$. Finally, we use $X_{+} = (X, \tilde{X})$ to denote the full set of locations both on the grid and at the data points. We can then proceed through the following steps to simultaneously simulate values of the surface of interest over $\tilde{X}$ and $X$.
+
+1.  Compute the covariance matrix $\Sigma_{+}$ using the combined set of locations $X_{+}$.
+
+2.  If covariates are used, compute the covariates effects $d(x)^\top \beta$ for all the locations in $X_{+}$.
+
+3.  Simulate $B$-times from a multivariate Gaussian distribution with mean vector 0 and covariance $\Sigma_{+}$ as previously defined. We denote the output form this step as $S_{(j)}(\tilde{x})$, for simulations generate on $\tilde{X}$, and with $S_{(j)}(x)$ for simulations on $X$, respectively, for $j=1,\ldots,B$.
+
+4.  Compute the linear predictor at each locations of $X_{+}$, by adding the covariates effects in 3 to the simulated random effects in 4, hence $g\{\mu_{(j)}(\tilde{x})\} = d(\tilde{x})^\top + S_{(j)}(\tilde{x})$ for $\tilde{X}$, and $g\{\mu_{(j)}(x)\} = d(x)^\top + S_{(j)}(x)$ for $X$.
+
+5.  Only for $X$, perform the steps 5A to 7A as explained in @sec-bootstrap, to simulate the data $Y$.
+
+The function `surf_sim` in `RiskMap` can be used to carry out all these steps automatically as shown next.
+
 #### Example
+
+Following the steps previously outlined, we first create a grid within the boundaries of Liberia and extract the values of elevation on the grid from a raster. 
+```{r, eval=FALSE}
+library(rgeoboundaries)
+shp <- geoboundaries(country = "liberia", adm_lvl = "adm0")
+shp <- st_transform(shp, crs= 32629)
+
+pred_grid <- create_grid(shp, spat_res = 5)
+pred_grid <- st_as_sf(pred_grid)
+liberia_elev <- get_elev_raster(locations = shp,
+                                z = 5, clip = "locations")
+
+pred_grid$elevation <- terra::extract(liberia_elev, st_coordinates(pred_grid))
+```
+The function `surf_sim` also requires a sampling functions that generates the locations $X$ from which data $Y$ are simulated. In this example, we shall consider a sampling function that simply returns the locations of the original data.
+```{r, eval=FALSE}
+sampling_f_lib <- function() {
+  coords_sf <- st_as_sf(liberia[,c("ntest", "long", "lat")],
+                        coords = c("long", "lat"), crs = 4326)
+  coords_sf <- st_transform(coords_sf, 32629)
+  coords_sf$units_m <- coords_sf$ntest
+  return(coords_sf)
+}
+```
+The output of the sampling function must be an `sf` object that must contain the number of tested people and its corresponding column must be named `units_m`. Also, the returned `sf` object must have a projection that correspond to the one used when fitting the model.
+
+We are now ready to run the `surf_sim` function. 
+```{r, eval = FALSE}
+lib_surf_sim <- surf_sim(n_sim = 200,
+                         pred_grid = pred_grid,
+                         formula = ~ elevation + pmax(elevation - 150,0) +
+                                     gp(kappa=0.5),
+                         sampling_f = sampling_f_lib,
+                         family = "binomial",
+                         par0 = coef(true_model))
+```
+In the above function, we have simulated $B = 200$ simulations from the true model as specified in `formula`. The argument `par0` is used to pass the values of the parameters of the true model.
+
+We can now inspect the individual simulated surfaces using the `plot_sim_surf` function, as demonstrated below, which produces @fig-surf-sim. This step is useful verifying that the simulations are consistent with expectations and free from any warning signs or anomalies.
+```{r, eval = FALSE}
+plot_sim_surf(lib_surf_sim, sim = 1)
+```
+![Simulated surface for the linear predictor, with locations of the simulated data noted by solid black points.](./figures/sim_surf1.jpeg){#fig-surf-sim fig-align="center"}
+
 
 
 ### Step 3: Fit the candidate models to the simulated data and predict the target
 
 #### Example
 
-
-### Step 4: Summarize the results using a pre-defined objective function  
+### Step 4: Summarize the results using a pre-defined objective function
 
 #### Example
-
 
 ### Assessessment of threshold-based classification of spatial units using geostatistical models {#sec-sim-assessment}
 
@@ -1074,20 +1126,13 @@ This model does not make use of any covariates and can be usually selected as a 
 3.  Consider the example in @sec-liberia-anpit. Fit a third model, that extends $M1$ by adding a nugget effect, hence $$
     M_{2} \: : \: \log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_0 + \beta_{1}e(x_i) + \beta_{2}\max\{e(x_i) - 150, 0\} + S(x_i) + Z_i.
     $$ Generate the AnPIT plot for $M_2$ and compare it to those of $M_0$ and $M_1$. Make sure to apply the function `assess_pp` to all three models so that the same test sets are used. Is $M_2$ showing a better calibration? Why?
-    
-4. In the analysis of the *Anopheles gambiae* moqsuitoes data, consider two models. One that uses elavation, with linear predictor
-$$
-M_1\: : \: \log\{\lambda(x_i)\} = \beta_0 + \beta_1 e(x_i) + S(x_i)
-$$
-where $e(x)$ is the elevation in meters at location $x$ and $S(x_i)$ is a stationary and isotropic Gaussian process with variance $\sigma^2$ and exponential correlation function $\rho(u) = \exp\{-u/\phi\}, \phi>0$.
-Consider also an intercept only model
-$$
-M_0\: : \: \log\{\lambda(x_i)\} = \beta_0 +  S(x_i).
-$$
-After fitting both models to the data, assess if they are well calibrated models using the average nonrandomized probability integral transform (AnPIT). Assuming both models are well-calibrated, compare the predictive performance using continuous ranked probability score (CRPS) and the scaled CRPS. In doing this, use different sampling schemes to split the data, as illustrated in @sec-split-data, and assess if and how the adopted approach to split the data affects the results.
 
-5. Consider the Liberia data-set on riverblindess. Carry out a simulation study where the objective is to assess the impact of mispecifying non-linear relationships between elevation and prevalence. Consider @eq-true-model-lib as the true model and a model that specifies the relationship as linear on the logit scale as the candidate model, hence
-$$M_{C}: \:
-\log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_{0} + \beta_{1}e(x_i) + S(x_i).
-$$ 
-Carry out 200 iterations in the simulation and define a suitable metric of predictive performance to compare the two models. Provide a clear answer on the impact of assuming a linear relationship with elevation when this is not valid.
+4.  In the analysis of the *Anopheles gambiae* moqsuitoes data, consider two models. One that uses elavation, with linear predictor $$
+    M_1\: : \: \log\{\lambda(x_i)\} = \beta_0 + \beta_1 e(x_i) + S(x_i)
+    $$ where $e(x)$ is the elevation in meters at location $x$ and $S(x_i)$ is a stationary and isotropic Gaussian process with variance $\sigma^2$ and exponential correlation function $\rho(u) = \exp\{-u/\phi\}, \phi>0$. Consider also an intercept only model $$
+    M_0\: : \: \log\{\lambda(x_i)\} = \beta_0 +  S(x_i).
+    $$ After fitting both models to the data, assess if they are well calibrated models using the average nonrandomized probability integral transform (AnPIT). Assuming both models are well-calibrated, compare the predictive performance using continuous ranked probability score (CRPS) and the scaled CRPS. In doing this, use different sampling schemes to split the data, as illustrated in @sec-split-data, and assess if and how the adopted approach to split the data affects the results.
+
+5.  Consider the Liberia data-set on riverblindess. Carry out a simulation study where the objective is to assess the impact of mispecifying non-linear relationships between elevation and prevalence. Consider @eq-true-model-lib as the true model and a model that specifies the relationship as linear on the logit scale as the candidate model, hence $$M_{C}: \:
+    \log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_{0} + \beta_{1}e(x_i) + S(x_i).
+    $$ Carry out 200 iterations in the simulation and define a suitable metric of predictive performance to compare the two models. Provide a clear answer on the impact of assuming a linear relationship with elevation when this is not valid.

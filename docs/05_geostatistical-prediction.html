@@ -343,6 +343,11 @@ window.Quarto = {
 <td><code>RiskMap</code></td>
 <td>Assessing the predictive performance of geostatistical models</td>
 </tr>
+<tr class="odd">
+<td><code>surf_sim</code></td>
+<td><code>RiskMap</code></td>
+<td>Simulating surfaces and data from geostatistical models</td>
+</tr>
 </tbody>
 </table></section><section id="introduction" class="level2" data-number="5.1"><h2 data-number="5.1" class="anchored" data-anchor-id="introduction">
 <span class="header-section-number">5.1</span> Introduction</h2>
@@ -811,15 +816,15 @@ Figure&nbsp;5.5: Maps of the predicted averae number of mosqutoes (left panel). 
 <span></span>
 <span><span class="va">pred_n_mosq_shp</span><span class="op">$</span><span class="va">target</span><span class="op">$</span><span class="va">reg1</span><span class="op">$</span><span class="va">n_mosq</span></span>
 <span><span class="co">## $mean</span></span>
-<span><span class="co">## [1] 17759.97</span></span>
+<span><span class="co">## [1] 17682.18</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $q025</span></span>
 <span><span class="co">##     2.5% </span></span>
-<span><span class="co">## 15302.75 </span></span>
+<span><span class="co">## 15110.75 </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $q075</span></span>
 <span><span class="co">##    97.5% </span></span>
-<span><span class="co">## 20840.39</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span><span class="co">## 20724.38</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Since we are not standardizing the weights, there is no need to specify <code>standardize_weights</code>, as it is set to <code>FALSE</code> by default. In the code above, we printed the mean of the predictive distribution of <span class="math inline">\(T\)</span> along with the 95% prediction interval. The point estimate of approximately 17,719 mosquitoes is likely an underestimate of the total number of Anopheles gambiae in the area, as the trap used to count the mosquitoes may not capture all of them, particularly those outside the immediate trapping zone or those active at different times.</p>
 </section></section><section id="sec-compare-pp" class="level2" data-number="5.5"><h2 data-number="5.5" class="anchored" data-anchor-id="sec-compare-pp">
@@ -1282,10 +1287,9 @@ Figure&nbsp;5.13: Point maps of the scores for model <span class="math inline">\
 <p>At this point, a natural question arises: how should we choose the true model for a simulation study? The answer depends on the specific objectives of the study and what we aim to demonstrate. We now provide an example to demonstrate this point.</p>
 <section id="example" class="level4" data-number="5.6.1.1"><h4 data-number="5.6.1.1" class="anchored" data-anchor-id="example">
 <span class="header-section-number">5.6.1.1</span> Example</h4>
-<p>In our analysis of the riverblindness data-set, we might be interested in assessing the usefulness of elevation as a spatial predictor. To this end, we can use a simulation study where we compare the performance of models that make use of elevation against models that do not use it for prediction of disease prevalence.</p>
-<p>In this case, we can consider the following true model (henceforth <span class="math inline">\(M_T\)</span>) for the simulation <span id="eq-true-model-lib"><span class="math display">\[M_{T}: \:
+<p>In our analysis of the river blindness dataset, we now aim to evaluate the effectiveness of using elevation as a spatial predictor. To achieve this, we conduct a simulation study to compare the performance of two geostatistical models: one that incorporates elevation as a predictor and another that excludes it. This example will be revisited throughout the steps outlined in this section on simulation. We can chose the following true model (henceforth <span class="math inline">\(M_T\)</span>) for the simulation <span id="eq-true-model-lib"><span class="math display">\[M_{T}: \:
 \log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_{0} + \beta_{1}e(x_i) + \beta_{2}\max\{e(x_i)-150, 0\} + S(x_i).
-\tag{5.7}\]</span></span> Hence, the true model expressed by the equation above assumes a non-linear relationship with elevation based on a linear spline that has a single change point in 150 meters, which we have previously considered in our analysis. In order to simulation from the the true model, which is the next step of the simulation study, we first need to define the values of the model parameters. A reasonable choice is to set the values to the maximum likelihood estimates obtained by fitting the binomial geostatistical model in <a href="#eq-true-model-lib" class="quarto-xref">Equation&nbsp;<span>5.8</span></a>. These can be obtained as shown below.</p>
+\tag{5.7}\]</span></span> The true model, described by the equation above, assumes a nonlinear relationship with elevation based on a linear spline with a single knot at 150 meters. To simulate data from the true model, which constitutes the next step in our simulation study, we must first define the model parameter values. A reasonable approach is to use the maximum likelihood estimates obtained by fitting the binomial geostatistical model specified in <a href="#eq-true-model-lib" class="quarto-xref">Equation&nbsp;<span>5.7</span></a>. These estimates can be derived as shown below.</p>
 <div class="cell">
 <div class="sourceCode" id="cb34" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
 <span><span class="va">true_model</span> <span class="op">&lt;-</span> <span class="fu">glgpm</span><span class="op">(</span><span class="va">npos</span> <span class="op">~</span> <span class="va">elevation</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">pmax</a></span><span class="op">(</span><span class="va">elevation</span> <span class="op">-</span> <span class="fl">150</span>, <span class="fl">0</span><span class="op">)</span> <span class="op">+</span> </span>
@@ -1311,13 +1315,69 @@ $phi
 [1] 41.02334</code></pre>
 </div>
 </div>
-<p>A natural candidate model to address the usefulness of using elevation as a covariate a an intercept only model (henceforth <span class="math inline">\(M_C\)</span>), i.e. <span id="eq-true-model-lib"><span class="math display">\[M_{C}: \:
+<p>A natural candidate model to evaluate the usefulness of elevation as a covariate is an intercept-only model (referred to here as <span class="math inline">\(M_C\)</span>). This model is defined as: <span class="math display">\[M_{C}: \:
 \log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_{0} + S(x_i).
-\tag{5.8}\]</span></span> This model does not make use of any covariates and can be usually selected as a candidate model whenever the goal is to assess the usefulness of covariates for spatial prediction.</p>
+\]</span> where no covariates are included. This approach makes <span class="math inline">\(M_C\)</span> a suitable baseline model, commonly selected when the objective is to assess the contribution of covariates to spatial prediction.</p>
 </section></section><section id="step-2-simulate-the-spatial-surface-and-the-data-from-the-true-model" class="level3" data-number="5.6.2"><h3 data-number="5.6.2" class="anchored" data-anchor-id="step-2-simulate-the-spatial-surface-and-the-data-from-the-true-model">
 <span class="header-section-number">5.6.2</span> Step 2: Simulate the spatial surface and the data from the true model</h3>
+<p>In <a href="03_model-fitting.html#sec-bootstrap" class="quarto-xref"><span>Section 3.3.3</span></a>, we have shown how to simulate from a geostatistical model, when the goal is simulate data at the observed locations. When we want to simulate a spatial surface, a similar approach can be used. First of all, we need to generate a regular grid, say <span class="math inline">\(\tilde{X}\)</span>, covering the study region of interest, say <span class="math inline">\(A\)</span>. Based on the notation used so far, we use <span class="math inline">\(X\)</span> to denote the set of observed locations which are used to simulate the outcome data <span class="math inline">\(Y\)</span>. Finally, we use <span class="math inline">\(X_{+} = (X, \tilde{X})\)</span> to denote the full set of locations both on the grid and at the data points. We can then proceed through the following steps to simultaneously simulate values of the surface of interest over <span class="math inline">\(\tilde{X}\)</span> and <span class="math inline">\(X\)</span>.</p>
+<ol type="1">
+<li><p>Compute the covariance matrix <span class="math inline">\(\Sigma_{+}\)</span> using the combined set of locations <span class="math inline">\(X_{+}\)</span>.</p></li>
+<li><p>If covariates are used, compute the covariates effects <span class="math inline">\(d(x)^\top \beta\)</span> for all the locations in <span class="math inline">\(X_{+}\)</span>.</p></li>
+<li><p>Simulate <span class="math inline">\(B\)</span>-times from a multivariate Gaussian distribution with mean vector 0 and covariance <span class="math inline">\(\Sigma_{+}\)</span> as previously defined. We denote the output form this step as <span class="math inline">\(S_{(j)}(\tilde{x})\)</span>, for simulations generate on <span class="math inline">\(\tilde{X}\)</span>, and with <span class="math inline">\(S_{(j)}(x)\)</span> for simulations on <span class="math inline">\(X\)</span>, respectively, for <span class="math inline">\(j=1,\ldots,B\)</span>.</p></li>
+<li><p>Compute the linear predictor at each locations of <span class="math inline">\(X_{+}\)</span>, by adding the covariates effects in 3 to the simulated random effects in 4, hence <span class="math inline">\(g\{\mu_{(j)}(\tilde{x})\} = d(\tilde{x})^\top + S_{(j)}(\tilde{x})\)</span> for <span class="math inline">\(\tilde{X}\)</span>, and <span class="math inline">\(g\{\mu_{(j)}(x)\} = d(x)^\top + S_{(j)}(x)\)</span> for <span class="math inline">\(X\)</span>.</p></li>
+<li><p>Only for <span class="math inline">\(X\)</span>, perform the steps 5A to 7A as explained in <a href="03_model-fitting.html#sec-bootstrap" class="quarto-xref"><span>Section 3.3.3</span></a>, to simulate the data <span class="math inline">\(Y\)</span>.</p></li>
+</ol>
+<p>The function <code>surf_sim</code> in <code>RiskMap</code> can be used to carry out all these steps automatically as shown next.</p>
 <section id="example-1" class="level4" data-number="5.6.2.1"><h4 data-number="5.6.2.1" class="anchored" data-anchor-id="example-1">
 <span class="header-section-number">5.6.2.1</span> Example</h4>
+<p>Following the steps previously outlined, we first create a grid within the boundaries of Liberia and extract the values of elevation on the grid from a raster.</p>
+<div class="cell">
+<div class="sourceCode" id="cb37" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/wmgeolab/rgeoboundaries">rgeoboundaries</a></span><span class="op">)</span></span>
+<span><span class="va">shp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/rgeoboundaries/man/geoboundaries.html">geoboundaries</a></span><span class="op">(</span>country <span class="op">=</span> <span class="st">"liberia"</span>, adm_lvl <span class="op">=</span> <span class="st">"adm0"</span><span class="op">)</span></span>
+<span><span class="va">shp</span> <span class="op">&lt;-</span> <span class="fu">st_transform</span><span class="op">(</span><span class="va">shp</span>, crs<span class="op">=</span> <span class="fl">32629</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">pred_grid</span> <span class="op">&lt;-</span> <span class="fu">create_grid</span><span class="op">(</span><span class="va">shp</span>, spat_res <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
+<span><span class="va">pred_grid</span> <span class="op">&lt;-</span> <span class="fu">st_as_sf</span><span class="op">(</span><span class="va">pred_grid</span><span class="op">)</span></span>
+<span><span class="va">liberia_elev</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/elevatr/man/get_elev_raster.html">get_elev_raster</a></span><span class="op">(</span>locations <span class="op">=</span> <span class="va">shp</span>,</span>
+<span>                                z <span class="op">=</span> <span class="fl">5</span>, clip <span class="op">=</span> <span class="st">"locations"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">pred_grid</span><span class="op">$</span><span class="va">elevation</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/extract.html">extract</a></span><span class="op">(</span><span class="va">liberia_elev</span>, <span class="fu">st_coordinates</span><span class="op">(</span><span class="va">pred_grid</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The function <code>surf_sim</code> also requires a sampling functions that generates the locations <span class="math inline">\(X\)</span> from which data <span class="math inline">\(Y\)</span> are simulated. In this example, we shall consider a sampling function that simply returns the locations of the original data.</p>
+<div class="cell">
+<div class="sourceCode" id="cb38" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">sampling_f_lib</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">coords_sf</span> <span class="op">&lt;-</span> <span class="fu">st_as_sf</span><span class="op">(</span><span class="va">liberia</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"ntest"</span>, <span class="st">"long"</span>, <span class="st">"lat"</span><span class="op">)</span><span class="op">]</span>,</span>
+<span>                        coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"long"</span>, <span class="st">"lat"</span><span class="op">)</span>, crs <span class="op">=</span> <span class="fl">4326</span><span class="op">)</span></span>
+<span>  <span class="va">coords_sf</span> <span class="op">&lt;-</span> <span class="fu">st_transform</span><span class="op">(</span><span class="va">coords_sf</span>, <span class="fl">32629</span><span class="op">)</span></span>
+<span>  <span class="va">coords_sf</span><span class="op">$</span><span class="va">units_m</span> <span class="op">&lt;-</span> <span class="va">coords_sf</span><span class="op">$</span><span class="va">ntest</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="va">coords_sf</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The output of the sampling function must be an <code>sf</code> object that must contain the number of tested people and its corresponding column must be named <code>units_m</code>. Also, the returned <code>sf</code> object must have a projection that correspond to the one used when fitting the model.</p>
+<p>We are now ready to run the <code>surf_sim</code> function.</p>
+<div class="cell">
+<div class="sourceCode" id="cb39" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">lib_surf_sim</span> <span class="op">&lt;-</span> <span class="fu">surf_sim</span><span class="op">(</span>n_sim <span class="op">=</span> <span class="fl">200</span>,</span>
+<span>                         pred_grid <span class="op">=</span> <span class="va">pred_grid</span>,</span>
+<span>                         formula <span class="op">=</span> <span class="op">~</span> <span class="va">elevation</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">pmax</a></span><span class="op">(</span><span class="va">elevation</span> <span class="op">-</span> <span class="fl">150</span>,<span class="fl">0</span><span class="op">)</span> <span class="op">+</span></span>
+<span>                                     <span class="fu">gp</span><span class="op">(</span>kappa<span class="op">=</span><span class="fl">0.5</span><span class="op">)</span>,</span>
+<span>                         sampling_f <span class="op">=</span> <span class="va">sampling_f_lib</span>,</span>
+<span>                         family <span class="op">=</span> <span class="st">"binomial"</span>,</span>
+<span>                         par0 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/coef.html">coef</a></span><span class="op">(</span><span class="va">true_model</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>In the above function, we have simulated <span class="math inline">\(B = 200\)</span> simulations from the true model as specified in <code>formula</code>. The argument <code>par0</code> is used to pass the values of the parameters of the true model.</p>
+<p>We can now inspect the individual simulated surfaces using the <code>plot_sim_surf</code> function, as demonstrated below, which produces <a href="#fig-surf-sim" class="quarto-xref">Figure&nbsp;<span>5.14</span></a>. This step is useful verifying that the simulations are consistent with expectations and free from any warning signs or anomalies.</p>
+<div class="cell">
+<div class="sourceCode" id="cb40" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">plot_sim_surf</span><span class="op">(</span><span class="va">lib_surf_sim</span>, sim <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="fig-surf-sim" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-surf-sim-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="./figures/sim_surf1.jpeg" class="img-fluid quarto-figure quarto-figure-center figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-surf-sim-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.14: Simulated surface for the linear predictor, with locations of the simulated data noted by solid black points.
+</figcaption></figure>
+</div>
 </section></section><section id="step-3-fit-the-candidate-models-to-the-simulated-data-and-predict-the-target" class="level3" data-number="5.6.3"><h3 data-number="5.6.3" class="anchored" data-anchor-id="step-3-fit-the-candidate-models-to-the-simulated-data-and-predict-the-target">
 <span class="header-section-number">5.6.3</span> Step 3: Fit the candidate models to the simulated data and predict the target</h3>
 <section id="example-2" class="level4" data-number="5.6.3.1"><h4 data-number="5.6.3.1" class="anchored" data-anchor-id="example-2">
@@ -1413,9 +1473,9 @@ M_1\: : \: \log\{\lambda(x_i)\} = \beta_0 + \beta_1 e(x_i) + S(x_i)
 \]</span> where <span class="math inline">\(e(x)\)</span> is the elevation in meters at location <span class="math inline">\(x\)</span> and <span class="math inline">\(S(x_i)\)</span> is a stationary and isotropic Gaussian process with variance <span class="math inline">\(\sigma^2\)</span> and exponential correlation function <span class="math inline">\(\rho(u) = \exp\{-u/\phi\}, \phi&gt;0\)</span>. Consider also an intercept only model <span class="math display">\[
 M_0\: : \: \log\{\lambda(x_i)\} = \beta_0 +  S(x_i).
 \]</span> After fitting both models to the data, assess if they are well calibrated models using the average nonrandomized probability integral transform (AnPIT). Assuming both models are well-calibrated, compare the predictive performance using continuous ranked probability score (CRPS) and the scaled CRPS. In doing this, use different sampling schemes to split the data, as illustrated in <a href="#sec-split-data" class="quarto-xref"><span>Section 5.5.1</span></a>, and assess if and how the adopted approach to split the data affects the results.</p></li>
-<li><p>Consider the Liberia data-set on riverblindess. Carry out a simulation study where the objective is to assess the impact of mispecifying non-linear relationships between elevation and prevalence. Consider <a href="#eq-true-model-lib" class="quarto-xref">Equation&nbsp;<span>5.8</span></a> as the true model and a model that specifies the relationship as linear on the logit scale as the candidate model, hence <span class="math display">\[M_{C}: \:
+<li><p>Consider the Liberia data-set on riverblindess. Carry out a simulation study where the objective is to assess the impact of mispecifying non-linear relationships between elevation and prevalence. Consider <a href="#eq-true-model-lib" class="quarto-xref">Equation&nbsp;<span>5.7</span></a> as the true model and a model that specifies the relationship as linear on the logit scale as the candidate model, hence <span class="math display">\[M_{C}: \:
 \log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_{0} + \beta_{1}e(x_i) + S(x_i).
-\]</span> Carry out 200 iterations in the simulation and define a suitable metric of predictive performance to compare the two models. Provide a clear answer and recommendation on whether assuming a linear relationship with elevation does or does not matter when this assumption is not valid.</p></li>
+\]</span> Carry out 200 iterations in the simulation and define a suitable metric of predictive performance to compare the two models. Provide a clear answer on the impact of assuming a linear relationship with elevation when this is not valid.</p></li>
 </ol>
 
 
