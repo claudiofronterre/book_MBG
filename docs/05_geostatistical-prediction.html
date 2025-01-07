@@ -250,14 +250,14 @@ window.Quarto = {
   </ul>
 </li>
   <li>
-<a href="#spatially-continuous-targets" id="toc-spatially-continuous-targets" class="nav-link" data-scroll-target="#spatially-continuous-targets"><span class="header-section-number">5.3</span> Spatially continuous targets</a>
+<a href="#sec-spat-cont-target" id="toc-sec-spat-cont-target" class="nav-link" data-scroll-target="#sec-spat-cont-target"><span class="header-section-number">5.3</span> Spatially continuous targets</a>
   <ul class="collapse">
 <li><a href="#sec-liberia-prediction-1" id="toc-sec-liberia-prediction-1" class="nav-link" data-scroll-target="#sec-liberia-prediction-1"><span class="header-section-number">5.3.1</span> Example: mapping riverblidness prevalence in Liberia (continuing from <span>Section 5.2.1</span>)</a></li>
   <li><a href="#sec-non-spar-covariates" id="toc-sec-non-spar-covariates" class="nav-link" data-scroll-target="#sec-non-spar-covariates"><span class="header-section-number">5.3.2</span> Example: mapping malaria using age and elevation as predictors</a></li>
   </ul>
 </li>
   <li>
-<a href="#areal-level-targets" id="toc-areal-level-targets" class="nav-link" data-scroll-target="#areal-level-targets"><span class="header-section-number">5.4</span> Areal-level targets</a>
+<a href="#sec-areal-target" id="toc-sec-areal-target" class="nav-link" data-scroll-target="#sec-areal-target"><span class="header-section-number">5.4</span> Areal-level targets</a>
   <ul class="collapse">
 <li><a href="#sec-liberia-prediction-2" id="toc-sec-liberia-prediction-2" class="nav-link" data-scroll-target="#sec-liberia-prediction-2"><span class="header-section-number">5.4.1</span> Example: predicting the average riverblindness prevalence at admin level 1 in Liberia (continuing from <span>Section 5.3.1</span>)</a></li>
   <li><a href="#sec-anopheles-pred" id="toc-sec-anopheles-pred" class="nav-link" data-scroll-target="#sec-anopheles-pred"><span class="header-section-number">5.4.2</span> Example: predicting the total number of Anopheles gambiae mosquitoes (continuing from <span>Section 3.3.2</span>)</a></li>
@@ -274,9 +274,9 @@ window.Quarto = {
   <li>
 <a href="#simulation-based-assessment-of-predictive-performance" id="toc-simulation-based-assessment-of-predictive-performance" class="nav-link" data-scroll-target="#simulation-based-assessment-of-predictive-performance"><span class="header-section-number">5.6</span> Simulation-based assessment of predictive performance</a>
   <ul class="collapse">
-<li><a href="#step-1-define-the-aim-of-the-simulation-study" id="toc-step-1-define-the-aim-of-the-simulation-study" class="nav-link" data-scroll-target="#step-1-define-the-aim-of-the-simulation-study"><span class="header-section-number">5.6.1</span> Step 1: Define the aim of the simulation study</a></li>
+<li><a href="#sec-sim-step1" id="toc-sec-sim-step1" class="nav-link" data-scroll-target="#sec-sim-step1"><span class="header-section-number">5.6.1</span> Step 1: Define the aim of the simulation study</a></li>
   <li><a href="#step-2-simulate-the-spatial-surface-and-the-data-from-the-true-model" id="toc-step-2-simulate-the-spatial-surface-and-the-data-from-the-true-model" class="nav-link" data-scroll-target="#step-2-simulate-the-spatial-surface-and-the-data-from-the-true-model"><span class="header-section-number">5.6.2</span> Step 2: Simulate the spatial surface and the data from the true model</a></li>
-  <li><a href="#step-3-fit-the-candidate-models-to-the-simulated-data-and-predict-the-target" id="toc-step-3-fit-the-candidate-models-to-the-simulated-data-and-predict-the-target" class="nav-link" data-scroll-target="#step-3-fit-the-candidate-models-to-the-simulated-data-and-predict-the-target"><span class="header-section-number">5.6.3</span> Step 3: Fit the candidate models to the simulated data and predict the target</a></li>
+  <li><a href="#sec-sim-step3" id="toc-sec-sim-step3" class="nav-link" data-scroll-target="#sec-sim-step3"><span class="header-section-number">5.6.3</span> Step 3: Fit the candidate models to the simulated data and predict the target</a></li>
   <li><a href="#step-4-summarize-the-results-using-a-pre-defined-objective-function" id="toc-step-4-summarize-the-results-using-a-pre-defined-objective-function" class="nav-link" data-scroll-target="#step-4-summarize-the-results-using-a-pre-defined-objective-function"><span class="header-section-number">5.6.4</span> Step 4: Summarize the results using a pre-defined objective function</a></li>
   <li><a href="#sec-sim-assessment" id="toc-sec-sim-assessment" class="nav-link" data-scroll-target="#sec-sim-assessment"><span class="header-section-number">5.6.5</span> Assessessment of threshold-based classification of spatial units using geostatistical models</a></li>
   </ul>
@@ -377,12 +377,10 @@ window.Quarto = {
 <li><p><strong>Marginal predictions</strong> are obtained by simulating independently from the <span class="math inline">\(q\)</span> marginal predictive distributions of <span class="math inline">\([S(\tilde{X}) | y]\)</span>. In other words, we consider a prediction location <span class="math inline">\(\tilde{x}_j\)</span>, simulate from <span class="math inline">\([S(\tilde{x}_j) \: |\: y]\)</span> say <span class="math inline">\(B\)</span> samples, and repeat this for <span class="math inline">\(j=1,\ldots,q\)</span></p></li>
 <li><p><strong>Joint predictions</strong> are obtained by simulating from the joint distribution of <span class="math inline">\([S(\tilde{X}) \: |\: y]\)</span>. Unlike marginal predictions, joint predictions take into account the correlation between the different components of <span class="math inline">\([S(\tilde{X}) \: |\: y]\)</span>.</p></li>
 </ul>
-<p>To better understand the technical differences between marginal and joint predictions, we refer you to <a href="#sec-pred-distr-theory" class="quarto-xref"><span>Section 5.7.1</span></a>. However, in practice, the two following facts are important.</p>
-<ul>
-<li><p><em>Fact 1</em>. Joint predictions are computationally more intensive than marginal predictions.</p></li>
-<li><p><em>Fact 2</em>. Joint predictions are required when the predictive target is at areal-level.</p></li>
-<li><p><em>Fact 3</em>. For spatially continuous targets, both marginal and joint predictions can be used but, in light of <em>Fact 1</em>, we might prefer using the former.</p></li>
-</ul>
+<p>To better understand the technical differences between marginal and joint predictions, we refer you to <a href="#sec-pred-distr-theory" class="quarto-xref"><span>Section 5.7.1</span></a>. However, in practice, the two following observations are important.</p>
+<p>O1. Joint predictions are computationally more intensive than marginal predictions.</p>
+<p>O2. Joint predictions are required when the predictive target is at areal-level.</p>
+<p>O3. For spatially continuous targets, both marginal and joint predictions can be used but, in light of O1, we might prefer using the former.</p>
 <section id="sec-pred-samples" class="level3" data-number="5.2.1"><h3 data-number="5.2.1" class="anchored" data-anchor-id="sec-pred-samples">
 <span class="header-section-number">5.2.1</span> Generating samples from the predictive distribution of <span class="math inline">\(S(\tilde{X})\)</span> (continue from <a href="03_model-fitting.html#sec-liberia-estim1" class="quarto-xref"><span>Section 3.3.1</span></a>)</h3>
 <p>We now show how the ideas and concepts discussed above are put into practice in an geostatistical analysis, using the Liberia data example. Using the fitted model in <a href="03_model-fitting.html#sec-liberia-estim1" class="quarto-xref"><span>Section 3.3.1</span></a>, we use the <code>predict_over_grid</code> function in <code>RiskMap</code>, to sample from the predictive distribution of the spatial Gaussian process <span class="math inline">\(S(x)\)</span> based on a regular grid spanning the country of Liberia.</p>
@@ -441,7 +439,7 @@ Figure&nbsp;5.1: Histrogram of the predictive distribution of the first componen
 </div>
 </div>
 </div>
-</section></section><section id="spatially-continuous-targets" class="level2" data-number="5.3"><h2 data-number="5.3" class="anchored" data-anchor-id="spatially-continuous-targets">
+</section></section><section id="sec-spat-cont-target" class="level2" data-number="5.3"><h2 data-number="5.3" class="anchored" data-anchor-id="sec-spat-cont-target">
 <span class="header-section-number">5.3</span> Spatially continuous targets</h2>
 <p>In the previous section, we explained and demonstrated how to obtain Monte Carlo samples from the predictive distribution of <span class="math inline">\(S(\tilde{X})\)</span>, which we denoted by <span class="math inline">\([S(\tilde{X}) \: |\: y]\)</span>. Let <span class="math inline">\(S_{(j)}(\tilde{X})\)</span> and <span class="math inline">\([S(\tilde{X}) \: |\: y]\)</span> represent the <span class="math inline">\(j\)</span>-th Monte Carlo samples for the entire grid and the specific location <span class="math inline">\(x_k\)</span>, respectively, for <span class="math inline">\(j=1,\ldots,B\)</span> and <span class="math inline">\(k=1,\ldots,q\)</span>.</p>
 <p>We define our predictive target, <span class="math inline">\(T(x)\)</span>, at any given location <span class="math inline">\(x\)</span>, as a transformation of <span class="math inline">\(S(x)\)</span>. Thus, we express it as <span class="math inline">\(T(x) = f\{S(x)\}\)</span>. Note that <span class="math inline">\(f(\cdot)\)</span> can represent any type of non-linear transformation of <span class="math inline">\(S(x)\)</span> and may include covariate effects and other non-structured random effects. A list of common predictive targets frequently used in geostatistical analysis is provided in <a href="#tbl-spat-cont-pred-target" class="quarto-xref">Table&nbsp;<span>5.1</span></a>.</p>
@@ -637,7 +635,7 @@ Figure&nbsp;5.3: Maps of the predictive mean of the rapid diagnostic test (RDT) 
 </div>
 </div>
 <p>The exploratory analysis of <a href="03_model-fitting.html#sec-indiv-expl-analysis" class="quarto-xref"><span>Section 3.1.1.2</span></a> had shown that the prevalence around the age of 15 is higher than at other ages. This is also reflected in <a href="#fig-malaria-maps" class="quarto-xref">Figure&nbsp;<span>5.3</span></a>, when the left panel, corresponding to the RDT prevalence for children at the age of 15 years, shows a higher level of prevalence than the right panel, which is instead for the general population.</p>
-</section></section><section id="areal-level-targets" class="level2" data-number="5.4"><h2 data-number="5.4" class="anchored" data-anchor-id="areal-level-targets">
+</section></section><section id="sec-areal-target" class="level2" data-number="5.4"><h2 data-number="5.4" class="anchored" data-anchor-id="sec-areal-target">
 <span class="header-section-number">5.4</span> Areal-level targets</h2>
 <p>When determining areal-level targets, we must first address the following questions:</p>
 <ol type="1">
@@ -816,15 +814,15 @@ Figure&nbsp;5.5: Maps of the predicted averae number of mosqutoes (left panel). 
 <span></span>
 <span><span class="va">pred_n_mosq_shp</span><span class="op">$</span><span class="va">target</span><span class="op">$</span><span class="va">reg1</span><span class="op">$</span><span class="va">n_mosq</span></span>
 <span><span class="co">## $mean</span></span>
-<span><span class="co">## [1] 17682.18</span></span>
+<span><span class="co">## [1] 17702.03</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $q025</span></span>
 <span><span class="co">##     2.5% </span></span>
-<span><span class="co">## 15110.75 </span></span>
+<span><span class="co">## 14891.56 </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $q075</span></span>
 <span><span class="co">##    97.5% </span></span>
-<span><span class="co">## 20724.38</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span><span class="co">## 20819.79</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Since we are not standardizing the weights, there is no need to specify <code>standardize_weights</code>, as it is set to <code>FALSE</code> by default. In the code above, we printed the mean of the predictive distribution of <span class="math inline">\(T\)</span> along with the 95% prediction interval. The point estimate of approximately 17,719 mosquitoes is likely an underestimate of the total number of Anopheles gambiae in the area, as the trap used to count the mosquitoes may not capture all of them, particularly those outside the immediate trapping zone or those active at different times.</p>
 </section></section><section id="sec-compare-pp" class="level2" data-number="5.5"><h2 data-number="5.5" class="anchored" data-anchor-id="sec-compare-pp">
@@ -1276,7 +1274,7 @@ Figure&nbsp;5.13: Point maps of the scores for model <span class="math inline">\
 </section></section></section><section id="simulation-based-assessment-of-predictive-performance" class="level2" data-number="5.6"><h2 data-number="5.6" class="anchored" data-anchor-id="simulation-based-assessment-of-predictive-performance">
 <span class="header-section-number">5.6</span> Simulation-based assessment of predictive performance</h2>
 <p>In <a href="#sec-compare-pp" class="quarto-xref"><span>Section 5.5</span></a>, we illustrated how to evaluate predictive performance in relative terms, specifically by comparing candidate models under consideration. In this section, we demonstrate how simulation studies can be used to assess the predictive performance of a geostatistical model in predicting a spatially continuous target within a region of interest. Since a spatially continuous target cannot be directly observed, simulations provide a way to generate such targets under specified assumptions. This approach allows us to evaluate how effectively the model can recover the underlying spatial surface using suitable predictive performance metrics.</p>
-<section id="step-1-define-the-aim-of-the-simulation-study" class="level3" data-number="5.6.1"><h3 data-number="5.6.1" class="anchored" data-anchor-id="step-1-define-the-aim-of-the-simulation-study">
+<section id="sec-sim-step1" class="level3" data-number="5.6.1"><h3 data-number="5.6.1" class="anchored" data-anchor-id="sec-sim-step1">
 <span class="header-section-number">5.6.1</span> Step 1: Define the aim of the simulation study</h3>
 <p>As previously stated, one of the main reasons for carrying out a simulation study is the ability to generate spatial surfaces, which are typically unobservable in the real world. The purpose of the simulation is generally to evaluate how well a given geostatistical model can recover that surface and/or draw inferences on some of its properties.</p>
 <p>To fully understand the how to carry out a simulation study, it is essential to define its two main components: the <em>true model</em> and the <em>candidate models</em> (which can indeed include multiple options).</p>
@@ -1326,7 +1324,7 @@ $phi
 <li><p>If covariates are used, compute the covariates effects <span class="math inline">\(d(x)^\top \beta\)</span> for all the locations in <span class="math inline">\(X_{+}\)</span>.</p></li>
 <li><p>Simulate <span class="math inline">\(B\)</span>-times from a multivariate Gaussian distribution with mean vector 0 and covariance <span class="math inline">\(\Sigma_{+}\)</span> as previously defined. We denote the output form this step as <span class="math inline">\(S_{(j)}(\tilde{x})\)</span>, for simulations generate on <span class="math inline">\(\tilde{X}\)</span>, and with <span class="math inline">\(S_{(j)}(x)\)</span> for simulations on <span class="math inline">\(X\)</span>, respectively, for <span class="math inline">\(j=1,\ldots,B\)</span>.</p></li>
 <li><p>Compute the linear predictor at each locations of <span class="math inline">\(X_{+}\)</span>, by adding the covariates effects in 3 to the simulated random effects in 4, hence <span class="math inline">\(g\{\mu_{(j)}(\tilde{x})\} = d(\tilde{x})^\top + S_{(j)}(\tilde{x})\)</span> for <span class="math inline">\(\tilde{X}\)</span>, and <span class="math inline">\(g\{\mu_{(j)}(x)\} = d(x)^\top + S_{(j)}(x)\)</span> for <span class="math inline">\(X\)</span>.</p></li>
-<li><p>Only for <span class="math inline">\(X\)</span>, perform the steps 5A to 7A as explained in <a href="03_model-fitting.html#sec-bootstrap" class="quarto-xref"><span>Section 3.3.3</span></a>, to simulate the data <span class="math inline">\(Y\)</span>.</p></li>
+<li><p>Only for locations of the data <span class="math inline">\(X\)</span>, perform the steps 5A to 7A as explained in <a href="03_model-fitting.html#sec-bootstrap" class="quarto-xref"><span>Section 3.3.3</span></a>, to simulate the data <span class="math inline">\(Y\)</span>.</p></li>
 </ol>
 <p>The function <code>surf_sim</code> in <code>RiskMap</code> can be used to carry out all these steps automatically as shown next.</p>
 <section id="example-1" class="level4" data-number="5.6.2.1"><h4 data-number="5.6.2.1" class="anchored" data-anchor-id="example-1">
@@ -1378,16 +1376,72 @@ $phi
 Figure&nbsp;5.14: Simulated surface for the linear predictor, with locations of the simulated data noted by solid black points.
 </figcaption></figure>
 </div>
-</section></section><section id="step-3-fit-the-candidate-models-to-the-simulated-data-and-predict-the-target" class="level3" data-number="5.6.3"><h3 data-number="5.6.3" class="anchored" data-anchor-id="step-3-fit-the-candidate-models-to-the-simulated-data-and-predict-the-target">
+</section></section><section id="sec-sim-step3" class="level3" data-number="5.6.3"><h3 data-number="5.6.3" class="anchored" data-anchor-id="sec-sim-step3">
 <span class="header-section-number">5.6.3</span> Step 3: Fit the candidate models to the simulated data and predict the target</h3>
-<section id="example-2" class="level4" data-number="5.6.3.1"><h4 data-number="5.6.3.1" class="anchored" data-anchor-id="example-2">
-<span class="header-section-number">5.6.3.1</span> Example</h4>
-</section></section><section id="step-4-summarize-the-results-using-a-pre-defined-objective-function" class="level3" data-number="5.6.4"><h3 data-number="5.6.4" class="anchored" data-anchor-id="step-4-summarize-the-results-using-a-pre-defined-objective-function">
+<p>To summarize, the results obtained from Step 1 and Step 2 are as follows:</p>
+<ol type="1">
+<li>Simulated values for the linear predictor of the true model (<span class="math inline">\(M_T\)</span>) over a grid covering the study area.</li>
+<li>Simulated values for the linear predictor of <span class="math inline">\(M_T\)</span> at the data locations.</li>
+<li>Simulated realizations of the data at the data locations.</li>
+</ol>
+<p>Next, we use the third output listed above to fit the candidate models (<span class="math inline">\(M_C\)</span>) and make predictions over the grid. Note that each of the outputs above has been generated <span class="math inline">\(B\)</span> times, which denotes the number of simulations.</p>
+<p>Using the notation introduced in <a href="#sec-spat-cont-target" class="quarto-xref"><span>Section 5.3</span></a>, let <span class="math inline">\(T(x)\)</span> denote the spatially continuous target. When the predictive target is at the areal level, the necessary adjustments to Step 3 and Step 4 will be detailed in <a href="#sec-sim-assessment" class="quarto-xref"><span>Section 5.6.5</span></a>.</p>
+<p>The outputs generated in these steps include predictive samples of the target over the grid, represented by <span class="math inline">\(T_{(j)}^{(h)}(\tilde{x})\)</span>, where: <span class="math inline">\(j\)</span> is the index of the <span class="math inline">\(j\)</span>-th simulated data-set, for <span class="math inline">\(j = 1, \ldots, B\)</span>; <span class="math inline">\(h\)</span> is the index of the Monte Carlo samples, for <span class="math inline">\(h = 1, \ldots, N\)</span>, generated by the Monte Carlo Markov Chain (MCMC) algorithm for a given data-set <span class="math inline">\(j\)</span>.</p>
+<p>An example in R for Step 3 will be provided in the next section, where we shall use the function <code>assess_sim</code>, from the <code>RiskMap</code> package, which combines Step 3 and Step 4 into a single step.</p>
+</section><section id="step-4-summarize-the-results-using-a-pre-defined-objective-function" class="level3" data-number="5.6.4"><h3 data-number="5.6.4" class="anchored" data-anchor-id="step-4-summarize-the-results-using-a-pre-defined-objective-function">
 <span class="header-section-number">5.6.4</span> Step 4: Summarize the results using a pre-defined objective function</h3>
-<section id="example-3" class="level4" data-number="5.6.4.1"><h4 data-number="5.6.4.1" class="anchored" data-anchor-id="example-3">
+<p>In this final step, we compare the predictions of the target <span class="math inline">\(T(x)\)</span> against its true values, originally simulated in Step 1. To do this, we need a metric to summarize the results across all <span class="math inline">\(B\)</span> simulations for each candidate model <span class="math inline">\(M_C\)</span>.</p>
+<p>One approach is to use the predictive mean from <span class="math inline">\(M_C\)</span> in each simulation and evaluate how it differs from <span class="math inline">\(T(x)\)</span>. A natural choice for this comparison is the mean squared error (MSE), defined as:</p>
+<p><span class="math display">\[
+\frac{1}{B} \sum_{j=1}^B \sum_{i=1}^q \left(T(\tilde{x}_i) - \hat{T}_{C}(\tilde{x}_i)\right)^2
+\]</span></p>
+<p>where <span class="math inline">\(\tilde{x}_i\)</span> is the <span class="math inline">\(i\)</span>-th location on the grid <span class="math inline">\(\tilde{X}\)</span>, <span class="math inline">\(T(\tilde{x}_i)\)</span> represents the true value of the target, and <span class="math inline">\(\hat{T}_{C}(\tilde{x}_i)\)</span> is the predictive mean from <span class="math inline">\(M_C\)</span> at location <span class="math inline">\(\tilde{x}_i\)</span>.</p>
+<p>Other options for summarizing the results include using the bias or the absolute median deviation. The bias measures the systematic error between the predicted and true values and is defined as:</p>
+<p><span class="math display">\[
+\frac{1}{B} \sum_{j=1}^B \sum_{i=1}^q \left(T(\tilde{x}_i) - \hat{T}_{C}(\tilde{x}_i)\right)
+\]</span></p>
+<p>The median absolute deviation (MAD) focuses on the central tendency of the errors, providing a robust measure of variability. It is defined as:</p>
+<p><span class="math display">\[
+\text{median}\left(\left|T(\tilde{x}_i) - T^*_{C}(\tilde{x}_i)\right|\right),
+\]</span> where <span class="math inline">\(T^*_{C}(\tilde{x}_i)\)</span> is the median across all <span class="math inline">\(N\)</span> the Monte Carlo samples <span class="math inline">\(T_{(j)}^{(h)}(\tilde{x})\)</span>.</p>
+<section id="example-2" class="level4" data-number="5.6.4.1"><h4 data-number="5.6.4.1" class="anchored" data-anchor-id="example-2">
 <span class="header-section-number">5.6.4.1</span> Example</h4>
 </section></section><section id="sec-sim-assessment" class="level3" data-number="5.6.5"><h3 data-number="5.6.5" class="anchored" data-anchor-id="sec-sim-assessment">
 <span class="header-section-number">5.6.5</span> Assessessment of threshold-based classification of spatial units using geostatistical models</h3>
+<p>In this section, we address the specific problem of evaluating how effectively a geostatistical model classifies areal units into predefined categories of a disease indicator, such as prevalence. This issue is particularly relevant when dealing with areal-level targets (<a href="#sec-areal-target" class="quarto-xref"><span>Section 5.4</span></a>) as opposed to spatially continuous targets (<a href="#sec-spat-cont-target" class="quarto-xref"><span>Section 5.3</span></a>). This prediction problem arises when policy decisions regarding interventions are often based on the classification of the areal-level target into predefined categories at the level of administrative regions; see, for example, <span class="citation" data-cites="johnson2021">Johnson et al. (<a href="references.html#ref-johnson2021" role="doc-biblioref">2021</a>)</span> and <span class="citation" data-cites="puranik2024">Puranik et al. (<a href="references.html#ref-puranik2024" role="doc-biblioref">2024</a>)</span>.</p>
+<p>To formalize this problem mathematically, let <span class="math inline">\(\mathcal{M}_i\)</span> represent the true value of the areal-level target (e.g., the average prevalence over a district), and let <span class="math inline">\(\hat{\mathcal{M}}_{C,i}\)</span> denote the corresponding prediction produced by the candidate model <span class="math inline">\(M_C\)</span>. Note that <span class="math inline">\(\mathcal{M}_i\)</span> can be easily calculated in Step 1 during simulations from the true model (<a href="#sec-sim-step1" class="quarto-xref"><span>Section 5.6.1</span></a>).</p>
+<p>Now, consider that the target <span class="math inline">\(\mathcal{M}_i\)</span> is categorized into predefined classes, which are typically thresholds or ranges of the disease indicator (e.g., low, medium, and high prevalence). Denote the true membership class of areal unit <span class="math inline">\(i\)</span> by <span class="math inline">\(\mathcal{D}_i\)</span>, which is determined based on <span class="math inline">\(\mathcal{M}_i\)</span>, and the predicted membership class by <span class="math inline">\(\hat{\mathcal{D}}_{C,i}\)</span>, determined based on <span class="math inline">\(\hat{\mathcal{M}}_{C,i}\)</span>. The goal is to assess the overall quality of the classification, which involves evaluating how well the predicted classes <span class="math inline">\(\hat{\mathcal{D}}_{C,i}\)</span> agree with the true classes <span class="math inline">\(\mathcal{C}_i\)</span> across all areal units and simulations. This assessment provides insight into the model’s ability to accurately classify regions according to the chosen disease indicator and thus guide effective policy decisions.</p>
+<p>The required changes to Step 3 (<a href="#sec-sim-step3" class="quarto-xref"><span>Section 5.6.3</span></a>) consist of simply carrying the predictions over the areal units as explained in <a href="#sec-areal-target" class="quarto-xref"><span>Section 5.4</span></a>.</p>
+<p>For Step 4, which concerns how we summarize the agreement between the classification generated by <span class="math inline">\(M_C\)</span> and the true classes <span class="math inline">\(\mathcal{D}_i\)</span>, we can proceed as follows. First, we distinguish between indicators that can be computed for a given region and those that summarize performance across all regions.</p>
+<p>For a specific region, assessing classification performance can be approached similarly to evaluating a diagnostic test. Hence, key indicators include:</p>
+<ol type="1">
+<li><p><em>Sensitivity</em>: The proportion of areal units correctly classified as belonging to the true membership class when conditioned on that true class:<br><span class="math display">\[
+\text{Sensitivity} = \frac{\text{True Positives (TP)}}{\text{True Positives (TP)} + \text{False Negatives (FN)}}
+\]</span></p></li>
+<li><p><em>Specificity</em> (True Negative Rate): The proportion of areal units not belonging to a given membership class that are correctly classified as not being in that class:<br><span class="math display">\[
+\text{Specificity} = \frac{\text{True Negatives (TN)}}{\text{True Negatives (TN)} + \text{False Positives (FP)}}
+\]</span></p></li>
+<li><p><em>Positive Predictive Value (PPV)</em>: The proportion of areal units predicted to belong to a membership class that are correctly classified, conditioned on the predicted membership class:<br><span class="math display">\[
+\text{PPV} = \frac{\text{True Positives (TP)}}{\text{True Positives (TP)} + \text{False Positives (FP)}}
+\]</span></p></li>
+<li><p><em>Negative Predictive Value (NPV)</em>: The proportion of areal units predicted not to belong to a membership class that are correctly classified, conditioned on the predicted membership class:<br><span class="math display">\[
+\text{NPV} = \frac{\text{True Negatives (TN)}}{\text{True Negatives (TN)} + \text{False Negatives (FN)}}
+\]</span></p></li>
+<li><p><em>Correct Classification Rate</em>: The overall proportion of areal units whose predicted membership class matches the true membership class:<br><span class="math display">\[
+\text{Correct Classification Rate} = \frac{\text{True Positives (TP)} + \text{True Negatives (TN)}}{\text{Total Cases (TP + TN + FP + FN)}}
+\]</span></p></li>
+</ol>
+<p>These indicators provide a comprehensive view of performance for each region individually.</p>
+<p>To assess performance across all regions, the indicators calculated for each region can be averaged, using a weighted or simple average. For example, if some disease classes are more critical than others, weights can be applied to reflect their importance, and thus weight the regions differently according to their true class membership.</p>
+<p>The choice between sensitivity, specificity, PPV, and NPV depends on the specific public health context and the priorities of the decision-making process. Sensitivity and specificity are conditioned on the <em>true membership class</em>, making them useful for assessing the model’s performance in terms of correctly identifying or excluding true positives or negatives. PPV and NPV are conditioned on the <em>predicted membership class</em>, making them more informative about the trustworthiness of predictions, especially when prevalence varies significantly across regions.</p>
+<p>We can thus summarize the difference of each indicator as follows.</p>
+<ul>
+<li><p>Sensitivity is most appropriate when the priority is to ensure that true positive cases (e.g., high-prevalence regions) are not missed. Sensitivity is useful in contexts where failing to identify true cases could have severe consequences, such as delaying critical interventions or underestimating resource needs. For example, during an outbreak, ensuring all high-risk areas are flagged is crucial, even if this increases the number of false positives.</p></li>
+<li><p>Specificity is more suitable when the focus is on minimizing false positives, which is critical in contexts where over-classification could lead to unnecessary interventions or misallocation of resources. Specificity may be particularly important in low-prevalence scenarios, where the cost of acting on false alarms could outweigh the benefits of capturing all true positives.</p></li>
+<li><p>PPV is appropriate when the emphasis is on the reliability of positive predictions, i.e., how confident we can be that regions classified as high-prevalence are truly high-prevalence. PPV is heavily influenced by the prevalence of the condition being classified, making it especially relevant in scenarios where actionable decisions depend on the certainty of a positive classification.</p></li>
+<li><p>NPV is most relevant when it is critical to trust negative predictions, i.e., ensuring that regions predicted as low-prevalence are indeed low-prevalence. NPV is particularly important in high-prevalence settings, where failing to act on a true positive could have significant public health impacts.</p></li>
+</ul>
+<p>Ultimately, the selection of indicators should result from a dialogue between statisticians, epidemiologists, and policy makers, ensuring alignment with the specific priorities and policy decisions being informed by the model’s classifications.</p>
 </section></section><section id="sec-theory-prediction" class="level2" data-number="5.7"><h2 data-number="5.7" class="anchored" data-anchor-id="sec-theory-prediction">
 <span class="header-section-number">5.7</span> Theory</h2>
 <section id="sec-pred-distr-theory" class="level3" data-number="5.7.1"><h3 data-number="5.7.1" class="anchored" data-anchor-id="sec-pred-distr-theory">
@@ -1573,6 +1627,9 @@ Hastie, Trevor, Robert Tibshirani, and Jerome Friedman. 2001. <em>The Elements o
 <div id="ref-hastings1970monte" class="csl-entry" role="listitem">
 Hastings, W. K. 1970. <span>“Monte Carlo Sampling Methods Using Markov Chains and Their Applications.”</span> <em>Biometrika</em> 57 (1): 97–109.
 </div>
+<div id="ref-johnson2021" class="csl-entry" role="listitem">
+Johnson, Olatunji, Claudio Fronterre, Benjamin Amoah, Antonio Montresor, Emanuele Giorgi, Nicholas Midzi, Masceline Jenipher Mutsaka-Makuvaza, et al. 2021. <span>“Model-Based Geostatistical Methods Enable Efficient Design and Analysis of Prevalence Surveys for Soil-Transmitted Helminth Infection and Other Neglected Tropical Diseases.”</span> <em>Clinical Infectious Diseases</em> 72 (Supplement_3): S172–79. <a href="https://doi.org/10.1093/cid/ciab192">https://doi.org/10.1093/cid/ciab192</a>.
+</div>
 <div id="ref-gates2020" class="csl-entry" role="listitem">
 Katz, Elizabeth, and Bill &amp; Melinda Gates Foundation. 2020. <span>“Gender and Malaria Evidence Reivew.”</span> Bill &amp; Melinda Gates Foundation. <a href="https://www.gatesgenderequalitytoolbox.org/wp-content/uploads/BMGF_Malaria-Review_FC.pdf">https://www.gatesgenderequalitytoolbox.org/wp-content/uploads/BMGF_Malaria-Review_FC.pdf</a>.
 </div>
@@ -1596,6 +1653,9 @@ Nelder, J. A., and R. W. M. Wedderburn. 1972. <span>“Generalized Linear Models
 </div>
 <div id="ref-pawitan2001" class="csl-entry" role="listitem">
 Pawitan, Yudi. 2001. <em>In All Likelihood : Statistical Modelling and Inference Using Likelihood</em>. Oxford ; New York: Clarendon Press : Oxford University Press.
+</div>
+<div id="ref-puranik2024" class="csl-entry" role="listitem">
+Puranik, Amitha, Peter J. Diggle, Maurice R. Odiere, Katherine Gass, Stella Kepha, Collins Okoyo, Charles Mwandawiro, et al. 2024. <span>“Understanding the Impact of Covariates on the Classification of Implementation Units for Soil-Transmitted Helminths Control: A Case Study from Kenya.”</span> <em>BMC Medical Research Methodology</em> 24 (1): 294. <a href="https://doi.org/10.1186/s12874-024-02420-1">https://doi.org/10.1186/s12874-024-02420-1</a>.
 </div>
 <div id="ref-ripley1981" class="csl-entry" role="listitem">
 Ripley, B. D. 1981. <em>Spatial Statistics</em>. New York: Wiley.

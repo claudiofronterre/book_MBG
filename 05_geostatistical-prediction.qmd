@@ -57,13 +57,13 @@ At this stage, we need to consider which of the two following types of predictio
 
 -   **Joint predictions** are obtained by simulating from the joint distribution of $[S(\tilde{X}) \: |\: y]$. Unlike marginal predictions, joint predictions take into account the correlation between the different components of $[S(\tilde{X}) \: |\: y]$.
 
-To better understand the technical differences between marginal and joint predictions, we refer you to @sec-pred-distr-theory. However, in practice, the two following facts are important.
+To better understand the technical differences between marginal and joint predictions, we refer you to @sec-pred-distr-theory. However, in practice, the two following observations are important.
 
--   *Fact 1*. Joint predictions are computationally more intensive than marginal predictions.
+O1. Joint predictions are computationally more intensive than marginal predictions.
 
--   *Fact 2*. Joint predictions are required when the predictive target is at areal-level.
+O2. Joint predictions are required when the predictive target is at areal-level.
 
--   *Fact 3*. For spatially continuous targets, both marginal and joint predictions can be used but, in light of *Fact 1*, we might prefer using the former.
+O3. For spatially continuous targets, both marginal and joint predictions can be used but, in light of O1, we might prefer using the former.
 
 ### Generating samples from the predictive distribution of $S(\tilde{X})$ (continue from @sec-liberia-estim1) {#sec-pred-samples}
 
@@ -328,7 +328,7 @@ par(mfrow = c(1,1))
 
 The exploratory analysis of @sec-indiv-expl-analysis had shown that the prevalence around the age of 15 is higher than at other ages. This is also reflected in @fig-malaria-maps, when the left panel, corresponding to the RDT prevalence for children at the age of 15 years, shows a higher level of prevalence than the right panel, which is instead for the general population.
 
-## Areal-level targets
+## Areal-level targets {#sec-areal-target}
 
 When determining areal-level targets, we must first address the following questions:
 
@@ -962,7 +962,7 @@ In the code above, we evaluated the cross-validation results generated using a c
 
 In @sec-compare-pp, we illustrated how to evaluate predictive performance in relative terms, specifically by comparing candidate models under consideration. In this section, we demonstrate how simulation studies can be used to assess the predictive performance of a geostatistical model in predicting a spatially continuous target within a region of interest. Since a spatially continuous target cannot be directly observed, simulations provide a way to generate such targets under specified assumptions. This approach allows us to evaluate how effectively the model can recover the underlying spatial surface using suitable predictive performance metrics.
 
-### Step 1: Define the aim of the simulation study
+### Step 1: Define the aim of the simulation study {#sec-sim-step1}
 
 As previously stated, one of the main reasons for carrying out a simulation study is the ability to generate spatial surfaces, which are typically unobservable in the real world. The purpose of the simulation is generally to evaluate how well a given geostatistical model can recover that surface and/or draw inferences on some of its properties.
 
@@ -1016,7 +1016,7 @@ In @sec-bootstrap, we have shown how to simulate from a geostatistical model, wh
 
 4.  Compute the linear predictor at each locations of $X_{+}$, by adding the covariates effects in 3 to the simulated random effects in 4, hence $g\{\mu_{(j)}(\tilde{x})\} = d(\tilde{x})^\top + S_{(j)}(\tilde{x})$ for $\tilde{X}$, and $g\{\mu_{(j)}(x)\} = d(x)^\top + S_{(j)}(x)$ for $X$.
 
-5.  Only for $X$, perform the steps 5A to 7A as explained in @sec-bootstrap, to simulate the data $Y$.
+5.  Only for locations of the data $X$, perform the steps 5A to 7A as explained in @sec-bootstrap, to simulate the data $Y$.
 
 The function `surf_sim` in `RiskMap` can be used to carry out all these steps automatically as shown next.
 
@@ -1067,7 +1067,7 @@ plot_sim_surf(lib_surf_sim, sim = 1)
 
 
 
-### Step 3: Fit the candidate models to the simulated data and predict the target
+### Step 3: Fit the candidate models to the simulated data and predict the target {#sec-sim-step3}
 
 To summarize, the results obtained from Step 1 and Step 2 are as follows:
 
@@ -1085,12 +1085,96 @@ An example in R for Step 3 will be provided in the next section, where we shall 
 
 ### Step 4: Summarize the results using a pre-defined objective function
 
+In this final step, we compare the predictions of the target $T(x)$ against its true values, originally simulated in Step 1. To do this, we need a metric to summarize the results across all $B$ simulations for each candidate model $M_C$. 
 
+One approach is to use the predictive mean from $M_C$ in each simulation and evaluate how it differs from $T(x)$. A natural choice for this comparison is the mean squared error (MSE), defined as:
+
+$$
+\frac{1}{B} \sum_{j=1}^B \sum_{i=1}^q \left(T(\tilde{x}_i) - \hat{T}_{C}(\tilde{x}_i)\right)^2
+$$
+
+where $\tilde{x}_i$ is the $i$-th location on the grid $\tilde{X}$, $T(\tilde{x}_i)$ represents the true value of the target, and $\hat{T}_{C}(\tilde{x}_i)$ is the predictive mean from $M_C$ at location $\tilde{x}_i$.
+
+Other options for summarizing the results include using the bias or the absolute median deviation. The bias measures the systematic error between the predicted and true values and is defined as:
+
+$$
+\frac{1}{B} \sum_{j=1}^B \sum_{i=1}^q \left(T(\tilde{x}_i) - \hat{T}_{C}(\tilde{x}_i)\right)
+$$
+
+The median absolute deviation (MAD) focuses on the central tendency of the errors, providing a robust measure of variability. It is defined as:
+
+
+$$
+\text{median}\left(\left|T(\tilde{x}_i) - T^*_{C}(\tilde{x}_i)\right|\right),
+$$
+where $T^*_{C}(\tilde{x}_i)$ is the median across all $N$ the Monte Carlo samples $T_{(j)}^{(h)}(\tilde{x})$.
 
 
 #### Example
 
 ### Assessessment of threshold-based classification of spatial units using geostatistical models {#sec-sim-assessment}
+
+In this section, we address the specific problem of evaluating how effectively a geostatistical model classifies areal units into predefined categories of a disease indicator, such as prevalence. This issue is particularly relevant when dealing with areal-level targets (@sec-areal-target) as opposed to spatially continuous targets (@sec-spat-cont-target). This prediction problem arises when policy decisions regarding interventions are often based on the classification of the areal-level target into predefined categories at the level of administrative regions; see, for example, @johnson2021 and @puranik2024.
+
+To formalize this problem mathematically, let $\mathcal{M}_i$ represent the true value of the areal-level target (e.g., the average prevalence over a district), and let $\hat{\mathcal{M}}_{C,i}$ denote the corresponding prediction produced by the candidate model $M_C$. Note that $\mathcal{M}_i$ can be easily calculated in Step 1 during simulations from the true model (@sec-sim-step1). 
+
+Now, consider that the target $\mathcal{M}_i$ is categorized into predefined classes, which are typically thresholds or ranges of the disease indicator (e.g., low, medium, and high prevalence). Denote the true membership class of areal unit $i$ by $\mathcal{D}_i$, which is determined based on $\mathcal{M}_i$, and the predicted membership class by $\hat{\mathcal{D}}_{C,i}$, determined based on $\hat{\mathcal{M}}_{C,i}$. 
+The goal is to assess the overall quality of the classification, which involves evaluating how well the predicted classes $\hat{\mathcal{D}}_{C,i}$ agree with the true classes $\mathcal{C}_i$ across all areal units and simulations. This assessment provides insight into the model's ability to accurately classify regions according to the chosen disease indicator and thus guide effective policy decisions.
+
+The required changes to Step 3 (@sec-sim-step3) consist of simply carrying the predictions over the areal units as explained in @sec-areal-target. 
+
+For Step 4, which concerns how we summarize the agreement between the classification generated by $M_C$ and the true classes $\mathcal{D}_i$, we can proceed as follows. First, we distinguish between indicators that can be computed for a given region and those that summarize performance across all regions.
+
+For a specific region, assessing classification performance can be approached similarly to evaluating a diagnostic test. Hence, key indicators include:
+
+
+1. *Sensitivity*: The proportion of areal units correctly classified as belonging to the true membership class when conditioned on that true class:  
+   $$
+   \text{Sensitivity} = \frac{\text{True Positives (TP)}}{\text{True Positives (TP)} + \text{False Negatives (FN)}}
+   $$
+
+2. *Specificity* (True Negative Rate): The proportion of areal units not belonging to a given membership class that are correctly classified as not being in that class:  
+   $$
+   \text{Specificity} = \frac{\text{True Negatives (TN)}}{\text{True Negatives (TN)} + \text{False Positives (FP)}}
+   $$
+
+3. *Positive Predictive Value (PPV)*: The proportion of areal units predicted to belong to a membership class that are correctly classified, conditioned on the predicted membership class:  
+   $$
+   \text{PPV} = \frac{\text{True Positives (TP)}}{\text{True Positives (TP)} + \text{False Positives (FP)}}
+   $$
+
+4. *Negative Predictive Value (NPV)*: The proportion of areal units predicted not to belong to a membership class that are correctly classified, conditioned on the predicted membership class:  
+   $$
+   \text{NPV} = \frac{\text{True Negatives (TN)}}{\text{True Negatives (TN)} + \text{False Negatives (FN)}}
+   $$
+
+
+5. *Correct Classification Rate*: The overall proportion of areal units whose predicted membership class matches the true membership class:  
+   $$
+   \text{Correct Classification Rate} = \frac{\text{True Positives (TP)} + \text{True Negatives (TN)}}{\text{Total Cases (TP + TN + FP + FN)}}
+   $$
+
+These indicators provide a comprehensive view of performance for each region individually.
+
+
+To assess performance across all regions, the indicators calculated for each region can be averaged, using a weighted or simple average. For example, if some disease classes are more critical than others, weights can be applied to reflect their importance, and thus weight the regions differently according to their true class membership.
+
+The choice between sensitivity, specificity, PPV, and NPV depends on the specific public health context and the priorities of the decision-making process. Sensitivity and specificity are conditioned on the *true membership class*, making them useful for assessing the model's performance in terms of correctly identifying or excluding true positives or negatives. PPV and NPV are conditioned on the *predicted membership class*, making them more informative about the trustworthiness of predictions, especially when prevalence varies significantly across regions. 
+
+We can thus summarize the difference of each indicator as follows.
+
+- Sensitivity is most appropriate when the priority is to ensure that true positive cases (e.g., high-prevalence regions) are not missed. Sensitivity is useful in contexts where failing to identify true cases could have severe consequences, such as delaying critical interventions or underestimating resource needs. For example, during an outbreak, ensuring all high-risk areas are flagged is crucial, even if this increases the number of false positives.
+
+- Specificity is more suitable when the focus is on minimizing false positives, which is critical in contexts where over-classification could lead to unnecessary interventions or misallocation of resources. Specificity may be particularly important in low-prevalence scenarios, where the cost of acting on false alarms could outweigh the benefits of capturing all true positives.
+
+- PPV is appropriate when the emphasis is on the reliability of positive predictions, i.e., how confident we can be that regions classified as high-prevalence are truly high-prevalence. PPV is heavily influenced by the prevalence of the condition being classified, making it especially relevant in scenarios where actionable decisions depend on the certainty of a positive classification.
+
+- NPV is most relevant when it is critical to trust negative predictions, i.e., ensuring that regions predicted as low-prevalence are indeed low-prevalence. NPV is particularly important in high-prevalence settings, where failing to act on a true positive could have significant public health impacts.
+
+
+Ultimately, the selection of indicators should result from a dialogue between statisticians, epidemiologists, and policy makers, ensuring alignment with the specific priorities and policy decisions being informed by the model's classifications.  
+
+#### Example
 
 ## Theory {#sec-theory-prediction}
 
