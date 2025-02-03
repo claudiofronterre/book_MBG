@@ -11,11 +11,11 @@ fig-asp: 0.75
 
 ## List of the main functions used in the chapter {.unnumbered}
 
-| Function      | R Package | Used for                                                                                     |
-|---------------|---------------|-------------------------------------------|
-| `lmer`        | `lme4`    | Fitting linear mixed models                                                                  |
-| `glmer`       | `lme4`    | Fitting generalized linear mixed models                                                      |
-| `glgm`        | `RiskMap` | Fitting generalized linear geostatistical models                                             |
+| Function | R Package | Used for |
+|------------------------|------------------------|------------------------|
+| `lmer` | `lme4` | Fitting linear mixed models |
+| `glmer` | `lme4` | Fitting generalized linear mixed models |
+| `glgm` | `RiskMap` | Fitting generalized linear geostatistical models |
 | `s_variogram` | `RiskMap` | Computing the empirical variogram and carrying out permutation test for spatial independence |
 
 ## Exploratory analysis
@@ -810,6 +810,47 @@ dist_summaries(anopheles, scale_to_km = TRUE)
 
 Using the `dist_summaries` function, we can see that the average distance is about 55km and the minimum is about 387 meters. The estimate of phi of 4km is thus relatively small compared to the the distances between locations in the data. In @sec-geo-prediction, we will further investigate to what extent this small-scale spatial correlation can affect the predictions of the An. Gambiae counts.
 
+### How to simulate from a geostatistical model and obtain bootstrap interval estimates {#sec-bootstrap}
+
+The use of simulation-based approaches will be more extensively covered in @sec-geo-prediction, it is important to understand how data can be simulated from a geostatistical model.
+
+The way we have formulated geostatistical models in @sec-geostat-models provides a hint as to what step should be followed when simulating from a geostatistical model. Using the same notation of @sec-geostat-models, these are the steps.
+
+1.  For a given set of predefined locations $X$ compute the covariance matrix $\Sigma$ with $(i,j)-$th entry $\sigma^2 \rho(u_{ij})$.
+
+2.  Compute the covariates effects $d(x)^\top \beta$ for all the locations in $X$.
+
+3.  Simulate $B$-times from a multivariate Gaussian distribution with mean vector 0 and covariance $\Sigma$ as previously defined. We denote the output form this step as $S_{(j)}(x)$, for $j=1,\ldots,B$.
+
+4.  Compute the linear predictor at each locations of $X$, by adding the covariates effects in 3 to the simulated random effects in 4, hence $g\{\mu_{(j)}(x)\} = d(x)^\top + S_{(j)}(x)$.
+
+Note that before performing the steps above, the values of the model parameters must be fixed. For example, if simulating from a model fitted to the data, the values of the model parameters should be the maximum likelihood estimates. At this point, if the goal is to simulate actual observations for the outcome $Y$ at the locations $X$. Then we need to add the following two steps. 
+
+5A. If the nugget term is included in the model then, draw samples $Z_{(j)}$ for each location in $X$ from a Gaussian distribution with mean 0 and variance $\tau^2$. Finally add the simulated values $Z_{(j)}$ to $g\{\mu_{(j)}(x)\}$. 
+
+6A. Compute $\mu_{(j)}(x)$ by applying the inverse link function $g^{-1}(\cdot)$ to the samples of the linear predictor previously computed. 
+
+7A. Simulate from the distribution of $Y$ given $\mu_{(j)}(x)$, according the chosen model, for $j=1,\ldots,B$.
+
+These steps, from 1 to 7A, have been implemented in the `glgpm_sim` function. For example, using the fitted Binomial geostatistical model from the example on riverblindness in Liberia, we simulate a single data-set as follows
+
+```{r, eval = FALSE}
+liberia_sim <- glgpm_sim(n_sim = 1, model_fit = fit_liberia)
+```
+
+The output `liberia_sim` is a list with as many components as indicated by `n_sim`. In this this case, we can access the simulated data-set as `liberia_sim[[1]]`. For example, we could refit the same model to the simulated data as
+
+```{r, eval = FALSE}
+fit_liberia_sim <- 
+glgpm(formula = npos ~ log(elevation) + gp(long, lat, nugget = NULL), 
+    data = liberia_sim[[1]], family = "binomial", den = ntest, 
+    crs = 32629)
+```
+
+Note that if the data's CRS has been converted, the simulated data-set will inherit the new CRS rather than the original. This means that any transformation applied to the CRS before simulation (e.g., from geographic to projected coordinates) will affect the spatial scale and interpretation of the simulated data.
+
+In other cases, as in @sec-sim-assessment, the locations $X$ correspond to a regular grid and the steps that we want to carry out on completion of step 4 above depend on the objective of the simulation. We explain this more in detail in the next section.
+
 ## Theory
 
 ### Maximum likelihood estimation for non-Guassian mixed models with independent random effects
@@ -1005,8 +1046,11 @@ In the sections above, we focused specifically on the implementation of the Mont
 Alternative methods worth mentioning include the expectation-maximization algorithm for maximum likelihood estimation [@zhang2002], integrated nested Laplace approximation (INLA) [@rue2009], and implementations of the Metropolis-Adjusted Langevin Algorithm (MALA) for Bayesian inference [@christensen2006]. While these methods are valuable, explaining and comparing them is not our focus here, as it would detract from the practical orientation of this book.
 
 ## Review questions
-    -   Define the theoretical and empirical varigroam, making appropriate use of equations.
-    -   How do we use the empirical variogram to test for spatial correlation? What are the limiations of this approach?
+
+```         
+-   Define the theoretical and empirical varigroam, making appropriate use of equations.
+-   How do we use the empirical variogram to test for spatial correlation? What are the limiations of this approach?
+```
 
 ## Exercises
 
