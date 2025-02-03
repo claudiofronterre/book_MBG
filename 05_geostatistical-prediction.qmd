@@ -1178,7 +1178,43 @@ Ultimately, the selection of indicators should result from a dialogue between st
 
 ## Theory {#sec-theory-prediction}
 
-### Derivation of the predictive distribution {#sec-pred-distr-theory}
+### Expression of the predictive distribution for a linear geostatistical model {#sec-pred-distr-theory}
+
+In this section, we consider the simple case of a linear geostatistical model with a single observation per location. 
+
+Let $Y = (Y_1, \ldots, Y_n)^\top$ be the vector of data associated with spatial locations $x_1, \ldots, x_n$. The model assumes that:
+
+\begin{equation}
+Y_i = d(x_i)^\top {\beta} + S(x_i) + Z_i, \quad i = 1, \ldots, n,
+\end{equation}
+
+where $d(x_i)$ is a vector of covariates at location $x_i$, ${\beta}$ is a vector of regression coefficients, $S(x)$ is a stationary Gaussian process with mean zero and Matern correlation function $\rho(u)$ (where $u$ is the distance between locations), and $Z_i \sim \mathcal{N}(0, \tau^2)$ represents independent measurement errors (nugget effect).
+
+We first consider the simple case of a linear target, hence $T(x) = d(x)^\top {\beta} + S(x)$. The goal is to predict the unobserved process $T^* = (T_{n+1}, \ldots, T_{n+q})^\top$ at new locations $x_{n+1}, \ldots, x_{n+q}$. The predictive distribution of $T^*$, conditional on the observed data $Y$, follows a multivariate Gaussian distribution:
+
+\begin{equation}
+T^* | Y \sim \mathcal{N}(\mu^*, \Sigma^*),
+\end{equation}
+
+where the conditional mean and covariance are given by:
+
+\begin{align}
+\mu^* &= D^* {\beta} + C \Sigma^{-1} (Y - D {\beta}), \\
+{\Sigma}^* &= V - C \Sigma^{-1} C^\top.
+\end{align}
+
+Here, $D^*$ is the design matrix for the prediction locations, $C$ is the cross-covariance matrix between $T^*$ and $Y$, $\Sigma$ is the covariance matrix of $Y$, and $V$ is the covariance matrix of $T^*$. Using a multivariate Gaussian distribution with mean $\mu^*$ and covariance matrix $\Sigma^*$, we are now able to predict $T^*$ and obtain summaries of uncertainties. 
+
+For non-linear prediction targets, i.e. targets that involve non-linear transformations of the spatial process $S(x)$, say $W(T^*)$, Monte Carlo methods can be employed. More specifically, we generate samples $T_{(j)}^*$, for $j=1,\ldots,B$ from the predictive distribution $T^* | Y$ using the multivariate Gaussian distribution with mean $\boldsymbol{\mu}^*$ and covariance $\boldsymbol{\Sigma}^*$. 
+For each sample $T^{*}_{(j)}$, the non-linear transformation $W(T^{*}_{(j)} = W^{*}_{(j)}$ of interest is then computed. The predictive summary statistics, such as the mean, variance, or quantiles of $W(T^*)$, are then estimated by averaging over the simulated samples, e.g.
+
+\begin{align}
+E[W(T^*) | Y] &\approx  \frac{1}{B} \sum_{J=1}^B W^{*}_{(j)}), \\
+\mathrm{Var}[W(T^*) | Y] &\approx \frac{1}{B-1} \sum_{j=1}^B \left( W^{*}_{(j)} - E[W(T^*)] \right)^2.
+\end{align}
+
+For more detailed explanations on this we refer you to Chapter 6 of @diggle2007book.
+
 
 ### Scoring rules
 
@@ -1235,3 +1271,4 @@ Ultimately, the selection of indicators should result from a dialogue between st
 5.  Consider the Liberia data-set on riverblindess. Carry out a simulation study where the objective is to assess the impact of mispecifying non-linear relationships between elevation and prevalence. Consider @eq-true-model-lib as the true model and a model that specifies the relationship as linear on the logit scale as the candidate model, hence $$M_{C}: \:
     \log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_{0} + \beta_{1}e(x_i) + S(x_i).
     $$ Carry out 200 iterations in the simulation and define a suitable metric of predictive performance to compare the two models. Provide a clear answer on the impact of assuming a linear relationship with elevation when this is not valid.
+

@@ -284,7 +284,7 @@ window.Quarto = {
   <li>
 <a href="#sec-theory-prediction" id="toc-sec-theory-prediction" class="nav-link" data-scroll-target="#sec-theory-prediction"><span class="header-section-number">5.7</span> Theory</a>
   <ul class="collapse">
-<li><a href="#sec-pred-distr-theory" id="toc-sec-pred-distr-theory" class="nav-link" data-scroll-target="#sec-pred-distr-theory"><span class="header-section-number">5.7.1</span> Derivation of the predictive distribution</a></li>
+<li><a href="#sec-pred-distr-theory" id="toc-sec-pred-distr-theory" class="nav-link" data-scroll-target="#sec-pred-distr-theory"><span class="header-section-number">5.7.1</span> Expression of the predictive distribution for a linear geostatistical model</a></li>
   <li><a href="#scoring-rules" id="toc-scoring-rules" class="nav-link" data-scroll-target="#scoring-rules"><span class="header-section-number">5.7.2</span> Scoring rules</a></li>
   </ul>
 </li>
@@ -814,15 +814,15 @@ Figure&nbsp;5.5: Maps of the predicted averae number of mosqutoes (left panel). 
 <span></span>
 <span><span class="va">pred_n_mosq_shp</span><span class="op">$</span><span class="va">target</span><span class="op">$</span><span class="va">reg1</span><span class="op">$</span><span class="va">n_mosq</span></span>
 <span><span class="co">## $mean</span></span>
-<span><span class="co">## [1] 17702.03</span></span>
+<span><span class="co">## [1] 17742.53</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $q025</span></span>
 <span><span class="co">##     2.5% </span></span>
-<span><span class="co">## 14891.56 </span></span>
+<span><span class="co">## 15247.62 </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $q075</span></span>
 <span><span class="co">##    97.5% </span></span>
-<span><span class="co">## 20819.79</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span><span class="co">## 20715.94</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Since we are not standardizing the weights, there is no need to specify <code>standardize_weights</code>, as it is set to <code>FALSE</code> by default. In the code above, we printed the mean of the predictive distribution of <span class="math inline">\(T\)</span> along with the 95% prediction interval. The point estimate of approximately 17,719 mosquitoes is likely an underestimate of the total number of Anopheles gambiae in the area, as the trap used to count the mosquitoes may not capture all of them, particularly those outside the immediate trapping zone or those active at different times.</p>
 </section></section><section id="sec-compare-pp" class="level2" data-number="5.5"><h2 data-number="5.5" class="anchored" data-anchor-id="sec-compare-pp">
@@ -1442,10 +1442,34 @@ Figure&nbsp;5.14: Simulated surface for the linear predictor, with locations of 
 <li><p>NPV is most relevant when it is critical to trust negative predictions, i.e., ensuring that regions predicted as low-prevalence are indeed low-prevalence. NPV is particularly important in high-prevalence settings, where failing to act on a true positive could have significant public health impacts.</p></li>
 </ul>
 <p>Ultimately, the selection of indicators should result from a dialogue between statisticians, epidemiologists, and policy makers, ensuring alignment with the specific priorities and policy decisions being informed by the model’s classifications.</p>
-</section></section><section id="sec-theory-prediction" class="level2" data-number="5.7"><h2 data-number="5.7" class="anchored" data-anchor-id="sec-theory-prediction">
+<section id="example-3" class="level4" data-number="5.6.5.1"><h4 data-number="5.6.5.1" class="anchored" data-anchor-id="example-3">
+<span class="header-section-number">5.6.5.1</span> Example</h4>
+</section></section></section><section id="sec-theory-prediction" class="level2" data-number="5.7"><h2 data-number="5.7" class="anchored" data-anchor-id="sec-theory-prediction">
 <span class="header-section-number">5.7</span> Theory</h2>
 <section id="sec-pred-distr-theory" class="level3" data-number="5.7.1"><h3 data-number="5.7.1" class="anchored" data-anchor-id="sec-pred-distr-theory">
-<span class="header-section-number">5.7.1</span> Derivation of the predictive distribution</h3>
+<span class="header-section-number">5.7.1</span> Expression of the predictive distribution for a linear geostatistical model</h3>
+<p>In this section, we consider the simple case of a linear geostatistical model with a single observation per location.</p>
+<p>Let <span class="math inline">\(Y = (Y_1, \ldots, Y_n)^\top\)</span> be the vector of data associated with spatial locations <span class="math inline">\(x_1, \ldots, x_n\)</span>. The model assumes that:</p>
+<p><span class="math display">\[\begin{equation}
+Y_i = d(x_i)^\top {\beta} + S(x_i) + Z_i, \quad i = 1, \ldots, n,
+\end{equation}\]</span></p>
+<p>where <span class="math inline">\(d(x_i)\)</span> is a vector of covariates at location <span class="math inline">\(x_i\)</span>, <span class="math inline">\({\beta}\)</span> is a vector of regression coefficients, <span class="math inline">\(S(x)\)</span> is a stationary Gaussian process with mean zero and Matern correlation function <span class="math inline">\(\rho(u)\)</span> (where <span class="math inline">\(u\)</span> is the distance between locations), and <span class="math inline">\(Z_i \sim \mathcal{N}(0, \tau^2)\)</span> represents independent measurement errors (nugget effect).</p>
+<p>We first consider the simple case of a linear target, hence <span class="math inline">\(T(x) = d(x)^\top {\beta} + S(x)\)</span>. The goal is to predict the unobserved process <span class="math inline">\(T^* = (T_{n+1}, \ldots, T_{n+q})^\top\)</span> at new locations <span class="math inline">\(x_{n+1}, \ldots, x_{n+q}\)</span>. The predictive distribution of <span class="math inline">\(T^*\)</span>, conditional on the observed data <span class="math inline">\(Y\)</span>, follows a multivariate Gaussian distribution:</p>
+<p><span class="math display">\[\begin{equation}
+T^* | Y \sim \mathcal{N}(\mu^*, \Sigma^*),
+\end{equation}\]</span></p>
+<p>where the conditional mean and covariance are given by:</p>
+<p><span class="math display">\[\begin{align}
+\mu^* &amp;= D^* {\beta} + C \Sigma^{-1} (Y - D {\beta}), \\
+{\Sigma}^* &amp;= V - C \Sigma^{-1} C^\top.
+\end{align}\]</span></p>
+<p>Here, <span class="math inline">\(D^*\)</span> is the design matrix for the prediction locations, <span class="math inline">\(C\)</span> is the cross-covariance matrix between <span class="math inline">\(T^*\)</span> and <span class="math inline">\(Y\)</span>, <span class="math inline">\(\Sigma\)</span> is the covariance matrix of <span class="math inline">\(Y\)</span>, and <span class="math inline">\(V\)</span> is the covariance matrix of <span class="math inline">\(T^*\)</span>. Using a multivariate Gaussian distribution with mean <span class="math inline">\(\mu^*\)</span> and covariance matrix <span class="math inline">\(\Sigma^*\)</span>, we are now able to predict <span class="math inline">\(T^*\)</span> and obtain summaries of uncertainties.</p>
+<p>For non-linear prediction targets, i.e.&nbsp;targets that involve non-linear transformations of the spatial process <span class="math inline">\(S(x)\)</span>, say <span class="math inline">\(W(T^*)\)</span>, Monte Carlo methods can be employed. More specifically, we generate samples <span class="math inline">\(T_{(j)}^*\)</span>, for <span class="math inline">\(j=1,\ldots,B\)</span> from the predictive distribution <span class="math inline">\(T^* | Y\)</span> using the multivariate Gaussian distribution with mean <span class="math inline">\(\boldsymbol{\mu}^*\)</span> and covariance <span class="math inline">\(\boldsymbol{\Sigma}^*\)</span>. For each sample <span class="math inline">\(T^{*}_{(j)}\)</span>, the non-linear transformation <span class="math inline">\(W(T^{*}_{(j)} = W^{*}_{(j)}\)</span> of interest is then computed. The predictive summary statistics, such as the mean, variance, or quantiles of <span class="math inline">\(W(T^*)\)</span>, are then estimated by averaging over the simulated samples, e.g.</p>
+<p><span class="math display">\[\begin{align}
+E[W(T^*) | Y] &amp;\approx  \frac{1}{B} \sum_{J=1}^B W^{*}_{(j)}), \\
+\mathrm{Var}[W(T^*) | Y] &amp;\approx \frac{1}{B-1} \sum_{j=1}^B \left( W^{*}_{(j)} - E[W(T^*)] \right)^2.
+\end{align}\]</span></p>
+<p>For more detailed explanations on this we refer you to Chapter 6 of <span class="citation" data-cites="diggle2007book">P. Diggle and Ribeiro (<a href="references.html#ref-diggle2007book" role="doc-biblioref">2007</a>)</span>.</p>
 </section><section id="scoring-rules" class="level3" data-number="5.7.2"><h3 data-number="5.7.2" class="anchored" data-anchor-id="scoring-rules">
 <span class="header-section-number">5.7.2</span> Scoring rules</h3>
 </section></section><section id="summary" class="level2" data-number="5.8"><h2 data-number="5.8" class="anchored" data-anchor-id="summary">
@@ -1579,11 +1603,14 @@ Czado, Claudia, Tilmann Gneiting, and Leonhard Held. 2009. <span>“<span class=
 <div id="ref-dawid1984" class="csl-entry" role="listitem">
 Dawid, A. P. 1984. <span>“Statistical Theory: The Prequential Approach.”</span> <em>Journal of the Royal Statistical Society: Series A (General)</em> 147 (2): 278–92.
 </div>
+<div id="ref-diggleBook2019" class="csl-entry" role="listitem">
+Diggle, P J, and E Giorgi. 2019. <em>Model-Based Geostatistics for Global Public Health : Methods and Applications.</em> Chapman and Hall/CRC Interdisciplinary Statistics Ser. Milton: Chapman; Hall/CRC.
+</div>
 <div id="ref-diggle1998" class="csl-entry" role="listitem">
 Diggle, P. J., J. A. Tawn, and R. A. Moyeed. 1998. <span>“Model-Based Geostatistics.”</span> <em>Journal of the Royal Statistical Society: Series C (Applied Statistics)</em> 47 (3): 299–350. <a href="https://doi.org/10.1111/1467-9876.00113">https://doi.org/10.1111/1467-9876.00113</a>.
 </div>
-<div id="ref-diggleBook2019" class="csl-entry" role="listitem">
-Diggle, Peter J. 2019. <em>Model-Based Geostatistics for Global Public Health : Methods and Applications.</em> Chapman and Hall/CRC Interdisciplinary Statistics Ser. Milton: Chapman; Hall/CRC.
+<div id="ref-diggle2007book" class="csl-entry" role="listitem">
+Diggle, Peter, and Paulo Justiniano Ribeiro. 2007. <em>Model-Based Geostatistics</em>. Springer Series in Statistics. Springer.
 </div>
 <div id="ref-dobson2008" class="csl-entry" role="listitem">
 Dobson, A. J., and A. Barnett. 2008. <em>An Introduction to Generalized Linear Models</em>. Third. Chapman; Hall/CRC.
