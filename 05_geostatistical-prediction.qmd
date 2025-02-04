@@ -16,8 +16,9 @@ fig-asp: 0.75
 | `pred_over_grid` | `RiskMap` | Predicting the different component of the linear predictor over a grid: the covariates effects and the random effects |
 | `pred_target_grid` | `RiskMap` | Predictions of target defined at pixel-level |
 | `pred_target_shp` | `RiskMap` | Predictions of targets defined at areal level |
-| `assess_pp` | `RiskMap` | Assessing the predictive performance of geostatistical models |
+| `assess_pp` | `RiskMap` | Assessing the predictive performance of geostatistical models using cross-validation |
 | `surf_sim` | `RiskMap` | Simulating surfaces and data from geostatistical models |
+| `assess_sim` | `RiskMap` | Assessing the predictive performance of geostatistical models using simulations |
 
 ## Introduction
 
@@ -865,7 +866,7 @@ The AnPIT from @fig-anpit-clus show very similar results to those of @fig-anpit-
 
 ### Assessing calibration and sharpness using continuous ranked probability scores
 
-We now consider another important aspect that helps to describe the predictive performance of a geostatistical model, namely sharpness. As the name suggests, sharpness refers to the concentration or narrowness of the predictive distribution around the observation $y_i$ which we aim to predict. A sharp predictive distribution has a narrow spread, indicating that the model is highly confident in its predictions. Importantly, sharpness does not depend on how close predictions are to the true values (i.e., it is independent of accuracy). A model with high sharpness will produce predictions with low variance, but this sharpness is only meaningful if the model is well-calibrated, ensuring that the high confidence aligns with observed values. For example, a geostatistical model for disease prevalence mapping that predicts a very tight range of possible prevalence values for a location is producing sharp predictions. However, if the actual prevalence often falls outside this range, then the predictions may be sharp but poorly calibrated, thus limiting the value of quantifying sharpness alone.
+We now consider another important aspect that helps to describe the predictive performance of a geostatistical model, namely sharpness. As the name suggests, sharpness refers to the spread of the predictive distribution. A sharp predictive distribution has a narrow spread, indicating that the model is highly confident in its predictions. Importantly, sharpness does not depend on how close predictions are to the true values (i.e., it is independent of accuracy). A model with high sharpness will produce predictions with low variance, but this sharpness is only meaningful if the model is well-calibrated, ensuring that the high confidence aligns with observed values. For example, a geostatistical model for disease prevalence mapping that predicts a very tight range of possible prevalence values for a location is producing sharp predictions. However, if the actual prevalence often falls outside this range, then the predictions may be sharp but poorly calibrated, thus limiting the value of quantifying sharpness alone.
 
 To assess predictive performance while considering both sharpness and calibration, we introduce the *continuous ranked probability score (CRPS)* [@gneiting2007] and its scaled variant, the *scaled CRPS (SCRPS)* [@bolin2023]. The CRPS evaluates the agreement between the predicted cumulative distribution function of the model $M$, which we denote as in the previous section as $F_M$, and the observed value $y_i$. The CRPS is formally defined as $$
 \text{CRPS}(F_M, y_i) = \int_{-\infty}^\infty \left[ F_M(y) - \mathbf{1}(y \geq y_i) \right]^2 dy,
@@ -1022,7 +1023,8 @@ The function `surf_sim` in `RiskMap` can be used to carry out all these steps au
 
 #### Example
 
-Following the steps previously outlined, we first create a grid within the boundaries of Liberia and extract the values of elevation on the grid from a raster. 
+Following the steps previously outlined, we first create a grid within the boundaries of Liberia and extract the values of elevation on the grid from a raster.
+
 ```{r, eval=FALSE}
 library(rgeoboundaries)
 shp <- geoboundaries(country = "liberia", adm_lvl = "adm0")
@@ -1035,7 +1037,9 @@ liberia_elev <- get_elev_raster(locations = shp,
 
 pred_grid$elevation <- terra::extract(liberia_elev, st_coordinates(pred_grid))
 ```
+
 The function `surf_sim` also requires a sampling functions that generates the locations $X$ from which data $Y$ are simulated. In this example, we shall consider a sampling function that simply returns the locations of the original data.
+
 ```{r, eval=FALSE}
 sampling_f_lib <- function() {
   coords_sf <- st_as_sf(liberia[,c("ntest", "long", "lat")],
@@ -1045,9 +1049,11 @@ sampling_f_lib <- function() {
   return(coords_sf)
 }
 ```
+
 The output of the sampling function must be an `sf` object that must contain the number of tested people and its corresponding column must be named `units_m`. Also, the returned `sf` object must have a projection that correspond to the one used when fitting the model.
 
-We are now ready to run the `surf_sim` function. 
+We are now ready to run the `surf_sim` function.
+
 ```{r, eval = FALSE}
 lib_surf_sim <- surf_sim(n_sim = 200,
                          pred_grid = pred_grid,
@@ -1057,23 +1063,24 @@ lib_surf_sim <- surf_sim(n_sim = 200,
                          family = "binomial",
                          par0 = coef(true_model))
 ```
+
 In the above function, we have simulated $B = 200$ simulations from the true model as specified in `formula`. The argument `par0` is used to pass the values of the parameters of the true model.
 
 We can now inspect the individual simulated surfaces using the `plot_sim_surf` function, as demonstrated below, which produces @fig-surf-sim. This step is useful verifying that the simulations are consistent with expectations and free from any warning signs or anomalies.
+
 ```{r, eval = FALSE}
 plot_sim_surf(lib_surf_sim, sim = 1)
 ```
+
 ![Simulated surface for the linear predictor, with locations of the simulated data noted by solid black points.](./figures/sim_surf1.jpeg){#fig-surf-sim fig-align="center"}
-
-
 
 ### Step 3: Fit the candidate models to the simulated data and predict the target {#sec-sim-step3}
 
 To summarize, the results obtained from Step 1 and Step 2 are as follows:
 
-1. Simulated values for the linear predictor of the true model ($M_T$) over a grid covering the study area.
-2. Simulated values for the linear predictor of $M_T$ at the data locations.
-3. Simulated realizations of the data at the data locations.
+1.  Simulated values for the linear predictor of the true model ($M_T$) over a grid covering the study area.
+2.  Simulated values for the linear predictor of $M_T$ at the data locations.
+3.  Simulated realizations of the data at the data locations.
 
 Next, we use the third output listed above to fit the candidate models ($M_C$) and make predictions over the grid. Note that each of the outputs above has been generated $B$ times, which denotes the number of simulations.
 
@@ -1081,11 +1088,11 @@ Using the notation introduced in @sec-spat-cont-target, let $T(x)$ denote the sp
 
 The outputs generated in these steps include predictive samples of the target over the grid, represented by $T_{(j)}^{(h)}(\tilde{x})$, where: $j$ is the index of the $j$-th simulated data-set, for $j = 1, \ldots, B$; $h$ is the index of the Monte Carlo samples, for $h = 1, \ldots, N$, generated by the Monte Carlo Markov Chain (MCMC) algorithm for a given data-set $j$.
 
-An example in R for Step 3 will be provided in the next section, where we shall use the function `assess_sim`, from the `RiskMap` package, which combines Step 3 and Step 4  into a single step.
+An example in R for Step 3 will be provided in the next section, where we shall use the function `assess_sim`, from the `RiskMap` package, which combines Step 3 and Step 4 into a single step.
 
 ### Step 4: Summarize the results using a pre-defined objective function
 
-In this final step, we compare the predictions of the target $T(x)$ against its true values, originally simulated in Step 1. To do this, we need a metric to summarize the results across all $B$ simulations for each candidate model $M_C$. 
+In this final step, we compare the predictions of the target $T(x)$ against its true values, originally simulated in Step 1. To do this, we need a metric to summarize the results across all $B$ simulations for each candidate model $M_C$.
 
 One approach is to use the predictive mean from $M_C$ in each simulation and evaluate how it differs from $T(x)$. A natural choice for this comparison is the mean squared error (MSE), defined as:
 
@@ -1103,12 +1110,9 @@ $$
 
 The median absolute deviation (MAD) focuses on the central tendency of the errors, providing a robust measure of variability. It is defined as:
 
-
 $$
 \text{median}\left(\left|T(\tilde{x}_i) - T^*_{C}(\tilde{x}_i)\right|\right),
-$$
-where $T^*_{C}(\tilde{x}_i)$ is the median across all $N$ the Monte Carlo samples $T_{(j)}^{(h)}(\tilde{x})$.
-
+$$ where $T^*_{C}(\tilde{x}_i)$ is the median across all $N$ the Monte Carlo samples $T_{(j)}^{(h)}(\tilde{x})$.
 
 #### Example
 
@@ -1116,63 +1120,58 @@ where $T^*_{C}(\tilde{x}_i)$ is the median across all $N$ the Monte Carlo sample
 
 In this section, we address the specific problem of evaluating how effectively a geostatistical model classifies areal units into predefined categories of a disease indicator, such as prevalence. This issue is particularly relevant when dealing with areal-level targets (@sec-areal-target) as opposed to spatially continuous targets (@sec-spat-cont-target). This prediction problem arises when policy decisions regarding interventions are often based on the classification of the areal-level target into predefined categories at the level of administrative regions; see, for example, @johnson2021 and @puranik2024.
 
-To formalize this problem mathematically, let $\mathcal{M}_i$ represent the true value of the areal-level target (e.g., the average prevalence over a district), and let $\hat{\mathcal{M}}_{C,i}$ denote the corresponding prediction produced by the candidate model $M_C$. Note that $\mathcal{M}_i$ can be easily calculated in Step 1 during simulations from the true model (@sec-sim-step1). 
+To formalize this problem mathematically, let $\mathcal{M}_i$ represent the true value of the areal-level target (e.g., the average prevalence over a district), and let $\hat{\mathcal{M}}_{C,i}$ denote the corresponding prediction produced by the candidate model $M_C$. Note that $\mathcal{M}_i$ can be easily calculated in Step 1 during simulations from the true model (@sec-sim-step1).
 
-Now, consider that the target $\mathcal{M}_i$ is categorized into predefined classes, which are typically thresholds or ranges of the disease indicator (e.g., low, medium, and high prevalence). Denote the true membership class of areal unit $i$ by $\mathcal{D}_i$, which is determined based on $\mathcal{M}_i$, and the predicted membership class by $\hat{\mathcal{D}}_{C,i}$, determined based on $\hat{\mathcal{M}}_{C,i}$. 
-The goal is to assess the overall quality of the classification, which involves evaluating how well the predicted classes $\hat{\mathcal{D}}_{C,i}$ agree with the true classes $\mathcal{C}_i$ across all areal units and simulations. This assessment provides insight into the model's ability to accurately classify regions according to the chosen disease indicator and thus guide effective policy decisions.
+Now, consider that the target $\mathcal{M}_i$ is categorized into predefined classes, which are typically thresholds or ranges of the disease indicator (e.g., low, medium, and high prevalence). Denote the true membership class of areal unit $i$ by $\mathcal{D}_i$, which is determined based on $\mathcal{M}_i$, and the predicted membership class by $\hat{\mathcal{D}}_{C,i}$, determined based on $\hat{\mathcal{M}}_{C,i}$. The goal is to assess the overall quality of the classification, which involves evaluating how well the predicted classes $\hat{\mathcal{D}}_{C,i}$ agree with the true classes $\mathcal{C}_i$ across all areal units and simulations. This assessment provides insight into the model's ability to accurately classify regions according to the chosen disease indicator and thus guide effective policy decisions.
 
-The required changes to Step 3 (@sec-sim-step3) consist of simply carrying the predictions over the areal units as explained in @sec-areal-target. 
+The required changes to Step 3 (@sec-sim-step3) consist of simply carrying the predictions over the areal units as explained in @sec-areal-target.
 
 For Step 4, which concerns how we summarize the agreement between the classification generated by $M_C$ and the true classes $\mathcal{D}_i$, we can proceed as follows. First, we distinguish between indicators that can be computed for a given region and those that summarize performance across all regions.
 
 For a specific region, assessing classification performance can be approached similarly to evaluating a diagnostic test. Hence, key indicators include:
 
+1.  *Sensitivity*: The proportion of areal units correctly classified as belonging to the true membership class when conditioned on that true class:\
+    $$
+    \text{Sensitivity} = \frac{\text{True Positives (TP)}}{\text{True Positives (TP)} + \text{False Negatives (FN)}}
+    $$
 
-1. *Sensitivity*: The proportion of areal units correctly classified as belonging to the true membership class when conditioned on that true class:  
-   $$
-   \text{Sensitivity} = \frac{\text{True Positives (TP)}}{\text{True Positives (TP)} + \text{False Negatives (FN)}}
-   $$
+2.  *Specificity* (True Negative Rate): The proportion of areal units not belonging to a given membership class that are correctly classified as not being in that class:\
+    $$
+    \text{Specificity} = \frac{\text{True Negatives (TN)}}{\text{True Negatives (TN)} + \text{False Positives (FP)}}
+    $$
 
-2. *Specificity* (True Negative Rate): The proportion of areal units not belonging to a given membership class that are correctly classified as not being in that class:  
-   $$
-   \text{Specificity} = \frac{\text{True Negatives (TN)}}{\text{True Negatives (TN)} + \text{False Positives (FP)}}
-   $$
+3.  *Positive Predictive Value (PPV)*: The proportion of areal units predicted to belong to a membership class that are correctly classified, conditioned on the predicted membership class:\
+    $$
+    \text{PPV} = \frac{\text{True Positives (TP)}}{\text{True Positives (TP)} + \text{False Positives (FP)}}
+    $$
 
-3. *Positive Predictive Value (PPV)*: The proportion of areal units predicted to belong to a membership class that are correctly classified, conditioned on the predicted membership class:  
-   $$
-   \text{PPV} = \frac{\text{True Positives (TP)}}{\text{True Positives (TP)} + \text{False Positives (FP)}}
-   $$
+4.  *Negative Predictive Value (NPV)*: The proportion of areal units predicted not to belong to a membership class that are correctly classified, conditioned on the predicted membership class:\
+    $$
+    \text{NPV} = \frac{\text{True Negatives (TN)}}{\text{True Negatives (TN)} + \text{False Negatives (FN)}}
+    $$
 
-4. *Negative Predictive Value (NPV)*: The proportion of areal units predicted not to belong to a membership class that are correctly classified, conditioned on the predicted membership class:  
-   $$
-   \text{NPV} = \frac{\text{True Negatives (TN)}}{\text{True Negatives (TN)} + \text{False Negatives (FN)}}
-   $$
-
-
-5. *Correct Classification Rate*: The overall proportion of areal units whose predicted membership class matches the true membership class:  
-   $$
-   \text{Correct Classification Rate} = \frac{\text{True Positives (TP)} + \text{True Negatives (TN)}}{\text{Total Cases (TP + TN + FP + FN)}}
-   $$
+5.  *Correct Classification Rate*: The overall proportion of areal units whose predicted membership class matches the true membership class:\
+    $$
+    \text{Correct Classification Rate} = \frac{\text{True Positives (TP)} + \text{True Negatives (TN)}}{\text{Total Cases (TP + TN + FP + FN)}}
+    $$
 
 These indicators provide a comprehensive view of performance for each region individually.
 
-
 To assess performance across all regions, the indicators calculated for each region can be averaged, using a weighted or simple average. For example, if some disease classes are more critical than others, weights can be applied to reflect their importance, and thus weight the regions differently according to their true class membership.
 
-The choice between sensitivity, specificity, PPV, and NPV depends on the specific public health context and the priorities of the decision-making process. Sensitivity and specificity are conditioned on the *true membership class*, making them useful for assessing the model's performance in terms of correctly identifying or excluding true positives or negatives. PPV and NPV are conditioned on the *predicted membership class*, making them more informative about the trustworthiness of predictions, especially when prevalence varies significantly across regions. 
+The choice between sensitivity, specificity, PPV, and NPV depends on the specific public health context and the priorities of the decision-making process. Sensitivity and specificity are conditioned on the *true membership class*, making them useful for assessing the model's performance in terms of correctly identifying or excluding true positives or negatives. PPV and NPV are conditioned on the *predicted membership class*, making them more informative about the trustworthiness of predictions, especially when prevalence varies significantly across regions.
 
 We can thus summarize the difference of each indicator as follows.
 
-- Sensitivity is most appropriate when the priority is to ensure that true positive cases (e.g., high-prevalence regions) are not missed. Sensitivity is useful in contexts where failing to identify true cases could have severe consequences, such as delaying critical interventions or underestimating resource needs. For example, during an outbreak, ensuring all high-risk areas are flagged is crucial, even if this increases the number of false positives.
+-   Sensitivity is most appropriate when the priority is to ensure that true positive cases (e.g., high-prevalence regions) are not missed. Sensitivity is useful in contexts where failing to identify true cases could have severe consequences, such as delaying critical interventions or underestimating resource needs. For example, during an outbreak, ensuring all high-risk areas are flagged is crucial, even if this increases the number of false positives.
 
-- Specificity is more suitable when the focus is on minimizing false positives, which is critical in contexts where over-classification could lead to unnecessary interventions or misallocation of resources. Specificity may be particularly important in low-prevalence scenarios, where the cost of acting on false alarms could outweigh the benefits of capturing all true positives.
+-   Specificity is more suitable when the focus is on minimizing false positives, which is critical in contexts where over-classification could lead to unnecessary interventions or misallocation of resources. Specificity may be particularly important in low-prevalence scenarios, where the cost of acting on false alarms could outweigh the benefits of capturing all true positives.
 
-- PPV is appropriate when the emphasis is on the reliability of positive predictions, i.e., how confident we can be that regions classified as high-prevalence are truly high-prevalence. PPV is heavily influenced by the prevalence of the condition being classified, making it especially relevant in scenarios where actionable decisions depend on the certainty of a positive classification.
+-   PPV is appropriate when the emphasis is on the reliability of positive predictions, i.e., how confident we can be that regions classified as high-prevalence are truly high-prevalence. PPV is heavily influenced by the prevalence of the condition being classified, making it especially relevant in scenarios where actionable decisions depend on the certainty of a positive classification.
 
-- NPV is most relevant when it is critical to trust negative predictions, i.e., ensuring that regions predicted as low-prevalence are indeed low-prevalence. NPV is particularly important in high-prevalence settings, where failing to act on a true positive could have significant public health impacts.
+-   NPV is most relevant when it is critical to trust negative predictions, i.e., ensuring that regions predicted as low-prevalence are indeed low-prevalence. NPV is particularly important in high-prevalence settings, where failing to act on a true positive could have significant public health impacts.
 
-
-Ultimately, the selection of indicators should result from a dialogue between statisticians, epidemiologists, and policy makers, ensuring alignment with the specific priorities and policy decisions being informed by the model's classifications.  
+Ultimately, the selection of indicators should result from a dialogue between statisticians, epidemiologists, and policy makers, ensuring alignment with the specific priorities and policy decisions being informed by the model's classifications.
 
 #### Example
 
@@ -1180,7 +1179,7 @@ Ultimately, the selection of indicators should result from a dialogue between st
 
 ### Expression of the predictive distribution for a linear geostatistical model {#sec-pred-distr-theory}
 
-In this section, we consider the simple case of a linear geostatistical model with a single observation per location. 
+In this section, we consider the simple case of a linear geostatistical model with a single observation per location.
 
 Let $Y = (Y_1, \ldots, Y_n)^\top$ be the vector of data associated with spatial locations $x_1, \ldots, x_n$. The model assumes that:
 
@@ -1203,10 +1202,9 @@ where the conditional mean and covariance are given by:
 {\Sigma}^* &= V - C \Sigma^{-1} C^\top.
 \end{align}
 
-Here, $D^*$ is the design matrix for the prediction locations, $C$ is the cross-covariance matrix between $T^*$ and $Y$, $\Sigma$ is the covariance matrix of $Y$, and $V$ is the covariance matrix of $T^*$. Using a multivariate Gaussian distribution with mean $\mu^*$ and covariance matrix $\Sigma^*$, we are now able to predict $T^*$ and obtain summaries of uncertainties. 
+Here, $D^*$ is the design matrix for the prediction locations, $C$ is the cross-covariance matrix between $T^*$ and $Y$, $\Sigma$ is the covariance matrix of $Y$, and $V$ is the covariance matrix of $T^*$. Using a multivariate Gaussian distribution with mean $\mu^*$ and covariance matrix $\Sigma^*$, we are now able to predict $T^*$ and obtain summaries of uncertainties.
 
-For non-linear prediction targets, i.e. targets that involve non-linear transformations of the spatial process $S(x)$, say $W(T^*)$, Monte Carlo methods can be employed. More specifically, we generate samples $T_{(j)}^*$, for $j=1,\ldots,B$ from the predictive distribution $T^* | Y$ using the multivariate Gaussian distribution with mean $\boldsymbol{\mu}^*$ and covariance $\boldsymbol{\Sigma}^*$. 
-For each sample $T^{*}_{(j)}$, the non-linear transformation $W(T^{*}_{(j)} = W^{*}_{(j)}$ of interest is then computed. The predictive summary statistics, such as the mean, variance, or quantiles of $W(T^*)$, are then estimated by averaging over the simulated samples, e.g.
+For non-linear prediction targets, i.e. targets that involve non-linear transformations of the spatial process $S(x)$, say $W(T^*)$, Monte Carlo methods can be employed. More specifically, we generate samples $T_{(j)}^*$, for $j=1,\ldots,B$ from the predictive distribution $T^* | Y$ using the multivariate Gaussian distribution with mean $\boldsymbol{\mu}^*$ and covariance $\boldsymbol{\Sigma}^*$. For each sample $T^{*}_{(j)}$, the non-linear transformation $W(T^{*}_{(j)} = W^{*}_{(j)}$ of interest is then computed. The predictive summary statistics, such as the mean, variance, or quantiles of $W(T^*)$, are then estimated by averaging over the simulated samples, e.g.
 
 \begin{align}
 E[W(T^*) | Y] &\approx  \frac{1}{B} \sum_{J=1}^B W^{*}_{(j)}), \\
@@ -1215,20 +1213,59 @@ E[W(T^*) | Y] &\approx  \frac{1}{B} \sum_{J=1}^B W^{*}_{(j)}), \\
 
 For more detailed explanations on this we refer you to Chapter 6 of @diggle2007book.
 
+### A brief overview of scoring rules
 
-### Scoring rules
+We now provide an overview of the theoretical framework of *scoring rules*, of which the continuous ranked probability score (CRPS) and its scaled variant (SCRPS), previously presented, are an example. Scoring rules are a tool used in the evaluation of probabilistic forecasts. As shown for CRPS and SCRPS, scoring rules are designed to measure how well a predictive distribution aligns with observed outcomes, balancing both *calibration* and *sharpness*.
+
+In general, a scoring rule is a function $G(F, y)$ that assigns a numerical score to a predictive distribution $F$ and an observed outcome $y$. Lower scores typically indicate better predictive performance, as they reflect a closer match between the predicted distribution and the observed value.
+
+A central concept in the theory of scoring rules is that of *proper scoring rules*. A scoring rule is said to be *proper* if it favours honest predictions or, in other words, if the expected score is minimized when the predictive distribution $F$ matches the true data-generating distribution $F^*$. More formally, a scoring rule $G$ is proper if, for all distributions $F$ and $F^*$, we have: $$
+E_{Y \sim F^*}[G(F^*, Y)] \leq E_{Y \sim F^*}[G(F, Y)],
+$$ with equality if and only if $F = F^*$ when the rule is *strictly proper*. This property is crucial because it ensures that forecasters cannot improve their scores by manipulating their predictions to deviate from their true beliefs.
+
+Proper scoring rules encourage the selection of models that yield predictions that are both well-calibrated (reflecting the true distribution of outcomes) and sharp (concentrated around likely values). However, this does not imply that predictions from the (unknown) true model $F^*$ will always be favoured in practice, when dealing with finite samples. In other words, even if two scoring rules are proper, this does not guarantee that the true data-generating model will always achieve a lower score compared to a misspecified model in finite samples. *Sample variability* can in fact lead to the selection of a misspecified model by chance, especially when the sample size is small or the data are noisy. *Model complexity* is another important factor. If the true model $F^*$ is highly parameterised and the sample size is insufficient to estimate its parameters accurately, it may perform poorly in predictive tasks due to overfitting or parameter estimation error. In contrast, a simpler misspecified model, despite not capturing the full complexity of the data-generating process, might generalize better in such scenarios. This is related to the bias-variance trade-off, where a model with higher bias (due to misspecification) can still achieve lower overall predictive error if it has substantially lower variance.
+
+The CRPS and SCRPS are examples of a strictly proper scoring rule for continuous outcomes. Other scoring rules are the following:
+
+-   *Logarithmic Score (or Log Score):* For a predictive density $f(y)$, the log score is defined as: $$
+    G_{\text{log}}(f, y) = -\log f(y).
+    $$ This rule heavily penalizes low-probability predictions for observed outcomes, making it sensitive to the tails of the predictive distribution.
+
+-   *Brier Score:* For binary outcomes, the Brier score measures the mean squared difference between the predicted probability $p$ of an event and the actual outcome $y \in \{0, 1\}$: $$
+    G_{\text{Brier}}(p, y) = (p - y)^2.
+    $$ The Brier score is both proper and easy to interpret, with connections to mean squared error in classical regression.
+
+-   *Energy Score:* A generalization of the CRPS to multivariate outcomes, the energy score for a predictive distribution $F$ and observation $y$ is given by: $$
+    G_{\text{energy}}(F, y) = E_{X, X' \sim F}[\|X - X'\|] - 2 E_{X \sim F}[\|X - y\|],
+    $$ where $\|\cdot\|$ denotes a norm, typically the Euclidean norm. The energy score is particularly useful for evaluating spatial or multivariate forecasts.
+
+Many proper scoring rules, including the CRPS, can be decomposed into components that separately capture calibration and sharpness. This decomposition helps to understand the different aspects of predictive performance. Specifically, the expected score can often be expressed as: $$
+E[G(F, Y)] = \underbrace{\text{Uncertainty}}_{\text{inherent in data}} - \underbrace{\text{Resolution}}_{\text{sharpness of predictions}} + \underbrace{\text{Reliability}}_{\text{calibration error}},
+$$ where: - *Uncertainty* represents the inherent variability in the data, independent of the model. - *Resolution* quantifies the model’s ability to produce sharp, confident forecasts. - *Reliability* (or calibration error) measures the degree to which the forecast probabilities align with observed frequencies.
+
+This decomposition highlights an important trade-off: improving sharpness without compromising calibration is the hallmark of a good probabilistic model. A model that produces overly sharp forecasts may suffer from poor calibration, while a model that is perfectly calibrated but overly diffuse lacks resolution.
+
+As we have shown in this chapter, scoring rules are particularly appropriate in cross-validation frameworks, where the goal is to evaluate how well a model predicts future data realizations. When instead conducting simulation studies, we generate data from a known simulated true surface which becomes our benchmark. Hence, in simulation studies, we do not perform cross-validation but, for a given simulation, we compare the model predictions against the true surface. In such cases, scoring rules are not used because they are designed to assess predictive performance based on observed data, where both calibration and sharpness are critical considerations. Hence, in simulation studies, prediction performance metrics, such as bias, mean squared error (MSE), or other distance-based metrics that directly quantify the deviation from the known truth can be used to quantify the predictive performance of a model.
+
+For a more detailed explanation of scoring rules, @gneiting2007 is a recommended read.
 
 ## Summary
 
-| Diagnostic/Metric | Performance characteristic | Descritpion |
-|--------------------------------|----------------------|------------------|
-| Probability integral transform (PIT) | Calibration |  |
-| Nonrandomized PIT | Calibration |  |
-| Mean square error | Calibration |  |
-| Continuous ranked probability score (CRPS) | Calibration and sharpness |  |
-| Scaled CRPS | Calibration and sharpness |  |
+In this chapter, we have demonstrated how geostatistical models can be used to draw predictive inference for targets that may be spatially continuous (e.g., a prevalence surface within a study region) or aggregated at the areal level (e.g., the average disease prevalence in a district). The fundamental concept underpinning geostatistical prediction is that of the **predictive distribution**, which we define as the distribution of the target $T(x)$ conditioned on the data $y$. This distribution is the key element that enables the derivation and computation of point predictions, predictive intervals and the probability that the target falls within a pre-specified interval or above/below a given threshold.
 
-: Summary of the different diagnostic tools and metrics, discussed in this chapter, that are used to assess the predictive performance of a geostatistical model. {#tbl-summary-pp-diag}
+To assess the predictive performance of a geostatistical model, we have considered two complementary approaches: cross-validation and simulation studies. In the cross-validation framework, the concepts of **calibration** and **sharpness** are introduced to evaluate the quality of spatial predictions. Calibration refers to the agreement between the predicted probability of an event occurring and its actual observed frequency. Sharpness, on the other hand, quantifies the concentration of the predictive distribution. However, sharper predictions are not necessarily better; they must be well-calibrated to be meaningful. Thus, it is appropriate to discuss sharpness only in the context of well calibrated models.
+
+| Diagnostic/Metric | Performance characteristic | Recommended use in |
+|------------------------------|----------------------|--------------------|
+| Bias | Accuracy | Simulation |
+| Continuous ranked probability score (CRPS) | Calibration and sharpness | Cross-validation |
+| Coverage probability | Calibration | Cross-validation and simulation |
+| Mean square error | Accuracy | Simulation |
+| Nonrandomized probability integral transform (PIT) | Calibration | Cross-validation |
+| PIT | Calibration | Cross-validation |
+| Scaled CRPS | Calibration and sharpness | Cross-validation |
+
+: Summary of the different diagnostic tools and metrics, that are used to assess the predictive performance of a geostatistical model using both cross-validation and simulatoin-based approaches. {#tbl-summary-pp-diag}
 
 ## FAQs
 
@@ -1271,4 +1308,3 @@ For more detailed explanations on this we refer you to Chapter 6 of @diggle2007b
 5.  Consider the Liberia data-set on riverblindess. Carry out a simulation study where the objective is to assess the impact of mispecifying non-linear relationships between elevation and prevalence. Consider @eq-true-model-lib as the true model and a model that specifies the relationship as linear on the logit scale as the candidate model, hence $$M_{C}: \:
     \log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_{0} + \beta_{1}e(x_i) + S(x_i).
     $$ Carry out 200 iterations in the simulation and define a suitable metric of predictive performance to compare the two models. Provide a clear answer on the impact of assuming a linear relationship with elevation when this is not valid.
-

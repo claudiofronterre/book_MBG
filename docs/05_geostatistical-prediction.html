@@ -285,7 +285,7 @@ window.Quarto = {
 <a href="#sec-theory-prediction" id="toc-sec-theory-prediction" class="nav-link" data-scroll-target="#sec-theory-prediction"><span class="header-section-number">5.7</span> Theory</a>
   <ul class="collapse">
 <li><a href="#sec-pred-distr-theory" id="toc-sec-pred-distr-theory" class="nav-link" data-scroll-target="#sec-pred-distr-theory"><span class="header-section-number">5.7.1</span> Expression of the predictive distribution for a linear geostatistical model</a></li>
-  <li><a href="#scoring-rules" id="toc-scoring-rules" class="nav-link" data-scroll-target="#scoring-rules"><span class="header-section-number">5.7.2</span> Scoring rules</a></li>
+  <li><a href="#a-brief-overview-of-scoring-rules" id="toc-a-brief-overview-of-scoring-rules" class="nav-link" data-scroll-target="#a-brief-overview-of-scoring-rules"><span class="header-section-number">5.7.2</span> A brief overview of scoring rules</a></li>
   </ul>
 </li>
   <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">5.8</span> Summary</a></li>
@@ -341,12 +341,17 @@ window.Quarto = {
 <tr class="even">
 <td><code>assess_pp</code></td>
 <td><code>RiskMap</code></td>
-<td>Assessing the predictive performance of geostatistical models</td>
+<td>Assessing the predictive performance of geostatistical models using cross-validation</td>
 </tr>
 <tr class="odd">
 <td><code>surf_sim</code></td>
 <td><code>RiskMap</code></td>
 <td>Simulating surfaces and data from geostatistical models</td>
+</tr>
+<tr class="even">
+<td><code>assess_sim</code></td>
+<td><code>RiskMap</code></td>
+<td>Assessing the predictive performance of geostatistical models using simulations</td>
 </tr>
 </tbody>
 </table></section><section id="introduction" class="level2" data-number="5.1"><h2 data-number="5.1" class="anchored" data-anchor-id="introduction">
@@ -814,15 +819,15 @@ Figure&nbsp;5.5: Maps of the predicted averae number of mosqutoes (left panel). 
 <span></span>
 <span><span class="va">pred_n_mosq_shp</span><span class="op">$</span><span class="va">target</span><span class="op">$</span><span class="va">reg1</span><span class="op">$</span><span class="va">n_mosq</span></span>
 <span><span class="co">## $mean</span></span>
-<span><span class="co">## [1] 17789.26</span></span>
+<span><span class="co">## [1] 17633.83</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $q025</span></span>
 <span><span class="co">##     2.5% </span></span>
-<span><span class="co">## 15203.41 </span></span>
+<span><span class="co">## 15061.78 </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $q075</span></span>
 <span><span class="co">##    97.5% </span></span>
-<span><span class="co">## 20910.67</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span><span class="co">## 20500.16</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Since we are not standardizing the weights, there is no need to specify <code>standardize_weights</code>, as it is set to <code>FALSE</code> by default. In the code above, we printed the mean of the predictive distribution of <span class="math inline">\(T\)</span> along with the 95% prediction interval. The point estimate of approximately 17,719 mosquitoes is likely an underestimate of the total number of Anopheles gambiae in the area, as the trap used to count the mosquitoes may not capture all of them, particularly those outside the immediate trapping zone or those active at different times.</p>
 </section></section><section id="sec-compare-pp" class="level2" data-number="5.5"><h2 data-number="5.5" class="anchored" data-anchor-id="sec-compare-pp">
@@ -1172,7 +1177,7 @@ Figure&nbsp;5.12: The average nonrandomized probability integral transform (AnPI
 <p>The AnPIT from <a href="#fig-anpit-clus" class="quarto-xref">Figure&nbsp;<span>5.12</span></a> show very similar results to those of <a href="#fig-anpit-reg" class="quarto-xref">Figure&nbsp;<span>5.11</span></a>, hence similar conclusions are drawn.</p>
 </section></section><section id="assessing-calibration-and-sharpness-using-continuous-ranked-probability-scores" class="level3" data-number="5.5.3"><h3 data-number="5.5.3" class="anchored" data-anchor-id="assessing-calibration-and-sharpness-using-continuous-ranked-probability-scores">
 <span class="header-section-number">5.5.3</span> Assessing calibration and sharpness using continuous ranked probability scores</h3>
-<p>We now consider another important aspect that helps to describe the predictive performance of a geostatistical model, namely sharpness. As the name suggests, sharpness refers to the concentration or narrowness of the predictive distribution around the observation <span class="math inline">\(y_i\)</span> which we aim to predict. A sharp predictive distribution has a narrow spread, indicating that the model is highly confident in its predictions. Importantly, sharpness does not depend on how close predictions are to the true values (i.e., it is independent of accuracy). A model with high sharpness will produce predictions with low variance, but this sharpness is only meaningful if the model is well-calibrated, ensuring that the high confidence aligns with observed values. For example, a geostatistical model for disease prevalence mapping that predicts a very tight range of possible prevalence values for a location is producing sharp predictions. However, if the actual prevalence often falls outside this range, then the predictions may be sharp but poorly calibrated, thus limiting the value of quantifying sharpness alone.</p>
+<p>We now consider another important aspect that helps to describe the predictive performance of a geostatistical model, namely sharpness. As the name suggests, sharpness refers to the spread of the predictive distribution. A sharp predictive distribution has a narrow spread, indicating that the model is highly confident in its predictions. Importantly, sharpness does not depend on how close predictions are to the true values (i.e., it is independent of accuracy). A model with high sharpness will produce predictions with low variance, but this sharpness is only meaningful if the model is well-calibrated, ensuring that the high confidence aligns with observed values. For example, a geostatistical model for disease prevalence mapping that predicts a very tight range of possible prevalence values for a location is producing sharp predictions. However, if the actual prevalence often falls outside this range, then the predictions may be sharp but poorly calibrated, thus limiting the value of quantifying sharpness alone.</p>
 <p>To assess predictive performance while considering both sharpness and calibration, we introduce the <em>continuous ranked probability score (CRPS)</em> <span class="citation" data-cites="gneiting2007">(<a href="references.html#ref-gneiting2007" role="doc-biblioref">Gneiting, Balabdaoui, and Raftery 2007</a>)</span> and its scaled variant, the <em>scaled CRPS (SCRPS)</em> <span class="citation" data-cites="bolin2023">(<a href="references.html#ref-bolin2023" role="doc-biblioref">Bolin and Wallin 2023</a>)</span>. The CRPS evaluates the agreement between the predicted cumulative distribution function of the model <span class="math inline">\(M\)</span>, which we denote as in the previous section as <span class="math inline">\(F_M\)</span>, and the observed value <span class="math inline">\(y_i\)</span>. The CRPS is formally defined as <span class="math display">\[
 \text{CRPS}(F_M, y_i) = \int_{-\infty}^\infty \left[ F_M(y) - \mathbf{1}(y \geq y_i) \right]^2 dy,
 \]</span> The CRPS balances sharpness and calibration, penalizing deviations of the predictive distribution from the observation, with smaller CRPS value indicating better predictive performance.</p>
@@ -1470,50 +1475,86 @@ E[W(T^*) | Y] &amp;\approx  \frac{1}{B} \sum_{J=1}^B W^{*}_{(j)}), \\
 \mathrm{Var}[W(T^*) | Y] &amp;\approx \frac{1}{B-1} \sum_{j=1}^B \left( W^{*}_{(j)} - E[W(T^*)] \right)^2.
 \end{align}\]</span></p>
 <p>For more detailed explanations on this we refer you to Chapter 6 of <span class="citation" data-cites="diggle2007book">P. Diggle and Ribeiro (<a href="references.html#ref-diggle2007book" role="doc-biblioref">2007</a>)</span>.</p>
-</section><section id="scoring-rules" class="level3" data-number="5.7.2"><h3 data-number="5.7.2" class="anchored" data-anchor-id="scoring-rules">
-<span class="header-section-number">5.7.2</span> Scoring rules</h3>
+</section><section id="a-brief-overview-of-scoring-rules" class="level3" data-number="5.7.2"><h3 data-number="5.7.2" class="anchored" data-anchor-id="a-brief-overview-of-scoring-rules">
+<span class="header-section-number">5.7.2</span> A brief overview of scoring rules</h3>
+<p>We now provide an overview of the theoretical framework of <em>scoring rules</em>, of which the continuous ranked probability score (CRPS) and its scaled variant (SCRPS), previously presented, are an example. Scoring rules are a tool used in the evaluation of probabilistic forecasts. As shown for CRPS and SCRPS, scoring rules are designed to measure how well a predictive distribution aligns with observed outcomes, balancing both <em>calibration</em> and <em>sharpness</em>.</p>
+<p>In general, a scoring rule is a function <span class="math inline">\(G(F, y)\)</span> that assigns a numerical score to a predictive distribution <span class="math inline">\(F\)</span> and an observed outcome <span class="math inline">\(y\)</span>. Lower scores typically indicate better predictive performance, as they reflect a closer match between the predicted distribution and the observed value.</p>
+<p>A central concept in the theory of scoring rules is that of <em>proper scoring rules</em>. A scoring rule is said to be <em>proper</em> if it favours honest predictions or, in other words, if the expected score is minimized when the predictive distribution <span class="math inline">\(F\)</span> matches the true data-generating distribution <span class="math inline">\(F^*\)</span>. More formally, a scoring rule <span class="math inline">\(G\)</span> is proper if, for all distributions <span class="math inline">\(F\)</span> and <span class="math inline">\(F^*\)</span>, we have: <span class="math display">\[
+E_{Y \sim F^*}[G(F^*, Y)] \leq E_{Y \sim F^*}[G(F, Y)],
+\]</span> with equality if and only if <span class="math inline">\(F = F^*\)</span> when the rule is <em>strictly proper</em>. This property is crucial because it ensures that forecasters cannot improve their scores by manipulating their predictions to deviate from their true beliefs.</p>
+<p>Proper scoring rules encourage the selection of models that yield predictions that are both well-calibrated (reflecting the true distribution of outcomes) and sharp (concentrated around likely values). However, this does not imply that predictions from the (unknown) true model <span class="math inline">\(F^*\)</span> will always be favoured in practice, when dealing with finite samples. In other words, even if two scoring rules are proper, this does not guarantee that the true data-generating model will always achieve a lower score compared to a misspecified model in finite samples. <em>Sample variability</em> can in fact lead to the selection of a misspecified model by chance, especially when the sample size is small or the data are noisy. <em>Model complexity</em> is another important factor. If the true model <span class="math inline">\(F^*\)</span> is highly parameterised and the sample size is insufficient to estimate its parameters accurately, it may perform poorly in predictive tasks due to overfitting or parameter estimation error. In contrast, a simpler misspecified model, despite not capturing the full complexity of the data-generating process, might generalize better in such scenarios. This is related to the bias-variance trade-off, where a model with higher bias (due to misspecification) can still achieve lower overall predictive error if it has substantially lower variance.</p>
+<p>The CRPS and SCRPS are examples of a strictly proper scoring rule for continuous outcomes. Other scoring rules are the following:</p>
+<ul>
+<li><p><em>Logarithmic Score (or Log Score):</em> For a predictive density <span class="math inline">\(f(y)\)</span>, the log score is defined as: <span class="math display">\[
+G_{\text{log}}(f, y) = -\log f(y).
+\]</span> This rule heavily penalizes low-probability predictions for observed outcomes, making it sensitive to the tails of the predictive distribution.</p></li>
+<li><p><em>Brier Score:</em> For binary outcomes, the Brier score measures the mean squared difference between the predicted probability <span class="math inline">\(p\)</span> of an event and the actual outcome <span class="math inline">\(y \in \{0, 1\}\)</span>: <span class="math display">\[
+G_{\text{Brier}}(p, y) = (p - y)^2.
+\]</span> The Brier score is both proper and easy to interpret, with connections to mean squared error in classical regression.</p></li>
+<li><p><em>Energy Score:</em> A generalization of the CRPS to multivariate outcomes, the energy score for a predictive distribution <span class="math inline">\(F\)</span> and observation <span class="math inline">\(y\)</span> is given by: <span class="math display">\[
+G_{\text{energy}}(F, y) = E_{X, X' \sim F}[\|X - X'\|] - 2 E_{X \sim F}[\|X - y\|],
+\]</span> where <span class="math inline">\(\|\cdot\|\)</span> denotes a norm, typically the Euclidean norm. The energy score is particularly useful for evaluating spatial or multivariate forecasts.</p></li>
+</ul>
+<p>Many proper scoring rules, including the CRPS, can be decomposed into components that separately capture calibration and sharpness. This decomposition helps to understand the different aspects of predictive performance. Specifically, the expected score can often be expressed as: <span class="math display">\[
+E[G(F, Y)] = \underbrace{\text{Uncertainty}}_{\text{inherent in data}} - \underbrace{\text{Resolution}}_{\text{sharpness of predictions}} + \underbrace{\text{Reliability}}_{\text{calibration error}},
+\]</span> where: - <em>Uncertainty</em> represents the inherent variability in the data, independent of the model. - <em>Resolution</em> quantifies the model’s ability to produce sharp, confident forecasts. - <em>Reliability</em> (or calibration error) measures the degree to which the forecast probabilities align with observed frequencies.</p>
+<p>This decomposition highlights an important trade-off: improving sharpness without compromising calibration is the hallmark of a good probabilistic model. A model that produces overly sharp forecasts may suffer from poor calibration, while a model that is perfectly calibrated but overly diffuse lacks resolution.</p>
+<p>As we have shown in this chapter, scoring rules are particularly appropriate in cross-validation frameworks, where the goal is to evaluate how well a model predicts future data realizations. When instead conducting simulation studies, we generate data from a known simulated true surface which becomes our benchmark. Hence, in simulation studies, we do not perform cross-validation but, for a given simulation, we compare the model predictions against the true surface. In such cases, scoring rules are not used because they are designed to assess predictive performance based on observed data, where both calibration and sharpness are critical considerations. Hence, in simulation studies, prediction performance metrics, such as bias, mean squared error (MSE), or other distance-based metrics that directly quantify the deviation from the known truth can be used to quantify the predictive performance of a model.</p>
+<p>For a more detailed explanation of scoring rules, <span class="citation" data-cites="gneiting2007">Gneiting, Balabdaoui, and Raftery (<a href="references.html#ref-gneiting2007" role="doc-biblioref">2007</a>)</span> is a recommended read.</p>
 </section></section><section id="summary" class="level2" data-number="5.8"><h2 data-number="5.8" class="anchored" data-anchor-id="summary">
 <span class="header-section-number">5.8</span> Summary</h2>
+<p>In this chapter, we have demonstrated how geostatistical models can be used to draw predictive inference for targets that may be spatially continuous (e.g., a prevalence surface within a study region) or aggregated at the areal level (e.g., the average disease prevalence in a district). The fundamental concept underpinning geostatistical prediction is that of the <strong>predictive distribution</strong>, which we define as the distribution of the target <span class="math inline">\(T(x)\)</span> conditioned on the data <span class="math inline">\(y\)</span>. This distribution is the key element that enables the derivation and computation of point predictions, predictive intervals and the probability that the target falls within a pre-specified interval or above/below a given threshold.</p>
+<p>To assess the predictive performance of a geostatistical model, we have considered two complementary approaches: cross-validation and simulation studies. In the cross-validation framework, the concepts of <strong>calibration</strong> and <strong>sharpness</strong> are introduced to evaluate the quality of spatial predictions. Calibration refers to the agreement between the predicted probability of an event occurring and its actual observed frequency. Sharpness, on the other hand, quantifies the concentration of the predictive distribution. However, sharper predictions are not necessarily better; they must be well-calibrated to be meaningful. Thus, it is appropriate to discuss sharpness only in the context of well calibrated models.</p>
 <div id="tbl-summary-pp-diag" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure"><figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-summary-pp-diag-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;5.2: Summary of the different diagnostic tools and metrics, discussed in this chapter, that are used to assess the predictive performance of a geostatistical model.
+Table&nbsp;5.2: Summary of the different diagnostic tools and metrics, that are used to assess the predictive performance of a geostatistical model using both cross-validation and simulatoin-based approaches.
 </figcaption><div aria-describedby="tbl-summary-pp-diag-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <table class="caption-top table">
 <colgroup>
-<col style="width: 44%">
+<col style="width: 41%">
 <col style="width: 30%">
-<col style="width: 25%">
+<col style="width: 27%">
 </colgroup>
 <thead><tr class="header">
 <th>Diagnostic/Metric</th>
 <th>Performance characteristic</th>
-<th>Descritpion</th>
+<th>Recommended use in</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td>Probability integral transform (PIT)</td>
-<td>Calibration</td>
-<td></td>
-</tr>
-<tr class="even">
-<td>Nonrandomized PIT</td>
-<td>Calibration</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td>Mean square error</td>
-<td>Calibration</td>
-<td></td>
+<td>Bias</td>
+<td>Accuracy</td>
+<td>Simulation</td>
 </tr>
 <tr class="even">
 <td>Continuous ranked probability score (CRPS)</td>
 <td>Calibration and sharpness</td>
-<td></td>
+<td>Cross-validation</td>
+</tr>
+<tr class="odd">
+<td>Coverage probability</td>
+<td>Calibration</td>
+<td>Cross-validation and simulation</td>
+</tr>
+<tr class="even">
+<td>Mean square error</td>
+<td>Accuracy</td>
+<td>Simulation</td>
+</tr>
+<tr class="odd">
+<td>Nonrandomized PIT</td>
+<td>Calibration</td>
+<td>Cross-validation</td>
+</tr>
+<tr class="even">
+<td>PIT</td>
+<td>Calibration</td>
+<td>Cross-validation</td>
 </tr>
 <tr class="odd">
 <td>Scaled CRPS</td>
 <td>Calibration and sharpness</td>
-<td></td>
+<td>Cross-validation</td>
 </tr>
 </tbody>
 </table>
