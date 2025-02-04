@@ -1,0 +1,1477 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>2&nbsp; Handling of spatial data in R – Model-based geostatistics for global public health using R</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./03_model-fitting.html" rel="next">
+<link href="./01_intro.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/quarto-contrib/line-highlight-1.0.0/line-highlight.css" rel="stylesheet"><script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script><link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
+<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+</head>
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top"><nav class="quarto-secondary-nav"><div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./02_handling-spatial-data.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Handling of spatial data in R</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav></header><!-- content --><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto"><div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Model-based geostatistics for global public health using R</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./author.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Author</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01_intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02_handling-spatial-data.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Handling of spatial data in R</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03_model-fitting.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Model formulation and parameter estimation</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04_model-validation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Model validation through residuals analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05_geostatistical-prediction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Geostatistical prediction</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06_case-studies.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Case studies</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Appendix</span></a>
+  </div>
+</li>
+    </ul>
+</div>
+</nav><div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active"><h2 id="toc-title">Contents</h2>
+   
+  <ul>
+<li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">2.1</span> Introduction</a></li>
+  <li><a href="#spatial-data-handling-in-geostatistical-analysis" id="toc-spatial-data-handling-in-geostatistical-analysis" class="nav-link" data-scroll-target="#spatial-data-handling-in-geostatistical-analysis"><span class="header-section-number">2.2</span> Spatial data handling in geostatistical analysis</a></li>
+  <li><a href="#chapter-overview" id="toc-chapter-overview" class="nav-link" data-scroll-target="#chapter-overview"><span class="header-section-number">2.3</span> Chapter overview</a></li>
+  <li>
+<a href="#accessing-covariates-for-disease-mapping" id="toc-accessing-covariates-for-disease-mapping" class="nav-link" data-scroll-target="#accessing-covariates-for-disease-mapping"><span class="header-section-number">2.4</span> Accessing covariates for disease mapping</a>
+  <ul class="collapse">
+<li><a href="#example-downloading-administrative-boundaries" id="toc-example-downloading-administrative-boundaries" class="nav-link" data-scroll-target="#example-downloading-administrative-boundaries"><span class="header-section-number">2.4.1</span> Example: Downloading administrative boundaries</a></li>
+  <li><a href="#sec-pop-data" id="toc-sec-pop-data" class="nav-link" data-scroll-target="#sec-pop-data"><span class="header-section-number">2.4.2</span> Example: Download population data</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#importing-and-standardizing-spatial-data" id="toc-importing-and-standardizing-spatial-data" class="nav-link" data-scroll-target="#importing-and-standardizing-spatial-data"><span class="header-section-number">2.5</span> Importing and standardizing spatial data</a>
+  <ul class="collapse">
+<li><a href="#importing-vector-data" id="toc-importing-vector-data" class="nav-link" data-scroll-target="#importing-vector-data"><span class="header-section-number">2.5.1</span> Importing vector data</a></li>
+  <li><a href="#importing-raster-data" id="toc-importing-raster-data" class="nav-link" data-scroll-target="#importing-raster-data"><span class="header-section-number">2.5.2</span> Importing raster data</a></li>
+  <li><a href="#understanding-coordinate-reference-systems-crs" id="toc-understanding-coordinate-reference-systems-crs" class="nav-link" data-scroll-target="#understanding-coordinate-reference-systems-crs"><span class="header-section-number">2.5.3</span> Understanding coordinate reference systems (CRS)</a></li>
+  <li><a href="#epsg-codes" id="toc-epsg-codes" class="nav-link" data-scroll-target="#epsg-codes"><span class="header-section-number">2.5.4</span> EPSG codes</a></li>
+  <li><a href="#convert-a-data-frame-to-an-sf-object" id="toc-convert-a-data-frame-to-an-sf-object" class="nav-link" data-scroll-target="#convert-a-data-frame-to-an-sf-object"><span class="header-section-number">2.5.5</span> Convert a data frame to an <code>sf</code> object</a></li>
+  <li><a href="#working-with-crss-in-r" id="toc-working-with-crss-in-r" class="nav-link" data-scroll-target="#working-with-crss-in-r"><span class="header-section-number">2.5.6</span> Working with CRSs in R</a></li>
+  <li><a href="#common-issues-and-considerations" id="toc-common-issues-and-considerations" class="nav-link" data-scroll-target="#common-issues-and-considerations"><span class="header-section-number">2.5.7</span> Common Issues and Considerations</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#extracting-covariate-data" id="toc-extracting-covariate-data" class="nav-link" data-scroll-target="#extracting-covariate-data"><span class="header-section-number">2.6</span> Extracting covariate data</a>
+  <ul class="collapse">
+<li><a href="#extracting-covariates-from-raster-layers" id="toc-extracting-covariates-from-raster-layers" class="nav-link" data-scroll-target="#extracting-covariates-from-raster-layers"><span class="header-section-number">2.6.1</span> Extracting covariates from raster layers</a></li>
+  </ul>
+</li>
+  <li><a href="#creating-a-predictive-grid" id="toc-creating-a-predictive-grid" class="nav-link" data-scroll-target="#creating-a-predictive-grid"><span class="header-section-number">2.7</span> Creating a predictive grid</a></li>
+  <li>
+<a href="#visualizing-spatial-data" id="toc-visualizing-spatial-data" class="nav-link" data-scroll-target="#visualizing-spatial-data"><span class="header-section-number">2.8</span> Visualizing spatial data</a>
+  <ul class="collapse">
+<li><a href="#visualizing-point-data" id="toc-visualizing-point-data" class="nav-link" data-scroll-target="#visualizing-point-data"><span class="header-section-number">2.8.1</span> Visualizing point data</a></li>
+  <li><a href="#visualizing-polygon-data" id="toc-visualizing-polygon-data" class="nav-link" data-scroll-target="#visualizing-polygon-data"><span class="header-section-number">2.8.2</span> Visualizing polygon data</a></li>
+  <li><a href="#visualizing-raster-data" id="toc-visualizing-raster-data" class="nav-link" data-scroll-target="#visualizing-raster-data"><span class="header-section-number">2.8.3</span> Visualizing raster data</a></li>
+  <li><a href="#combining-multiple-spatial-data-types" id="toc-combining-multiple-spatial-data-types" class="nav-link" data-scroll-target="#combining-multiple-spatial-data-types"><span class="header-section-number">2.8.4</span> Combining Multiple Spatial Data Types</a></li>
+  </ul>
+</li>
+  </ul></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><div class="quarto-title">
+<h1 class="title"><span id="sec-handling-data" class="quarto-section-identifier"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Handling of spatial data in R</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header><section id="introduction" class="level2" data-number="2.1"><h2 data-number="2.1" class="anchored" data-anchor-id="introduction">
+<span class="header-section-number">2.1</span> Introduction</h2>
+<p>Geostatistical analysis primarily deals with <strong>point-referenced data</strong>. However, geostatistical modeling often requires more than just point data—<strong>raster</strong> and <strong>areal (polygon)</strong> data are frequently used to build essential covariates, enhance spatial understanding, or provide environmental context. For instance, population density, climate data, land use, and elevation, often key covariates in many spatial analyses, usually come in raster or polygon formats. Efficient handling of these different data types is critical for successful model-building. This chapter provides a comprehensive guide to the various stages of managing spatial data in R, using the <code>sf</code> and <code>terra</code> packages, to support a complete geostatistical workflow.</p>
+</section><section id="spatial-data-handling-in-geostatistical-analysis" class="level2" data-number="2.2"><h2 data-number="2.2" class="anchored" data-anchor-id="spatial-data-handling-in-geostatistical-analysis">
+<span class="header-section-number">2.2</span> Spatial data handling in geostatistical analysis</h2>
+<p>Throughout a geostatistical analysis, handling spatial data takes place at multiple key stages:</p>
+<ol type="1">
+<li><p><strong>Retrieving External Spatial Data Sources</strong>: Before starting the modeling process, one often needs to acquire spatial datasets from external sources to improve model accuracy. These could include satellite-derived environmental variables, population data from <a href="https://www.worldpop.org/">WorldPop</a>, or climate data from <a href="https://www.worldclim.org/">WorldClim</a>. Acquiring these datasets and ensuring they are in compatible formats and resolutions is an essential early step in spatial analysis.</p></li>
+<li><p><strong>Importing and Standardizing Spatial Data</strong>: Once external data is obtained, it must be imported into R. This involves handling various file formats such as shapefiles or geopackages for vector data and GeoTIFFs for raster data. Moreover, different datasets might use different <strong>Coordinate Reference Systems (CRS)</strong>, requiring CRS standardization to ensure that all datasets align correctly. Failure to standardize CRS can result in spatial misalignments and incorrect results.</p></li>
+<li><p><strong>Extracting Covariate Information for Modeling</strong>: Covariate extraction is an essential step in geostatistical modeling. After importing spatial data, it is necessary to extract relevant covariate information both for the <strong>sampled locations</strong> (where we have observed data) and the <strong>prediction locations</strong> (where we wish to make predictions). This step involves linking raster or polygonal covariates—such as climate, population, or land cover data—to the geostatistical data points.</p></li>
+<li><p><strong>Prediction and Creation of a Spatial Grid</strong>: For predictive geostatistical models, a regular grid of points is often created over the study region. Covariates must then be assigned to each grid point to make predictions across the entire region of interest. Creating predictive grids and linking them to the necessary covariates is key to generating continuous spatial predictions from geostatistical models.</p></li>
+<li><p><strong>Visualizing Spatial Data</strong>: Visualization is crucial for exploring spatial data, interpreting model results, and communicating findings. Whether working with point-referenced data, polygons, or rasters, clear and effective visualization helps reveal patterns that inform the modeling process. Effective visualization can also help highlight covariate trends, spatial clusters, and uncertainty in predictions.</p></li>
+</ol></section><section id="chapter-overview" class="level2" data-number="2.3"><h2 data-number="2.3" class="anchored" data-anchor-id="chapter-overview">
+<span class="header-section-number">2.3</span> Chapter overview</h2>
+<p>This chapter introduces methods for handling spatial data at each stage of the geostatistical analysis workflow. You’ll learn how to:</p>
+<ul>
+<li><p>Retrieve covariates from external spatial data sources;</p></li>
+<li><p>Import and standardize spatial data;</p></li>
+<li><p>Extract covariates for geostatistical analysis;</p></li>
+<li><p>Create predictive grids and link them with covariates;</p></li>
+<li><p>Visualize spatial data effectively to aid in analysis and presentation.</p></li>
+</ul>
+<p>By mastering these steps, you’ll be equipped to handle the complexity of spatial data in geostatistical modeling, enhancing your analyses and improving your predictions.</p>
+</section><section id="accessing-covariates-for-disease-mapping" class="level2" data-number="2.4"><h2 data-number="2.4" class="anchored" data-anchor-id="accessing-covariates-for-disease-mapping">
+<span class="header-section-number">2.4</span> Accessing covariates for disease mapping</h2>
+<p>Covariates can play a crucial role in understanding and modeling the spatial variation in disease risk. In geostatistical analysis, incorporating environmental, demographic, and climatic variables might improve the predictive power of models or at least reduce the level of uncertainty in the predictions. These covariates can influence factors such as the spread of infectious diseases, the distribution of disease vectors, and the socio-economic conditions that impact health outcomes.</p>
+<p>A wide range of open-access spatial datasets provide covariates for disease mapping. These include population density, climate, land cover, and human infrastructure data, which often come in raster or polygon formats. Alongside these environmental covariates, administrative boundaries are also crucial for public health analysis, as they help organize and aggregate data at different levels (e.g., country, region, or district). For example, aggregating health outcomes or covariate data by administrative units allows researchers to identify geographic disparities and allocate resources accordingly. Fortunately, open-source platforms such as <a href="https://www.geoboundaries.org/">geoBoundaries</a> provide easily accessible administrative boundary data for many countries at various levels of granularity. This data is available in formats compatible with geospatial analysis tools in R, making it easy to integrate into geostatistical workflows.</p>
+<p><a href="#tbl-data-sources" class="quarto-xref">Table&nbsp;<span>2.1</span></a> below summarizes key sources of covariates useful in disease mapping. Each dataset offers specific types of data, from satellite-derived environmental variables to gridded population estimates and administrative boundaries, which can be accessed through various R packages or APIs.</p>
+<p>MENTION RSPATIAL DATA WEBSITE?? https://rspatialdata.github.io/</p>
+<div id="tbl-data-sources" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure"><figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-data-sources-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;2.1: Some key sources of covariates useful in disease mapping and R packages to retrieve them.
+</figcaption><div aria-describedby="tbl-data-sources-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 19%">
+<col style="width: 26%">
+<col style="width: 36%">
+<col style="width: 17%">
+</colgroup>
+<thead><tr class="header">
+<th><strong>Source</strong></th>
+<th><strong>Data Type</strong></th>
+<th><strong>Description</strong></th>
+<th><strong>R Package</strong></th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><strong>WorldClim</strong></td>
+<td>Climate (temperature, rainfall)</td>
+<td>Global climate data</td>
+<td><code>geodata</code></td>
+</tr>
+<tr class="even">
+<td><strong>MODIS</strong></td>
+<td>Remote Sensing</td>
+<td>Satellite imagery (e.g., vegetation indices)</td>
+<td><code>MODIStsp</code></td>
+</tr>
+<tr class="odd">
+<td><strong>OpenStreetMap (OSM)</strong></td>
+<td>Human settlements, roads</td>
+<td>Global geographic features</td>
+<td><code>osmdata</code></td>
+</tr>
+<tr class="even">
+<td><strong>Google Earth Engine</strong></td>
+<td>Satellite imagery</td>
+<td>Large-scale environmental data analysis</td>
+<td><code>rgee</code></td>
+</tr>
+<tr class="odd">
+<td><strong>WorldPop</strong></td>
+<td>Population data</td>
+<td>Gridded population density estimates</td>
+<td>
+<code>worldpop</code> (via API)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<section id="example-downloading-administrative-boundaries" class="level3" data-number="2.4.1"><h3 data-number="2.4.1" class="anchored" data-anchor-id="example-downloading-administrative-boundaries">
+<span class="header-section-number">2.4.1</span> Example: Downloading administrative boundaries</h3>
+<p>Administrative boundaries provide an essential spatial structure for many types of geostatistical analyses, particularly in disease mapping where data is often aggregated by administrative units such as regions, districsts or provinces. The <a href="https://www.geoboundaries.org/">geoBoundaries</a> datasets, which are accessible via the <code>rgeoboundaries</code> package, provides openly available administrative boundary data for nearly every country, allowing researchers to integrate these boundaries into their analyses seamlessly.</p>
+<div class="sourceCode" id="cb1" data-code-line-numbers=""><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span><span class="op">(</span>mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co"># Load the rgeoboundaries package</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/wmgeolab/rgeoboundaries">rgeoboundaries</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Download administrative boundaries for Liberia (level 0: country)</span></span>
+<span><span class="va">liberia_admin0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/rgeoboundaries/man/geoboundaries.html">gb_adm0</a></span><span class="op">(</span><span class="st">"Liberia"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Do the same for level 1: regions</span></span>
+<span><span class="va">liberia_admin1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/rgeoboundaries/man/geoboundaries.html">gb_adm1</a></span><span class="op">(</span><span class="st">"Liberia"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Plot the administrative boundaries</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">liberia_admin0</span><span class="op">$</span><span class="va">geometry</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">liberia_admin1</span><span class="op">$</span><span class="va">geometry</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="fig-liberia-admin" class="quarto-layout-panel">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-liberia-admin-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-layout-row">
+<div class="cell-output-display quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-liberia-admin" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-liberia-admin-1" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-subfloat-fig figure"><div aria-describedby="fig-liberia-admin-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="02_handling-spatial-data_files/figure-html/fig-liberia-admin-1.png" class="img-fluid figure-img" data-ref-parent="fig-liberia-admin">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-liberia-admin-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(a) Adimin level 0
+</figcaption></figure>
+</div>
+</div>
+<div class="cell-output-display quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-liberia-admin" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-liberia-admin-2" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-subfloat-fig figure"><div aria-describedby="fig-liberia-admin-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="02_handling-spatial-data_files/figure-html/fig-liberia-admin-2.png" class="img-fluid figure-img" data-ref-parent="fig-liberia-admin">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-liberia-admin-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(b) Admin level 1
+</figcaption></figure>
+</div>
+</div>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-liberia-admin-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2.1: Administrative boundaries for Liberia retrieved using the <code>rgeoboundaries</code> package.
+</figcaption></figure>
+</div>
+</section><section id="sec-pop-data" class="level3" data-number="2.4.2"><h3 data-number="2.4.2" class="anchored" data-anchor-id="sec-pop-data">
+<span class="header-section-number">2.4.2</span> Example: Download population data</h3>
+<p>Population density is a key covariate in geostatistical models for public health research. In this section, we demonstrate how to retrieve high-resolution population data for Liberia from <a href="https://www.worldpop.org/">WorldPop</a> using the <code>wpgpDownloadR</code> package. This package provides easy access to the WorldPop datasets, which offers gridded population estimates at various spatial resolutions.</p>
+<p>Before downloading the data, we will search for available datasets for Liberia. The function <code><a href="https://rdrr.io/pkg/wpgpDownloadR/man/wpgpListCountryDatasets.html">wpgpListCountryDatasets()</a></code> helps in retrieving a list of all available datasets for a specified country.</p>
+<div class="cell">
+<div class="sourceCode" id="cb2" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">wpgpDownloadR</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Search for datasets available for Liberia </span></span>
+<span><span class="co"># usign the ISO3 country code</span></span>
+<span><span class="va">lbr_datasets</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/wpgpDownloadR/man/wpgpListCountryDatasets.html">wpgpListCountryDatasets</a></span><span class="op">(</span>ISO3 <span class="op">=</span> <span class="st">"LBR"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We can check the description column to see what datasets are available. Let’s download the population data for Liberia for the year 2014 at a 100m resolution. The <code>wpgpGetCountryDataset</code> function will then download a raster dataset based on ISO3 code and covariate name.</p>
+<div class="cell">
+<div class="sourceCode" id="cb3" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">lbr_pop_url</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/wpgpDownloadR/man/wpgpGetCountryDataset.html">wpgpGetCountryDataset</a></span><span class="op">(</span>ISO3 <span class="op">=</span> <span class="st">"LBR"</span>, covariate <span class="op">=</span> <span class="st">"ppp_2014"</span><span class="op">)</span> </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>This will download a raster file locally in a temporary directory. The path to the downloaded file is contained in the <code>lbr_pop_url</code> variable and when we introduce the <code>terra</code> package in the next sections we will show how to upoload the population raster into R. It is also possible to specify the directory where we want the raster to be downloaded using the <code>destDir</code> argument.</p>
+</section></section><section id="importing-and-standardizing-spatial-data" class="level2" data-number="2.5"><h2 data-number="2.5" class="anchored" data-anchor-id="importing-and-standardizing-spatial-data">
+<span class="header-section-number">2.5</span> Importing and standardizing spatial data</h2>
+<p>In geostatistical analysis, importing and standardizing spatial data is a critical step to ensure that data from different sources align and can be used effectively. Spatial data, whether it’s vector data (points, lines, polygons) or raster data (grids), can come in various formats and may use different <strong>Coordinate Reference Systems (CRS)</strong>. To perform accurate spatial analyses, it’s essential to import data correctly and ensure consistency in terms of projection and format. This section will cover how to import vector and raster data into R, explain the concept of CRS and sensure that different datasets align properly for subsequent geostatistical analysis.</p>
+<section id="importing-vector-data" class="level3" data-number="2.5.1"><h3 data-number="2.5.1" class="anchored" data-anchor-id="importing-vector-data">
+<span class="header-section-number">2.5.1</span> Importing vector data</h3>
+<p>Vector data are typically stored in formats such as <strong>shapefiles</strong> (<code>.shp</code>) or <strong>geopackages</strong> (<code>.gpkg</code>). The <code>sf</code> (simple features) package in R is the most common tool for handling vector data.</p>
+<div class="cell">
+<div class="sourceCode" id="cb4" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Load the sf package</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/">sf</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Import a shapefile (e.g., administrative boundaries)</span></span>
+<span><span class="va">admin</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html">st_read</a></span><span class="op">(</span><span class="st">"path_to_your_shapefile/Admin_Boundaries.shp"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Inspect the data</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">admin</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">admin</span><span class="op">)</span>  <span class="co"># Basic plot of the shapefile</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The <code><a href="https://r-spatial.github.io/sf/reference/st_read.html">st_read()</a></code> function reads various spatial data formats, automatically recognizing file types.</p>
+</section><section id="importing-raster-data" class="level3" data-number="2.5.2"><h3 data-number="2.5.2" class="anchored" data-anchor-id="importing-raster-data">
+<span class="header-section-number">2.5.2</span> Importing raster data</h3>
+<p>Raster data consists of a grid of cells, where each cell holds a value representing a spatial attribute such as elevation or temperature. The <code>terra</code> package in R is designed to work with raster data and has superseded the older <code>raster</code> package due to better performance and greater functionality. Let’s see now how to import a GeoTIFF file using <code>terra</code>. We can upload the population raster for Liberia that we have downloaded in <a href="#sec-pop-data" class="quarto-xref"><span>Section 2.4.2</span></a>.</p>
+<div class="cell">
+<div class="sourceCode" id="cb5" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Load the terra package</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/">terra</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Import a raster file </span></span>
+<span><span class="va">lbr_pop_100</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html">rast</a></span><span class="op">(</span><span class="va">lbr_pop_url</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Inspect the raster data</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">lbr_pop_100</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre data-code-line-numbers=""><code>class       : SpatRaster 
+dimensions  : 5040, 4945, 1  (nrow, ncol, nlyr)
+resolution  : 0.0008333333, 0.0008333333  (x, y)
+extent      : -11.48625, -7.365417, 4.352084, 8.552084  (xmin, xmax, ymin, ymax)
+coord. ref. : lon/lat WGS 84 (EPSG:4326) 
+source      : lbr_ppp_2014.tif 
+name        : lbr_ppp_2014 
+min value   :  0.006426936 
+max value   : 92.716874581 </code></pre>
+</div>
+<div class="sourceCode" id="cb7" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Basic plot of the raster</span></span>
+<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html">plot</a></span><span class="op">(</span><span class="va">lbr_pop_100</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-lbr-pop" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-lbr-pop-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="02_handling-spatial-data_files/figure-html/fig-lbr-pop-1.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-lbr-pop-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2.2: Liberia population count for 2014 at 100m resolution
+</figcaption></figure>
+</div>
+</div>
+</div>
+<p>The output of <code><a href="https://rdrr.io/r/base/print.html">print()</a></code> provides a detailed summary of the raster’s properties. The <code><a href="https://rspatial.github.io/terra/reference/rast.html">rast()</a></code> function reads raster files in formats like GeoTIFF, ASCII grid, or other common raster formats and then we used <code><a href="https://rspatial.github.io/terra/reference/plot.html">plot()</a></code> as a quick way to visualize raster data.</p>
+</section><section id="understanding-coordinate-reference-systems-crs" class="level3" data-number="2.5.3"><h3 data-number="2.5.3" class="anchored" data-anchor-id="understanding-coordinate-reference-systems-crs">
+<span class="header-section-number">2.5.3</span> Understanding coordinate reference systems (CRS)</h3>
+<p>When working with spatial data, especially from different sources, one of the most critical tasks is ensuring that all datasets share the same <strong>Coordinate Reference System (CRS)</strong>. A CRS defines how the two-dimensional map data corresponds to locations on the three-dimensional Earth. If different layers (e.g., raster and vector data) have different CRSs, they may not align correctly when plotted or analyzed together, leading to inaccurate analyses or visualizations.</p>
+<p>CRSs can either be:</p>
+<ul>
+<li><p><strong>Geographic</strong>: These use latitude and longitude coordinates to represent locations on the Earth’s surface. The most common example is <strong>WGS84</strong> (EPSG:4326), the default CRS used by GPS and global datasets.</p></li>
+<li><p><strong>Projected</strong>: These convert the Earth’s curved surface to a flat map and preserve certain properties like area, distance, or direction. Examples include <strong>Universal Transverse Mercator (UTM)</strong> or <strong>Albers Equal Area</strong> projections.</p></li>
+</ul>
+<p>In many cases, using a projected rather than a geographic CRS s preferred, especially when any summary statistic or parameter is distance-related. In a geographic CRS, distances between two points are calculated using angular coordinates (degrees), which do not translate easily into linear units like meters or kilometers. This makes interpreting distances challenging, as the length of a degree of latitude differs from the length of a degree of longitude. In contrast, a projected CRS uses a linear coordinate system (usually meters), ensuring that distances are accurately represented on a flat surface. This is important when computing spatial variograms, covariance functions, or some parameters in geostatistical models, where distance between sampling locations is a key factor. In this context, we assume that the default distance metric is Euclidean distance. However, an important exception to our recommendation arises when analyzing data across large, global-scale regions. In such cases, it is more appropriate to use a geographic CRS along with spherical distances, as these better reflect the curved nature of the Earth’s surface.</p>
+</section><section id="epsg-codes" class="level3" data-number="2.5.4"><h3 data-number="2.5.4" class="anchored" data-anchor-id="epsg-codes">
+<span class="header-section-number">2.5.4</span> EPSG codes</h3>
+<p>An <strong>EPSG code</strong> is a unique identifier that defines a CRS. These codes, managed by the <strong>European Petroleum Survey Group (EPSG)</strong>, are widely used in geographic information systems (GIS) to simplify the use of specific projections, ensuring that spatial data is correctly aligned and interpreted. Each EPSG code corresponds to a unique CRS or map projection, making it easier to standardize and manage spatial data from different sources.</p>
+<p>Some key and often used EPSG codes are:</p>
+<ul>
+<li><p><strong>EPSG:4326</strong>: This code represents <strong>WGS84</strong>, the most commonly used geographic CRS, which uses latitude and longitude to describe locations on the Earth’s surface. It is the default CRS for global datasets and GPS systems.</p></li>
+<li><p><strong>EPSG:326XX</strong>: These codes represent the <strong>UTM (Universal Transverse Mercator)</strong> projection, which divides the world into zones. Each zone is optimized to preserve local distances and areas. For example (e.g.&nbsp;EPSG:32629: UTM Zone 29N, covering parts of Western Africa, including Liberia)</p></li>
+<li><p><strong>EPSG:3857</strong>: This code is for the <strong>Web Mercator projection</strong>, which is widely used for web mapping services, including <strong>Google Maps</strong>, <strong>OpenStreetMap</strong>, and <strong>Bing Maps</strong>. This projected CRS uses meters as the unit of distance and is optimized for visualizing maps on a 2D plane, though it distorts area and distance, especially at high latitudes. It is well-suited for interactive online mapping but not ideal for precise distance-based geostatistical analyses.</p></li>
+</ul></section><section id="convert-a-data-frame-to-an-sf-object" class="level3" data-number="2.5.5"><h3 data-number="2.5.5" class="anchored" data-anchor-id="convert-a-data-frame-to-an-sf-object">
+<span class="header-section-number">2.5.5</span> Convert a data frame to an <code>sf</code> object</h3>
+<p>In geospatial analysis, data is often provided in tabular formats like CSV files that contain spatial coordinates (e.g., latitude and longitude). To use these data effectively in R, it is necessary to convert the data frame into an <code>sf</code> object, which is the standard format for working with spatial data in R. Here we show how to achieve this, we can use the Liberia data available in the <code>RiskMap</code> package as it is a data frame.</p>
+<div class="cell">
+<div class="sourceCode" id="cb8" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Load the RiskMap package</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://claudiofronterre.github.io/RiskMap/">RiskMap</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Load the Liberia data set</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"liberia"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Convert the data frame to an sf object</span></span>
+<span><span class="va">liberia_sf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html">st_as_sf</a></span><span class="op">(</span><span class="va">liberia</span>, </span>
+<span>                       coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"long"</span>, <span class="st">"lat"</span><span class="op">)</span>, </span>
+<span>                       crs <span class="op">=</span> <span class="fl">4326</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Inspect the new sf object</span></span>
+<span><span class="va">liberia_sf</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["ntest"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["npos"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["elevation"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["log_elevation"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["geometry"],"name":[5],"type":["sf_POINT"],"align":["right"]}],"data":[{"1":"50","2":"14","3":"17.82621","4":"2.880670","5":"<sf_POINT>","_rn_":"1"},{"1":"46","2":"10","3":"104.85070","4":"4.652537","5":"<sf_POINT>","_rn_":"2"},{"1":"43","2":"11","3":"119.09543","4":"4.779925","5":"<sf_POINT>","_rn_":"3"},{"1":"50","2":"10","3":"144.10921","4":"4.970571","5":"<sf_POINT>","_rn_":"4"},{"1":"48","2":"9","3":"19.03508","4":"2.946283","5":"<sf_POINT>","_rn_":"5"},{"1":"50","2":"13","3":"16.99954","4":"2.833186","5":"<sf_POINT>","_rn_":"6"},{"1":"43","2":"9","3":"137.75360","4":"4.925467","5":"<sf_POINT>","_rn_":"7"},{"1":"50","2":"11","3":"101.75000","4":"4.622519","5":"<sf_POINT>","_rn_":"8"},{"1":"47","2":"11","3":"147.12867","4":"4.991308","5":"<sf_POINT>","_rn_":"9"},{"1":"43","2":"0","3":"26.61054","4":"3.281308","5":"<sf_POINT>","_rn_":"10"},{"1":"43","2":"1","3":"126.85216","4":"4.843022","5":"<sf_POINT>","_rn_":"11"},{"1":"48","2":"10","3":"191.12602","4":"5.252933","5":"<sf_POINT>","_rn_":"12"},{"1":"48","2":"1","3":"72.26974","4":"4.280405","5":"<sf_POINT>","_rn_":"13"},{"1":"50","2":"1","3":"83.05280","4":"4.419477","5":"<sf_POINT>","_rn_":"14"},{"1":"50","2":"9","3":"179.05409","4":"5.187688","5":"<sf_POINT>","_rn_":"15"},{"1":"43","2":"7","3":"219.63379","4":"5.391962","5":"<sf_POINT>","_rn_":"16"},{"1":"50","2":"10","3":"275.38584","4":"5.618173","5":"<sf_POINT>","_rn_":"17"},{"1":"47","2":"15","3":"168.74192","4":"5.128370","5":"<sf_POINT>","_rn_":"18"},{"1":"49","2":"17","3":"153.82902","4":"5.035842","5":"<sf_POINT>","_rn_":"19"},{"1":"43","2":"15","3":"182.72222","4":"5.207967","5":"<sf_POINT>","_rn_":"20"},{"1":"45","2":"7","3":"209.68256","4":"5.345595","5":"<sf_POINT>","_rn_":"21"},{"1":"49","2":"10","3":"293.68001","4":"5.682491","5":"<sf_POINT>","_rn_":"22"},{"1":"50","2":"9","3":"266.37234","4":"5.584895","5":"<sf_POINT>","_rn_":"23"},{"1":"41","2":"8","3":"391.74481","4":"5.970611","5":"<sf_POINT>","_rn_":"24"},{"1":"50","2":"14","3":"328.63853","4":"5.794958","5":"<sf_POINT>","_rn_":"25"},{"1":"50","2":"13","3":"243.03890","4":"5.493222","5":"<sf_POINT>","_rn_":"26"},{"1":"43","2":"8","3":"248.74826","4":"5.516441","5":"<sf_POINT>","_rn_":"27"},{"1":"50","2":"12","3":"261.13335","4":"5.565031","5":"<sf_POINT>","_rn_":"28"},{"1":"45","2":"9","3":"314.68551","4":"5.751574","5":"<sf_POINT>","_rn_":"29"},{"1":"42","2":"8","3":"235.96129","4":"5.463668","5":"<sf_POINT>","_rn_":"30"},{"1":"49","2":"11","3":"324.14160","4":"5.781180","5":"<sf_POINT>","_rn_":"31"},{"1":"50","2":"9","3":"368.04498","4":"5.908205","5":"<sf_POINT>","_rn_":"32"},{"1":"50","2":"14","3":"355.43776","4":"5.873350","5":"<sf_POINT>","_rn_":"33"},{"1":"50","2":"16","3":"528.46907","4":"6.269984","5":"<sf_POINT>","_rn_":"34"},{"1":"50","2":"12","3":"43.45274","4":"3.771674","5":"<sf_POINT>","_rn_":"35"},{"1":"46","2":"14","3":"106.91602","4":"4.672044","5":"<sf_POINT>","_rn_":"36"},{"1":"50","2":"4","3":"26.98081","4":"3.295126","5":"<sf_POINT>","_rn_":"37"},{"1":"50","2":"3","3":"16.39052","4":"2.796703","5":"<sf_POINT>","_rn_":"38"},{"1":"46","2":"10","3":"62.49984","4":"4.135164","5":"<sf_POINT>","_rn_":"39"},{"1":"50","2":"10","3":"59.90005","4":"4.092677","5":"<sf_POINT>","_rn_":"40"},{"1":"50","2":"6","3":"28.54618","4":"3.351523","5":"<sf_POINT>","_rn_":"41"},{"1":"43","2":"5","3":"15.95256","4":"2.769619","5":"<sf_POINT>","_rn_":"42"},{"1":"50","2":"10","3":"67.85720","4":"4.217405","5":"<sf_POINT>","_rn_":"43"},{"1":"43","2":"1","3":"11.74960","4":"2.463819","5":"<sf_POINT>","_rn_":"44"},{"1":"50","2":"9","3":"154.26286","4":"5.038658","5":"<sf_POINT>","_rn_":"45"},{"1":"46","2":"14","3":"232.60584","4":"5.449345","5":"<sf_POINT>","_rn_":"46"},{"1":"43","2":"9","3":"221.21223","4":"5.399123","5":"<sf_POINT>","_rn_":"47"},{"1":"49","2":"15","3":"307.24208","4":"5.727636","5":"<sf_POINT>","_rn_":"48"},{"1":"50","2":"14","3":"306.99560","4":"5.726833","5":"<sf_POINT>","_rn_":"49"},{"1":"50","2":"12","3":"339.23185","4":"5.826684","5":"<sf_POINT>","_rn_":"50"},{"1":"46","2":"9","3":"350.72552","4":"5.860004","5":"<sf_POINT>","_rn_":"51"},{"1":"50","2":"16","3":"468.89988","4":"6.150389","5":"<sf_POINT>","_rn_":"52"},{"1":"50","2":"10","3":"350.43568","4":"5.859177","5":"<sf_POINT>","_rn_":"53"},{"1":"44","2":"9","3":"462.81669","4":"6.137331","5":"<sf_POINT>","_rn_":"54"},{"1":"50","2":"11","3":"461.43930","4":"6.134351","5":"<sf_POINT>","_rn_":"55"},{"1":"43","2":"8","3":"530.01579","4":"6.272907","5":"<sf_POINT>","_rn_":"56"},{"1":"50","2":"14","3":"524.92094","4":"6.263248","5":"<sf_POINT>","_rn_":"57"},{"1":"48","2":"10","3":"509.12362","4":"6.232691","5":"<sf_POINT>","_rn_":"58"},{"1":"50","2":"11","3":"585.21129","4":"6.371973","5":"<sf_POINT>","_rn_":"59"},{"1":"43","2":"10","3":"420.64098","4":"6.041780","5":"<sf_POINT>","_rn_":"60"},{"1":"42","2":"9","3":"413.50931","4":"6.024680","5":"<sf_POINT>","_rn_":"61"},{"1":"45","2":"1","3":"30.28219","4":"3.410560","5":"<sf_POINT>","_rn_":"62"},{"1":"50","2":"3","3":"29.04470","4":"3.368836","5":"<sf_POINT>","_rn_":"63"},{"1":"47","2":"1","3":"12.56866","4":"2.531207","5":"<sf_POINT>","_rn_":"64"},{"1":"50","2":"10","3":"67.58882","4":"4.213443","5":"<sf_POINT>","_rn_":"65"},{"1":"41","2":"9","3":"39.58975","4":"3.678570","5":"<sf_POINT>","_rn_":"66"},{"1":"50","2":"8","3":"131.33305","4":"4.877736","5":"<sf_POINT>","_rn_":"67"},{"1":"48","2":"1","3":"10.60796","4":"2.361604","5":"<sf_POINT>","_rn_":"68"},{"1":"40","2":"3","3":"21.68275","4":"3.076517","5":"<sf_POINT>","_rn_":"69"},{"1":"50","2":"4","3":"59.05072","4":"4.078397","5":"<sf_POINT>","_rn_":"70"},{"1":"44","2":"8","3":"74.88933","4":"4.316011","5":"<sf_POINT>","_rn_":"71"},{"1":"50","2":"10","3":"97.90856","4":"4.584034","5":"<sf_POINT>","_rn_":"72"},{"1":"42","2":"9","3":"132.04637","4":"4.883153","5":"<sf_POINT>","_rn_":"73"},{"1":"49","2":"2","3":"27.77351","4":"3.324083","5":"<sf_POINT>","_rn_":"74"},{"1":"40","2":"2","3":"19.23788","4":"2.956881","5":"<sf_POINT>","_rn_":"75"},{"1":"50","2":"4","3":"34.36730","4":"3.537105","5":"<sf_POINT>","_rn_":"76"},{"1":"50","2":"11","3":"117.13212","4":"4.763303","5":"<sf_POINT>","_rn_":"77"},{"1":"46","2":"10","3":"58.78720","4":"4.073924","5":"<sf_POINT>","_rn_":"78"},{"1":"50","2":"10","3":"196.56726","4":"5.281005","5":"<sf_POINT>","_rn_":"79"},{"1":"50","2":"8","3":"222.79488","4":"5.406252","5":"<sf_POINT>","_rn_":"80"},{"1":"48","2":"11","3":"71.72164","4":"4.272793","5":"<sf_POINT>","_rn_":"81"},{"1":"50","2":"12","3":"112.04979","4":"4.718943","5":"<sf_POINT>","_rn_":"82"},{"1":"40","2":"7","3":"261.60762","4":"5.566846","5":"<sf_POINT>","_rn_":"83"},{"1":"50","2":"6","3":"255.48200","4":"5.543152","5":"<sf_POINT>","_rn_":"84"},{"1":"48","2":"10","3":"204.13043","4":"5.318759","5":"<sf_POINT>","_rn_":"85"},{"1":"50","2":"13","3":"210.40515","4":"5.349035","5":"<sf_POINT>","_rn_":"86"},{"1":"50","2":"9","3":"238.36232","4":"5.473792","5":"<sf_POINT>","_rn_":"87"},{"1":"50","2":"10","3":"295.52640","4":"5.688758","5":"<sf_POINT>","_rn_":"88"},{"1":"43","2":"9","3":"168.63179","4":"5.127718","5":"<sf_POINT>","_rn_":"89"},{"1":"50","2":"11","3":"281.69646","4":"5.640830","5":"<sf_POINT>","_rn_":"90"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+<div class="sourceCode" id="cb9" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html">plot</a></span><span class="op">(</span><span class="va">liberia_sf</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="02_handling-spatial-data_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The <code><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html">st_as_sf()</a></code> function converts the data frame into an <code>sf</code> object. The <code>coords</code> argument specifies which columns contain the spatial coordinates and the <code>crs</code> argument assigns the CRS that in this case we know being WGS84 (EPSG:4326). The <code>sf</code> object can now be used for operations such as spatial joins, distance calculations, and mapping with other spatial layers. Note that the columns containing the spatial coordinates have been replaced by a <code>geometry</code> column, which now stores this information. If you would like to retain the original coordinate columns in the output, you can set the <code>remove</code> argument to <code>FALSE</code> when converting the data frame to an <code>sf</code> object.</p>
+</section><section id="working-with-crss-in-r" class="level3" data-number="2.5.6"><h3 data-number="2.5.6" class="anchored" data-anchor-id="working-with-crss-in-r">
+<span class="header-section-number">2.5.6</span> Working with CRSs in R</h3>
+<p>When working with data from multiple sources, such as environmental layers, population data, or administrative boundaries, ensuring that all datasets share the same CRS is essential for accurate spatial analysis. This section covers the core tasks involved in managing CRSs in R: checking the CRS of spatial data to ensure datasets are compatible and Reprojecting spatial data into a common CRS when necessary.</p>
+<section id="checking-the-crs-of-spatial-data" class="level4" data-number="2.5.6.1"><h4 data-number="2.5.6.1" class="anchored" data-anchor-id="checking-the-crs-of-spatial-data">
+<span class="header-section-number">2.5.6.1</span> Checking the CRS of Spatial Data</h4>
+<p>Before performing any spatial operation, it’s crucial to check the CRS of your spatial datasets. Knowing whether your data uses geographic coordinates (e.g., WGS84) or a projected coordinate system (e.g., UTM) helps ensure that they are aligned and ready for analysis. Both <code>sf</code> and <code>terra</code> provide functions to retrieve and inspect the CRS, ensuring datasets are spatially aligned before analysis. The <code><a href="https://r-spatial.github.io/sf/reference/st_crs.html">st_crs()</a></code> function retrieves the CRS information for vector data.</p>
+<div class="cell">
+<div class="sourceCode" id="cb10" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Check the CRS of the vector data</span></span>
+<span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_crs.html">st_crs</a></span><span class="op">(</span><span class="va">liberia_sf</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre data-code-line-numbers=""><code>Coordinate Reference System:
+  User input: EPSG:4326 
+  wkt:
+GEOGCRS["WGS 84",
+    ENSEMBLE["World Geodetic System 1984 ensemble",
+        MEMBER["World Geodetic System 1984 (Transit)"],
+        MEMBER["World Geodetic System 1984 (G730)"],
+        MEMBER["World Geodetic System 1984 (G873)"],
+        MEMBER["World Geodetic System 1984 (G1150)"],
+        MEMBER["World Geodetic System 1984 (G1674)"],
+        MEMBER["World Geodetic System 1984 (G1762)"],
+        MEMBER["World Geodetic System 1984 (G2139)"],
+        ELLIPSOID["WGS 84",6378137,298.257223563,
+            LENGTHUNIT["metre",1]],
+        ENSEMBLEACCURACY[2.0]],
+    PRIMEM["Greenwich",0,
+        ANGLEUNIT["degree",0.0174532925199433]],
+    CS[ellipsoidal,2],
+        AXIS["geodetic latitude (Lat)",north,
+            ORDER[1],
+            ANGLEUNIT["degree",0.0174532925199433]],
+        AXIS["geodetic longitude (Lon)",east,
+            ORDER[2],
+            ANGLEUNIT["degree",0.0174532925199433]],
+    USAGE[
+        SCOPE["Horizontal component of 3D system."],
+        AREA["World."],
+        BBOX[-90,-180,90,180]],
+    ID["EPSG",4326]]</code></pre>
+</div>
+</div>
+<p>The same can be achieved for raster data with the <code><a href="https://rspatial.github.io/terra/reference/crs.html">crs()</a></code> function from the <code>terra</code> package.</p>
+<div class="cell">
+<div class="sourceCode" id="cb12" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Check the CRS of the raster data</span></span>
+<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/crs.html">crs</a></span><span class="op">(</span><span class="va">lbr_pop_100</span>, proj <span class="op">=</span> <span class="cn">TRUE</span>, describe <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":["name"],"name":[1],"type":["chr"],"align":["left"]},{"label":["authority"],"name":[2],"type":["chr"],"align":["left"]},{"label":["code"],"name":[3],"type":["chr"],"align":["left"]},{"label":["area"],"name":[4],"type":["chr"],"align":["left"]},{"label":["extent"],"name":[5],"type":["list"],"align":["right"]},{"label":["proj"],"name":[6],"type":["chr"],"align":["left"]}],"data":[{"1":"WGS 84","2":"EPSG","3":"4326","4":"World","5":"<dbl [4]>","6":"+proj=longlat +datum=WGS84 +no_defs"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+</section><section id="reprojecting-spatial-data-to-a-common-crs" class="level4" data-number="2.5.6.2"><h4 data-number="2.5.6.2" class="anchored" data-anchor-id="reprojecting-spatial-data-to-a-common-crs">
+<span class="header-section-number">2.5.6.2</span> Reprojecting spatial data to a common CRS</h4>
+<p>If your datasets have different CRSs or if you want to change CRS (e.g.&nbsp;from geographical to projected) you will need to reproject one or more datasets so they can be spatially aligned. This ensures that they can be overlaid and analyzed together. For vector data, <code><a href="https://r-spatial.github.io/sf/reference/st_transform.html">st_transform()</a></code> reprojects the data into a specified CRS. This example transforms the liberia point data from WGS84 into UTM. To know what’s the correct UTM zone and hence EPSG code for Liberia we can use the <code>get_epsg_utm</code> function from the <code>RiskMap</code> package.</p>
+<div class="cell">
+<div class="sourceCode" id="cb13" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># MOVE THIS INTO RISKMAP</span></span>
+<span></span>
+<span><span class="va">get_epsg_utm</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">sf_object</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="co"># Ensure the input is an sf object</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/class.html">inherits</a></span><span class="op">(</span><span class="va">sf_object</span>, <span class="st">"sf"</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/stop.html">stop</a></span><span class="op">(</span><span class="st">"Input must be an sf object."</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span>  </span>
+<span>  <span class="co"># Check if the CRS is WGS 84 (EPSG: 4326)</span></span>
+<span>  <span class="va">crs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_crs.html">st_crs</a></span><span class="op">(</span><span class="va">sf_object</span><span class="op">)</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html">is.null</a></span><span class="op">(</span><span class="va">crs</span><span class="op">)</span> <span class="op">||</span> <span class="va">crs</span><span class="op">$</span><span class="va">epsg</span> <span class="op">!=</span> <span class="fl">4326</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/stop.html">stop</a></span><span class="op">(</span><span class="st">"Input sf object must have a CRS of WGS84 (EPSG: 4326)."</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span>  </span>
+<span>  <span class="co"># Get the coordinates of the centroid of the sf object</span></span>
+<span>  <span class="va">centroid</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/geos_unary.html">st_centroid</a></span><span class="op">(</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/geos_combine.html">st_union</a></span><span class="op">(</span><span class="va">sf_object</span><span class="op">)</span><span class="op">)</span> </span>
+<span>  <span class="va">coords</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_coordinates.html">st_coordinates</a></span><span class="op">(</span><span class="va">centroid</span><span class="op">)</span>  </span>
+<span>  </span>
+<span>  <span class="co"># Function to calculate UTM zone based on longitude</span></span>
+<span>  <span class="va">get_utm_zone</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">lon</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Round.html">floor</a></span><span class="op">(</span><span class="op">(</span><span class="va">lon</span> <span class="op">+</span> <span class="fl">180</span><span class="op">)</span> <span class="op">/</span> <span class="fl">6</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/Arithmetic.html">%%</a></span> <span class="fl">60</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span>  </span>
+<span>  <span class="co"># Calculate UTM zone from longitude</span></span>
+<span>  <span class="va">utm_zone</span> <span class="op">&lt;-</span> <span class="fu">get_utm_zone</span><span class="op">(</span><span class="va">coords</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co"># Determine the EPSG code based on the latitude (north/south)</span></span>
+<span>  <span class="va">epsg_code</span> <span class="op">&lt;-</span> <span class="kw">if</span> <span class="op">(</span><span class="va">coords</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span> <span class="op">&gt;=</span> <span class="fl">0</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fl">32600</span> <span class="op">+</span> <span class="va">utm_zone</span>   <span class="co"># Northern Hemisphere</span></span>
+<span>  <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span>    <span class="fl">32700</span> <span class="op">+</span> <span class="va">utm_zone</span>   <span class="co"># Southern Hemisphere</span></span>
+<span>  <span class="op">}</span></span>
+<span>  </span>
+<span>  <span class="co"># Return the calculated EPSG code</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="va">epsg_code</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co"># Obtain EPSG code for UTM for Liberia</span></span>
+<span><span class="fu">get_epsg_utm</span><span class="op">(</span><span class="va">liberia_sf</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre data-code-line-numbers=""><code>[1] 32629</code></pre>
+</div>
+<div class="sourceCode" id="cb15" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Reproject the vector data </span></span>
+<span><span class="va">liberia_sf_utm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_transform.html">st_transform</a></span><span class="op">(</span><span class="va">liberia_sf</span>, crs <span class="op">=</span> <span class="fu">get_epsg_utm</span><span class="op">(</span><span class="va">liberia_sf</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Reprojecting raster data is more complex than reprojecting vector data due to the continuous nature of raster grids. The process involves recalculating cell values to fit a new grid based on the new CRS, which can lead to challenges like resampling, distortion, and data loss. When reprojecting a raster, the grid must adjust to the new CRS, often requiring resampling of cell values. The method you choose depends on the data type: <strong>nearest neighbor</strong> is best for categorical data like land use while <strong>bilinear or cubic interpolation</strong> is good for continuous data like temperature, where smooth transitions are needed.</p>
+<p>The function <code><a href="https://rspatial.github.io/terra/reference/project.html">project()</a></code> from the <code>terra</code> package can be used to reproject a raster.</p>
+<div class="cell">
+<div class="sourceCode" id="cb16" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">lbr_pop_100_utm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/project.html">project</a></span><span class="op">(</span><span class="va">lbr_pop_100</span>, </span>
+<span>                           <span class="fu"><a href="https://rspatial.github.io/terra/reference/crs.html">crs</a></span><span class="op">(</span><span class="va">liberia_sf_utm</span><span class="op">)</span>,</span>
+<span>                           method <span class="op">=</span> <span class="st">"bilinear"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Reprojecting a raster may alter its resolution. For example, reprojecting from geographic (degrees) to projected (meters) CRS can result in a mismatch between the original and new cell sizes. Moreover, distortion can occur when converting between projections, especially at high latitudes. Some cells may be stretched or compressed, leading to potential loss of information or edge artifacts. These distortions arise because the Earth is not flat, and projecting the curved surface of the Earth onto a flat plane (or vice versa) leads to trade-offs. For example, the Mercator projection preserves angles and shapes but distorts area, particularly near the poles.</p>
+<p>For these reasons, it’s often better to reproject vectors rather than rasters when both data types are used together and avoid as much as possible to change the CRS of raster. One way to achieve this is to work with WGS84 when performing all spatial operations like extraction of covariates from rasters and then transform only the point data to a projected CRS before fitting the model.</p>
+</section></section><section id="common-issues-and-considerations" class="level3" data-number="2.5.7"><h3 data-number="2.5.7" class="anchored" data-anchor-id="common-issues-and-considerations">
+<span class="header-section-number">2.5.7</span> Common Issues and Considerations</h3>
+<p>#NOT SURE ABOUT THIS, MAYBE EXPAND OR REMOVE</p>
+<ul>
+<li><p><strong>CRS Mismatch</strong>: One of the most common issues in spatial analysis is the mismatch of CRSs between datasets. Always check and reproject datasets if necessary before performing spatial operations like overlays or extractions.</p></li>
+<li><p><strong>Datum Transformations</strong>: In some cases, especially when working with datasets from different regions, a simple projection transformation may not be enough. You might need to handle datum shifts (e.g., from NAD83 to WGS84). R can handle these transformations, but it’s important to be aware of them.</p></li>
+<li><p><strong>Choosing the Right CRS</strong>: The choice of CRS depends on your study area and the type of analysis. For global studies, WGS84 is often used. For regional studies, <strong>UTM</strong> or other local projections may be more appropriate to preserve accuracy in distances and areas.</p></li>
+</ul></section></section><section id="extracting-covariate-data" class="level2" data-number="2.6"><h2 data-number="2.6" class="anchored" data-anchor-id="extracting-covariate-data">
+<span class="header-section-number">2.6</span> Extracting covariate data</h2>
+<p>In geostatistical models, the inclusion of relevant covariates (environmental, demographic, or climatic) can potentially enhances predictive accuracy. Covariate data often come from raster or polygon sources, and extracting these values for point locations is essential to link spatial context to point-referenced data. These covariates could include variables like temperature, elevation, land cover, or population density, which influence the spatial distribution of diseases. In this section, we will cover how to extract covariates at point locations from both polygon layers raster layers.</p>
+<section id="extracting-covariates-from-polygon-layers" class="level4" data-number="2.6.0.1"><h4 data-number="2.6.0.1" class="anchored" data-anchor-id="extracting-covariates-from-polygon-layers">
+<span class="header-section-number">2.6.0.1</span> Extracting covariates from polygon layers</h4>
+<p>Polygon layers contain discrete spatial entities, such as administrative boundaries or land use areas, with associated attributes. Extracting covariates from polygon layers involves associating point data with the attributes of the polygon in which they fall. Here is an example with…..NEED SOME DATA FOR THIS</p>
+<div class="cell">
+<div class="sourceCode" id="cb17" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Perform a spatial join to transfer polygon attributes to the points</span></span>
+<span><span class="va">points_with_admin</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_join.html">st_join</a></span><span class="op">(</span><span class="va">liberia_sf</span>, <span class="va">liberia_admin1</span><span class="op">[</span><span class="st">"shapeName"</span><span class="op">]</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># View the results, points now include covariates from the polygon layer</span></span>
+<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html">head</a></span><span class="op">(</span><span class="va">points_with_admin</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["ntest"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["npos"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["elevation"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["log_elevation"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["shapeName"],"name":[5],"type":["chr"],"align":["left"]},{"label":["geometry"],"name":[6],"type":["sf_POINT"],"align":["right"]}],"data":[{"1":"50","2":"14","3":"17.82621","4":"2.880670","5":"Margibi","6":"<sf_POINT>","_rn_":"1"},{"1":"46","2":"10","3":"104.85070","4":"4.652537","5":"Montserrado","6":"<sf_POINT>","_rn_":"2"},{"1":"43","2":"11","3":"119.09543","4":"4.779925","5":"Margibi","6":"<sf_POINT>","_rn_":"3"},{"1":"50","2":"10","3":"144.10921","4":"4.970571","5":"Margibi","6":"<sf_POINT>","_rn_":"4"},{"1":"48","2":"9","3":"19.03508","4":"2.946283","5":"Grand Bassa","6":"<sf_POINT>","_rn_":"5"},{"1":"50","2":"13","3":"16.99954","4":"2.833186","5":"Grand Bassa","6":"<sf_POINT>","_rn_":"6"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+<p>This spatial join operation adds attributes (in this case the admin1 names) from the polygons to the points. These attributes can now be used in geostatistical models to explain spatial variation in disease risk based on the regions they fall into.</p>
+</section><section id="extracting-covariates-from-raster-layers" class="level3" data-number="2.6.1"><h3 data-number="2.6.1" class="anchored" data-anchor-id="extracting-covariates-from-raster-layers">
+<span class="header-section-number">2.6.1</span> Extracting covariates from raster layers</h3>
+<p>Raster data provides continuous spatial information, such as elevation, climate data, or population density. Covariate values from raster layers can be extracted for specific points using the <strong><code><a href="https://rspatial.github.io/terra/reference/extract.html">extract()</a></code></strong> function from the <code>terra</code> package. Each point will receive the value of the raster cell it overlaps.</p>
+<div class="cell">
+<div class="sourceCode" id="cb18" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Extract raster values at the point locations</span></span>
+<span><span class="va">covariate_values</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/extract.html">extract</a></span><span class="op">(</span><span class="va">lbr_pop_100</span>, <span class="va">liberia_sf</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Combine the extracted values with the point data</span></span>
+<span><span class="va">liberia_sf</span><span class="op">$</span><span class="va">pop_total</span> <span class="op">&lt;-</span> <span class="va">covariate_values</span><span class="op">[</span>, <span class="fl">2</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># View the updated dataset</span></span>
+<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html">head</a></span><span class="op">(</span><span class="va">liberia_sf</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["ntest"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["npos"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["elevation"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["log_elevation"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["geometry"],"name":[5],"type":["sf_POINT"],"align":["right"]},{"label":["pop_total"],"name":[6],"type":["dbl"],"align":["right"]}],"data":[{"1":"50","2":"14","3":"17.82621","4":"2.880670","5":"<sf_POINT>","6":"0.2914019","_rn_":"1"},{"1":"46","2":"10","3":"104.85070","4":"4.652537","5":"<sf_POINT>","6":"0.6087928","_rn_":"2"},{"1":"43","2":"11","3":"119.09543","4":"4.779925","5":"<sf_POINT>","6":"0.2044306","_rn_":"3"},{"1":"50","2":"10","3":"144.10921","4":"4.970571","5":"<sf_POINT>","6":"0.5078438","_rn_":"4"},{"1":"48","2":"9","3":"19.03508","4":"2.946283","5":"<sf_POINT>","6":"0.1767686","_rn_":"5"},{"1":"50","2":"13","3":"16.99954","4":"2.833186","5":"<sf_POINT>","6":"1.6693381","_rn_":"6"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+<p>In this example, the <code><a href="https://rspatial.github.io/terra/reference/extract.html">extract()</a></code> function assigns the raster value from the population density layer to each point in the dataset. This allows the point data to include population density as a covariate in the analysis.</p>
+<p>Instead of extracting values for exact point locations, it can sometimes be useful to aggregate covariate values within a defined area around each point. This is often done by creating a buffer around each point and calculating summary statistics (e.g., mean, sum) of the raster values within that buffer. For instance, you might want to calculate the average population density or temperature within a 2 km radius around each point to smooth out fine-scale variation.</p>
+<div class="cell">
+<div class="sourceCode" id="cb19" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Create buffers around each point (e.g., 2 km radius)</span></span>
+<span><span class="va">buffered_points</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/geos_unary.html">st_buffer</a></span><span class="op">(</span><span class="va">liberia_sf_utm</span>, dist <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span>  </span>
+<span></span>
+<span><span class="co"># Plot the buffers for visualization</span></span>
+<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html">plot</a></span><span class="op">(</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html">st_geometry</a></span><span class="op">(</span><span class="va">buffered_points</span><span class="op">)</span>, col <span class="op">=</span> <span class="st">"blue"</span>, border <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="02_handling-spatial-data_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode" id="cb20" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Extract raster values within the buffer areas and calculate the </span></span>
+<span><span class="co"># mean or sum. Note that since we used the utm data to work on the</span></span>
+<span><span class="co"># meter scale we need to convert them back to WGS84</span></span>
+<span><span class="va">mean_pop_density</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/extract.html">extract</a></span><span class="op">(</span><span class="va">lbr_pop_100</span>, </span>
+<span>                            <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_transform.html">st_transform</a></span><span class="op">(</span><span class="va">buffered_points</span>, crs <span class="op">=</span> <span class="fl">4326</span><span class="op">)</span>,</span>
+<span>                            fun <span class="op">=</span> <span class="va">mean</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Add the averaged values to the points dataset</span></span>
+<span><span class="va">liberia_sf</span><span class="op">$</span><span class="va">pop_mean2km</span> <span class="op">&lt;-</span> <span class="va">mean_pop_density</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># View the updated dataset</span></span>
+<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html">head</a></span><span class="op">(</span><span class="va">liberia_sf</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["ntest"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["npos"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["elevation"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["log_elevation"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["geometry"],"name":[5],"type":["sf_POINT"],"align":["right"]},{"label":["pop_total"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["pop_mean2km"],"name":[7],"type":["dbl"],"align":["right"]}],"data":[{"1":"50","2":"14","3":"17.82621","4":"2.880670","5":"<sf_POINT>","6":"0.2914019","7":"0.3239253","_rn_":"1"},{"1":"46","2":"10","3":"104.85070","4":"4.652537","5":"<sf_POINT>","6":"0.6087928","7":"0.5534695","_rn_":"2"},{"1":"43","2":"11","3":"119.09543","4":"4.779925","5":"<sf_POINT>","6":"0.2044306","7":"0.2254926","_rn_":"3"},{"1":"50","2":"10","3":"144.10921","4":"4.970571","5":"<sf_POINT>","6":"0.5078438","7":"0.4708411","_rn_":"4"},{"1":"48","2":"9","3":"19.03508","4":"2.946283","5":"<sf_POINT>","6":"0.1767686","7":"0.2419380","_rn_":"5"},{"1":"50","2":"13","3":"16.99954","4":"2.833186","5":"<sf_POINT>","6":"1.6693381","7":"3.7534250","_rn_":"6"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+<p>You can modify the <code>fun</code> argument to calculate other summary statistics, such as the sum, min or max of the raster values within the buffer. This approach is particularly useful when the phenomenon being modeled (e.g., disease transmission) is influenced by broader spatial factors around the observation point, rather than just the value at the exact point location.</p>
+</section></section><section id="creating-a-predictive-grid" class="level2" data-number="2.7"><h2 data-number="2.7" class="anchored" data-anchor-id="creating-a-predictive-grid">
+<span class="header-section-number">2.7</span> Creating a predictive grid</h2>
+<p>A predictive grid is a regularly spaced set of points or cells that spans the study region. This grid serves as the basis for predictions made by your model. The density of the grid (i.e., the distance between grid points) affects both the resolution of the prediction and the computational cost. For point-based predictions, we can generate a grid of points over a polygon (e.g., administrative boundary) using the <code>sf</code> package and the <code>st_make_grid</code> function.</p>
+<div class="cell">
+<div class="sourceCode" id="cb21" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># First we convert the Liberia boundaries to the UTM CRS</span></span>
+<span><span class="co"># because we want our grid in meters</span></span>
+<span><span class="va">liberia_admin0_utm</span> <span class="op">&lt;-</span> <span class="va">liberia_admin0</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_transform.html">st_transform</a></span><span class="op">(</span>crs <span class="op">=</span> <span class="fu">get_epsg_utm</span><span class="op">(</span><span class="va">liberia_sf</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Generate prediction grid at 5km resolution</span></span>
+<span><span class="va">pred_locations</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_make_grid.html">st_make_grid</a></span><span class="op">(</span><span class="va">liberia_admin0_utm</span>, </span>
+<span>                               cellsize <span class="op">=</span> <span class="fl">5000</span>, </span>
+<span>                               what <span class="op">=</span> <span class="st">"centers"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Exclude locations that fall outside the study area</span></span>
+<span><span class="va">pred_locations</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/geos_binary_ops.html">st_intersection</a></span><span class="op">(</span><span class="va">pred_locations</span>, <span class="va">liberia_admin0_utm</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Visualize the result</span></span>
+<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html">plot</a></span><span class="op">(</span><span class="va">liberia_admin0_utm</span><span class="op">$</span><span class="va">geometry</span>, col <span class="op">=</span> <span class="st">"white"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html">plot</a></span><span class="op">(</span><span class="va">pred_locations</span>, cex <span class="op">=</span> <span class="fl">.01</span>, col <span class="op">=</span> <span class="st">"red"</span>, pch <span class="op">=</span> <span class="fl">19</span>, add <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="02_handling-spatial-data_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section><section id="visualizing-spatial-data" class="level2" data-number="2.8"><h2 data-number="2.8" class="anchored" data-anchor-id="visualizing-spatial-data">
+<span class="header-section-number">2.8</span> Visualizing spatial data</h2>
+<p>Visualization is a key part of spatial data analysis, as it allows you to explore and communicate spatial patterns and relationships effectively. R provides a lot of functionalities to visualize spatial data and create very beautiful maps. Until now we have used basic plotting functions. Here we introduce the <code>ggplot2</code> package that allows to combine different types of geographic data in a map. The <code>ggplot2</code> package in R provides a flexible and powerful framework for creating both simple and complex visualizations, including maps of point data, polygons, and rasters. With the help of extensions like <code><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf()</a></code> and <code><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html">geom_raster()</a></code>, <code>ggplot2</code> makes it easy to visualize spatial data, whether you’re working with point locations, polygons, or continuous raster data.</p>
+<section id="visualizing-point-data" class="level3" data-number="2.8.1"><h3 data-number="2.8.1" class="anchored" data-anchor-id="visualizing-point-data">
+<span class="header-section-number">2.8.1</span> Visualizing point data</h3>
+<p>Point data often represents the locations of observations (e.g., disease cases, sampling sites). <code>ggplot2</code> allows you to plot these points and optionally color them by a covariate (e.g., disease prevalence or population density). Here is an example that uses the Liberia data.</p>
+<div class="sourceCode" id="cb22" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Load necessary libraries</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Create a new variable with prevalence in the dataset</span></span>
+<span><span class="va">liberia_sf</span><span class="op">$</span><span class="va">prevalence</span> <span class="op">&lt;-</span> <span class="va">liberia</span><span class="op">$</span><span class="va">npos</span> <span class="op">/</span> <span class="va">liberia</span><span class="op">$</span><span class="va">ntest</span></span>
+<span></span>
+<span><span class="co"># Plot only the locations</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">liberia_sf</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf</a></span><span class="op">(</span>col <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span> <span class="op">+</span>  </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Survey locations"</span><span class="op">)</span></span>
+<span><span class="co"># Color the points according to prevalence</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">liberia_sf</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>color <span class="op">=</span> <span class="va">prevalence</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>  </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html">scale_color_viridis_c</a></span><span class="op">(</span>labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/label_percent.html">label_percent</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>  </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Onchocerciasis in Liberia"</span>,</span>
+<span>       color <span class="op">=</span> <span class="st">"Prevalence (%)"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="02_handling-spatial-data_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="02_handling-spatial-data_files/figure-html/unnamed-chunk-16-2.png" class="img-fluid"></p>
+</div>
+</div>
+</div>
+<p>Here <code><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf()</a></code> is used to plot the spatial points. <code>aes(color = prevalence)</code> specifies that the points should be colored based on the <code>prevalence</code> covariate, providing a visual representation of spatial variation in disease risk. The <code><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html">scale_color_viridis_c()</a></code> function applies the Viridis color scale, which is well-suited for continuous data and is friendly for those with color blindness. The <code>labels = scales::label_percent()</code> argument ensures that the color scale’s labels are displayed as percentages (e.g., 5, 10%) rather than raw decimal values. To make the plot visually clean and minimal, <code><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal()</a></code> is applied, stripping away unnecessary background elements and keeping the focus on the data. Finally, the <code><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs()</a></code> defines the plot title and the color legend label.</p>
+</section><section id="visualizing-polygon-data" class="level3" data-number="2.8.2"><h3 data-number="2.8.2" class="anchored" data-anchor-id="visualizing-polygon-data">
+<span class="header-section-number">2.8.2</span> Visualizing polygon data</h3>
+<p>Polygon data typically represents administrative boundaries, land use, or other regional divisions. We can still use <code><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf()</a></code> to create maps of polygons, optionally filling them by a covariate.</p>
+<div class="sourceCode" id="cb23" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Plot Liberia admin 1 level boundaries </span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">liberia_admin1</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co"># We compute the area of each polygon</span></span>
+<span><span class="va">liberia_admin1</span><span class="op">$</span><span class="va">area</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/geos_measures.html">st_area</a></span><span class="op">(</span><span class="va">liberia_admin1</span><span class="op">)</span> <span class="op">/</span> <span class="fl">1000</span> <span class="op">^</span> <span class="fl">2</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Color the polygons according tis new variable</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">liberia_admin1</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="va">area</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html">scale_fill_distiller</a></span><span class="op">(</span>direction <span class="op">=</span> <span class="op">-</span><span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"Area km^2"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="02_handling-spatial-data_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="02_handling-spatial-data_files/figure-html/unnamed-chunk-17-2.png" class="img-fluid"></p>
+</div>
+</div>
+</div>
+<p>In this code, <code>aes(fill = area)</code> is used to fill each polygon with colors corresponding to its area. The <code>color = "black"</code> argument outlines the polygons in black, and you could set <code>fill = NA</code> to make the polygons transparent while still displaying the borders. The <code>scale_fill_distiller(direction = -1)</code> function applies a color gradient from ColorBrewer, with the <code>direction = -1</code> argument reversing the gradient (e.g., darker colors for larger areas).</p>
+</section><section id="visualizing-raster-data" class="level3" data-number="2.8.3"><h3 data-number="2.8.3" class="anchored" data-anchor-id="visualizing-raster-data">
+<span class="header-section-number">2.8.3</span> Visualizing raster data</h3>
+<p>In <code>ggplot2</code>, you can visualize raster data by converting it into a data frame of coordinates and values. You can convert raster data into a format that <code>ggplot2</code> can handle by using the <code><a href="https://rspatial.github.io/terra/reference/as.data.frame.html">as.data.frame()</a></code> function from <code>terra</code>.</p>
+<div class="cell">
+<div class="sourceCode" id="cb24" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Convert the raster to a data frame for ggplot2</span></span>
+<span><span class="va">raster_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="va">lbr_pop_100</span>, xy <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Plot raster using ggplot2</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">raster_df</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html">geom_raster</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span>, y <span class="op">=</span> <span class="va">y</span>, fill <span class="op">=</span> <span class="va">lbr_ppp_2014</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html">scale_fill_viridis_c</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_cartesian.html">coord_cartesian</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Population Density"</span>,</span>
+<span>       fill <span class="op">=</span> <span class="st">"Density"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="02_handling-spatial-data_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>In this example <code><a href="https://rspatial.github.io/terra/reference/as.data.frame.html">as.data.frame()</a></code> converts the raster into a data frame with x and y coordinates and their corresponding raster values and <code><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html">geom_raster()</a></code> is used to plot the raster cells, coloring them based on the population density.</p>
+</section><section id="combining-multiple-spatial-data-types" class="level3" data-number="2.8.4"><h3 data-number="2.8.4" class="anchored" data-anchor-id="combining-multiple-spatial-data-types">
+<span class="header-section-number">2.8.4</span> Combining Multiple Spatial Data Types</h3>
+<p>In many cases, it’s useful to combine different spatial data types (points, polygons, and rasters) in a single visualization. <code>ggplot2</code> allows you to overlay these layers, providing a more comprehensive view of your spatial data.</p>
+<div class="cell">
+<div class="sourceCode" id="cb25" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Combine points, polygons, and raster data in one plot</span></span>
+<span><span class="va">combined_map</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html">geom_raster</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">raster_df</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span>, y <span class="op">=</span> <span class="va">y</span>, fill <span class="op">=</span> <span class="va">lbr_ppp_2014</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">liberia_admin1</span>, fill <span class="op">=</span> <span class="cn">NA</span>, color <span class="op">=</span> <span class="st">"grey"</span><span class="op">)</span> <span class="op">+</span>    </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">liberia_sf</span>, shape <span class="op">=</span> <span class="fl">21</span>, col <span class="op">=</span> <span class="st">"black"</span>, fill <span class="op">=</span> <span class="st">"white"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html">scale_fill_viridis_c</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>  </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Combined Spatial Data: Points, Polygons, and Raster"</span>,</span>
+<span>       fill <span class="op">=</span> <span class="st">"Population Density"</span>,</span>
+<span>       x <span class="op">=</span> <span class="st">""</span>, y <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">combined_map</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="02_handling-spatial-data_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>To enhance spatial visualizations in <code>ggplot2</code>, adding a scale bar and a north arrow improves map readability and professionalism. The <code>ggspatial</code> package offers tools to easily integrate these elements into your maps. Below is an example that demonstrates how to use <code>ggspatial</code> to add a scale bar and north arrow to a map that includes raster, polygon, and point data.</p>
+<div class="cell">
+<div class="sourceCode" id="cb26" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Load necessary libraries</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://paleolimbot.github.io/ggspatial/">ggspatial</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Add scale bar and north arrow</span></span>
+<span><span class="va">combined_map</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://paleolimbot.github.io/ggspatial/reference/annotation_scale.html">annotation_scale</a></span><span class="op">(</span>location <span class="op">=</span> <span class="st">"bl"</span>, width_hint <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span>  </span>
+<span>  <span class="fu"><a href="https://paleolimbot.github.io/ggspatial/reference/annotation_north_arrow.html">annotation_north_arrow</a></span><span class="op">(</span>location <span class="op">=</span> <span class="st">"tr"</span>, which_north <span class="op">=</span> <span class="st">"true"</span><span class="op">)</span> </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="02_handling-spatial-data_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+
+
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
+<div id="ref-amazigo2008" class="csl-entry" role="listitem">
+Amazigo, U. 2008. <span>“The African Programme for Onchocerciasis Control (APOC).”</span> <em>Ann Trop Med Parasitol</em> 102 (Suppl 1): 19–22. <a href="https://doi.org/10.1179/136485908X337436">https://doi.org/10.1179/136485908X337436</a>.
+</div>
+<div id="ref-bates2015" class="csl-entry" role="listitem">
+Bates, Douglas, Martin Mächler, Ben Bolker, and Steve Walker. 2015. <span>“Fitting Linear Mixed-Effects Models Using <span class="nocase">lme4</span>.”</span> <em>Journal of Statistical Software</em> 67 (1): 1–48. <a href="https://doi.org/10.18637/jss.v067.i01">https://doi.org/10.18637/jss.v067.i01</a>.
+</div>
+<div id="ref-bishop2006" class="csl-entry" role="listitem">
+Bishop, Christopher M. 2006. <em>Pattern Recognition and Machine Learning</em>. Springer.
+</div>
+<div id="ref-bolin2023" class="csl-entry" role="listitem">
+Bolin, David, and Jonas Wallin. 2023. <span>“<span class="nocase">Local scale invariance and robustness of proper scoring rules</span>.”</span> <em>Statistical Science</em> 38 (1): 140–59. <a href="https://doi.org/10.1214/22-STS864">https://doi.org/10.1214/22-STS864</a>.
+</div>
+<div id="ref-bowman1997" class="csl-entry" role="listitem">
+Bowman, A. W. 1997. <em>Applied Smoothing Techniques for Data Analysis : The Kernel Approach with s-Plus Illustrations</em>. Oxford Statistical Science Series ; 18. Oxford : New York: Clarendon Press ; Oxford University Press.
+</div>
+<div id="ref-breslow1993" class="csl-entry" role="listitem">
+Breslow, N. E., and D. G. Clayton. 1993. <span>“Approximate Inference in Generalized Linear Mixed Models.”</span> <em>Journal of the American Statistical Association</em> 88: 9–25.
+</div>
+<div id="ref-brooks2011handbook" class="csl-entry" role="listitem">
+Brooks, Steve, Andrew Gelman, Galin L. Jones, and Xiao-Li Meng. 2011. <em>Handbook of Markov Chain Monte Carlo</em>. CRC Press.
+</div>
+<div id="ref-chilesdelfiner2016" class="csl-entry" role="listitem">
+Chilès, J-P, and P. Delfiner. 2016. <em>Geostatistics (Second Edition)</em>. Hoboken: Wiley.
+</div>
+<div id="ref-christensen2006" class="csl-entry" role="listitem">
+Christensen, OF, GO Roberts, and M Sköld. 2006. <span>“Robust Markov Chain Monte Carlo Methods for Spatial Generalized Linear Mixed Models.”</span> <em>Journal of Computational and Graphical Statistics</em> 15 (1): 1–17.
+</div>
+<div id="ref-christensen2004" class="csl-entry" role="listitem">
+Christensen, Ole F. 2004. <span>“Monte Carlo Maximum Likelihood in Model-Based Geostatistics.”</span> <em>Journal of Computational and Graphical Statistics</em> 13 (3): 702–18.
+</div>
+<div id="ref-cowles1996markov" class="csl-entry" role="listitem">
+Cowles, Mary Kathryn, and Bradley P. Carlin. 1996. <span>“Markov Chain Monte Carlo Convergence Diagnostics: A Comparative Review.”</span> <em>Journal of the American Statistical Association</em> 91 (434): 883–904.
+</div>
+<div id="ref-cressie1991" class="csl-entry" role="listitem">
+Cressie, N. A. C. 1991. <em>Statistics for Spatial Data</em>. New York: Wiley.
+</div>
+<div id="ref-cressie1985" class="csl-entry" role="listitem">
+Cressie, Noel. 1985. <span>“Fitting Variogram Models by Weighted Least Squares.”</span> <em>Mathematical Geology</em> 17 (5): 563–86.
+</div>
+<div id="ref-czado2009" class="csl-entry" role="listitem">
+Czado, Claudia, Tilmann Gneiting, and Leonhard Held. 2009. <span>“<span class="nocase">Predictive Model Assessment for Count Data</span>.”</span> <em>Biometrics</em> 65 (4): 1254–61. <a href="https://doi.org/10.1111/j.1541-0420.2009.01191.x">https://doi.org/10.1111/j.1541-0420.2009.01191.x</a>.
+</div>
+<div id="ref-dawid1984" class="csl-entry" role="listitem">
+Dawid, A. P. 1984. <span>“Statistical Theory: The Prequential Approach.”</span> <em>Journal of the Royal Statistical Society: Series A (General)</em> 147 (2): 278–92.
+</div>
+<div id="ref-diggle1998" class="csl-entry" role="listitem">
+Diggle, P. J., J. A. Tawn, and R. A. Moyeed. 1998. <span>“Model-Based Geostatistics.”</span> <em>Journal of the Royal Statistical Society: Series C (Applied Statistics)</em> 47 (3): 299–350. <a href="https://doi.org/10.1111/1467-9876.00113">https://doi.org/10.1111/1467-9876.00113</a>.
+</div>
+<div id="ref-diggleBook2019" class="csl-entry" role="listitem">
+Diggle, Peter J. 2019. <em>Model-Based Geostatistics for Global Public Health : Methods and Applications.</em> Chapman and Hall/CRC Interdisciplinary Statistics Ser. Milton: Chapman; Hall/CRC.
+</div>
+<div id="ref-dobson2008" class="csl-entry" role="listitem">
+Dobson, A. J., and A. Barnett. 2008. <em>An Introduction to Generalized Linear Models</em>. Third. Chapman; Hall/CRC.
+</div>
+<div id="ref-evans2021" class="csl-entry" role="listitem">
+Evans, Jeffrey S., and Melanie A. Murphy. 2021. <em>spatialEco</em>. <a href="https://github.com/jeffreyevans/spatialEco">https://github.com/jeffreyevans/spatialEco</a>.
+</div>
+<div id="ref-fernandez2000" class="csl-entry" role="listitem">
+Fernández, J. A, A Rey, and A Carballeira. 2000. <span>“An Extended Study of Heavy Metal Deposition in Galicia (NW Spain) Based on Moss Analysis.”</span> <em>Science of The Total Environment</em> 254 (1): 31–44. <a href="https://doi.org/10.1016/S0048-9697(00)00431-9">https://doi.org/10.1016/S0048-9697(00)00431-9</a>.
+</div>
+<div id="ref-gelman2013bayesian" class="csl-entry" role="listitem">
+Gelman, Andrew, John B. Carlin, Hal S. Stern, David B. Dunson, Aki Vehtari, and Donald B. Rubin. 2013. <em>Bayesian Data Analysis</em>. 3rd ed. CRC Press.
+</div>
+<div id="ref-gelman1992inference" class="csl-entry" role="listitem">
+Gelman, Andrew, and Donald B Rubin. 1992. <span>“Inference from Iterative Simulation Using Multiple Sequences.”</span> <em>Statistical Science</em> 7 (4): 457–72.
+</div>
+<div id="ref-geweke1992evaluating" class="csl-entry" role="listitem">
+Geweke, John. 1992. <span>“Evaluating the Accuracy of Sampling‐based Approaches to the Calculation of Posterior Moments.”</span> Edited by Jose M. Bernardo, James O. Berger, A. Philip Dawid, and Adrian F. M. Smith, 169–93.
+</div>
+<div id="ref-geyer1991" class="csl-entry" role="listitem">
+Geyer, Charles J. 1991. <span>“Markov Chain Monte Carlo Maximum Likelihood.”</span> <em>Journal of Computational and Graphical Statistics</em> 1 (4): 39–55.
+</div>
+<div id="ref-geyer1994" class="csl-entry" role="listitem">
+Geyer, Charles J. 1994. <span>“Likelihood and Exponential Families.”</span> <em>Department of Statistics, University of Minnesota</em>.
+</div>
+<div id="ref-geyer1996" class="csl-entry" role="listitem">
+———. 1996. <span>“Markov Chain Monte Carlo Maximum Likelihood.”</span> <em>Department of Statistics, University of Minnesota</em>.
+</div>
+<div id="ref-geyer2019handbook" class="csl-entry" role="listitem">
+———. 2019. <span>“Monte Carlo Methods in MCMC.”</span> In <em>Handbook of MCMC</em>, edited by Steve Brooks, Andrew Gelman, Galin L. Jones, and Xiao-Li Meng, 3–48. CRC Press.
+</div>
+<div id="ref-gneiting2007" class="csl-entry" role="listitem">
+Gneiting, Tilmann, Fadoua Balabdaoui, and Adrian E Raftery. 2007. <span>“Probabilistic Forecasts, Calibration and Sharpness.”</span> <em>Journal of the Royal Statistical Society: Series B (Statistical Methodology)</em> 69 (2): 243–68.
+</div>
+<div id="ref-gneiting2007jasa" class="csl-entry" role="listitem">
+Gneiting, Tilmann, and Adrian E Raftery. 2007. <span>“Strictly Proper Scoring Rules, Prediction, and Estimation.”</span> <em>Journal of the American Statistical Association</em> 102 (477): 359–78. <a href="https://doi.org/10.1198/016214506000001437">https://doi.org/10.1198/016214506000001437</a>.
+</div>
+<div id="ref-hastie2001" class="csl-entry" role="listitem">
+Hastie, Trevor, Robert Tibshirani, and Jerome Friedman. 2001. <em>The Elements of Statistical Learning</em>. Springer Series in Statistics. New York, NY, USA: Springer New York Inc.
+</div>
+<div id="ref-hastings1970monte" class="csl-entry" role="listitem">
+Hastings, W. K. 1970. <span>“Monte Carlo Sampling Methods Using Markov Chains and Their Applications.”</span> <em>Biometrika</em> 57 (1): 97–109.
+</div>
+<div id="ref-gates2020" class="csl-entry" role="listitem">
+Katz, Elizabeth, and Bill &amp; Melinda Gates Foundation. 2020. <span>“Gender and Malaria Evidence Reivew.”</span> Bill &amp; Melinda Gates Foundation. <a href="https://www.gatesgenderequalitytoolbox.org/wp-content/uploads/BMGF_Malaria-Review_FC.pdf">https://www.gatesgenderequalitytoolbox.org/wp-content/uploads/BMGF_Malaria-Review_FC.pdf</a>.
+</div>
+<div id="ref-krige1951" class="csl-entry" role="listitem">
+Krige, D. G. 1951. <span>“A Statistical Approach to Some Basic Mine Valuation Problems on the Witwatersrand.”</span> <em>Journal of the Chemical, Metallurgical and Mining Society of South Africa</em> 52: 119–39.
+</div>
+<div id="ref-mahoney2023" class="csl-entry" role="listitem">
+Mahoney, Michael J, Lucas K Johnson, Julia Silge, Hannah Frick, Max Kuhn, and Colin M Beier. 2023. <span>“Assessing the Performance of Spatial Cross-Validation Approaches for Models of Spatially Structured Data.”</span> <a href="https://doi.org/10.48550/arXiv.2303.07334">https://doi.org/10.48550/arXiv.2303.07334</a>.
+</div>
+<div id="ref-matern2013" class="csl-entry" role="listitem">
+Matern, B. 2013. <em>Spatial Variation</em>. Lecture Notes in Statistics. Springer New York. <a href="https://books.google.co.uk/books?id=HrbSBwAAQBAJ">https://books.google.co.uk/books?id=HrbSBwAAQBAJ</a>.
+</div>
+<div id="ref-matheron1963" class="csl-entry" role="listitem">
+Matheron, G. 1963. <span>“Principles of Geostatistics.”</span> <em>Economic Geology</em> 58: 1246–66.
+</div>
+<div id="ref-metropolis1953equation" class="csl-entry" role="listitem">
+Metropolis, Nicholas, Arianna W. Rosenbluth, Marshall N. Rosenbluth, Augusta H. Teller, and Edward Teller. 1953. <span>“Equation of State Calculations by Fast Computing Machines.”</span> <em>The Journal of Chemical Physics</em> 21 (6): 1087–92.
+</div>
+<div id="ref-nelder1972" class="csl-entry" role="listitem">
+Nelder, J. A., and R. W. M. Wedderburn. 1972. <span>“Generalized Linear Models.”</span> <em>Journal of the Royal Statistical Society A</em> 135: 370–84.
+</div>
+<div id="ref-pawitan2001" class="csl-entry" role="listitem">
+Pawitan, Yudi. 2001. <em>In All Likelihood : Statistical Modelling and Inference Using Likelihood</em>. Oxford ; New York: Clarendon Press : Oxford University Press.
+</div>
+<div id="ref-ripley1981" class="csl-entry" role="listitem">
+Ripley, B. D. 1981. <em>Spatial Statistics</em>. New York: Wiley.
+</div>
+<div id="ref-roberts1996exponential" class="csl-entry" role="listitem">
+Roberts, Gareth O., and Richard L. Tweedie. 1996. <span>“Exponential Convergence of Langevin Distributions and Their Discrete Approximations.”</span> <em>Bernoulli</em> 2 (4): 341–63.
+</div>
+<div id="ref-ross2013" class="csl-entry" role="listitem">
+Ross, Sheldon. 2013. <em>First Course in Probability, a.</em> 9th ed. Harlow: Pearson Education UK.
+</div>
+<div id="ref-rossky1978brownian" class="csl-entry" role="listitem">
+Rossky, Peter J., J. D. Doll, and Harold L. Friedman. 1978. <span>“Brownian Dynamics as Smart Monte Carlo Simulation.”</span> <em>The Journal of Chemical Physics</em> 69 (10): 4628–33.
+</div>
+<div id="ref-rue2009" class="csl-entry" role="listitem">
+Rue, H., S. Martino, and N. Chopin. 2009. <span>“Approximate Bayesian Inference for Latent Gaussian Models by Using Integrated Nested Laplace Approximations.”</span> <em>Journal of the Royal Statistical Society: Series B (Statistical Methodology)</em> 71 (2): 319–92. <a href="https://doi.org/10.1111/j.1467-9868.2008.00700.x">https://doi.org/10.1111/j.1467-9868.2008.00700.x</a>.
+</div>
+<div id="ref-smith2007" class="csl-entry" role="listitem">
+Smith, David L, Carlos A Guerra, Robert W Snow, and Simon I Hay. 2007. <span>“Standardizing Estimates of the Plasmodium Falciparum Parasite Rate.”</span> <em>Malaria Journal</em> 6 (1): 131–31.
+</div>
+<div id="ref-stein1999" class="csl-entry" role="listitem">
+Stein, Michael L. 1999. <em>Interpolation of Spatial Data Some Theory for Kriging</em>. 1st ed. 1999. Springer Series in Statistics. New York, NY: Springer New York : Imprint: Springer.
+</div>
+<div id="ref-stevenson2013" class="csl-entry" role="listitem">
+Stevenson, Gillian H. AND Gitonga, Jennifer C. AND Stresman. 2013. <span>“Reliability of School Surveys in Estimating Geographic Variation in Malaria Transmission in the Western Kenyan Highlands.”</span> <em>PLOS ONE</em> 8 (10). <a href="https://doi.org/10.1371/journal.pone.0077641">https://doi.org/10.1371/journal.pone.0077641</a>.
+</div>
+<div id="ref-fossog2015" class="csl-entry" role="listitem">
+Tene Fossog, Billy, Diego Ayala, Pelayo Acevedo, Pierre Kengne, Ignacio Ngomo Abeso Mebuy, Boris Makanga, Julie Magnus, et al. 2015. <span>“Habitat Segregation and Ecological Character Displacement in Cryptic African Malaria Mosquitoes.”</span> <em>Evolutionary Applications</em> 8 (4): 326–45. <a href="https://doi.org/10.1111/eva.12242">https://doi.org/10.1111/eva.12242</a>.
+</div>
+<div id="ref-tobler1970" class="csl-entry" role="listitem">
+Tobler, W. R. 1970. <span>“A Computer Movie Simulating Urban Growth in the Detroit Region.”</span> <em>Economic Geography</em> 46: 234–40.
+</div>
+<div id="ref-watson1971" class="csl-entry" role="listitem">
+Watson, G. S. 1971. <span>“Trend -Surface Analysis.”</span> <em>Mathematical Geology</em> 3: 215–26.
+</div>
+<div id="ref-watson1972" class="csl-entry" role="listitem">
+———. 1972. <span>“Trend Surface Analysis and Spatial Correlation.”</span> <em>Geological Society of America Special Paper</em> 146: 39–46.
+</div>
+<div id="ref-weisberg2014" class="csl-entry" role="listitem">
+Weisberg, Sanford. 2014. <em>Applied Linear Regression</em>. Fourth. Hoboken <span>NJ</span>: Wiley. <a href="http://z.umn.edu/alr4ed">http://z.umn.edu/alr4ed</a>.
+</div>
+<div id="ref-yin2024" class="csl-entry" role="listitem">
+Yin, Hui, Yutong Wang, Yuxin Wang, Zihan Li, Yujie Li, and Yuxin Wang. 2024. <span>“A Rapid Review of Clustering Algorithms.”</span> <em>arXiv Preprint arXiv:2401.07389</em>.
+</div>
+<div id="ref-zhang2002" class="csl-entry" role="listitem">
+Zhang, Hao. 2002. <span>“On Estimation and Prediction for Spatial Generalized Linear Mixed Models.”</span> <em>Biometrics</em> 58 (1): 129–36.
+</div>
+<div id="ref-zhang2004" class="csl-entry" role="listitem">
+———. 2004. <span>“Inconsistent Estimation and Asymptotically Equal Interpolations in Model-Based Geostatistics.”</span> <em>Journal of the American Statistical Association</em> 99 (465): 250–61.
+</div>
+<div id="ref-zoure2014" class="csl-entry" role="listitem">
+Zouré, Honorat GM, Mounkaila Noma, Afework H Tekle, Uche V Amazigo, Peter J Diggle, Emanuele Giorgi, and Jan HF Remme. 2014. <span>“Geographic Distribution of Onchocerciasis in the 20 Participating Countries of the African Programme for Onchocerciasis Control: (2) Pre-Control Endemicity Levels and Estimated Number Infected.”</span> <em>Parasites &amp; Vectors</em> 7 (1): 326–26.
+</div>
+</div>
+</section></section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script><nav class="page-navigation"><div class="nav-page nav-page-previous">
+      <a href="./01_intro.html" class="pagination-link" aria-label="Introduction">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./03_model-fitting.html" class="pagination-link" aria-label="Model formulation and parameter estimation">
+        <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Model formulation and parameter estimation</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+<script src="site_libs/quarto-contrib/line-highlight-1.0.0/line-highlight.js" defer="true"></script>
+</body></html>
