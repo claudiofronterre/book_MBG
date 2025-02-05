@@ -819,15 +819,15 @@ Figure&nbsp;5.5: Maps of the predicted averae number of mosqutoes (left panel). 
 <span></span>
 <span><span class="va">pred_n_mosq_shp</span><span class="op">$</span><span class="va">target</span><span class="op">$</span><span class="va">reg1</span><span class="op">$</span><span class="va">n_mosq</span></span>
 <span><span class="co">## $mean</span></span>
-<span><span class="co">## [1] 17633.83</span></span>
+<span><span class="co">## [1] 17724.7</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $q025</span></span>
 <span><span class="co">##     2.5% </span></span>
-<span><span class="co">## 15061.78 </span></span>
+<span><span class="co">## 15192.27 </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $q075</span></span>
 <span><span class="co">##    97.5% </span></span>
-<span><span class="co">## 20500.16</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span><span class="co">## 21012.42</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Since we are not standardizing the weights, there is no need to specify <code>standardize_weights</code>, as it is set to <code>FALSE</code> by default. In the code above, we printed the mean of the predictive distribution of <span class="math inline">\(T\)</span> along with the 95% prediction interval. The point estimate of approximately 17,719 mosquitoes is likely an underestimate of the total number of Anopheles gambiae in the area, as the trap used to count the mosquitoes may not capture all of them, particularly those outside the immediate trapping zone or those active at different times.</p>
 </section></section><section id="sec-compare-pp" class="level2" data-number="5.5"><h2 data-number="5.5" class="anchored" data-anchor-id="sec-compare-pp">
@@ -1397,9 +1397,9 @@ Figure&nbsp;5.14: Simulated surface for the linear predictor, with locations of 
 <span class="header-section-number">5.6.4</span> Step 4: Summarize the results using a pre-defined objective function</h3>
 <p>In this final step, we compare the predictions of the target <span class="math inline">\(T(x)\)</span> against its true values, originally simulated in Step 1. To do this, we need a metric to summarize the results across all <span class="math inline">\(B\)</span> simulations for each candidate model <span class="math inline">\(M_C\)</span>.</p>
 <p>One approach is to use the predictive mean from <span class="math inline">\(M_C\)</span> in each simulation and evaluate how it differs from <span class="math inline">\(T(x)\)</span>. A natural choice for this comparison is the mean squared error (MSE), defined as:</p>
-<p><span class="math display">\[
+<p><span id="eq-mse"><span class="math display">\[
 \frac{1}{B} \sum_{j=1}^B \sum_{i=1}^q \left(T(\tilde{x}_i) - \hat{T}_{C}(\tilde{x}_i)\right)^2
-\]</span></p>
+\tag{5.8}\]</span></span></p>
 <p>where <span class="math inline">\(\tilde{x}_i\)</span> is the <span class="math inline">\(i\)</span>-th location on the grid <span class="math inline">\(\tilde{X}\)</span>, <span class="math inline">\(T(\tilde{x}_i)\)</span> represents the true value of the target, and <span class="math inline">\(\hat{T}_{C}(\tilde{x}_i)\)</span> is the predictive mean from <span class="math inline">\(M_C\)</span> at location <span class="math inline">\(\tilde{x}_i\)</span>.</p>
 <p>Other options for summarizing the results include using the bias or the absolute median deviation. The bias measures the systematic error between the predicted and true values and is defined as:</p>
 <p><span class="math display">\[
@@ -1411,14 +1411,41 @@ Figure&nbsp;5.14: Simulated surface for the linear predictor, with locations of 
 \]</span> where <span class="math inline">\(T^*_{C}(\tilde{x}_i)\)</span> is the median across all <span class="math inline">\(N\)</span> the Monte Carlo samples <span class="math inline">\(T_{(j)}^{(h)}(\tilde{x})\)</span>.</p>
 <section id="example-2" class="level4" data-number="5.6.4.1"><h4 data-number="5.6.4.1" class="anchored" data-anchor-id="example-2">
 <span class="header-section-number">5.6.4.1</span> Example</h4>
+<p>Using the output from the <code>surf_sim</code> function, named <code>lib_surf_sim</code>, we can use as the input to the function <code>assess_sim</code> which performs Step 3 and Step 4, previously outlined.</p>
+<div class="cell">
+<div class="sourceCode" id="cb41" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">res_sim</span> <span class="op">&lt;-</span> <span class="fu">assess_sim</span><span class="op">(</span><span class="va">lib_surf_sim</span>,</span>
+<span>                      models <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>M_T <span class="op">=</span> <span class="op">~</span>  <span class="va">elevation</span> <span class="op">+</span></span>
+<span>                                             <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">pmax</a></span><span class="op">(</span><span class="va">elevation</span> <span class="op">-</span> <span class="fl">150</span>, <span class="fl">0</span><span class="op">)</span> <span class="op">+</span></span>
+<span>                                             <span class="fu">gp</span><span class="op">(</span><span class="va">long</span>, <span class="va">lat</span><span class="op">)</span>,</span>
+<span>                                    M_C <span class="op">=</span> <span class="op">~</span> <span class="fu">gp</span><span class="op">(</span><span class="va">long</span>, <span class="va">lat</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>                      f_grid_target <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">/</span><span class="op">(</span><span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>                      pred_objective <span class="op">=</span> <span class="st">"mse"</span>,</span>
+<span>                      spatial_scale <span class="op">=</span> <span class="st">"grid"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>In this function, we specify the models to be assessed using the <code>models</code> argument, which is a list of <code>formula</code> objects. The formula <code>M_T</code> represents the true model <span class="math inline">\(M_T\)</span>, while <code>M_C</code> corresponds to the intercept-only model. Note that the coordinate names used in the <code>gp()</code> function within the formulas are converted according to the CRS specified in <code>lib_suf_sim</code>.</p>
+<p>The argument <code>f_grid_target</code> defines our target function <span class="math inline">\(T(x)\)</span> over the grid as a transformation of the linear predictor. Specifically, <code>exp(x) / (1 + exp(x))</code> expresses disease prevalence as our predictive target over the grid. The <code>pred_objective</code> argument specifies the objective function from Step 4, with <code>pred_objective = "mse"</code> setting it to the mean squared error from <a href="#eq-mse" class="quarto-xref">Equation&nbsp;<span>5.8</span></a>. Finally, <code>spatial_scle = "grid"</code> indicates that the objective function applies to a pixel-level target according to the grid stored in <code>lib_surf_sim</code>.</p>
+<p>We can now look at the summary of <code>res_sim</code>.</p>
+<div class="cell">
+<div class="sourceCode" id="cb42" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rspatial.github.io/terra/reference/summary.html">summary</a></span><span class="op">(</span><span class="va">res_sim</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre data-code-line-numbers=""><code>Summary of Simulation Results
+
+Mean Squared Error (MSE):
+    Model    MSE_mean       MSE_sd
+M_T   M_T 0.004426811 0.0009040507
+M_C   M_C 0.004390553 0.0008564500</code></pre>
+</div>
+</div>
+<p>The results reported here present the average and standard deviation across 200 simulations for the models <span class="math inline">\(M_C\)</span> and <span class="math inline">\(M_T\)</span>. The differences between the two models are negligible, indicating that the point predictions generated by <span class="math inline">\(M_C\)</span> and <span class="math inline">\(M_T\)</span> perform similarly in recovering the true prevalence surface for river blindness in Liberia.</p>
+<p>This result should not be surprising, as estimating regression relationships with prevalence data can be challenging, potentially limiting their predictive advantage. However, incorporating covariates enhances model interpretability, allowing us to understand why the model makes certain predictions in specific areas, which an intercept-only model cannot provide. Thus, even if the model with covariates does not achieve the best predictive performance, we may still choose to retain the covariates, in this case elevation, for their interpretative value.</p>
 </section></section><section id="sec-sim-assessment" class="level3" data-number="5.6.5"><h3 data-number="5.6.5" class="anchored" data-anchor-id="sec-sim-assessment">
 <span class="header-section-number">5.6.5</span> Assessessment of threshold-based classification of spatial units using geostatistical models</h3>
 <p>In this section, we address the specific problem of evaluating how effectively a geostatistical model classifies areal units into predefined categories of a disease indicator, such as prevalence. This issue is particularly relevant when dealing with areal-level targets (<a href="#sec-areal-target" class="quarto-xref"><span>Section 5.4</span></a>) as opposed to spatially continuous targets (<a href="#sec-spat-cont-target" class="quarto-xref"><span>Section 5.3</span></a>). This prediction problem arises when policy decisions regarding interventions are often based on the classification of the areal-level target into predefined categories at the level of administrative regions; see, for example, <span class="citation" data-cites="johnson2021">Johnson et al. (<a href="references.html#ref-johnson2021" role="doc-biblioref">2021</a>)</span> and <span class="citation" data-cites="puranik2024">Puranik et al. (<a href="references.html#ref-puranik2024" role="doc-biblioref">2024</a>)</span>.</p>
 <p>To formalize this problem mathematically, let <span class="math inline">\(\mathcal{M}_i\)</span> represent the true value of the areal-level target (e.g., the average prevalence over a district), and let <span class="math inline">\(\hat{\mathcal{M}}_{C,i}\)</span> denote the corresponding prediction produced by the candidate model <span class="math inline">\(M_C\)</span>. Note that <span class="math inline">\(\mathcal{M}_i\)</span> can be easily calculated in Step 1 during simulations from the true model (<a href="#sec-sim-step1" class="quarto-xref"><span>Section 5.6.1</span></a>).</p>
-<p>Now, consider that the target <span class="math inline">\(\mathcal{M}_i\)</span> is categorized into predefined classes, which are typically thresholds or ranges of the disease indicator (e.g., low, medium, and high prevalence). Denote the true membership class of areal unit <span class="math inline">\(i\)</span> by <span class="math inline">\(\mathcal{D}_i\)</span>, which is determined based on <span class="math inline">\(\mathcal{M}_i\)</span>, and the predicted membership class by <span class="math inline">\(\hat{\mathcal{D}}_{C,i}\)</span>, determined based on <span class="math inline">\(\hat{\mathcal{M}}_{C,i}\)</span>. The goal is to assess the overall quality of the classification, which involves evaluating how well the predicted classes <span class="math inline">\(\hat{\mathcal{D}}_{C,i}\)</span> agree with the true classes <span class="math inline">\(\mathcal{C}_i\)</span> across all areal units and simulations. This assessment provides insight into the model’s ability to accurately classify regions according to the chosen disease indicator and thus guide effective policy decisions.</p>
+<p>Now, consider that the target <span class="math inline">\(\mathcal{M}_i\)</span> is categorized into predefined classes, which are typically thresholds or ranges of the disease indicator (such as values that define low, medium, and high levels). Denote the true membership class of areal unit <span class="math inline">\(i\)</span> by <span class="math inline">\(\mathcal{D}_i\)</span>, which is determined based on <span class="math inline">\(\mathcal{M}_i\)</span>, and the predicted membership class by <span class="math inline">\(\hat{\mathcal{D}}_{C,i}\)</span>, determined based on <span class="math inline">\(\hat{\mathcal{M}}_{C,i}\)</span>. The goal is to assess the overall quality of the classification, which involves evaluating how well the predicted classes <span class="math inline">\(\hat{\mathcal{D}}_{C,i}\)</span> agree with the true classes <span class="math inline">\(\mathcal{C}_i\)</span> across all areal units and simulations. This assessment provides insight into the model’s ability to accurately classify regions according to the chosen disease indicator and thus guide effective policy decisions.</p>
 <p>The required changes to Step 3 (<a href="#sec-sim-step3" class="quarto-xref"><span>Section 5.6.3</span></a>) consist of simply carrying the predictions over the areal units as explained in <a href="#sec-areal-target" class="quarto-xref"><span>Section 5.4</span></a>.</p>
 <p>For Step 4, which concerns how we summarize the agreement between the classification generated by <span class="math inline">\(M_C\)</span> and the true classes <span class="math inline">\(\mathcal{D}_i\)</span>, we can proceed as follows. First, we distinguish between indicators that can be computed for a given region and those that summarize performance across all regions.</p>
-<p>For a specific region, assessing classification performance can be approached similarly to evaluating a diagnostic test. Hence, key indicators include:</p>
+<p>Assessing classification performance can be approached similarly to evaluating a diagnostic test. Here, true positives, true negatives, false positives, and false negatives are defined at the level of individual spatial units that subdivide the study area. Hence, key indicators include:</p>
 <ol type="1">
 <li><p><em>Sensitivity</em>: The proportion of areal units correctly classified as belonging to the true membership class when conditioned on that true class:<br><span class="math display">\[
 \text{Sensitivity} = \frac{\text{True Positives (TP)}}{\text{True Positives (TP)} + \text{False Negatives (FN)}}
@@ -1436,15 +1463,14 @@ Figure&nbsp;5.14: Simulated surface for the linear predictor, with locations of 
 \text{Correct Classification Rate} = \frac{\text{True Positives (TP)} + \text{True Negatives (TN)}}{\text{Total Cases (TP + TN + FP + FN)}}
 \]</span></p></li>
 </ol>
-<p>These indicators provide a comprehensive view of performance for each region individually.</p>
-<p>To assess performance across all regions, the indicators calculated for each region can be averaged, using a weighted or simple average. For example, if some disease classes are more critical than others, weights can be applied to reflect their importance, and thus weight the regions differently according to their true class membership.</p>
+<p>Note that for multiple classes, the indicators above are computed by comparing each class in turn against all other classes combined. This allows us to create a 2 by 2 table, enabling the calculation of the indicators above.</p>
 <p>The choice between sensitivity, specificity, PPV, and NPV depends on the specific public health context and the priorities of the decision-making process. Sensitivity and specificity are conditioned on the <em>true membership class</em>, making them useful for assessing the model’s performance in terms of correctly identifying or excluding true positives or negatives. PPV and NPV are conditioned on the <em>predicted membership class</em>, making them more informative about the trustworthiness of predictions, especially when prevalence varies significantly across regions.</p>
 <p>We can thus summarize the difference of each indicator as follows.</p>
 <ul>
 <li><p>Sensitivity is most appropriate when the priority is to ensure that true positive cases (e.g., high-prevalence regions) are not missed. Sensitivity is useful in contexts where failing to identify true cases could have severe consequences, such as delaying critical interventions or underestimating resource needs. For example, during an outbreak, ensuring all high-risk areas are flagged is crucial, even if this increases the number of false positives.</p></li>
 <li><p>Specificity is more suitable when the focus is on minimizing false positives, which is critical in contexts where over-classification could lead to unnecessary interventions or misallocation of resources. Specificity may be particularly important in low-prevalence scenarios, where the cost of acting on false alarms could outweigh the benefits of capturing all true positives.</p></li>
 <li><p>PPV is appropriate when the emphasis is on the reliability of positive predictions, i.e., how confident we can be that regions classified as high-prevalence are truly high-prevalence. PPV is heavily influenced by the prevalence of the condition being classified, making it especially relevant in scenarios where actionable decisions depend on the certainty of a positive classification.</p></li>
-<li><p>NPV is most relevant when it is critical to trust negative predictions, i.e., ensuring that regions predicted as low-prevalence are indeed low-prevalence. NPV is particularly important in high-prevalence settings, where failing to act on a true positive could have significant public health impacts.</p></li>
+<li><p>NPV is most relevant when it is critical to trust negative predictions, i.e., ensuring that regions predicted as low-prevalence are indeed low-prevalence. NPV is particularly important in low-prevalence settings, where a high proportion of predicted negatives are true negatives.</p></li>
 </ul>
 <p>Ultimately, the selection of indicators should result from a dialogue between statisticians, epidemiologists, and policy makers, ensuring alignment with the specific priorities and policy decisions being informed by the model’s classifications.</p>
 <section id="example-3" class="level4" data-number="5.6.5.1"><h4 data-number="5.6.5.1" class="anchored" data-anchor-id="example-3">
@@ -1542,7 +1568,7 @@ Table&nbsp;5.2: Summary of the different diagnostic tools and metrics, that are 
 <td>Simulation</td>
 </tr>
 <tr class="odd">
-<td>Nonrandomized PIT</td>
+<td>Nonrandomized probability integral transform (PIT)</td>
 <td>Calibration</td>
 <td>Cross-validation</td>
 </tr>
