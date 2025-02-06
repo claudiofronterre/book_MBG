@@ -819,15 +819,15 @@ Figure&nbsp;5.5: Maps of the predicted averae number of mosqutoes (left panel). 
 <span></span>
 <span><span class="va">pred_n_mosq_shp</span><span class="op">$</span><span class="va">target</span><span class="op">$</span><span class="va">reg1</span><span class="op">$</span><span class="va">n_mosq</span></span>
 <span><span class="co">## $mean</span></span>
-<span><span class="co">## [1] 17724.7</span></span>
+<span><span class="co">## [1] 17666.88</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $q025</span></span>
 <span><span class="co">##     2.5% </span></span>
-<span><span class="co">## 15192.27 </span></span>
+<span><span class="co">## 15028.73 </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $q075</span></span>
 <span><span class="co">##    97.5% </span></span>
-<span><span class="co">## 21012.42</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span><span class="co">## 20767.73</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Since we are not standardizing the weights, there is no need to specify <code>standardize_weights</code>, as it is set to <code>FALSE</code> by default. In the code above, we printed the mean of the predictive distribution of <span class="math inline">\(T\)</span> along with the 95% prediction interval. The point estimate of approximately 17,719 mosquitoes is likely an underestimate of the total number of Anopheles gambiae in the area, as the trap used to count the mosquitoes may not capture all of them, particularly those outside the immediate trapping zone or those active at different times.</p>
 </section></section><section id="sec-compare-pp" class="level2" data-number="5.5"><h2 data-number="5.5" class="anchored" data-anchor-id="sec-compare-pp">
@@ -1413,7 +1413,7 @@ Figure&nbsp;5.14: Simulated surface for the linear predictor, with locations of 
 <span class="header-section-number">5.6.4.1</span> Example</h4>
 <p>Using the output from the <code>surf_sim</code> function, named <code>lib_surf_sim</code>, we can use as the input to the function <code>assess_sim</code> which performs Step 3 and Step 4, previously outlined.</p>
 <div class="cell">
-<div class="sourceCode" id="cb41" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">res_sim</span> <span class="op">&lt;-</span> <span class="fu">assess_sim</span><span class="op">(</span><span class="va">lib_surf_sim</span>,</span>
+<div class="sourceCode" id="cb41" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">res_sim_grid</span> <span class="op">&lt;-</span> <span class="fu">assess_sim</span><span class="op">(</span><span class="va">lib_surf_sim</span>,</span>
 <span>                      models <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>M_T <span class="op">=</span> <span class="op">~</span>  <span class="va">elevation</span> <span class="op">+</span></span>
 <span>                                             <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">pmax</a></span><span class="op">(</span><span class="va">elevation</span> <span class="op">-</span> <span class="fl">150</span>, <span class="fl">0</span><span class="op">)</span> <span class="op">+</span></span>
 <span>                                             <span class="fu">gp</span><span class="op">(</span><span class="va">long</span>, <span class="va">lat</span><span class="op">)</span>,</span>
@@ -1424,9 +1424,9 @@ Figure&nbsp;5.14: Simulated surface for the linear predictor, with locations of 
 </div>
 <p>In this function, we specify the models to be assessed using the <code>models</code> argument, which is a list of <code>formula</code> objects. The formula <code>M_T</code> represents the true model <span class="math inline">\(M_T\)</span>, while <code>M_C</code> corresponds to the intercept-only model. Note that the coordinate names used in the <code>gp()</code> function within the formulas are converted according to the CRS specified in <code>lib_suf_sim</code>.</p>
 <p>The argument <code>f_grid_target</code> defines our target function <span class="math inline">\(T(x)\)</span> over the grid as a transformation of the linear predictor. Specifically, <code>exp(x) / (1 + exp(x))</code> expresses disease prevalence as our predictive target over the grid. The <code>pred_objective</code> argument specifies the objective function from Step 4, with <code>pred_objective = "mse"</code> setting it to the mean squared error from <a href="#eq-mse" class="quarto-xref">Equation&nbsp;<span>5.8</span></a>. Finally, <code>spatial_scle = "grid"</code> indicates that the objective function applies to a pixel-level target according to the grid stored in <code>lib_surf_sim</code>.</p>
-<p>We can now look at the summary of <code>res_sim</code>.</p>
+<p>We can now look at the summary of <code>res_sim_grid</code>.</p>
 <div class="cell">
-<div class="sourceCode" id="cb42" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rspatial.github.io/terra/reference/summary.html">summary</a></span><span class="op">(</span><span class="va">res_sim</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb42" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rspatial.github.io/terra/reference/summary.html">summary</a></span><span class="op">(</span><span class="va">res_sim_grid</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre data-code-line-numbers=""><code>Summary of Simulation Results
 
@@ -1475,6 +1475,55 @@ M_C   M_C 0.004390553 0.0008564500</code></pre>
 <p>Ultimately, the selection of indicators should result from a dialogue between statisticians, epidemiologists, and policy makers, ensuring alignment with the specific priorities and policy decisions being informed by the model’s classifications.</p>
 <section id="example-3" class="level4" data-number="5.6.5.1"><h4 data-number="5.6.5.1" class="anchored" data-anchor-id="example-3">
 <span class="header-section-number">5.6.5.1</span> Example</h4>
+<p>Using the same models, <span class="math inline">\(M_T\)</span> and <span class="math inline">\(M_C\)</span>, from the river blindness example in Liberia, we now compare their performance in classifying admin level 1 regions into two prevalence categories, <span class="math inline">\((0, 0.2)\)</span> and $(0.2, 1) $. The assessment is conducted using <code>assess_sim</code>, where the prevalence surface is first aggregated at the areal level before classification.</p>
+<div class="cell">
+<div class="sourceCode" id="cb44" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Admin level 1 shape files</span></span>
+<span><span class="va">shp_adm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/rgeoboundaries/man/geoboundaries.html">geoboundaries</a></span><span class="op">(</span>country <span class="op">=</span> <span class="st">"liberia"</span>, adm_lvl <span class="op">=</span> <span class="st">"adm1"</span><span class="op">)</span></span>
+<span><span class="va">shp_adm</span> <span class="op">&lt;-</span> <span class="fu">st_transform</span><span class="op">(</span><span class="va">shp_adm</span>, crs<span class="op">=</span> <span class="fl">32629</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">res_sim_area</span> <span class="op">&lt;-</span> <span class="fu">assess_sim</span><span class="op">(</span><span class="va">lib_surf_sim</span>,</span>
+<span>                      models <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>M_T <span class="op">=</span> <span class="op">~</span>  <span class="va">elevation</span> <span class="op">+</span></span>
+<span>                                      <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">pmax</a></span><span class="op">(</span><span class="va">elevation</span> <span class="op">-</span> <span class="fl">150</span>, <span class="fl">0</span><span class="op">)</span> <span class="op">+</span></span>
+<span>                                      <span class="fu">gp</span><span class="op">(</span><span class="va">long</span>, <span class="va">lat</span><span class="op">)</span>,</span>
+<span>                                    M_C <span class="op">=</span> <span class="op">~</span> <span class="fu">gp</span><span class="op">(</span><span class="va">long</span>, <span class="va">lat</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>                      f_grid_target <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">/</span><span class="op">(</span><span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>                      f_area_target <span class="op">=</span> <span class="va">mean</span>,</span>
+<span>                      pred_objective <span class="op">=</span> <span class="st">"classify"</span>, shp <span class="op">=</span> <span class="va">shp_adm</span>,</span>
+<span>                      categories <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0.2</span>,<span class="fl">1</span><span class="op">)</span>,</span>
+<span>                      spatial_scale <span class="op">=</span> <span class="st">"area"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The implementation first loads the admin level 1 shapefiles for Liberia, transforming them to the appropriate coordinate reference system. The arugment <code>f_area_target</code> is set to <code>mean</code>, ensuring that the target prevalence for each region is computed as the average over the area, corresponding to<br>
+[ _A T(x) , dx ] The classification is performed by specifying <code>pred_objective = "classify"</code>, meaning the models are evaluated based on their ability to assign regions to the correct prevalence class. The <code>categories</code> argument defines the classification thresholds, requiring at least three values to distinguish between two classes. The <code>spatial_scale</code> is set to <code>"area"</code>, meaning predictions are made at the level of administrative regions which are specified by the shapefile <code>shp_adm</code>, passed to the argument <code>shp</code>.</p>
+<p>Finally, we can examine the results of the simulation through the summary function.</p>
+<div class="cell">
+<div class="sourceCode" id="cb45" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rspatial.github.io/terra/reference/summary.html">summary</a></span><span class="op">(</span><span class="va">res_sim_area</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre data-code-line-numbers=""><code>Summary of Simulation Results
+
+Classification Results:
+
+Model: M_T
+
+Averages across simulations by Category:
+  Sensitivity Specificity       PPV       NPV        CC   Class
+1   0.9020851   0.8151707 0.8923583 0.8654312 0.9020851 (0,0.2]
+2   0.8151707   0.9020851 0.8654312 0.8923583 0.8151707 (0.2,1]
+
+Proportion of Correct Classification (CC) across categories:
+Mean: 0.871, 95% CI: [0.665, 1.000]
+
+Model: M_C
+
+Averages across simulations by Category:
+  Sensitivity Specificity       PPV       NPV        CC   Class
+1   0.9048404   0.7974989 0.8890838 0.8581346 0.9048404 (0,0.2]
+2   0.7974989   0.9048404 0.8581346 0.8890838 0.7974989 (0.2,1]
+
+Proportion of Correct Classification (CC) across categories:
+Mean: 0.868, 95% CI: [0.600, 1.000]</code></pre>
+</div>
+</div>
+<p>In this example, the performance of models <span class="math inline">\(M_T\)</span>​ and <span class="math inline">\(M_C\)</span>​ is comparable across all considered indicators. This similarity arises for the same reasons previously discussed examining the quality of prevalence surface predictions.</p>
 </section></section></section><section id="sec-theory-prediction" class="level2" data-number="5.7"><h2 data-number="5.7" class="anchored" data-anchor-id="sec-theory-prediction">
 <span class="header-section-number">5.7</span> Theory</h2>
 <section id="sec-pred-distr-theory" class="level3" data-number="5.7.1"><h3 data-number="5.7.1" class="anchored" data-anchor-id="sec-pred-distr-theory">
@@ -1529,8 +1578,10 @@ E[G(F, Y)] = \underbrace{\text{Uncertainty}}_{\text{inherent in data}} - \underb
 <p>For a more detailed explanation of scoring rules, <span class="citation" data-cites="gneiting2007">Gneiting, Balabdaoui, and Raftery (<a href="references.html#ref-gneiting2007" role="doc-biblioref">2007</a>)</span> is a recommended read.</p>
 </section></section><section id="summary" class="level2" data-number="5.8"><h2 data-number="5.8" class="anchored" data-anchor-id="summary">
 <span class="header-section-number">5.8</span> Summary</h2>
-<p>In this chapter, we have demonstrated how geostatistical models can be used to draw predictive inference for targets that may be spatially continuous (e.g., a prevalence surface within a study region) or aggregated at the areal level (e.g., the average disease prevalence in a district). The fundamental concept underpinning geostatistical prediction is that of the <strong>predictive distribution</strong>, which we define as the distribution of the target <span class="math inline">\(T(x)\)</span> conditioned on the data <span class="math inline">\(y\)</span>. This distribution is the key element that enables the derivation and computation of point predictions, predictive intervals and the probability that the target falls within a pre-specified interval or above/below a given threshold.</p>
-<p>To assess the predictive performance of a geostatistical model, we have considered two complementary approaches: cross-validation and simulation studies. In the cross-validation framework, the concepts of <strong>calibration</strong> and <strong>sharpness</strong> are introduced to evaluate the quality of spatial predictions. Calibration refers to the agreement between the predicted probability of an event occurring and its actual observed frequency. Sharpness, on the other hand, quantifies the concentration of the predictive distribution. However, sharper predictions are not necessarily better; they must be well-calibrated to be meaningful. Thus, it is appropriate to discuss sharpness only in the context of well calibrated models.</p>
+<p>In this chapter, we have demonstrated how geostatistical models can be used to draw predictive inference for targets that are spatially continuous (e.g., a prevalence surface within a study region) and aggregated at the areal level (e.g., the average disease prevalence in a district). The fundamental concept underpinning geostatistical prediction is that of the <strong>predictive distribution</strong>, which we define as the distribution of the target <span class="math inline">\(T(x)\)</span> conditioned on the data <span class="math inline">\(y\)</span>. This distribution is the key element that enables the derivation and computation of point predictions, predictive intervals and the probability that the target falls within a pre-specified interval or above/below a given threshold.</p>
+<p>To assess the predictive performance of a geostatistical model, we have considered two complementary approaches: <strong>cross-validation</strong> and <strong>simulation studies</strong>.</p>
+<p>In the cross-validation framework, the concepts of <strong>calibration</strong> and <strong>sharpness</strong> are introduced to evaluate the quality of spatial predictions. Calibration refers to the agreement between the predicted probability of an event occurring and its actual observed frequency. Sharpness, on the other hand, quantifies the concentration of the predictive distribution around its point estimate. However, sharper predictions are not necessarily better; they must be well-calibrated to be meaningful. Thus, it is appropriate to discuss sharpness only in the context of well calibrated models.</p>
+<p>A simulation study, unlike cross-validation, allows us to assess the ability of our model to predict an entire spatial surface within a study area or a predictive target defined over spatial units (e.g., districts) that make up the study area. This is possible because, in a simulation study, we can generate data from a <strong>true model</strong> and then evaluate the quality of inferences from <strong>candidate models</strong> on the simulated surface. The way we summarize predictive performance in a simulation study depends on the objective. If the goal is to assess how closely our point predictions align with the true surface, we can use metrics such as the mean squared error (<a href="#eq-mse" class="quarto-xref">Equation&nbsp;<span>5.8</span></a>), averaged over the grid used to approximate the surface. Conversely, if the objective is to evaluate classification performance by categorizing spatial units into predefined health outcome categories, we can use sensitivity, specificity, negative predictive value, and positive predictive value. The choice of metric depends on whether the priority is minimizing errors in detecting true positives or true negatives (sensitivity and specificity), or ensuring that the spatial units classified as positive or negative are truly so (positive predictive value and negative predictive value). A summary of the metrics considered in this chapter is given in <a href="#tbl-summary-pp-diag" class="quarto-xref">Table&nbsp;<span>5.2</span></a>.</p>
 <div id="tbl-summary-pp-diag" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure"><figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-summary-pp-diag-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Table&nbsp;5.2: Summary of the different diagnostic tools and metrics, that are used to assess the predictive performance of a geostatistical model using both cross-validation and simulatoin-based approaches.
@@ -1590,12 +1641,26 @@ Table&nbsp;5.2: Summary of the different diagnostic tools and metrics, that are 
 </section><section id="faqs" class="level2" data-number="5.9"><h2 data-number="5.9" class="anchored" data-anchor-id="faqs">
 <span class="header-section-number">5.9</span> FAQs</h2>
 <ul>
-<li><p><em>What should be the spatial resolution of the grid used for prediction?</em></p></li>
-<li><p><em>I have covariates with different spatial resolutions. Which spatial resolution should I use?</em></p></li>
-<li><p><em>My prediction map looks like noise. What could be the error?</em></p></li>
-<li><p><em>The main goal of my analysis is to carry out predictions of the main outcome. However, can I also use the model to draw inferences on the association between the outcome and the covariates that I have included in the model?</em></p></li>
-<li><p><em>In my model I have some covariates that are attached to the individual (e.g.&nbsp;age, gender, occupation, etc.). How do I specify them when doing prediction?</em> <br> Read <a href="#sec-non-spar-covariates" class="quarto-xref"><span>Section 5.3.2</span></a>.</p></li>
-</ul></section><section id="review-questions" class="level2" data-number="5.10"><h2 data-number="5.10" class="anchored" data-anchor-id="review-questions">
+<li><em>What should be the spatial resolution of the grid used for prediction?</em></li>
+</ul>
+<p>The choice of spatial resolution for the prediction grid involves a trade-off between computational efficiency and the ability to capture spatial correlation. Higher spatial resolution provides more detailed predictions but increases computational demands. A reasonable approach is to ensure that the distance between adjacent grid pixels is small enough to maintain a high spatial correlation. For instance, selecting a resolution where the correlation between neighboring pixels is at least 0.95 can be a useful guideline. However, this threshold is somewhat arbitrary, similar to the convention of using 0.95 in confidence intervals. Ultimately, the resolution should be chosen based on the spatial scale of variation in the data, while avoiding excessive computational burden.</p>
+<ul>
+<li><em>I have covariates with different spatial resolutions. Which spatial resolution should I use?</em></li>
+</ul>
+<p>Two main approaches can be considered for handling covariates at different spatial resolutions in geostatistical analysis. The first involves aggregating all covariates to the coarsest resolution, ensuring consistency and avoiding artificial detail. This prevents high-resolution predictions based on low-resolution data but may sacrifice fine-scale spatial variation. The second approach disaggregates covariates to the finest resolution, enabling higher-detail predictions but risking false precision and artifacts if the data do not support such resolution. To assess the impact on inferences, one might apply both approaches and evaluate how they influence the final results.</p>
+<ul>
+<li><em>My prediction map looks like noise. What could be the error?</em></li>
+</ul>
+<p>The prediction map appearing noisy could be due to several factors. First, one should verify that the spatial grid was created correctly by plotting it alongside the original data to ensure alignment and consistency. Second, the spatial correlation in the data might be very small relative to the resolution of the grid, causing the model to struggle with capturing meaningful patterns. To address this, increasing the spatial resolution of the grid may help, as finer resolution can better capture the underlying spatial structure.</p>
+<ul>
+<li><em>The main goal of my analysis is to carry out predictions of the main outcome. However, can I also use the model to draw inferences on the association between the outcome and the covariates that I have included in the model?</em></li>
+</ul>
+<p>The model developed for prediction, in theory, should not be primarily used to draw inferences on the regression relationships between the outcome and covariates. Understanding regression relationships and making predictions are distinct goals that often require different modeling approaches. While it is possible to interpret the estimated regression coefficients, caution is necessary, as these associations are not causative. Predictive models are optimized for accuracy in predicting th outcome rather than for identifying or explaining underlying relationships, so any inferences drawn should be treated as exploratory rather than definitive. An recommended reading on this topic is <span class="citation" data-cites="shmueli2010">Shmueli (<a href="references.html#ref-shmueli2010" role="doc-biblioref">2010</a>)</span>.</p>
+<ul>
+<li><em>In my model I have some covariates that are attached to the individual (e.g.&nbsp;age, gender, occupation, etc.). How do I specify them when doing prediction?</em></li>
+</ul>
+<p>The answer to this question is given in <a href="#sec-non-spar-covariates" class="quarto-xref"><span>Section 5.3.2</span></a>.</p>
+</section><section id="review-questions" class="level2" data-number="5.10"><h2 data-number="5.10" class="anchored" data-anchor-id="review-questions">
 <span class="header-section-number">5.10</span> Review questions</h2>
 <ul>
 <li>What are the steps that needs to taken when performing spatial prediction?</li>
@@ -1605,6 +1670,7 @@ Table&nbsp;5.2: Summary of the different diagnostic tools and metrics, that are 
 <li>Define predictive performance in terms of calibration and sharpness.</li>
 <li>Explain how calibration can be assessed using graphical tools, by distinguishing between continuous and count outcomes.</li>
 <li>Give examples of metrics that can be used to evaluate calibration and sharpness.</li>
+<li>Explain how simulation studies can be carried to assess the predictive performance of geostatistical models and how this differ from cross-validation.</li>
 </ul></section><section id="exercises" class="level2" data-number="5.11"><h2 data-number="5.11" class="anchored" data-anchor-id="exercises">
 <span class="header-section-number">5.11</span> Exercises</h2>
 <ol type="1">
@@ -1765,6 +1831,9 @@ Rossky, Peter J., J. D. Doll, and Harold L. Friedman. 1978. <span>“Brownian Dy
 </div>
 <div id="ref-rue2009" class="csl-entry" role="listitem">
 Rue, H., S. Martino, and N. Chopin. 2009. <span>“Approximate Bayesian Inference for Latent Gaussian Models by Using Integrated Nested Laplace Approximations.”</span> <em>Journal of the Royal Statistical Society: Series B (Statistical Methodology)</em> 71 (2): 319–92. <a href="https://doi.org/10.1111/j.1467-9868.2008.00700.x">https://doi.org/10.1111/j.1467-9868.2008.00700.x</a>.
+</div>
+<div id="ref-shmueli2010" class="csl-entry" role="listitem">
+Shmueli, Galit. 2010. <span>“To Explain or to Predict?”</span> <em>Statistical Science</em> 25 (3): 289–310.
 </div>
 <div id="ref-smith2007" class="csl-entry" role="listitem">
 Smith, David L, Carlos A Guerra, Robert W Snow, and Simon I Hay. 2007. <span>“Standardizing Estimates of the Plasmodium Falciparum Parasite Rate.”</span> <em>Malaria Journal</em> 6 (1): 131–31.
