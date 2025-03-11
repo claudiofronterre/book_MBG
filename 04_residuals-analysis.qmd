@@ -1,0 +1,39 @@
+---
+filters:
+  - line-highlight
+execute: 
+  freeze: auto
+fig-width: 5
+fig-asp: 0.75
+---
+
+
+# Model validation through residuals analysis {#sec-validation}
+
+The class of generalized linear geostatistical models discussed in this book is a special case of generalized linear mixed models that explicitly account for spatial correlation. Consequently, all the diagnostics tools that are used to assess the validity of regression models can and should be applied in the validation of geostatistical model. In this chapter we illustrate how to carry out the analysis of the residuals of geostatistical models and check the validity of specific model assumptions.
+
+## Which residuals?
+In generalized linear geostatistical models, there are different definitions and thus types of *residuals* that can be considered.
+
+If we define the residuals as the component of the model that expresses the unexplained variation in the outcome by the covariates, then we are implying that the random effects component of the linear predictor -- i.e. $S(x_i)$ or $S(x_i)+Z_i$, if the nugget effect $Z_i$ is also included -- correspond to the residuals. We shall refer to these as **random effects residuals** (RER).
+
+Let $W_i$ denote the sum of all the random effects in the model, whether $W_i = S(x_i)$, $W_i = S(x_i) + Z_i$ or any other random effects structure. Other types of residuals that come from standard regression modelling (i.e. regression models that do not include random effects) that we can still consider are the the **Pearson's residuals** (PR)
+$$
+{\rm PR}_i = \frac{y_i - \hat{\mathrm E}\left[Y_i | W_i\right]}{\sqrt{\hat{\mathrm Var}\left[Y_i | W_i\right]}}
+$$ 
+where $\hat{\mathrm E}\left[Y_i | W_i\right]$ and $\hat{\mathrm Var}\left[Y_i | W_i\right]}$ are an estimate of the of the expectation and variance of $Y_i$ conditional on $W_i$; see @tbl-glm for the expressions of ${\mathrm E}\left[Y_i | W_i\right]$ and ${\mathrm Var}\left[Y_i | W_i\right]}$ for the probability distributions considered in this book. For example, using the Monte Carlo samples from $W_i$, say $W_{i, (j)}$ for $j=1,\ldots,B$ (see @sec-mcmc-mala to understand how these samples are generated in `RiskMap`), those estimates become $\hat{\mathrm E}\left[Y_i | W_i\right] = \sum_{i=1}^B \hat{\mathrm E}\left[Y_i | W_{i, (j)}\right]$ and $\hat{\mathrm Var}\left[Y_i | W_i\right] = \sum_{i=1}^B\hat{\mathrm Var}\left[Y_i | W_{i,(j)}\right]$.
+
+An alternative to Pearson's residuals, that is especially useful when $Y_i$ is a binary outcome, are the **deviance residuals** (DR). These are defined as
+$$
+ {\rm DR}_i = \text{sign}(y_i - \hat{y}_i) \sqrt{2 \left\{ l^{S}_{i} - l^{F}_i \right\}}
+$$
+where $l^{S}_{i}$ is the log-likelihood of the saturated model and $l^F_i$ is the log-likelihood of the fitted model, both conditional on $W_i$; we provide more explanation on the concept of saturated model in @sec-sat-model.
+
+
+## Standard diagnostic checks on the residuals
+
+## Does our model adequalty explain the spatial correlation of the data?
+
+## Theory
+
+### Saturated models {#sec-sat-model}

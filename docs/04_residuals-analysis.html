@@ -90,6 +90,35 @@ div.csl-indent {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -102,7 +131,7 @@ div.csl-indent {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./04_model-validation.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Model validation through residuals analysis</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./04_residuals-analysis.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Model validation through residuals analysis</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -159,7 +188,7 @@ div.csl-indent {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./04_model-validation.html" class="sidebar-item-text sidebar-link active">
+  <a href="./04_residuals-analysis.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Model validation through residuals analysis</span></span></a>
   </div>
 </li>
@@ -200,6 +229,10 @@ div.csl-indent {
   <li><a href="#which-residuals" id="toc-which-residuals" class="nav-link active" data-scroll-target="#which-residuals"><span class="header-section-number">4.1</span> Which residuals?</a></li>
   <li><a href="#standard-diagnostic-checks-on-the-residuals" id="toc-standard-diagnostic-checks-on-the-residuals" class="nav-link" data-scroll-target="#standard-diagnostic-checks-on-the-residuals"><span class="header-section-number">4.2</span> Standard diagnostic checks on the residuals</a></li>
   <li><a href="#does-our-model-adequalty-explain-the-spatial-correlation-of-the-data" id="toc-does-our-model-adequalty-explain-the-spatial-correlation-of-the-data" class="nav-link" data-scroll-target="#does-our-model-adequalty-explain-the-spatial-correlation-of-the-data"><span class="header-section-number">4.3</span> Does our model adequalty explain the spatial correlation of the data?</a></li>
+  <li><a href="#theory" id="toc-theory" class="nav-link" data-scroll-target="#theory"><span class="header-section-number">4.4</span> Theory</a>
+  <ul class="collapse">
+  <li><a href="#sec-sat-model" id="toc-sec-sat-model" class="nav-link" data-scroll-target="#sec-sat-model"><span class="header-section-number">4.4.1</span> Saturated models</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -225,14 +258,28 @@ div.csl-indent {
 </header>
 
 
+<p>The class of generalized linear geostatistical models discussed in this book is a special case of generalized linear mixed models that explicitly account for spatial correlation. Consequently, all the diagnostics tools that are used to assess the validity of regression models can and should be applied in the validation of geostatistical model. In this chapter we illustrate how to carry out the analysis of the residuals of geostatistical models and check the validity of specific model assumptions.</p>
 <section id="which-residuals" class="level2" data-number="4.1">
 <h2 data-number="4.1" class="anchored" data-anchor-id="which-residuals"><span class="header-section-number">4.1</span> Which residuals?</h2>
+<p>In generalized linear geostatistical models, there are different definitions and thus types of <em>residuals</em> that can be considered.</p>
+<p>If we define the residuals as the component of the model that expresses the unexplained variation in the outcome by the covariates, then we are implying that the random effects component of the linear predictor – i.e.&nbsp;<span class="math inline">\(S(x_i)\)</span> or <span class="math inline">\(S(x_i)+Z_i\)</span>, if the nugget effect <span class="math inline">\(Z_i\)</span> is also included – correspond to the residuals. We shall refer to these as <strong>random effects residuals</strong> (RER).</p>
+<p>Let <span class="math inline">\(W_i\)</span> denote the sum of all the random effects in the model, whether <span class="math inline">\(W_i = S(x_i)\)</span>, <span class="math inline">\(W_i = S(x_i) + Z_i\)</span> or any other random effects structure. Other types of residuals that come from standard regression modelling (i.e.&nbsp;regression models that do not include random effects) that we can still consider are the the <strong>Pearson’s residuals</strong> (PR) <span class="math display">\[
+{\rm PR}_i = \frac{y_i - \hat{\mathrm E}\left[Y_i | W_i\right]}{\sqrt{\hat{\mathrm Var}\left[Y_i | W_i\right]}}
+\]</span> where <span class="math inline">\(\hat{\mathrm E}\left[Y_i | W_i\right]\)</span> and <span class="math inline">\(\hat{\mathrm Var}\left[Y_i | W_i\right]}\)</span> are an estimate of the of the expectation and variance of <span class="math inline">\(Y_i\)</span> conditional on <span class="math inline">\(W_i\)</span>; see <a href="01_intro.html#tbl-glm" class="quarto-xref">Table&nbsp;<span>1.3</span></a> for the expressions of <span class="math inline">\({\mathrm E}\left[Y_i | W_i\right]\)</span> and <span class="math inline">\({\mathrm Var}\left[Y_i | W_i\right]}\)</span> for the probability distributions considered in this book. For example, using the Monte Carlo samples from <span class="math inline">\(W_i\)</span>, say <span class="math inline">\(W_{i, (j)}\)</span> for <span class="math inline">\(j=1,\ldots,B\)</span> (see <a href="03_model-fitting.html#sec-mcmc-mala" class="quarto-xref"><span>Section 3.4.2.2</span></a> to understand how these samples are generated in <code>RiskMap</code>), those estimates become <span class="math inline">\(\hat{\mathrm E}\left[Y_i | W_i\right] = \sum_{i=1}^B \hat{\mathrm E}\left[Y_i | W_{i, (j)}\right]\)</span> and <span class="math inline">\(\hat{\mathrm Var}\left[Y_i | W_i\right] = \sum_{i=1}^B\hat{\mathrm Var}\left[Y_i | W_{i,(j)}\right]\)</span>.</p>
+<p>An alternative to Pearson’s residuals, that is especially useful when <span class="math inline">\(Y_i\)</span> is a binary outcome, are the <strong>deviance residuals</strong> (DR). These are defined as <span class="math display">\[
+{\rm DR}_i = \text{sign}(y_i - \hat{y}_i) \sqrt{2 \left\{ l^{S}_{i} - l^{F}_i \right\}}
+\]</span> where <span class="math inline">\(l^{S}_{i}\)</span> is the log-likelihood of the saturated model and <span class="math inline">\(l^F_i\)</span> is the log-likelihood of the fitted model, both conditional on <span class="math inline">\(W_i\)</span>; we provide more explanation on the concept of saturated model in <a href="#sec-sat-model" class="quarto-xref"><span>Section 4.4.1</span></a>.</p>
 </section>
 <section id="standard-diagnostic-checks-on-the-residuals" class="level2" data-number="4.2">
 <h2 data-number="4.2" class="anchored" data-anchor-id="standard-diagnostic-checks-on-the-residuals"><span class="header-section-number">4.2</span> Standard diagnostic checks on the residuals</h2>
 </section>
 <section id="does-our-model-adequalty-explain-the-spatial-correlation-of-the-data" class="level2" data-number="4.3">
 <h2 data-number="4.3" class="anchored" data-anchor-id="does-our-model-adequalty-explain-the-spatial-correlation-of-the-data"><span class="header-section-number">4.3</span> Does our model adequalty explain the spatial correlation of the data?</h2>
+</section>
+<section id="theory" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="theory"><span class="header-section-number">4.4</span> Theory</h2>
+<section id="sec-sat-model" class="level3" data-number="4.4.1">
+<h3 data-number="4.4.1" class="anchored" data-anchor-id="sec-sat-model"><span class="header-section-number">4.4.1</span> Saturated models</h3>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
@@ -417,6 +464,7 @@ Zhang, Hao. 2002. <span>“On Estimation and Prediction for Spatial Generalized 
 Zouré, Honorat GM, Mounkaila Noma, Afework H Tekle, Uche V Amazigo, Peter J Diggle, Emanuele Giorgi, and Jan HF Remme. 2014. <span>“Geographic Distribution of Onchocerciasis in the 20 Participating Countries of the African Programme for Onchocerciasis Control: (2) Pre-Control Endemicity Levels and Estimated Number Infected.”</span> <em>Parasites &amp; Vectors</em> 7 (1): 326–26.
 </div>
 </div>
+</section>
 </section>
 
 </main> <!-- /main -->

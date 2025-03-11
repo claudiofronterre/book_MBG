@@ -12,7 +12,7 @@ fig-asp: 0.75
 ## List of the main functions used in the chapter {.unnumbered}
 
 | Function | R Package | Used for |
-|------------------------|------------------------|------------------------|
+|----|----|----|
 | `lmer` | `lme4` | Fitting linear mixed models |
 | `glmer` | `lme4` | Fitting generalized linear mixed models |
 | `glgm` | `RiskMap` | Fitting generalized linear geostatistical models |
@@ -824,11 +824,11 @@ The way we have formulated geostatistical models in @sec-geostat-models provides
 
 4.  Compute the linear predictor at each locations of $X$, by adding the covariates effects in 3 to the simulated random effects in 4, hence $g\{\mu_{(j)}(x)\} = d(x)^\top + S_{(j)}(x)$.
 
-Note that before performing the steps above, the values of the model parameters must be fixed. For example, if simulating from a model fitted to the data, the values of the model parameters should be the maximum likelihood estimates. At this point, if the goal is to simulate actual observations for the outcome $Y$ at the locations $X$. Then we need to add the following two steps. 
+Note that before performing the steps above, the values of the model parameters must be fixed. For example, if simulating from a model fitted to the data, the values of the model parameters should be the maximum likelihood estimates. At this point, if the goal is to simulate actual observations for the outcome $Y$ at the locations $X$. Then we need to add the following two steps.
 
-5A. If the nugget term is included in the model then, draw samples $Z_{(j)}$ for each location in $X$ from a Gaussian distribution with mean 0 and variance $\tau^2$. Finally add the simulated values $Z_{(j)}$ to $g\{\mu_{(j)}(x)\}$. 
+5A. If the nugget term is included in the model then, draw samples $Z_{(j)}$ for each location in $X$ from a Gaussian distribution with mean 0 and variance $\tau^2$. Finally add the simulated values $Z_{(j)}$ to $g\{\mu_{(j)}(x)\}$.
 
-6A. Compute $\mu_{(j)}(x)$ by applying the inverse link function $g^{-1}(\cdot)$ to the samples of the linear predictor previously computed. 
+6A. Compute $\mu_{(j)}(x)$ by applying the inverse link function $g^{-1}(\cdot)$ to the samples of the linear predictor previously computed.
 
 7A. Simulate from the distribution of $Y$ given $\mu_{(j)}(x)$, according the chosen model, for $j=1,\ldots,B$.
 

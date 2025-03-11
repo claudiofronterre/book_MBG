@@ -1223,9 +1223,9 @@ res_sim_area <- assess_sim(lib_surf_sim,
 
 
 The implementation first loads the admin level 1 shapefiles for Liberia, transforming them to the appropriate coordinate reference system. The arugment `f_area_target` is set to `mean`, ensuring that the target prevalence for each region is computed as the average over the area, corresponding to  
-\[
+$$
 \frac{1}{|A|} \int_A T(x) \, dx
-\]
+$$
 The classification is performed by specifying `pred_objective = "classify"`, meaning the models are evaluated based on their ability to assign regions to the correct prevalence class. The `categories` argument defines the classification thresholds, requiring at least three values to distinguish between two classes. The `spatial_scale` is set to `"area"`, meaning predictions are made at the level of administrative regions which are specified by the shapefile `shp_adm`, passed to the argument `shp`.
 
 Finally, we can examine the results of the simulation through the summary function.

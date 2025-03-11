@@ -205,7 +205,7 @@ window.Quarto = {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./04_model-validation.html" class="sidebar-item-text sidebar-link">
+  <a href="./04_residuals-analysis.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Model validation through residuals analysis</span></span></a>
   </div>
 </li>
@@ -329,8 +329,8 @@ Table&nbsp;1.1: List of the R packages that will be used in the book with a desc
 </figcaption><div aria-describedby="tbl-packages-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <table class="caption-top table">
 <colgroup>
-<col style="width: 25%">
-<col style="width: 75%">
+<col style="width: 50%">
+<col style="width: 50%">
 </colgroup>
 <thead><tr class="header">
 <th>R packages</th>
@@ -385,9 +385,9 @@ Table&nbsp;1.2: List of data-sets available from the <code>RiskMap</code> packag
 </figcaption><div aria-describedby="tbl-data-sets-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <table class="caption-top table">
 <colgroup>
-<col style="width: 24%">
-<col style="width: 50%">
-<col style="width: 24%">
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
 </colgroup>
 <thead><tr class="header">
 <th>Names of the data-set</th>
@@ -624,7 +624,7 @@ Figure&nbsp;1.8: Stages of a statistical analysis
 <p>In the remainder of this book, each chapter focuses on a specific stage as shown in <a href="#fig-stages" class="quarto-xref">Figure&nbsp;<span>1.8</span></a>. We treat visualization of uncertainty together with spatial prediction in <a href="05_geostatistical-prediction.html" class="quarto-xref"><span>Chapter 5</span></a>.</p>
 <p><a href="02_handling-spatial-data.html" class="quarto-xref"><span>Chapter 2</span></a> will provide an overview of how to handle spatial data in R, in particular raster and vector data (both points and polygons). The skills learned in this chapter will be applied throughout the book, and will especially be useful in <a href="05_geostatistical-prediction.html" class="quarto-xref"><span>Chapter 5</span></a> and <a href="06_case-studies.html" class="quarto-xref"><span>Chapter 6</span></a> for generating predictive maps of the modeled outcome.</p>
 <p><a href="03_model-fitting.html" class="quarto-xref"><span>Chapter 3</span></a> focuses on the model building process and estimation of geostatistical models. This chapter will show how to carry out initial exploratory analyses of the data to inform the formulation of suitable geostatistical models and how these can be fitted using maximum likelihood estimation methods.</p>
-<p><a href="04_model-validation.html" class="quarto-xref"><span>Chapter 4</span></a> illustrates the use of methods that can be used to validate the assumptions and calibration of statistical models.</p>
+<p><a href="04_residuals-analysis.html" class="quarto-xref"><span>Chapter 4</span></a> illustrates the use of methods that can be used to validate the assumptions and calibration of statistical models.</p>
 <p><a href="05_geostatistical-prediction.html" class="quarto-xref"><span>Chapter 5</span></a> shows how geostatistical models can be used to carry out spatial prediction of a health outcome of interest both on a spatially continuous and spatially aggregated scales.</p>
 <p>Finally, <a href="06_case-studies.html" class="quarto-xref"><span>Chapter 6</span></a> presents the application of all the methods illustrated in the previous chapters to three additional data-sets. This chapter offers a summary of the content of the book by putting together all the stages in the geostatistical analyses for each of the three case studies, and illustrates additional functionalities of the <code>RiskMap</code> R package not covered in the previous chapters.</p>
 
@@ -770,6 +770,9 @@ Rossky, Peter J., J. D. Doll, and Harold L. Friedman. 1978. <span>“Brownian Dy
 </div>
 <div id="ref-rue2009" class="csl-entry" role="listitem">
 Rue, H., S. Martino, and N. Chopin. 2009. <span>“Approximate Bayesian Inference for Latent Gaussian Models by Using Integrated Nested Laplace Approximations.”</span> <em>Journal of the Royal Statistical Society: Series B (Statistical Methodology)</em> 71 (2): 319–92. <a href="https://doi.org/10.1111/j.1467-9868.2008.00700.x">https://doi.org/10.1111/j.1467-9868.2008.00700.x</a>.
+</div>
+<div id="ref-shmueli2010" class="csl-entry" role="listitem">
+Shmueli, Galit. 2010. <span>“To Explain or to Predict?”</span> <em>Statistical Science</em> 25 (3): 289–310.
 </div>
 <div id="ref-smith2007" class="csl-entry" role="listitem">
 Smith, David L, Carlos A Guerra, Robert W Snow, and Simon I Hay. 2007. <span>“Standardizing Estimates of the Plasmodium Falciparum Parasite Rate.”</span> <em>Malaria Journal</em> 6 (1): 131–31.
