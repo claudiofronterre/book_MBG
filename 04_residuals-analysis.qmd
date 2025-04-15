@@ -19,9 +19,10 @@ If we define the residuals as the component of the model that expresses the unex
 
 Let $W_i$ denote the sum of all the random effects in the model, whether $W_i = S(x_i)$, $W_i = S(x_i) + Z_i$ or any other random effects structure. Other types of residuals that come from standard regression modelling (i.e. regression models that do not include random effects) that we can still consider are the the **Pearson's residuals** (PR)
 $$
-{\rm PR}_i = \frac{y_i - \hat{\mathrm E}\left[Y_i | W_i\right]}{\sqrt{\hat{\mathrm Var}\left[Y_i | W_i\right]}}
+{\rm PR}_i = \frac{y_i - \hat{\rm E}\left[Y_i | W_i\right]}{\sqrt{\hat{\rm Var}\left[Y_i | W_i\right]}}
 $$ 
-where $\hat{\mathrm E}\left[Y_i | W_i\right]$ and $\hat{\mathrm Var}\left[Y_i | W_i\right]}$ are an estimate of the of the expectation and variance of $Y_i$ conditional on $W_i$; see @tbl-glm for the expressions of ${\mathrm E}\left[Y_i | W_i\right]$ and ${\mathrm Var}\left[Y_i | W_i\right]}$ for the probability distributions considered in this book. For example, using the Monte Carlo samples from $W_i$, say $W_{i, (j)}$ for $j=1,\ldots,B$ (see @sec-mcmc-mala to understand how these samples are generated in `RiskMap`), those estimates become $\hat{\mathrm E}\left[Y_i | W_i\right] = \sum_{i=1}^B \hat{\mathrm E}\left[Y_i | W_{i, (j)}\right]$ and $\hat{\mathrm Var}\left[Y_i | W_i\right] = \sum_{i=1}^B\hat{\mathrm Var}\left[Y_i | W_{i,(j)}\right]$.
+
+where $\hat{\rm E}\left[Y_i | W_i\right]$ and $\hat{\rm Var}\left[Y_i | W_i\right]$ are an estimate of the of the expectation and variance of $Y_i$ conditional on $W_i$; see @tbl-glm for the expressions of ${\rm E}\left[Y_i | W_i\right]$ and ${\rm Var}\left[Y_i | W_i\right]$ for the probability distributions considered in this book. For example, using the Monte Carlo samples from $W_i$, say $W_{i, (j)}$ for $j=1,\ldots,B$ (see @sec-mcmc-mala to understand how these samples are generated in `RiskMap`), those estimates become $\hat{\rm E}\left[Y_i | W_i\right] = \sum_{i=1}^B \hat{\rm E}\left[Y_i | W_{i, (j)}\right]$ and $\hat{\rm Var}\left[Y_i | W_i\right] = \sum_{i=1}^B\hat{\rm Var}\left[Y_i | W_{i,(j)}\right]$.
 
 An alternative to Pearson's residuals, that is especially useful when $Y_i$ is a binary outcome, are the **deviance residuals** (DR). These are defined as
 $$
@@ -35,5 +36,76 @@ where $l^{S}_{i}$ is the log-likelihood of the saturated model and $l^F_i$ is th
 ## Does our model adequalty explain the spatial correlation of the data?
 
 ## Theory
+
+### The Hat matrix in linear geostatistical models
+
+
+We consider the geostatistical model
+
+$$
+Y_i = d(x_i)^\top \beta + S(x_i) + Z_i
+$$
+
+where $ Y_i $ is the observed response at location $ x_i $, $ d(x_i) $ is a $ p $-dimensional vector of covariates, $ \beta $ is a $ p \times 1 $ vector of regression coefficients, $ S(x_i) $ is a spatially structured random effect, and $ Z_i \sim \mathcal{N}(0, \tau^2) $ is independent Gaussian noise. The model can be rewritten as  
+
+$$
+Y = D\beta + S + Z
+$$
+
+where $ Y = (Y_1, \ldots, Y_n)^\top $ is the $ n \times 1 $ vector of observations, $ S = (S(x_1), \ldots, S(x_n))^\top $ is the vector of spatially dependent random effects, $Z = (Z_1, \ldots, Z_n)$ is the noise, and $ D $ is an $ n \times p $ matrix of covariates given by  
+
+$$
+D = (d_1(X), \ldots, d_p(X))
+$$
+
+with each column $ d_j(X) = (d_j(x_1),\ldots,d_j(x_n))^\top $ representing the values of the $ j $-th covariate across all locations. This formulation accounts for both fixed effects through $ D\beta $ and spatial correlation through $ S(x_i) $. The covariance matrix of $ Y $ is  
+
+$$
+V = \Sigma + \tau^2 I
+$$
+
+where $ \Sigma $ is the spatial covariance matrix of $S$. Assuming the covariance parameters are known, the generalized least squares estimator for $ \beta $ is  
+
+$$
+\hat{\beta} = (D^T V^{-1} D)^{-1} D^T V^{-1} Y.
+$$
+
+
+The predictor for $S$ is the the conditional expectation $E[S(x_i) \: | \: Y_i]$ is  
+
+$$
+\hat{S} = \Sigma V^{-1} (Y - D\hat{\beta}).
+$$
+
+so the predictors for $Y$ can be written as  
+
+$$
+\hat{Y} = D\hat{\beta} + \hat{S}.
+$$
+
+The hat matrix, which projects observations onto the fitted space, is  
+
+$$
+H = [D - \Sigma V^{-1} D] (D^T V^{-1} D)^{-1} D^T V^{-1} + \Sigma V^{-1}.
+$$
+
+This matrix is symmetric since it consists of symmetric components, satisfying $ H^T = H $. It is also idempotent, meaning $ H^2 = H $, which follows from the properties of projection matrices. The diagonal elements $ h_{ii} $ represent the leverage of each observation, quantifying how much each $ Y_i $ influences its own fitted value. The rank of $ H $ is at most $ p $, constrained by the rank of $ D $. Unlike in ordinary least squares where the hat matrix is $ H = D (D^T D)^{-1} D^T $, here it depends on $ V^{-1} $, accounting for spatial dependence. Since $ V \neq I $, the hat matrix represents an oblique projection rather than an orthogonal one.
+
+The residuals, i.e. the estimate of $Z$ are given by  
+
+$$
+\hat{Z} = Y - \hat{Y} = (I - H) Y.
+$$
+
+We not thet the covariance structure of $\hat{Z}$ is  
+
+$$
+\text{Var}(\hat{Z}) = (I - H) V (I - H)^T.
+$$
+
+Since $ V = \Sigma + \tau^2 I $, the residuals retain spatial correlation unless $ \Sigma = 0 $. This means that residuals in the geostatistical model are generally not independent, unlike in standard regression where residuals are assumed to be uncorrelated when the model is correctly specified. To test for residual spatial dependence, one can use Moran’s I test for spatial autocorrelation, analyze residual semivariograms to check for remaining spatial structure, or inspect the off-diagonal elements of $ \text{Var}(e) $. If residuals exhibit spatial correlation, it suggests that the model has not fully accounted for spatial dependence. This framework generalizes standard regression by incorporating spatial correlation through $ \Sigma $, modifying the influence and leverage of observations and requiring additional diagnostic checks for residual independence.
+
+
+
 
 ### Saturated models {#sec-sat-model}

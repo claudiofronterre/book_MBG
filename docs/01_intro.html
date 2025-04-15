@@ -205,20 +205,14 @@ window.Quarto = {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./04_residuals-analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Model validation through residuals analysis</span></span></a>
+  <a href="./04_geostatistical-prediction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Geostatistical prediction</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./05_geostatistical-prediction.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Geostatistical prediction</span></span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./06_case-studies.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Case studies</span></span></a>
+  <a href="./05_case-studies.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Case studies</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -381,7 +375,7 @@ Table&nbsp;1.1: List of the R packages that will be used in the book with a desc
 <p>where in place of <code>NAME_OF_THE_DATASET</code> you should type of the name of one of the data-sets listed in <a href="#tbl-data-sets" class="quarto-xref">Table&nbsp;<span>1.2</span></a>.</p>
 <div id="tbl-data-sets" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure"><figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-data-sets-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;1.2: List of data-sets available from the <code>RiskMap</code> package. Data-sets listed as “Example” are used throughout the book to illustrate the use of R functions. Data-sets listed as “Case study” are analysed in <a href="06_case-studies.html" class="quarto-xref"><span>Chapter 6</span></a>.
+Table&nbsp;1.2: List of data-sets available from the <code>RiskMap</code> package. Data-sets listed as “Example” are used throughout the book to illustrate the use of R functions. Data-sets listed as “Case study” are analysed in <a href="05_case-studies.html" class="quarto-xref"><span>Chapter 5</span></a>.
 </figcaption><div aria-describedby="tbl-data-sets-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <table class="caption-top table">
 <colgroup>
@@ -499,7 +493,7 @@ Figure&nbsp;1.4: Map of the collected number of <em>Anopheles gambiae</em> mosqu
 Figure&nbsp;1.5: Map of the locations of the simulated data-set generated over Italy for a continuous outcome.
 </figcaption></figure>
 </div>
-<p>The data-set reported in <a href="#fig-italy-sim-ch1" class="quarto-xref">Figure&nbsp;<span>1.5</span></a> was generated using a geostatistical model, with the addition of unstructured random effects at provincial and regional level. More details on how this data-set was generated will be provided in <a href="03_model-fitting.html#sec-linear-model" class="quarto-xref"><span>Section 3.2</span></a>. Whilst this data-set does not have any scientific relevance like the other data-sets used in this book, it will serve us to illustrate some of the more advanced features of the package that enable the inclusion of random effects, in addition to the latent Gaussian process that is common to all geostatistical models. The skills you will aquire through the analysis of this data-set will be useful for the analysis of data-sets presented as case studies in <a href="06_case-studies.html" class="quarto-xref"><span>Chapter 6</span></a>.</p>
+<p>The data-set reported in <a href="#fig-italy-sim-ch1" class="quarto-xref">Figure&nbsp;<span>1.5</span></a> was generated using a geostatistical model, with the addition of unstructured random effects at provincial and regional level. More details on how this data-set was generated will be provided in <a href="03_model-fitting.html#sec-linear-model" class="quarto-xref"><span>Section 3.2</span></a>. Whilst this data-set does not have any scientific relevance like the other data-sets used in this book, it will serve us to illustrate some of the more advanced features of the package that enable the inclusion of random effects, in addition to the latent Gaussian process that is common to all geostatistical models. The skills you will aquire through the analysis of this data-set will be useful for the analysis of data-sets presented as case studies in <a href="05_case-studies.html" class="quarto-xref"><span>Chapter 5</span></a>.</p>
 </section></section><section id="sec-geostat-models" class="level2" data-number="1.5"><h2 data-number="1.5" class="anchored" data-anchor-id="sec-geostat-models">
 <span class="header-section-number">1.5</span> Geostatistical problems and geostatistical models</h2>
 <p>What the examples of the previous section have in common is that, in each case, the goal of the statistical analysis is to draw inferences on an unobserved spatially continuous surface using data collected from a finite set of locations. The lead concentration in Galicia, the prevalence for river-blindness in Liberia and the abundance of <em>A. gambiae</em> mosquitoes in Cameroon can all be represented as spatially continuous processes that originate from the combined effects of environmental factors. We denote this class of inferential problems as <em>geostatistical problems</em> for which a solution can be found through the development and application of suitable <em>geostatistical models</em>, which are the subject of this book.</p>
@@ -621,12 +615,11 @@ Figure&nbsp;1.8: Stages of a statistical analysis
 </figcaption></figure>
 </div>
 <p><a href="#fig-stages" class="quarto-xref">Figure&nbsp;<span>1.8</span></a> shows the different stages that will follow in carrying the geostatistical analysis of the examples introduced in <a href="#sec-examples-ch1" class="quarto-xref"><span>Section 1.4</span></a>. The exploratory analysis of the data is an essential first step that is used to understand the empirical associations between risk factors and the the health outcome of interest. In our case, this first stage is also used to justify the use of geostatistical models by questioning the underlying assumptions of standard generalized linear models. Based on the results obtained from the exploration of the data, we then formulate a suitable statistical model and estimate its parameters using likelihood based methods of inference. These also allows us to obtain uncertainty measures about the strength of associations of regression relationships and the other model parameters that define the shape of the spatial correlation in the data. Following the estimation of the model, we then proceed to validate its underlying assumptions using suitable diagnostics that assess whether the model can later be sufficiently trusted to represent the observed variation in the modeled outcome. At this stage, if the diagnostics checks yield results that indicate the incompatibility of the model with the data, we go back to the stage of model formulation and address the issues arisen from the validation stage. If instead, we do not find any evidence against the fitted model we can proceed to carry out spatial prediction. At this stage, it is important to define suitable predictive targets that can help us to better answer the original research question and better assist the decision making process. The final step of visualization of uncertainty plays an important role in geostatistical analysis in order to convey the main findings of the study in an effective and easy-to-understand way for a wider audience which also consists of non-experts.</p>
-<p>In the remainder of this book, each chapter focuses on a specific stage as shown in <a href="#fig-stages" class="quarto-xref">Figure&nbsp;<span>1.8</span></a>. We treat visualization of uncertainty together with spatial prediction in <a href="05_geostatistical-prediction.html" class="quarto-xref"><span>Chapter 5</span></a>.</p>
-<p><a href="02_handling-spatial-data.html" class="quarto-xref"><span>Chapter 2</span></a> will provide an overview of how to handle spatial data in R, in particular raster and vector data (both points and polygons). The skills learned in this chapter will be applied throughout the book, and will especially be useful in <a href="05_geostatistical-prediction.html" class="quarto-xref"><span>Chapter 5</span></a> and <a href="06_case-studies.html" class="quarto-xref"><span>Chapter 6</span></a> for generating predictive maps of the modeled outcome.</p>
+<p>In the remainder of this book, each chapter focuses on a specific stage as shown in <a href="#fig-stages" class="quarto-xref">Figure&nbsp;<span>1.8</span></a>. We treat visualization of uncertainty together with spatial prediction in <a href="04_geostatistical-prediction.html" class="quarto-xref"><span>Chapter 4</span></a>.</p>
+<p><a href="02_handling-spatial-data.html" class="quarto-xref"><span>Chapter 2</span></a> will provide an overview of how to handle spatial data in R, in particular raster and vector data (both points and polygons). The skills learned in this chapter will be applied throughout the book, and will especially be useful in <a href="04_geostatistical-prediction.html" class="quarto-xref"><span>Chapter 4</span></a> and <a href="05_case-studies.html" class="quarto-xref"><span>Chapter 5</span></a> for generating predictive maps of the modeled outcome.</p>
 <p><a href="03_model-fitting.html" class="quarto-xref"><span>Chapter 3</span></a> focuses on the model building process and estimation of geostatistical models. This chapter will show how to carry out initial exploratory analyses of the data to inform the formulation of suitable geostatistical models and how these can be fitted using maximum likelihood estimation methods.</p>
-<p><a href="04_residuals-analysis.html" class="quarto-xref"><span>Chapter 4</span></a> illustrates the use of methods that can be used to validate the assumptions and calibration of statistical models.</p>
-<p><a href="05_geostatistical-prediction.html" class="quarto-xref"><span>Chapter 5</span></a> shows how geostatistical models can be used to carry out spatial prediction of a health outcome of interest both on a spatially continuous and spatially aggregated scales.</p>
-<p>Finally, <a href="06_case-studies.html" class="quarto-xref"><span>Chapter 6</span></a> presents the application of all the methods illustrated in the previous chapters to three additional data-sets. This chapter offers a summary of the content of the book by putting together all the stages in the geostatistical analyses for each of the three case studies, and illustrates additional functionalities of the <code>RiskMap</code> R package not covered in the previous chapters.</p>
+<p><a href="04_geostatistical-prediction.html" class="quarto-xref"><span>Chapter 4</span></a> shows how geostatistical models can be used to carry out spatial prediction of a health outcome of interest both on a spatially continuous and spatially aggregated scales.</p>
+<p>Finally, <a href="05_case-studies.html" class="quarto-xref"><span>Chapter 5</span></a> presents the application of all the methods illustrated in the previous chapters to three additional data-sets. This chapter offers a summary of the content of the book by putting together all the stages in the geostatistical analyses for each of the three case studies, and illustrates additional functionalities of the <code>RiskMap</code> R package not covered in the previous chapters.</p>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
@@ -686,6 +679,9 @@ Diggle, Peter, and Paulo Justiniano Ribeiro. 2007. <em>Model-Based Geostatistics
 </div>
 <div id="ref-dobson2008" class="csl-entry" role="listitem">
 Dobson, A. J., and A. Barnett. 2008. <em>An Introduction to Generalized Linear Models</em>. Third. Chapman; Hall/CRC.
+</div>
+<div id="ref-efron1979" class="csl-entry" role="listitem">
+Efron, Bradley. 1979. <span>“Bootstrap Methods: Another Look at the Jackknife.”</span> <em>The Annals of Statistics</em> 7 (1): 1–26.
 </div>
 <div id="ref-evans2021" class="csl-entry" role="listitem">
 Evans, Jeffrey S., and Melanie A. Murphy. 2021. <em>spatialEco</em>. <a href="https://github.com/jeffreyevans/spatialEco">https://github.com/jeffreyevans/spatialEco</a>.

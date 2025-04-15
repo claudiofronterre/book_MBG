@@ -377,8 +377,6 @@ In the remainder of this book, each chapter focuses on a specific stage as shown
 
 @sec-estimation focuses on the model building process and estimation of geostatistical models. This chapter will show how to carry out initial exploratory analyses of the data to inform the formulation of suitable geostatistical models and how these can be fitted using maximum likelihood estimation methods.
 
-@sec-validation illustrates the use of methods that can be used to validate the assumptions and calibration of statistical models.
-
 @sec-geo-prediction shows how geostatistical models can be used to carry out spatial prediction of a health outcome of interest both on a spatially continuous and spatially aggregated scales.
 
 Finally, @sec-case-studies presents the application of all the methods illustrated in the previous chapters to three additional data-sets. This chapter offers a summary of the content of the book by putting together all the stages in the geostatistical analyses for each of the three case studies, and illustrates additional functionalities of the `RiskMap` R package not covered in the previous chapters.

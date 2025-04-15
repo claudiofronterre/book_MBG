@@ -1367,20 +1367,18 @@ The answer to this question is given in @sec-non-spar-covariates.
 
 ## Exercises
 
-1.  *Parametric bootstrap.* Using the model fitted to the Anopheles gambiae mosquitoes in @sec-anopheles-fit, simulate 1000 data-sets using the `glgpm_sim` function and estimate the model to each of the simulated data-set. Use the resulting 1000 estimates to compute 95$\%$ confidence intervals for each of the model parameters and compare this with the confidence intervals obtained from the model summary.
+1.  Using the code from @sec-compare-pp, redraw the plot of @fig-anpit by choosing different values for the dispersion parameter of the Negative Binomial distribution. What happens when $\alpha$ is close to 0 and why?
 
-2.  Using the code from @sec-compare-pp, redraw the plot of @fig-anpit by choosing different values for the dispersion parameter of the Negative Binomial distribution. What happens when $\alpha$ is close to 0 and why?
-
-3.  Consider the example in @sec-liberia-anpit. Fit a third model, that extends $M1$ by adding a nugget effect, hence $$
+2.  Consider the example in @sec-liberia-anpit. Fit a third model, that extends $M1$ by adding a nugget effect, hence $$
     M_{2} \: : \: \log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_0 + \beta_{1}e(x_i) + \beta_{2}\max\{e(x_i) - 150, 0\} + S(x_i) + Z_i.
     $$ Generate the AnPIT plot for $M_2$ and compare it to those of $M_0$ and $M_1$. Make sure to apply the function `assess_pp` to all three models so that the same test sets are used. Is $M_2$ showing a better calibration? Why?
 
-4.  In the analysis of the *Anopheles gambiae* moqsuitoes data, consider two models. One that uses elavation, with linear predictor $$
+3.  In the analysis of the *Anopheles gambiae* moqsuitoes data, consider two models. One that uses elavation, with linear predictor $$
     M_1\: : \: \log\{\lambda(x_i)\} = \beta_0 + \beta_1 e(x_i) + S(x_i)
     $$ where $e(x)$ is the elevation in meters at location $x$ and $S(x_i)$ is a stationary and isotropic Gaussian process with variance $\sigma^2$ and exponential correlation function $\rho(u) = \exp\{-u/\phi\}, \phi>0$. Consider also an intercept only model $$
     M_0\: : \: \log\{\lambda(x_i)\} = \beta_0 +  S(x_i).
     $$ After fitting both models to the data, assess if they are well calibrated models using the average nonrandomized probability integral transform (AnPIT). Assuming both models are well-calibrated, compare the predictive performance using continuous ranked probability score (CRPS) and the scaled CRPS. In doing this, use different sampling schemes to split the data, as illustrated in @sec-split-data, and assess if and how the adopted approach to split the data affects the results.
 
-5.  Consider the Liberia data-set on riverblindess. Carry out a simulation study where the objective is to assess the impact of mispecifying non-linear relationships between elevation and prevalence. Consider @eq-true-model-lib as the true model and a model that specifies the relationship as linear on the logit scale as the candidate model, hence $$M_{C}: \:
+4.  Consider the Liberia data-set on riverblindess. Carry out a simulation study where the objective is to assess the impact of mispecifying non-linear relationships between elevation and prevalence. Consider @eq-true-model-lib as the true model and a model that specifies the relationship as linear on the logit scale as the candidate model, hence $$M_{C}: \:
     \log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_{0} + \beta_{1}e(x_i) + S(x_i).
     $$ Carry out 200 iterations in the simulation and define a suitable metric of predictive performance to compare the two models. Provide a clear answer on the impact of assuming a linear relationship with elevation when this is not valid.
