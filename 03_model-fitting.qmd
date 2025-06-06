@@ -1159,7 +1159,7 @@ $$
 Y_i = d(x_i)^\top \beta + S(x_i) + Z_i
 $$
 
-where $ Y_i $ is the observed response at location $ x_i $, $ d(x_i) $ is a $ p $-dimensional vector of covariates, $ \beta $ is a $ p \times 1 $ vector of regression coefficients, $ S(x_i) $ is a spatially structured random effect, and $ Z_i \sim \mathcal{N}(0, \tau^2) $ is independent Gaussian noise. The model can be rewritten as  
+where $ Y_i $ is the observed response at location $ x_i $, $ d(x_i) $ is a $ p $-dimensional vector of covariates, $ \beta $ is a $ p \times 1 $ vector of regression coefficients, $ S(x_i) $ is a spatially structured random effect, and $ Z_i \sim N(0, \tau^2) $ is independent Gaussian noise. The model can be rewritten as  
 
 $$
 Y = D\beta + S + Z

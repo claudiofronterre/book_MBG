@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.5.57">
+<meta name="generator" content="quarto-1.6.42">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <title>5&nbsp; Case studies – Model-based geostatistics for global public health using R</title>
 <style>
@@ -87,10 +87,10 @@ div.csl-indent {
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-0de45b8b5f35a93596f1d788d60c4c11.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-b4a315dc253c0adfed1371f8f6efb9a0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <link href="site_libs/quarto-contrib/line-highlight-1.0.0/line-highlight.css" rel="stylesheet"><script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -118,7 +118,32 @@ div.csl-indent {
     "search-label": "Search"
   }
 }</script><link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
-<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script><script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script><script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script><script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 </head>
 <body class="nav-sidebar floating">
 
@@ -210,7 +235,7 @@ div.csl-indent {
         <nav id="TOC" role="doc-toc" class="toc-active"><h2 id="toc-title">Contents</h2>
    
   <ul>
-<li><a href="#mapping-stunting-risk-in-ghan" id="toc-mapping-stunting-risk-in-ghan" class="nav-link active" data-scroll-target="#mapping-stunting-risk-in-ghan"><span class="header-section-number">5.1</span> Mapping stunting risk in Ghan</a></li>
+<li><a href="#mapping-stunting-risk-in-ghana" id="toc-mapping-stunting-risk-in-ghana" class="nav-link active" data-scroll-target="#mapping-stunting-risk-in-ghana"><span class="header-section-number">5.1</span> Mapping stunting risk in Ghana</a></li>
   <li><a href="#mapping-river-blindness-in-malawi" id="toc-mapping-river-blindness-in-malawi" class="nav-link" data-scroll-target="#mapping-river-blindness-in-malawi"><span class="header-section-number">5.2</span> Mapping river blindness in Malawi</a></li>
   <li><a href="#mapping-mosquitoes-abundance-in-cameroon" id="toc-mapping-mosquitoes-abundance-in-cameroon" class="nav-link" data-scroll-target="#mapping-mosquitoes-abundance-in-cameroon"><span class="header-section-number">5.3</span> Mapping mosquitoes abundance in Cameroon</a></li>
   </ul></nav>
@@ -231,16 +256,221 @@ div.csl-indent {
   
 
 
-</header><p>This is a book created from markdown and executable code.</p>
-<p>See <span class="citation" data-cites="knuth84">(<a href="references.html#ref-knuth84" role="doc-biblioref"><strong>knuth84?</strong></a>)</span> for additional discussion of literate programming.</p>
+</header><section id="mapping-stunting-risk-in-ghana" class="level2" data-number="5.1"><h2 data-number="5.1" class="anchored" data-anchor-id="mapping-stunting-risk-in-ghana">
+<span class="header-section-number">5.1</span> Mapping stunting risk in Ghana</h2>
+<p>Malnutrition remains a critical public health issue in many low- and middle-income countries, particularly affecting children under five years of age. It can have long-term consequences on physical growth, cognitive development, and susceptibility to disease. Monitoring childhood nutritional status is essential for evaluating the effectiveness of health interventions and informing policy decisions.</p>
+<p>Two widely used anthropometric indicators derived from child growth measurements are:</p>
+<ul>
+<li><p>Height-for-Age Z-score (HAZ): A measure of stunting, which reflects chronic malnutrition. Children with a HAZ below -2 standard deviations from the WHO growth reference median are considered stunted, indicating long-term nutritional deprivation or repeated infections.</p></li>
+<li><p>Weight-for-Age Z-score (WAZ): A composite indicator of underweight, capturing both acute and chronic malnutrition. Children with WAZ below -2 are considered underweight. This measure is commonly used in population-based surveys because it is relatively easy to collect and interpret.</p></li>
+</ul>
+<p>These Z-scores are calculated by comparing individual anthropometric measurements to the WHO Child Growth Standards, which were developed based on data from healthy children under optimal environmental and nutritional conditions <span class="citation" data-cites="who2006">(<a href="references.html#ref-who2006" role="doc-biblioref">WHO 2006</a>)</span>.</p>
+<p>Geostatistical models applied to HAZ and WAZ, or to the prevalence of stunting and underweight derived from these scores, can help answer critical questions such as: <em>Where is the burden of malnutrition highest? How does it relate to socioeconomic or environmental factors? And which areas should be prioritized for targeted nutritional interventions?</em></p>
+<p>In this case study, we analyse HAZ and WAZ as continuous outcomes to assess the spatial variation in child malnutrition across Ghana and its association with socioeconomic and demographic covariates.</p>
+<p>We begin by loading the necessary R packages and the <code>malnutrition</code> dataset. This geostatistical dataset is derived from the 2014 Ghana Demographic and Health Survey (DHS) <span class="citation" data-cites="ghanaDHS2014">(<a href="references.html#ref-ghanaDHS2014" role="doc-biblioref">Ghana Statistical Service, Ghana Health Service, and ICF International 2015</a>)</span>, which provides nationally representative data on child health and nutrition. The dataset includes anthropometric measurements, household characteristics, and georeferenced sampling cluster coordinates, making it suitable for spatial analysis of child malnutrition.</p>
 <div class="cell">
-<div class="sourceCode" id="cb1" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fl">1</span> <span class="op">+</span> <span class="fl">1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb1" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Load packages</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://claudiofronterre.github.io/RiskMap/">RiskMap</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://patchwork.data-imaginist.com">patchwork</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Load the data</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">malnutrition</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The explanatory variables considered in this analysis are <code>age</code> and <code>wealth</code>. Figure <a href="#fig-maln-expl" class="quarto-xref">Figure&nbsp;<span>5.1</span></a> displays scatterplots of the two nutritional outcomes (<code>HAZ</code> and <code>WAZ</code>) against age, alongside boxplots stratified by the three levels of the <code>wealth</code> variable.</p>
+<p>To explore the relationship between age and nutritional status, the code below applies locally estimated scatterplot smoothing (LOESS) to highlight potential non-linear trends. In addition, we fit linear splines using the function <code><a href="https://rdrr.io/r/base/Extremes.html">pmax()</a></code> to model a change in slope at specified knots—2 months for HAZ and 1 month for WAZ. These change points were selected heuristically based on visual inspection of the LOESS curves.</p>
+<p>As shown in Figure <a href="#fig-maln-expl" class="quarto-xref">Figure&nbsp;<span>5.1</span></a>, the linear splines (green dashed lines) closely follow the LOESS fits (solid red lines), indicating that the piecewise linear models provide an adequate approximation of the age-nutrition relationship.</p>
+<div class="cell">
+<div class="sourceCode" id="cb2" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Filter complete cases for relevant variables</span></span>
+<span><span class="va">mal</span> <span class="op">&lt;-</span> <span class="va">malnutrition</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">HAZ</span><span class="op">)</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">WAZ</span><span class="op">)</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">age</span><span class="op">)</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">wealth</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Fit spline model for HAZ with knot at 2 months</span></span>
+<span><span class="va">mod_haz</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">HAZ</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">pmax</a></span><span class="op">(</span><span class="va">age</span> <span class="op">-</span> <span class="fl">2</span>, <span class="fl">0</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">mal</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Fit spline model for WAZ with knot at 1 month</span></span>
+<span><span class="va">mod_waz</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">WAZ</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">pmax</a></span><span class="op">(</span><span class="va">age</span> <span class="op">-</span> <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">mal</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Prediction grid for HAZ</span></span>
+<span><span class="va">newdat_haz</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>age <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">mal</span><span class="op">$</span><span class="va">age</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">mal</span><span class="op">$</span><span class="va">age</span><span class="op">)</span>, length.out <span class="op">=</span> <span class="fl">200</span><span class="op">)</span><span class="op">)</span> </span>
+<span><span class="va">newdat_haz</span><span class="op">$</span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span><span class="op">(</span><span class="va">mod_haz</span>, newdata <span class="op">=</span> <span class="va">newdat_haz</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Prediction grid for WAZ</span></span>
+<span><span class="va">newdat_waz</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>age <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">mal</span><span class="op">$</span><span class="va">age</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">mal</span><span class="op">$</span><span class="va">age</span><span class="op">)</span>, length.out <span class="op">=</span> <span class="fl">200</span><span class="op">)</span><span class="op">)</span> </span>
+<span><span class="va">newdat_waz</span><span class="op">$</span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span><span class="op">(</span><span class="va">mod_waz</span>, newdata <span class="op">=</span> <span class="va">newdat_waz</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Plot HAZ vs Age</span></span>
+<span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">mal</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">age</span>, y <span class="op">=</span> <span class="va">HAZ</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html">geom_smooth</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"loess"</span>, colour <span class="op">=</span> <span class="st">"red"</span>, se <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">newdat_haz</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">age</span>, y <span class="op">=</span> <span class="va">fit</span><span class="op">)</span>, </span>
+<span>            colour <span class="op">=</span> <span class="st">"green"</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span>, linewidth <span class="op">=</span> <span class="fl">1.2</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"HAZ vs Age"</span>, x <span class="op">=</span> <span class="st">"Age (months)"</span>, y <span class="op">=</span> <span class="st">"HAZ"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Plot WAZ vs Age</span></span>
+<span><span class="va">p2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">mal</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">age</span>, y <span class="op">=</span> <span class="va">WAZ</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html">geom_smooth</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"loess"</span>, colour <span class="op">=</span> <span class="st">"red"</span>, se <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">newdat_waz</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">age</span>, y <span class="op">=</span> <span class="va">fit</span><span class="op">)</span>, </span>
+<span>            colour <span class="op">=</span> <span class="st">"green"</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span>, linewidth <span class="op">=</span> <span class="fl">1.2</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"WAZ vs Age"</span>, x <span class="op">=</span> <span class="st">"Age (months)"</span>, y <span class="op">=</span> <span class="st">"WAZ"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Boxplots for HAZ and WAZ by wealth</span></span>
+<span><span class="va">p3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">mal</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">wealth</span><span class="op">)</span>, y <span class="op">=</span> <span class="va">HAZ</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html">geom_boxplot</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"lightblue"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"HAZ by Wealth Group"</span>, x <span class="op">=</span> <span class="st">"Wealth (1 = Poor, 3 = Rich)"</span>, y <span class="op">=</span> <span class="st">"HAZ"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">p4</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">mal</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">wealth</span><span class="op">)</span>, y <span class="op">=</span> <span class="va">WAZ</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html">geom_boxplot</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"lightgreen"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"WAZ by Wealth Group"</span>, x <span class="op">=</span> <span class="st">"Wealth (1 = Poor, 3 = Rich)"</span>, y <span class="op">=</span> <span class="st">"WAZ"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Combine plots</span></span>
+<span><span class="op">(</span><span class="va">p1</span> <span class="op">|</span> <span class="va">p2</span><span class="op">)</span> <span class="op">/</span> <span class="op">(</span><span class="va">p3</span> <span class="op">|</span> <span class="va">p4</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-maln-expl" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-maln-expl-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="05_case-studies_files/figure-html/fig-maln-expl-1.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-maln-expl-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.1: Exploratory analysis of HAZ and WAZ by age and wealth. The red lines correspond to LOESS smoothed curves and the green lines to linear splines with change points at 2 months (HAZ) and 1 month (WAZ) of age. Boxplots show variation by household wealth group.
+</figcaption></figure>
+</div>
+</div>
+</div>
+<p>We begin by fitting a non-spatial model to assess whether there is residual spatial correlation that remains after accounting for the effects of age and wealth. Let <span class="math inline">\(Y_{ij}\)</span> represent either the HAZ or WAZ score for the <span class="math inline">\(j\)</span>-th child in the <span class="math inline">\(i\)</span>-th cluster. The model takes the following form:</p>
+<p><span class="math display">\[
+Y_{ij} = \beta_0 + \beta_1 a_{ij} + \beta_2 \max\{a_{ij} - c, 0\} + \beta_3 w_i + Z_i + U_{ij},
+\]</span></p>
+<p>where <span class="math inline">\(a_{ij}\)</span> denotes the age in months of child <span class="math inline">\(j\)</span> in cluster <span class="math inline">\(i\)</span>, and <span class="math inline">\(w_i\)</span> is the wealth score associated with cluster <span class="math inline">\(i\)</span>; as previously stated, the change point <span class="math inline">\(c\)</span> of the linear spline is set to 2 months for HAZ and 1 month for WAZ. The term <span class="math inline">\(Z_i\)</span> is a Gaussian random effect with mean zero and variance <span class="math inline">\(\tau^2\)</span>, capturing between-cluster variation not explained by the covariates. The error term <span class="math inline">\(U_{ij}\)</span> represents child-specific residual variation and is assumed to be Gaussian with mean zero and variance <span class="math inline">\(\omega^2\)</span>.</p>
+<p>To fit this model, we create a cluster ID variable based on the sampling coordinates and include it as a random intercept in the <code>lmer</code> function to incorporate the term <span class="math inline">\(Z_i\)</span>.</p>
+<div class="cell">
+<div class="sourceCode" id="cb3" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Create ID for the location</span></span>
+<span><span class="va">malnutrition</span> <span class="op">&lt;-</span> <span class="va">malnutrition</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">lng</span>, <span class="va">lat</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>loc_id <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">cur_group_id</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">ungroup</a></span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We then fit the models using the <code>lmer</code> function.</p>
+<div class="cell">
+<div class="sourceCode" id="cb4" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/lme4/lme4/">lme4</a></span><span class="op">)</span></span>
+<span><span class="va">haz_lmer</span> <span class="op">&lt;-</span> </span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/lme4/man/lmer.html">lmer</a></span><span class="op">(</span><span class="va">HAZ</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">pmax</a></span><span class="op">(</span><span class="va">age</span> <span class="op">-</span> <span class="fl">2</span>, <span class="fl">0</span><span class="op">)</span> <span class="op">+</span> <span class="va">wealth</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">loc_id</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">malnutrition</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">haz_lmer</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre data-code-line-numbers=""><code>[1] 2</code></pre>
+<pre data-code-line-numbers=""><code>Linear mixed model fit by REML ['lmerMod']
+Formula: HAZ ~ age + pmax(age - 2, 0) + wealth + (1 | loc_id)
+   Data: malnutrition
+
+REML criterion at convergence: 8593.6
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-4.6407 -0.5992  0.0154  0.6098  5.6443 
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ loc_id   (Intercept) 0.06939  0.2634  
+ Residual             1.39362  1.1805  
+Number of obs: 2671, groups:  loc_id, 410
+
+Fixed effects:
+                 Estimate Std. Error t value
+(Intercept)      -0.39571    0.08170  -4.844
+age              -0.77185    0.04471 -17.265
+pmax(age - 2, 0)  0.88486    0.06698  13.211
+wealth            0.38630    0.03611  10.699
+
+Correlation of Fixed Effects:
+            (Intr) age    p(-2,0
+age         -0.654              
+pmax(g-2,0)  0.521 -0.932       
+wealth      -0.616 -0.034  0.038</code></pre>
+</div>
+<div class="sourceCode" id="cb6" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">waz_lmer</span> <span class="op">&lt;-</span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/lme4/man/lmer.html">lmer</a></span><span class="op">(</span><span class="va">WAZ</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">pmax</a></span><span class="op">(</span><span class="va">age</span> <span class="op">-</span> <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span> <span class="op">+</span> <span class="va">wealth</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">loc_id</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">malnutrition</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">waz_lmer</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre data-code-line-numbers=""><code>Linear mixed model fit by REML ['lmerMod']
+Formula: WAZ ~ age + pmax(age - 1, 0) + wealth + (1 | loc_id)
+   Data: malnutrition
+
+REML criterion at convergence: 7997.3
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-6.5967 -0.5816  0.0098  0.6312  5.7860 
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ loc_id   (Intercept) 0.05625  0.2372  
+ Residual             1.11823  1.0575  
+Number of obs: 2668, groups:  loc_id, 410
+
+Fixed effects:
+                 Estimate Std. Error t value
+(Intercept)      -0.50444    0.08951  -5.636
+age              -0.72230    0.09615  -7.512
+pmax(age - 1, 0)  0.73510    0.10754   6.835
+wealth            0.27359    0.03238   8.450
+
+Correlation of Fixed Effects:
+            (Intr) age    p(-1,0
+age         -0.765              
+pmax(g-1,0)  0.716 -0.989       
+wealth      -0.494 -0.036  0.037</code></pre>
 </div>
 </div>
-<section id="mapping-stunting-risk-in-ghan" class="level2" data-number="5.1"><h2 data-number="5.1" class="anchored" data-anchor-id="mapping-stunting-risk-in-ghan">
-<span class="header-section-number">5.1</span> Mapping stunting risk in Ghan</h2>
+<p>Of particular interest in the summary of the fitted models above are the estimates of the variances associated with the random effects: <span class="math inline">\(\tau^2\)</span> for the cluster-level terms <span class="math inline">\(Z_i\)</span>, and <span class="math inline">\(\omega^2\)</span> for the child-specific residuals <span class="math inline">\(U_{ij}\)</span>. The estimates suggest that <span class="math inline">\(\omega^2\)</span> is more than twenty times larger than <span class="math inline">\(\tau^2\)</span>, indicating that the majority of the unexplained variation occurs at the individual child level rather than between clusters. This has important implications for interpretation: any subsequent mapping of the prevalence of stunting or underweight should acknowledge the high degree of within-cluster variability as a limitation. In particular, predictions at unsampled locations may be subject to substantial uncertainty driven by this fine-scale heterogeneity.</p>
+<p>We next explore the residual spatial correlation through the variogram.</p>
+<div class="cell">
+<div class="sourceCode" id="cb8" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Extract random effects for HAZ and WAZ and combine them</span></span>
+<span><span class="va">re</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span></span>
+<span>  loc_id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/nlme/man/random.effects.html">ranef</a></span><span class="op">(</span><span class="va">haz_lmer</span><span class="op">)</span><span class="op">$</span><span class="va">loc_id</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  Z_hat_haz <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/nlme/man/random.effects.html">ranef</a></span><span class="op">(</span><span class="va">haz_lmer</span><span class="op">)</span><span class="op">$</span><span class="va">loc_id</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span>,</span>
+<span>  Z_hat_waz <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/nlme/man/random.effects.html">ranef</a></span><span class="op">(</span><span class="va">waz_lmer</span><span class="op">)</span><span class="op">$</span><span class="va">loc_id</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Extract one row per location with coordinates</span></span>
+<span><span class="va">loc_coords</span> <span class="op">&lt;-</span> <span class="va">malnutrition</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">loc_id</span>, <span class="va">lng</span>, <span class="va">lat</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html">distinct</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Merge coordinates into random effects</span></span>
+<span><span class="va">re</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span><span class="op">(</span><span class="va">re</span>, <span class="va">loc_coords</span>, by <span class="op">=</span> <span class="st">"loc_id"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Convert to sf and transform into UTM</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/">sf</a></span><span class="op">)</span></span>
+<span><span class="va">re</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html">st_as_sf</a></span><span class="op">(</span><span class="va">re</span>, coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"lng"</span>,<span class="st">"lat"</span><span class="op">)</span>, crs <span class="op">=</span> <span class="fl">4326</span><span class="op">)</span></span>
+<span><span class="va">re</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_transform.html">st_transform</a></span><span class="op">(</span><span class="va">re</span>, crs <span class="op">=</span> <span class="fu"><a href="https://claudiofronterre.github.io/RiskMap/reference/propose_utm.html">propose_utm</a></span><span class="op">(</span><span class="va">re</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Variogram for HAZ</span></span>
+<span><span class="va">var_haz</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://claudiofronterre.github.io/RiskMap/reference/s_variogram.html">s_variogram</a></span><span class="op">(</span><span class="va">re</span>, <span class="st">"Z_hat_haz"</span>, scale_to_km <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                       n_permutation <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span>
+<span><span class="va">var_waz</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://claudiofronterre.github.io/RiskMap/reference/s_variogram.html">s_variogram</a></span><span class="op">(</span><span class="va">re</span>, <span class="st">"Z_hat_waz"</span>, scale_to_km <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                       n_permutation <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://patchwork.data-imaginist.com">patchwork</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Create ggplot objects</span></span>
+<span><span class="va">p_haz</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://claudiofronterre.github.io/RiskMap/reference/plot_s_variogram.html">plot_s_variogram</a></span><span class="op">(</span><span class="va">var_haz</span>, plot_envelope <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"HAZ"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">p_waz</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://claudiofronterre.github.io/RiskMap/reference/plot_s_variogram.html">plot_s_variogram</a></span><span class="op">(</span><span class="va">var_waz</span>, plot_envelope <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"WAZ"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">p_haz</span> <span class="op">+</span> <span class="va">p_waz</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="05_case-studies_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
 </section><section id="mapping-river-blindness-in-malawi" class="level2" data-number="5.2"><h2 data-number="5.2" class="anchored" data-anchor-id="mapping-river-blindness-in-malawi">
 <span class="header-section-number">5.2</span> Mapping river blindness in Malawi</h2>
 </section><section id="mapping-mosquitoes-abundance-in-cameroon" class="level2" data-number="5.3"><h2 data-number="5.3" class="anchored" data-anchor-id="mapping-mosquitoes-abundance-in-cameroon">
@@ -305,6 +535,9 @@ Diggle, Peter, and Paulo Justiniano Ribeiro. 2007. <em>Model-Based Geostatistics
 <div id="ref-dobson2008" class="csl-entry" role="listitem">
 Dobson, A. J., and A. Barnett. 2008. <em>An Introduction to Generalized Linear Models</em>. Third. Chapman; Hall/CRC.
 </div>
+<div id="ref-efron1979" class="csl-entry" role="listitem">
+Efron, Bradley. 1979. <span>“Bootstrap Methods: Another Look at the Jackknife.”</span> <em>The Annals of Statistics</em> 7 (1): 1–26.
+</div>
 <div id="ref-evans2021" class="csl-entry" role="listitem">
 Evans, Jeffrey S., and Melanie A. Murphy. 2021. <em>spatialEco</em>. <a href="https://github.com/jeffreyevans/spatialEco">https://github.com/jeffreyevans/spatialEco</a>.
 </div>
@@ -331,6 +564,9 @@ Geyer, Charles J. 1994. <span>“Likelihood and Exponential Families.”</span> 
 </div>
 <div id="ref-geyer2019handbook" class="csl-entry" role="listitem">
 ———. 2019. <span>“Monte Carlo Methods in MCMC.”</span> In <em>Handbook of MCMC</em>, edited by Steve Brooks, Andrew Gelman, Galin L. Jones, and Xiao-Li Meng, 3–48. CRC Press.
+</div>
+<div id="ref-ghanaDHS2014" class="csl-entry" role="listitem">
+Ghana Statistical Service, Ghana Health Service, and ICF International. 2015. <em>Ghana Demographic and Health Survey 2014</em>. Rockville, Maryland, USA: Ghana Statistical Service, Ghana Health Service,; ICF International. <a href="https://dhsprogram.com/publications/publication-FR307-DHS-Final-Reports.cfm">https://dhsprogram.com/publications/publication-FR307-DHS-Final-Reports.cfm</a>.
 </div>
 <div id="ref-gneiting2007" class="csl-entry" role="listitem">
 Gneiting, Tilmann, Fadoua Balabdaoui, and Adrian E Raftery. 2007. <span>“Probabilistic Forecasts, Calibration and Sharpness.”</span> <em>Journal of the Royal Statistical Society: Series B (Statistical Methodology)</em> 69 (2): 243–68.
@@ -415,6 +651,9 @@ Watson, G. S. 1971. <span>“Trend -Surface Analysis.”</span> <em>Mathematical
 </div>
 <div id="ref-weisberg2014" class="csl-entry" role="listitem">
 Weisberg, Sanford. 2014. <em>Applied Linear Regression</em>. Fourth. Hoboken <span>NJ</span>: Wiley. <a href="http://z.umn.edu/alr4ed">http://z.umn.edu/alr4ed</a>.
+</div>
+<div id="ref-who2006" class="csl-entry" role="listitem">
+WHO. 2006. <span>“WHO Child Growth Standards: Length/Height-for-Age, Weight-for-Age, Weight-for-Length, Weight-for-Height and Body Mass Index-for-Age: Methods and Development.”</span> Geneva: WHO. <a href="https://www.who.int/publications/i/item/924154693X">https://www.who.int/publications/i/item/924154693X</a>.
 </div>
 <div id="ref-yin2024" class="csl-entry" role="listitem">
 Yin, Hui, Yutong Wang, Yuxin Wang, Zihan Li, Yujie Li, and Yuxin Wang. 2024. <span>“A Rapid Review of Clustering Algorithms.”</span> <em>arXiv Preprint arXiv:2401.07389</em>.
@@ -511,8 +750,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   });
   clipboard.on('success', onCopySuccess);
   if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-    // For code content inside modals, clipBoardJS needs to be initialized with a container option
-    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
     const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
       text: getTextToCopy,
       container: window.document.getElementById('quarto-embedded-source-code-modal')
@@ -623,7 +860,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (window.Quarto?.typesetMath) {
         window.Quarto.typesetMath(note);
       }
-      // TODO in 1.5, we should make sure this works without a callout special case
       if (note.classList.contains("callout")) {
         return note.outerHTML;
       } else {

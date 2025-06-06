@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.5.57">
+<meta name="generator" content="quarto-1.6.42">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <title>4&nbsp; Geostatistical prediction – Model-based geostatistics for global public health using R</title>
 <style>
@@ -87,10 +87,10 @@ div.csl-indent {
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-0de45b8b5f35a93596f1d788d60c4c11.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-b4a315dc253c0adfed1371f8f6efb9a0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <link href="site_libs/quarto-contrib/line-highlight-1.0.0/line-highlight.css" rel="stylesheet"><script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -364,7 +364,7 @@ window.Quarto = {
 <li><p>Step 1. define the predictive target <span class="math inline">\(T(x)\)</span>;</p></li>
 <li><p>Step 2. obtain the predictive distribution of <span class="math inline">\(T(x)\)</span> and use this to compute summaries that helps to answer your original research question.</p></li>
 </ul>
-<p>This begs two practical questions: “How do we obtain the predictive distribution of <span class="math inline">\(T(x)\)</span>?” and “How do we use the predictive distribution to compute our summaries?”. For a mathematical derivation of the predictive distribution and the form that this takes in the special case of a linear geostatistical model, you can read <a href="#sec-theory-prediction" class="quarto-xref"><span>Section 4.7</span></a>. In what follows, we shall assume that we can simulate directly from <span class="math inline">\([T(x) \: \mid \: y]\)</span> either using direct simulation or Markov Chains Monte Carlo (see <a href="03_model-fitting.html#sec-mcmc-mala" class="quarto-xref"><span>Section 3.4.2.2</span></a>).</p>
+<p>This begs two practical questions: “How do we obtain the predictive distribution of <span class="math inline">\(T(x)\)</span>?” and “How do we use the predictive distribution to compute our summaries?”. For a mathematical derivation of the predictive distribution and the form that this takes in the special case of a linear geostatistical model, you can read <a href="#sec-theory-prediction" class="quarto-xref"><span>Section 4.7</span></a>. In what follows, we shall assume that we can simulate directly from <span class="math inline">\([T(x) \: \mid \: y]\)</span> either using direct simulation or Markov Chains Monte Carlo (see <a href="03_model-fitting.html#sec-mcmc-mala" class="quarto-xref"><span>Section 3.5.2.2</span></a>).</p>
 <p>In our exposition so far, we have also made the implicit assumption that prediction is required for our predictive target at a single, unsampled, location <span class="math inline">\(x\)</span> and for this reason we have denote our predictive target simply as <span class="math inline">\(T(x)\)</span>. However, this is almost never the case, since in most cases, our predictive target correspond to either of the following.</p>
 <ul>
 <li><p><strong>Spatially continuous targets</strong> correspond to an unobserved spatially continuous surface (e.g.&nbsp;disease prevalence), formally denoted by <span class="math inline">\(\mathcal{T} = \{T(x), x \in A\}\)</span>, where <span class="math inline">\(A\)</span> is our region of interest.</p></li>
@@ -422,7 +422,7 @@ window.Quarto = {
 <span>               type <span class="op">=</span> <span class="st">"joint"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Both <code>lb_pred_S_m</code> and <code>lb_pred_S_j</code> contain lists with the same arguments, with one key difference: the samples in the list element named <code>S_samples</code> for the former are drawn from the marginal predictive distributions of the components of <span class="math inline">\(S(\tilde{X})\)</span>, while for the latter, they come from the joint predictive distribution of <span class="math inline">\(S(\tilde{X})\)</span>.</p>
-<p>An important note is that in the code above we have used the default settings for the Markov Chain Monte Carlo (MCMC). To change these setting use the function <code>set_control_sim</code> whose output should be passed to the argument <code>contol_sim</code> of <code>pred_over_grid</code>. The diagnostic on the convergence of the MCMC can also be applying the <code>check_mcmc</code> function to either <code>lb_pred_S_m</code> or <code>lb_pred_S_j</code>; see <a href="03_model-fitting.html#sec-summary" class="quarto-xref"><span>Section 3.4.2.3</span></a> for more details.</p>
+<p>An important note is that in the code above we have used the default settings for the Markov Chain Monte Carlo (MCMC). To change these setting use the function <code>set_control_sim</code> whose output should be passed to the argument <code>contol_sim</code> of <code>pred_over_grid</code>. The diagnostic on the convergence of the MCMC can also be applying the <code>check_mcmc</code> function to either <code>lb_pred_S_m</code> or <code>lb_pred_S_j</code>; see <a href="03_model-fitting.html#sec-summary" class="quarto-xref"><span>Section 3.5.2.3</span></a> for more details.</p>
 <p>We can inspect the predictive distribution of any component <span class="math inline">\(S(\tilde{X})\)</span> through the Monte Carlo samples stored in <code>S_samples</code>. For example, the script below generates the histogram for the predictive distribution of the first component of <span class="math inline">\(S(\tilde{X})\)</span> (<a href="#fig-hist-first-comp-pd" class="quarto-xref">Figure&nbsp;<span>4.1</span></a>).</p>
 <div class="cell">
 <div class="sourceCode" id="cb3" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html">hist</a></span><span class="op">(</span><span class="va">lb_pred_S_m</span><span class="op">$</span><span class="va">S_samples</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span>, main <span class="op">=</span> <span class="st">"Predictive distribution"</span>,</span>
@@ -1856,6 +1856,9 @@ Watson, G. S. 1971. <span>“Trend -Surface Analysis.”</span> <em>Mathematical
 <div id="ref-weisberg2014" class="csl-entry" role="listitem">
 Weisberg, Sanford. 2014. <em>Applied Linear Regression</em>. Fourth. Hoboken <span>NJ</span>: Wiley. <a href="http://z.umn.edu/alr4ed">http://z.umn.edu/alr4ed</a>.
 </div>
+<div id="ref-who2006" class="csl-entry" role="listitem">
+<span>“WHO Child Growth Standards: Length/Height-for-Age, Weight-for-Age, Weight-for-Length, Weight-for-Height and Body Mass Index-for-Age: Methods and Development.”</span> 2006. Geneva: World Health Organization. <a href="https://www.who.int/publications/i/item/924154693X">https://www.who.int/publications/i/item/924154693X</a>.
+</div>
 <div id="ref-yin2024" class="csl-entry" role="listitem">
 Yin, Hui, Yutong Wang, Yuxin Wang, Zihan Li, Yujie Li, and Yuxin Wang. 2024. <span>“A Rapid Review of Clustering Algorithms.”</span> <em>arXiv Preprint arXiv:2401.07389</em>.
 </div>
@@ -1955,8 +1958,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   });
   clipboard.on('success', onCopySuccess);
   if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-    // For code content inside modals, clipBoardJS needs to be initialized with a container option
-    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
     const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
       text: getTextToCopy,
       container: window.document.getElementById('quarto-embedded-source-code-modal')
@@ -2067,7 +2068,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (window.Quarto?.typesetMath) {
         window.Quarto.typesetMath(note);
       }
-      // TODO in 1.5, we should make sure this works without a callout special case
       if (note.classList.contains("callout")) {
         return note.outerHTML;
       } else {

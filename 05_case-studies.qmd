@@ -9,15 +9,166 @@ fig-asp: 0.75
 
 # Case studies {#sec-case-studies}
 
-This is a book created from markdown and executable code.
+## Mapping stunting risk in Ghana
 
-See @knuth84 for additional discussion of literate programming.
+Malnutrition remains a critical public health issue in many low- and middle-income countries, particularly affecting children under five years of age. It can have long-term consequences on physical growth, cognitive development, and susceptibility to disease. Monitoring childhood nutritional status is essential for evaluating the effectiveness of health interventions and informing policy decisions.
 
+Two widely used anthropometric indicators derived from child growth measurements are:
+
+- Height-for-Age Z-score (HAZ): A measure of stunting, which reflects chronic malnutrition. Children with a HAZ below -2 standard deviations from the WHO growth reference median are considered stunted, indicating long-term nutritional deprivation or repeated infections.
+
+- Weight-for-Age Z-score (WAZ): A composite indicator of underweight, capturing both acute and chronic malnutrition. Children with WAZ below -2 are considered underweight. This measure is commonly used in population-based surveys because it is relatively easy to collect and interpret.
+
+These Z-scores are calculated by comparing individual anthropometric measurements to the WHO Child Growth Standards, which were developed based on data from healthy children under optimal environmental and nutritional conditions [@who2006].
+
+Geostatistical models applied to HAZ and WAZ, or to the prevalence of stunting and underweight derived from these scores, can help answer critical questions such as: *Where is the burden of malnutrition highest? How does it relate to socioeconomic or environmental factors? And which areas should be prioritized for targeted nutritional interventions?*
+
+In this case study, we analyse HAZ and WAZ as continuous outcomes to assess the spatial variation in child malnutrition across Ghana and its association with socioeconomic and demographic covariates.
+
+We begin by loading the necessary R packages and the `malnutrition` dataset. This geostatistical dataset is derived from the 2014 Ghana Demographic and Health Survey (DHS) [@ghanaDHS2014], which provides nationally representative data on child health and nutrition. The dataset includes anthropometric measurements, household characteristics, and georeferenced sampling cluster coordinates, making it suitable for spatial analysis of child malnutrition.
 ```{r}
-1 + 1
+# Load packages
+library(RiskMap)
+library(ggplot2)
+library(dplyr)
+library(patchwork)
+
+# Load the data
+data(malnutrition)
 ```
 
-## Mapping stunting risk in Ghan
+The explanatory variables considered in this analysis are `age` and `wealth`. Figure @fig-maln-expl displays scatterplots of the two nutritional outcomes (`HAZ` and `WAZ`) against age, alongside boxplots stratified by the three levels of the `wealth` variable.
+
+To explore the relationship between age and nutritional status, the code below applies locally estimated scatterplot smoothing (LOESS) to highlight potential non-linear trends. In addition, we fit linear splines using the function `pmax()` to model a change in slope at specified knots—2 months for HAZ and 1 month for WAZ. These change points were selected heuristically based on visual inspection of the LOESS curves.
+
+As shown in Figure @fig-maln-expl, the linear splines (green dashed lines) closely follow the LOESS fits (solid red lines), indicating that the piecewise linear models provide an adequate approximation of the age-nutrition relationship.
+
+
+```{r}
+#| label: fig-maln-expl
+#| fig-cap: "Exploratory analysis of HAZ and WAZ by age and wealth. The red lines correspond to LOESS smoothed curves and the green lines to linear splines with change points at 2 months (HAZ) and 1 month (WAZ) of age. Boxplots show variation by household wealth group."  
+
+# Filter complete cases for relevant variables
+mal <- malnutrition %>%
+  filter(!is.na(HAZ), !is.na(WAZ), !is.na(age), !is.na(wealth))
+
+# Fit spline model for HAZ with knot at 2 months
+mod_haz <- lm(HAZ ~ age + pmax(age - 2, 0), data = mal)
+
+# Fit spline model for WAZ with knot at 1 month
+mod_waz <- lm(WAZ ~ age + pmax(age - 1, 0), data = mal)
+
+# Prediction grid for HAZ
+newdat_haz <- data.frame(age = seq(min(mal$age), max(mal$age), length.out = 200)) 
+newdat_haz$fit <- predict(mod_haz, newdata = newdat_haz)
+
+# Prediction grid for WAZ
+newdat_waz <- data.frame(age = seq(min(mal$age), max(mal$age), length.out = 200)) 
+newdat_waz$fit <- predict(mod_waz, newdata = newdat_waz)
+
+# Plot HAZ vs Age
+p1 <- ggplot(mal, aes(x = age, y = HAZ)) +
+  geom_point(alpha = 0.3) +
+  geom_smooth(method = "loess", colour = "red", se = FALSE) +
+  geom_line(data = newdat_haz, aes(x = age, y = fit), 
+            colour = "green", linetype = "dashed", linewidth = 1.2) +
+  labs(title = "HAZ vs Age", x = "Age (months)", y = "HAZ") +
+  theme_minimal()
+
+# Plot WAZ vs Age
+p2 <- ggplot(mal, aes(x = age, y = WAZ)) +
+  geom_point(alpha = 0.3) +
+  geom_smooth(method = "loess", colour = "red", se = FALSE) +
+  geom_line(data = newdat_waz, aes(x = age, y = fit), 
+            colour = "green", linetype = "dashed", linewidth = 1.2) +
+  labs(title = "WAZ vs Age", x = "Age (months)", y = "WAZ") +
+  theme_minimal()
+
+# Boxplots for HAZ and WAZ by wealth
+p3 <- ggplot(mal, aes(x = factor(wealth), y = HAZ)) +
+  geom_boxplot(fill = "lightblue") +
+  labs(title = "HAZ by Wealth Group", x = "Wealth (1 = Poor, 3 = Rich)", y = "HAZ") +
+  theme_minimal()
+
+p4 <- ggplot(mal, aes(x = factor(wealth), y = WAZ)) +
+  geom_boxplot(fill = "lightgreen") +
+  labs(title = "WAZ by Wealth Group", x = "Wealth (1 = Poor, 3 = Rich)", y = "WAZ") +
+  theme_minimal()
+
+# Combine plots
+(p1 | p2) / (p3 | p4)
+
+```
+
+We begin by fitting a non-spatial model to assess whether there is residual spatial correlation that remains after accounting for the effects of age and wealth. Let $Y_{ij}$ represent either the HAZ or WAZ score for the $j$-th child in the $i$-th cluster. The model takes the following form:
+
+$$
+Y_{ij} = \beta_0 + \beta_1 a_{ij} + \beta_2 \max\{a_{ij} - c, 0\} + \beta_3 w_i + Z_i + U_{ij},
+$$
+
+where $a_{ij}$ denotes the age in months of child $j$ in cluster $i$, and $w_i$ is the wealth score associated with cluster $i$; as previously stated, the change point $c$ of the linear spline is set to 2 months for HAZ and 1 month for WAZ. The term $Z_i$ is a Gaussian random effect with mean zero and variance $\tau^2$, capturing between-cluster variation not explained by the covariates. The error term $U_{ij}$ represents child-specific residual variation and is assumed to be Gaussian with mean zero and variance $\omega^2$.
+
+To fit this model, we create a cluster ID variable based on the sampling coordinates and include it as a random intercept in the `lmer` function to incorporate the term $Z_i$.
+```{r}
+# Create ID for the location
+malnutrition <- malnutrition %>%
+  group_by(lng, lat) %>%
+  mutate(loc_id = cur_group_id()) %>%
+  ungroup()
+```
+
+We then fit the models using the `lmer` function.
+```{r}
+library(lme4)
+haz_lmer <- 
+lmer(HAZ ~ age + pmax(age - 2, 0) + wealth + (1 | loc_id), data = malnutrition)
+
+summary(haz_lmer)
+
+waz_lmer <- 
+  lmer(WAZ ~ age + pmax(age - 1, 0) + wealth + (1 | loc_id), data = malnutrition)
+summary(waz_lmer)
+```
+Of particular interest in the summary of the fitted models above are the estimates of the variances associated with the random effects: $\tau^2$ for the cluster-level terms $Z_i$, and $\omega^2$ for the child-specific residuals $U_{ij}$. The estimates suggest that $\omega^2$ is more than twenty times larger than $\tau^2$, indicating that the majority of the unexplained variation occurs at the individual child level rather than between clusters. This has important implications for interpretation: any subsequent mapping of the prevalence of stunting or underweight should acknowledge the high degree of within-cluster variability as a limitation. In particular, predictions at unsampled locations may be subject to substantial uncertainty driven by this fine-scale heterogeneity.
+
+We next explore the residual spatial correlation through the variogram. 
+```{r}
+# Extract random effects for HAZ and WAZ and combine them
+re <- data.frame(
+  loc_id = as.numeric(rownames(ranef(haz_lmer)$loc_id)),
+  Z_hat_haz = ranef(haz_lmer)$loc_id[,1],
+  Z_hat_waz = ranef(waz_lmer)$loc_id[,1]
+)
+
+# Extract one row per location with coordinates
+loc_coords <- malnutrition %>%
+  select(loc_id, lng, lat) %>%
+  distinct()
+
+# Merge coordinates into random effects
+re <- left_join(re, loc_coords, by = "loc_id")
+
+# Convert to sf and transform into UTM
+library(sf)
+re <- st_as_sf(re, coords = c("lng","lat"), crs = 4326)
+re <- st_transform(re, crs = propose_utm(re))
+
+# Variogram for HAZ
+var_haz <- s_variogram(re, "Z_hat_haz", scale_to_km = TRUE,
+                       n_permutation = 1000)
+var_waz <- s_variogram(re, "Z_hat_waz", scale_to_km = TRUE,
+                       n_permutation = 1000)
+library(patchwork)
+
+# Create ggplot objects
+p_haz <- plot_s_variogram(var_haz, plot_envelope = TRUE) + 
+  ggtitle("HAZ")
+
+p_waz <- plot_s_variogram(var_waz, plot_envelope = TRUE) + 
+  ggtitle("WAZ")
+
+p_haz + p_waz
+```
 
 ## Mapping river blindness in Malawi
 

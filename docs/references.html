@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.5.57">
+<meta name="generator" content="quarto-1.6.42">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -57,10 +57,10 @@ div.csl-indent {
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-0de45b8b5f35a93596f1d788d60c4c11.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-b4a315dc253c0adfed1371f8f6efb9a0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -301,6 +301,10 @@ Geostatistics</em>. Springer Series in Statistics. Springer.
 Dobson, A. J., and A. Barnett. 2008. <em>An Introduction to Generalized
 Linear Models</em>. Third. Chapman; Hall/CRC.
 </div>
+<div id="ref-efron1979" class="csl-entry" role="listitem">
+Efron, Bradley. 1979. <span>“Bootstrap Methods: Another Look at the
+Jackknife.”</span> <em>The Annals of Statistics</em> 7 (1): 1–26.
+</div>
 <div id="ref-evans2021" class="csl-entry" role="listitem">
 Evans, Jeffrey S., and Melanie A. Murphy. 2021. <em>spatialEco</em>. <a href="https://github.com/jeffreyevans/spatialEco">https://github.com/jeffreyevans/spatialEco</a>.
 </div>
@@ -344,6 +348,12 @@ Minnesota</em>.
 ———. 2019. <span>“Monte Carlo Methods in MCMC.”</span> In <em>Handbook
 of MCMC</em>, edited by Steve Brooks, Andrew Gelman, Galin L. Jones, and
 Xiao-Li Meng, 3–48. CRC Press.
+</div>
+<div id="ref-ghanaDHS2014" class="csl-entry" role="listitem">
+Ghana Statistical Service, Ghana Health Service, and ICF International.
+2015. <em>Ghana Demographic and Health Survey 2014</em>. Rockville,
+Maryland, USA: Ghana Statistical Service, Ghana Health Service,; ICF
+International. <a href="https://dhsprogram.com/publications/publication-FR307-DHS-Final-Reports.cfm">https://dhsprogram.com/publications/publication-FR307-DHS-Final-Reports.cfm</a>.
 </div>
 <div id="ref-gneiting2007" class="csl-entry" role="listitem">
 Gneiting, Tilmann, Fadoua Balabdaoui, and Adrian E Raftery. 2007.
@@ -490,6 +500,11 @@ Paper</em> 146: 39–46.
 Weisberg, Sanford. 2014. <em>Applied Linear Regression</em>. Fourth.
 Hoboken <span>NJ</span>: Wiley. <a href="http://z.umn.edu/alr4ed">http://z.umn.edu/alr4ed</a>.
 </div>
+<div id="ref-who2006" class="csl-entry" role="listitem">
+WHO. 2006. <span>“WHO Child Growth Standards: Length/Height-for-Age,
+Weight-for-Age, Weight-for-Length, Weight-for-Height and Body Mass
+Index-for-Age: Methods and Development.”</span> Geneva: WHO. <a href="https://www.who.int/publications/i/item/924154693X">https://www.who.int/publications/i/item/924154693X</a>.
+</div>
 <div id="ref-yin2024" class="csl-entry" role="listitem">
 Yin, Hui, Yutong Wang, Yuxin Wang, Zihan Li, Yujie Li, and Yuxin Wang.
 2024. <span>“A Rapid Review of Clustering Algorithms.”</span> <em>arXiv
@@ -600,8 +615,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   });
   clipboard.on('success', onCopySuccess);
   if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-    // For code content inside modals, clipBoardJS needs to be initialized with a container option
-    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
     const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
       text: getTextToCopy,
       container: window.document.getElementById('quarto-embedded-source-code-modal')
@@ -712,7 +725,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (window.Quarto?.typesetMath) {
         window.Quarto.typesetMath(note);
       }
-      // TODO in 1.5, we should make sure this works without a callout special case
       if (note.classList.contains("callout")) {
         return note.outerHTML;
       } else {

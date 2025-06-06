@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.5.57">
+<meta name="generator" content="quarto-1.6.42">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <title>2&nbsp; Handling of spatial data in R – Model-based geostatistics for global public health using R</title>
 <style>
@@ -87,10 +87,10 @@ div.csl-indent {
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-0de45b8b5f35a93596f1d788d60c4c11.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-b4a315dc253c0adfed1371f8f6efb9a0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <link href="site_libs/quarto-contrib/line-highlight-1.0.0/line-highlight.css" rel="stylesheet"><script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -293,7 +293,7 @@ div.csl-indent {
 <span class="header-section-number">2.4</span> Accessing covariates for disease mapping</h2>
 <p>Covariates can play a crucial role in understanding and modeling the spatial variation in disease risk. In geostatistical analysis, incorporating environmental, demographic, and climatic variables might improve the predictive power of models or at least reduce the level of uncertainty in the predictions. These covariates can influence factors such as the spread of infectious diseases, the distribution of disease vectors, and the socio-economic conditions that impact health outcomes.</p>
 <p>A wide range of open-access spatial datasets provide covariates for disease mapping. These include population density, climate, land cover, and human infrastructure data, which often come in raster or polygon formats. Alongside these environmental covariates, administrative boundaries are also crucial for public health analysis, as they help organize and aggregate data at different levels (e.g., country, region, or district). For example, aggregating health outcomes or covariate data by administrative units allows researchers to identify geographic disparities and allocate resources accordingly. Fortunately, open-source platforms such as <a href="https://www.geoboundaries.org/">geoBoundaries</a> provide easily accessible administrative boundary data for many countries at various levels of granularity. This data is available in formats compatible with geospatial analysis tools in R, making it easy to integrate into geostatistical workflows.</p>
-<p><a href="#tbl-data-sources" class="quarto-xref">Table&nbsp;<span>2.1</span></a> below summarizes key sources of covariates useful in disease mapping. Each dataset offers specific types of data, from satellite-derived environmental variables to gridded population estimates and administrative boundaries, which can be accessed through various R packages or APIs.</p>
+<p><a href="#tbl-data-sources" class="quarto-xref">Table&nbsp;<span class="quarto-unresolved-ref">tbl-data-sources</span></a> below summarizes key sources of covariates useful in disease mapping. Each dataset offers specific types of data, from satellite-derived environmental variables to gridded population estimates and administrative boundaries, which can be accessed through various R packages or APIs.</p>
 <p>MENTION RSPATIAL DATA WEBSITE?? https://rspatialdata.github.io/</p>
 <div id="tbl-data-sources" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure"><figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-data-sources-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -430,7 +430,7 @@ Figure&nbsp;2.1: Administrative boundaries for Liberia retrieved using the <code
 <p>The <code><a href="https://r-spatial.github.io/sf/reference/st_read.html">st_read()</a></code> function reads various spatial data formats, automatically recognizing file types.</p>
 </section><section id="importing-raster-data" class="level3" data-number="2.5.2"><h3 data-number="2.5.2" class="anchored" data-anchor-id="importing-raster-data">
 <span class="header-section-number">2.5.2</span> Importing raster data</h3>
-<p>Raster data consists of a grid of cells, where each cell holds a value representing a spatial attribute such as elevation or temperature. The <code>terra</code> package in R is designed to work with raster data and has superseded the older <code>raster</code> package due to better performance and greater functionality. Let’s see now how to import a GeoTIFF file using <code>terra</code>. We can upload the population raster for Liberia that we have downloaded in <a href="#sec-pop-data" class="quarto-xref"><span>Section 2.4.2</span></a>.</p>
+<p>Raster data consists of a grid of cells, where each cell holds a value representing a spatial attribute such as elevation or temperature. The <code>terra</code> package in R is designed to work with raster data and has superseded the older <code>raster</code> package due to better performance and greater functionality. Let’s see now how to import a GeoTIFF file using <code>terra</code>. We can upload the population raster for Liberia that we have downloaded in <a href="#sec-pop-data" class="quarto-xref"><span class="quarto-unresolved-ref">sec-pop-data</span></a>.</p>
 <div class="cell">
 <div class="sourceCode" id="cb5" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Load the terra package</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/">terra</a></span><span class="op">)</span></span>
@@ -863,7 +863,7 @@ GEOGCRS["WGS 84",
 </div>
 
 
-<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
 <div id="ref-amazigo2008" class="csl-entry" role="listitem">
 Amazigo, U. 2008. <span>“The African Programme for Onchocerciasis Control (APOC).”</span> <em>Ann Trop Med Parasitol</em> 102 (Suppl 1): 19–22. <a href="https://doi.org/10.1179/136485908X337436">https://doi.org/10.1179/136485908X337436</a>.
 </div>
@@ -920,6 +920,9 @@ Diggle, Peter, and Paulo Justiniano Ribeiro. 2007. <em>Model-Based Geostatistics
 </div>
 <div id="ref-dobson2008" class="csl-entry" role="listitem">
 Dobson, A. J., and A. Barnett. 2008. <em>An Introduction to Generalized Linear Models</em>. Third. Chapman; Hall/CRC.
+</div>
+<div id="ref-efron1979" class="csl-entry" role="listitem">
+Efron, Bradley. 1979. <span>“Bootstrap Methods: Another Look at the Jackknife.”</span> <em>The Annals of Statistics</em> 7 (1): 1–26.
 </div>
 <div id="ref-evans2021" class="csl-entry" role="listitem">
 Evans, Jeffrey S., and Melanie A. Murphy. 2021. <em>spatialEco</em>. <a href="https://github.com/jeffreyevans/spatialEco">https://github.com/jeffreyevans/spatialEco</a>.
@@ -1032,6 +1035,9 @@ Watson, G. S. 1971. <span>“Trend -Surface Analysis.”</span> <em>Mathematical
 <div id="ref-weisberg2014" class="csl-entry" role="listitem">
 Weisberg, Sanford. 2014. <em>Applied Linear Regression</em>. Fourth. Hoboken <span>NJ</span>: Wiley. <a href="http://z.umn.edu/alr4ed">http://z.umn.edu/alr4ed</a>.
 </div>
+<div id="ref-who2006" class="csl-entry" role="listitem">
+<span>“WHO Child Growth Standards: Length/Height-for-Age, Weight-for-Age, Weight-for-Length, Weight-for-Height and Body Mass Index-for-Age: Methods and Development.”</span> 2006. Geneva: World Health Organization. <a href="https://www.who.int/publications/i/item/924154693X">https://www.who.int/publications/i/item/924154693X</a>.
+</div>
 <div id="ref-yin2024" class="csl-entry" role="listitem">
 Yin, Hui, Yutong Wang, Yuxin Wang, Zihan Li, Yujie Li, and Yuxin Wang. 2024. <span>“A Rapid Review of Clustering Algorithms.”</span> <em>arXiv Preprint arXiv:2401.07389</em>.
 </div>
@@ -1127,8 +1133,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   });
   clipboard.on('success', onCopySuccess);
   if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-    // For code content inside modals, clipBoardJS needs to be initialized with a container option
-    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
     const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
       text: getTextToCopy,
       container: window.document.getElementById('quarto-embedded-source-code-modal')
@@ -1239,7 +1243,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (window.Quarto?.typesetMath) {
         window.Quarto.typesetMath(note);
       }
-      // TODO in 1.5, we should make sure this works without a callout special case
       if (note.classList.contains("callout")) {
         return note.outerHTML;
       } else {

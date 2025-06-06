@@ -1,0 +1,21 @@
+{
+  "hash": "2c769a2ea2499a02e1e8fb244cca90c6",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\nfilters:\n  - line-highlight\nexecute: \n  freeze: auto\nfig-width: 5\nfig-asp: 0.75\n---\n\n\n\n\n\n\n# Case studies {#sec-case-studies}\n\nThis is a book created from markdown and executable code.\n\nSee @knuth84 for additional discussion of literate programming.\n\n\n\n\n\n\n::: {.cell}\n\n```{.r .cell-code}\n1 + 1\n```\n\n::: {.cell-output .cell-output-stdout}\n\n```\n[1] 2\n```\n\n\n:::\n:::\n\n\n\n\n\n\n## Mapping stunting risk in Ghan\n\n## Mapping river blindness in Malawi\n\n## Mapping mosquitoes abundance in Cameroon\n",
+    "supporting": [
+      "05_case-studies_files"
+    ],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {
+      "knitr": [
+        "{\"type\":\"list\",\"attributes\":{},\"value\":[]}"
+      ]
+    },
+    "preserve": null,
+    "postProcess": false
+  }
+}
