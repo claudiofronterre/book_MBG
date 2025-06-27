@@ -9,7 +9,7 @@ fig-asp: 0.75
 
 # Case studies {#sec-case-studies}
 
-## Mapping stunting risk in Ghana
+## Mapping stunting and underwieght risk in Ghana
 
 Malnutrition remains a critical public health issue in many low- and middle-income countries, particularly affecting children under five years of age. It can have long-term consequences on physical growth, cognitive development, and susceptibility to disease. Monitoring childhood nutritional status is essential for evaluating the effectiveness of health interventions and informing policy decisions.
 
@@ -24,6 +24,8 @@ These Z-scores are calculated by comparing individual anthropometric measurement
 Geostatistical models applied to HAZ and WAZ, or to the prevalence of stunting and underweight derived from these scores, can help answer critical questions such as: *Where is the burden of malnutrition highest? How does it relate to socioeconomic or environmental factors? And which areas should be prioritized for targeted nutritional interventions?*
 
 In this case study, we analyse HAZ and WAZ as continuous outcomes to assess the spatial variation in child malnutrition across Ghana and its association with socioeconomic and demographic covariates.
+
+### Exploratory analysis
 
 We begin by loading the necessary R packages and the `malnutrition` dataset. This geostatistical dataset is derived from the 2014 Ghana Demographic and Health Survey (DHS) [@ghanaDHS2014], which provides nationally representative data on child health and nutrition. The dataset includes anthropometric measurements, household characteristics, and georeferenced sampling cluster coordinates, making it suitable for spatial analysis of child malnutrition.
 ```{r}
@@ -104,7 +106,7 @@ We begin by fitting a non-spatial model to assess whether there is residual spat
 
 $$
 Y_{ij} = \beta_0 + \beta_1 a_{ij} + \beta_2 \max\{a_{ij} - c, 0\} + \beta_3 w_i + Z_i + U_{ij},
-$$
+$$ {#eq-model-haz-waz}
 
 where $a_{ij}$ denotes the age in months of child $j$ in cluster $i$, and $w_i$ is the wealth score associated with cluster $i$; as previously stated, the change point $c$ of the linear spline is set to 2 months for HAZ and 1 month for WAZ. The term $Z_i$ is a Gaussian random effect with mean zero and variance $\tau^2$, capturing between-cluster variation not explained by the covariates. The error term $U_{ij}$ represents child-specific residual variation and is assumed to be Gaussian with mean zero and variance $\omega^2$.
 
@@ -131,8 +133,14 @@ summary(waz_lmer)
 ```
 Of particular interest in the summary of the fitted models above are the estimates of the variances associated with the random effects: $\tau^2$ for the cluster-level terms $Z_i$, and $\omega^2$ for the child-specific residuals $U_{ij}$. The estimates suggest that $\omega^2$ is more than twenty times larger than $\tau^2$, indicating that the majority of the unexplained variation occurs at the individual child level rather than between clusters. This has important implications for interpretation: any subsequent mapping of the prevalence of stunting or underweight should acknowledge the high degree of within-cluster variability as a limitation. In particular, predictions at unsampled locations may be subject to substantial uncertainty driven by this fine-scale heterogeneity.
 
-We next explore the residual spatial correlation through the variogram. 
+
+### Assessing residual spatial correlation and model fitting
+
+We next explore the residual spatial correlation through the variogram. Hence, we extract the estimate of the random effects
 ```{r}
+#| label: fig-maln-vari
+#| fig-cap: "Empirical variograms for HAZ and WAZ based on the estimated random effects from @eq-model-haz-waz."  
+#| 
 # Extract random effects for HAZ and WAZ and combine them
 re <- data.frame(
   loc_id = as.numeric(rownames(ranef(haz_lmer)$loc_id)),
@@ -169,6 +177,10 @@ p_waz <- plot_s_variogram(var_waz, plot_envelope = TRUE) +
 
 p_haz + p_waz
 ```
+
+
+
+### Prediction and assessment of predictive performance
 
 ## Mapping river blindness in Malawi
 

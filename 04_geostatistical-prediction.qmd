@@ -98,6 +98,10 @@ res_sim_grid <- readRDS("data/sim_grid_mse.rds")
 
 res_sim_area <- readRDS("data/sim_area_cl.rds")
 
+fit_liberia$sst <- FALSE
+fit_malkenya$sst <- FALSE
+an_fit$sst <- FALSE
+true_model$sst <- FALSE
 ```
 
 ```{r, collapse = TRUE, message=FALSE}
@@ -709,7 +713,7 @@ In such cases, the PIT becomes valuable for evaluating model adequacy, as it all
 \text{nPIT}(u,y) = 
 \begin{cases} 
 0, & u \leq F_{M}(y-1) \\ 
-\frac{u - F_{M}(y-1)}{P_x - F_{M}(y-1)}, & F_{M}(y-1) \leq u \leq F_{M}(y) \\ 
+\frac{u - F_{M}(y-1)}{F_{M}(y-1) - F_{M}(y-1)}, & F_{M}(y-1) \leq u \leq F_{M}(y) \\ 
 1, & u \geq F_{M}(y)
 \end{cases}.
 $$ We then take the average nPIT over the observed outcomes $y_{1}, \ldots, y_{n}$, hence $$
@@ -873,15 +877,32 @@ The AnPIT from @fig-anpit-clus show very similar results to those of @fig-anpit-
 
 We now consider another important aspect that helps to describe the predictive performance of a geostatistical model, namely sharpness. As the name suggests, sharpness refers to the spread of the predictive distribution. A sharp predictive distribution has a narrow spread, indicating that the model is highly confident in its predictions. Importantly, sharpness does not depend on how close predictions are to the true values (i.e., it is independent of accuracy). A model with high sharpness will produce predictions with low variance, but this sharpness is only meaningful if the model is well-calibrated, ensuring that the high confidence aligns with observed values. For example, a geostatistical model for disease prevalence mapping that predicts a very tight range of possible prevalence values for a location is producing sharp predictions. However, if the actual prevalence often falls outside this range, then the predictions may be sharp but poorly calibrated, thus limiting the value of quantifying sharpness alone.
 
-To assess predictive performance while considering both sharpness and calibration, we introduce the *continuous ranked probability score (CRPS)* [@gneiting2007] and its scaled variant, the *scaled CRPS (SCRPS)* [@bolin2023]. The CRPS evaluates the agreement between the predicted cumulative distribution function of the model $M$, which we denote as in the previous section as $F_M$, and the observed value $y_i$. The CRPS is formally defined as $$
-\text{CRPS}(F_M, y_i) = \int_{-\infty}^\infty \left[ F_M(y) - \mathbf{1}(y \geq y_i) \right]^2 dy,
-$$ The CRPS balances sharpness and calibration, penalizing deviations of the predictive distribution from the observation, with smaller CRPS value indicating better predictive performance.
+To assess predictive performance while considering both *sharpness* and *calibration*, we introduce the *continuous ranked probability score (CRPS)* [@gneiting2007] and its scaled variant, the *scaled CRPS (SCRPS)* [@bolin2023]. The CRPS evaluates the agreement between the predicted cumulative distribution function of the model $M$, denoted as in the previous section by $F_M$, and the observed value $y_i$. It is formally defined as
 
-The *scaled CRPS (SCRPS)*, proposed by @bolin2023, refines this further by addressing the issue of scale dependence, which in observations with varying uncertainty. This is formally defined as $$
-\text{SCRPS}(F, y_i) = -\frac{1}{2} \left[ 1 + \frac{\text{CRPS}(F_M, y_i)}{\text{CRPS}(F_M, F_M)} + \log\left\{2 \text{CRPS}(F_M, F_M)\right\} \right],
+$$
+\text{CRPS}(F_M, y_i) = \int_{-\infty}^\infty \left[ F_M(y) - \mathbf{1}(y \geq y_i) \right]^2 dy,
 $$
 
-where $\text{CRPS}(F_M, F_M)$ is the expectation of $\text{CRPS}(F_M, Y)$ when $Y$ follows the distribution $F_M$.
+penalizing deviations of the predictive distribution from the observed value. The CRPS balances sharpness and calibration, with smaller values indicating better predictive performance.
+
+The *scaled CRPS (SCRPS)*, proposed by @bolin2023, refines the CRPS by addressing its dependence on the scale of the outcome variable, which can vary across observations. The SCRPS is defined as
+
+$$
+\text{SCRPS}(F_M, y_i) = -\frac{1}{2} \left[ 1 + \frac{\text{CRPS}(F_M, y_i)}{\text{CRPS}(F_M, F_M)} + \log\left\{2 \, \text{CRPS}(F_M, F_M)\right\} \right],
+$$ {#eq-scrps}
+
+where $\text{CRPS}(F_M, F_M)$ denotes the expected CRPS when the observation is drawn from the predictive distribution itself, i.e., $Y \sim F_M$.
+
+In settings where the predictive distribution is discrete, such as the Binomial and Poisson geostatistical models, a discrete analogue to CRPS is used. Let $F_M(k)$ be the cumulative distribution function over discrete support $\{0, 1, 2, \dots\}$. The discrete CRPS is given by
+
+$$
+\text{CRPS}(F_M, y_i) = \sum_{k \in \mathcal{S}}^{\infty} \left[ F_M(k) - \mathbf{1}(k \geq y_i) \right]^2,
+$$
+
+where $\mathcal{S}$ represents the support of the outcome $Y_{i}$, corresponding to $\{0,1,\ldots,m_i\}$ for the Binomial distribution, and the set of non-negative integers as in a Poisson distribution. This version remains proper and interpretable as a measure of calibration and sharpness for integer-valued outcomes. Analogously, a scaled version of the discrete CRPS can be constructed using the same transformation as in the continuous case, by replcing the continuous CRPS with its discrete counterpart in @eq-scrps.
+
+providing a scale-invariant and proper scoring rule for discrete predictive models. These discrete versions are particularly useful in count data models or models for ordinal responses.
+
 
 The expressions for the CRPS and SCRPS may initially appear complex, but their appropriate application and interpretation lie in understanding their differences and the contexts in which each is more suitable. These differences become more intuitive when considering the more familiar concept of the standard error. The standard error of a predictive distribution represents its uncertainty, but it is not inherently standardized. In many cases, there exists a mean-variance relationship, where the variance increases with the mean. For instance, in Poisson-distributed data, higher mean values correspond to larger variances. This lack of standardization means that directly comparing predictive uncertainties across different scales can be misleading. Similarly, the CRPS is sensitive to the scale of the predictive distribution, as it penalizes errors in absolute terms, often giving disproportionate weight to observations with larger predictive uncertainty.
 
