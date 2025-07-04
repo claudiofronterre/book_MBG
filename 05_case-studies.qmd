@@ -344,7 +344,6 @@ We note that for a Gaussian linear geostatistical model, the `assess_pp` functio
 ```{r}
 #| label: fig-maln-pit
 #| fig-cap: "Assessment of the models calibration. The left panel shows the probability integral transform (PIT) curve for HAZ, and the right panel for WAZ. In both panels, the red dahsed line corresponds to the identity line."
-#| fig-subcap: ["PIT: HAZ", "PIT: WAZ"]
 #| fig-width: 10
 #| fig-height: 4
 
