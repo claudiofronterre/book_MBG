@@ -7,6 +7,14 @@ fig-width: 5
 fig-asp: 0.75
 ---
 
+```{r, eval=TRUE, echo=FALSE,message=FALSE}
+waz_fit <- readRDS("data/waz_fit.rds")
+haz_fit <- readRDS("data/haz_fit.rds")
+stunting_prev <- readRDS("data/stuntin_prev.rds")
+underw_prev <- readRDS("data/underw_prev.rds")
+assess_haz <- readRDS("data/assess_haz.rds")
+assess_waz <- readRDS("data/assess_waz.rds")
+```
 # Case studies {#sec-case-studies}
 
 ## Mapping stunting and underwieght risk in Ghana
@@ -136,7 +144,8 @@ Of particular interest in the summary of the fitted models above are the estimat
 
 ### Assessing residual spatial correlation and model fitting
 
-We next explore the residual spatial correlation through the variogram. Hence, we extract the estimate of the random effects
+We next explore the residual spatial correlation through the empirical variogram. Hence, we extract the estimate of the random effects from @eq-model-haz-waz and input these into the `s_variogram` function that generates the empirical variogram.
+
 ```{r}
 #| label: fig-maln-vari
 #| fig-cap: "Empirical variograms for HAZ and WAZ based on the estimated random effects from @eq-model-haz-waz."  
@@ -178,9 +187,161 @@ p_waz <- plot_s_variogram(var_waz, plot_envelope = TRUE) +
 p_haz + p_waz
 ```
 
+@fig-maln-vari shows the variogram for both HAZ and WAZ. In both cases, we observe that is residual spatial correlation in the data that is not explained by either age or the wealth index. We next extend the model in @eq-model-haz-waz to address this issue.
 
+For our geostatistical analysis of HAZ and WAZ, we consider the following model:
+
+$$
+Y_{ij} = \beta_0 + \beta_1 a_{ij} + \beta_2 \max\{a_{ij} - c, 0\} + \beta_3 w_i + S(x_i) + U_{ij},
+$$ {#eq-model-haz-waz}
+
+where $S(x)$ is a zero-mean, stationary, and isotropic Gaussian process with variance $\sigma^2$ and an exponential correlation function with scale parameter $\phi$. In this geostatistical extension, we replace the cluster-level random effect $Z_i$ from @eq-model-haz-waz with the spatial process $S(x_i)$. The random effect $Z_i$ was previously used in the Binomial mixed model to account for unexplained variation between clusters. It is also possible to include both $S(x_i)$ and $Z_i$ in the model, so that the total unexplained variation between clusters is decomposed into a spatially structured component, $S(x_i)$, and an unstructured component, $Z_i$. However, this approach is not recommended in the initial model specification, as it may lead to identifiability issues. It can be considered later in the analysis if justified by model diagnostics.
+
+```{r, eval=FALSE}
+
+# Remove missing data from the WAZ outcome
+malnutrition <- malnutrition[complete.cases(malnutrition[,"WAZ"]),]
+
+# Converting the data-frame into an sf object
+malnutrition_sf <- st_as_sf(malnutrition, coords = c("lng", "lat"), crs = 4326)
+malnutrition_sf <- st_transform(malnutrition_sf, crs = propose_utm(malnutrition_sf))
+
+# Maximum likelihood estimation for the HAZ and WAZ outcomes
+haz_fit <- 
+glgpm(HAZ ~ age + pmax(age - 1, 0) + wealth + gp(),
+      data=malnutrition_sf, family = "gaussian")
+
+waz_fit <- 
+  glgpm(HAZ ~ age + pmax(age - 1, 0) + wealth + gp(),
+        data=malnutrition_sf, family = "gaussian") 
+```
+We then summarize the fit of models.
+```{r}
+summary(haz_fit)
+
+summary(waz_fit)
+```
+
+The spatial component of the models reveals a moderate degree of spatial structure in the HAZ and WAZ outcomes. For HAZ, the estimated spatial variance is approximately 0.069, while the individual-level radom effect's variance is substantially larger at around 1.437. For WAZ, the spatial variance is estimated at 0.050, compared to the variance of the individual-level radom effect's variance of 1.125. In both models, as already observed when fitting Binomial mixed models, this indicates that the majority of the residual variation is due to individual-level noise or unstructured heterogeneity rather than spatially structured effects. The relative contribution of the spatial process to the total unexplained variation is therefore relatively small. Nevertheless, geostatistical analysis remains valuable also in this context. Even when spatial effects explain only a modest proportion of the variation, the model still enables spatial prediction of the average spatial pattern for the outcome of interest across the study area. This is useful for identifying areas where child malnutrition is systematically higher or lower, guiding targeted interventions and informing resource allocation. We explore these implications further in the next section on geostatistical prediction for HAZ and WAZ.
 
 ### Prediction and assessment of predictive performance
+
+Stunting and underweight are standard indicators used to assess child malnutrition. A child is defined as \textit{stunted} if their height-for-age $z$-score (HAZ) is below $-2$ standard deviations from the median of the WHO Child Growth Standards, i.e., HAZ < -2. Similarly, a child is considered \textit{underweight} if their weight-for-age $z$-score (WAZ) falls below $-2$, i.e., WAZ < -2 [@sdg2201meta2025]. These thresholds are based on the World Health Organization (WHO) growth reference standards, which provide a normative basis for assessing nutritional status in children under five years of age [@who_underweight2024].
+
+We now define the predictive targets for stunting and underweight prevalence based on the adopted geostatistical model. Since both stunting and prevalence are defined as $Y < -2$ where $Y(x)$ is either the HAZ or WAZ score of a child at a location $x$, prevalence is then formally defined as
+$$
+T(x) = P\left\{Y(x) < -1  \: \middle | S(x)\:   \right\} = \Phi\left\{-\frac{\mu + S(x) +  2}{\omega}\right\}
+$$
+where
+```{r, eval=FALSE}
+# Boundaries of Ghana
+library(rgeoboundaries)
+ghana <- geoboundaries(country = "Ghana", adm_lvl = "adm0")
+ghana <- st_transform(ghana, st_crs(malnutrition_sf))
+
+ghana_grid <- create_grid(ghana, spat_res = 10)
+
+n_pred <- nrow(st_coordinates(ghana_grid))
+
+# Prediction of S(x) and covariates effects over the grid for
+
+# HAZ
+haz_pred_grid <- pred_over_grid(haz_fit,
+                                grid_pred = ghana_grid,
+                                predictors = data.frame(
+                                  # Setting age to 2 months
+                                  age = rep(2, n_pred),
+                                  # Setting wealth to 1 (least wealthy)
+                                  wealth = rep(1, n_pred)
+                                ))
+# WAZ
+waz_pred_grid <- pred_over_grid(waz_fit,
+                                grid_pred = ghana_grid,
+                                predictors = data.frame(
+                                  # Setting age to 1 month
+                                  age = rep(1, n_pred),
+                                  # Setting wealth to 1 (least wealthy)
+                                  wealth = rep(1, n_pred)
+                                ))
+```
+
+```{r, eval=FALSE}
+# Prediction of stunting prevalence
+sd_ind_haz <- sqrt(coef(haz_fit)$sigma2_me)
+stunting_prev <-
+pred_target_grid(haz_pred_grid,
+                 f_target = list(prev = function(x) pnorm((-2-x)/sd_ind_haz)),
+                 pd_summary = list(mean = mean,
+                                       cv = function(x) sd(x)/mean(x)))
+
+# Prediction of underweight prevalence
+sd_ind_waz <- sqrt(coef(waz_fit)$sigma2_me)
+underw_prev <-
+  pred_target_grid(waz_pred_grid,
+                   f_target = list(prev = function(x) pnorm((-2-x)/sd_ind_waz)),
+                   pd_summary = list(mean = mean,
+                                     cv = function(x) sd(x)/mean(x)))
+```
+
+```{r}
+#| label: fig-maln-pred
+#| fig-cap: "Predictive mean and coefficient of variation for stunting and underweight prevalence estimates. The top row shows predictions for stunting, while the bottom row corresponds to underweight. For each indicator, the left panel shows the predictive mean and the right panel the coefficient of variation."
+#| fig-width: 10
+#| fig-height: 8
+
+# Set up a 2x2 layout
+layout(matrix(1:4, nrow = 2, byrow = TRUE))
+par(mar = c(4, 4, 4, 5))  # Adjust margins
+
+# Top row: stunting
+plot(stunting_prev, which_target = "prev", which_summary = "mean",
+     main = "Stunting: Predictive Mean")
+plot(stunting_prev, which_target = "prev", which_summary = "cv",
+     main = "Stunting: Coefficient of Variation")
+
+# Bottom row: underweight
+plot(underw_prev, which_target = "prev", which_summary = "mean",
+     main = "Underweight: Predictive Mean")
+plot(underw_prev, which_target = "prev", which_summary = "cv",
+     main = "Underweight: Coefficient of Variation")
+```
+
+```{r, eval=FALSE}
+# HAZ
+assess_haz <-
+assess_pp(list(HAZ = haz_fit),
+          n_size = 100,
+          min_dist = 5,
+          iter = 10,
+          method = "regularized")
+
+# WAZ
+assess_waz <-
+  assess_pp(list(WAZ = waz_fit),
+            n_size = 100,
+            min_dist = 5,
+            iter = 10,
+            method = "regularized")
+
+```
+
+```{r}
+#| label: fig-maln-anpit
+#| fig-cap: "Assessment of predictive performance and calibration. The left panel shows the aggregated PIT histogram for HAZ, and the right panel for WAZ."
+#| fig-subcap: ["PIT: HAZ", "PIT: WAZ"]
+#| fig-width: 10
+#| fig-height: 4
+
+# Generate PIT plots
+p_haz <- plot_AnPIT(assess_haz, mode = "all")
+p_waz <- plot_AnPIT(assess_waz, mode = "all")
+
+# Arrange side-by-side
+library(gridExtra)
+grid.arrange(p_haz, p_waz, ncol = 2)
+```
+
+
 
 ## Mapping river blindness in Malawi
 
