@@ -224,15 +224,20 @@ summary(waz_fit)
 
 The spatial component of the models reveals a moderate degree of spatial structure in the HAZ and WAZ outcomes. For HAZ, the estimated spatial variance is approximately 0.069, while the individual-level radom effect's variance is substantially larger at around 1.437. For WAZ, the spatial variance is estimated at 0.050, compared to the variance of the individual-level radom effect's variance of 1.125. In both models, as already observed when fitting Binomial mixed models, this indicates that the majority of the residual variation is due to individual-level noise or unstructured heterogeneity rather than spatially structured effects. The relative contribution of the spatial process to the total unexplained variation is therefore relatively small. Nevertheless, geostatistical analysis remains valuable also in this context. Even when spatial effects explain only a modest proportion of the variation, the model still enables spatial prediction of the average spatial pattern for the outcome of interest across the study area. This is useful for identifying areas where child malnutrition is systematically higher or lower, guiding targeted interventions and informing resource allocation. We explore these implications further in the next section on geostatistical prediction for HAZ and WAZ.
 
-### Prediction and assessment of predictive performance
+### Prediction and assessment of model calibration
 
 Stunting and underweight are standard indicators used to assess child malnutrition. A child is defined as \textit{stunted} if their height-for-age $z$-score (HAZ) is below $-2$ standard deviations from the median of the WHO Child Growth Standards, i.e., HAZ < -2. Similarly, a child is considered \textit{underweight} if their weight-for-age $z$-score (WAZ) falls below $-2$, i.e., WAZ < -2 [@sdg2201meta2025]. These thresholds are based on the World Health Organization (WHO) growth reference standards, which provide a normative basis for assessing nutritional status in children under five years of age [@who_underweight2024].
 
-We now define the predictive targets for stunting and underweight prevalence based on the adopted geostatistical model. Since both stunting and prevalence are defined as $Y < -2$ where $Y(x)$ is either the HAZ or WAZ score of a child at a location $x$, prevalence is then formally defined as
+We now define the predictive targets for stunting and underweight prevalence in terms of the adopted geostatistical model. Both indicators correspond to the probability that a child's z-score falls below $-2$, that is, $Y(x) < -2$, where $Y(x)$ denotes either the HAZ or WAZ score at location $x$. Under the model specification, the prevalence is therefore defined as
+
 $$
-T(x) = P\left\{Y(x) < -1  \: \middle | S(x)\:   \right\} = \Phi\left\{-\frac{\mu + S(x) +  2}{\omega}\right\}
-$$
-where
+T(x) = P\left\{ Y(x) < -2 \,\middle|\, S(x) \right\} = \Phi\left( -\frac{\mu + S(x) + 2}{\omega} \right),
+$$ {#eq-prev-maln}
+
+where $\Phi(\cdot)$ is the cumulative distribution function of the standard normal distribution, $\mu$ is the linear predictor including the effects of covariates at individual- and cluster-level (as defined by the coefficients $\beta_1$ to $\beta_3$ of @eq-model-haz-waz) as well as the intercept, and $\omega^2$ is the variance of the individual-level residual term. In @eq-prev-maln, we condition on $S(x)$ because this allows us to define both stunting an underweight prevalence as a spatially varying predictive target.
+
+To implement this in `RiskMap`, we begin by generating a predictive grid over the study region. In this case, we use a regular grid with 10 km by 10 km resolution. We then draw predictive samples of the spatial effect $S(x)$ at each grid location, conditional on the observed data. For the `age` variable, we fix it at 2 months for HAZ and 1 month for WAZ, respectively. The `wealth` variable is set to its lowest value of 1. These choices are made to visualize the predictive target for the subgroup of children most at risk of stunting and underweight, as identified through exploratory analysis and the estimated regression coefficients. The code below illustrates this procedure.
+ 
 ```{r, eval=FALSE}
 # Boundaries of Ghana
 library(rgeoboundaries)
@@ -265,6 +270,8 @@ waz_pred_grid <- pred_over_grid(waz_fit,
                                 ))
 ```
 
+We then use the `pred_target_grid` function to generate predictive summaries of stunting and underweight prevalence, as defined in @eq-prev-maln. To quantify uncertainty in the predictions, we report the coefficient of variation, which provides a standardized measure of relative uncertainty across the prediction grid.
+
 ```{r, eval=FALSE}
 # Prediction of stunting prevalence
 sd_ind_haz <- sqrt(coef(haz_fit)$sigma2_me)
@@ -282,6 +289,9 @@ underw_prev <-
                    pd_summary = list(mean = mean,
                                      cv = function(x) sd(x)/mean(x)))
 ```
+
+Finally, we visualize the results in the map shown in @fig-maln-pred. The maps reveal a clear hotspot for both stunting and underweight, with predicted prevalence values reaching approximately $45\%$ and $24\%$, respectively. Notably, this same region also exhibits lower predictive uncertaint, measured by the coefficient of variation, compared to other areas in Ghana.
+
 
 ```{r}
 #| label: fig-maln-pred
@@ -306,6 +316,9 @@ plot(underw_prev, which_target = "prev", which_summary = "cv",
      main = "Underweight: Coefficient of Variation")
 ```
 
+
+To assess the predictive performance and calibration of our geostatistical models for HAZ and WAZ, we perform a cross-validation exercise using the `assess_pp` function. Cross-validation is conducted by repeatedly splitting the data into training and testing sets, ensuring that prediction locations are at least 5 km away from the nearest training point. Specifically, we set `n_size = 100` prediction locations for the test set, impose a minimum distance constraint of 5 km (`min_dist = 5`), and repeat the process over 10 test sets randomly drawn under those conditions (`iter = 10`) using `method="regularized"` as the sampling method. 
+
 ```{r, eval=FALSE}
 # HAZ
 assess_haz <-
@@ -324,10 +337,13 @@ assess_waz <-
             method = "regularized")
 
 ```
+We note that for a Gaussian linear geostatistical model, the `assess_pp` function does not compute the average non-randomized probability integral transform (AnPIT, introduced in @sec-anpit), as this measure is specifically designed for count outcomes. Instead, it employs the standard probability integral transform (PIT), defined as $\text{PIT}(y) = F_{M}(y)$, where $F_{M}(y)$ is the cumulative distribution function of the predictive distribution evaluated at the observed value $y$. The PIT transforms the observed outcomes in the test set such that, if the model is well-calibrated, these transformed values should follow a uniform distribution. Deviations from uniformity indicate potential issues with calibration and predictive accuracy.
+
+@fig-maln-pit shows the results of the cross-validation exercise visualized through PIT curves for HAZ and WAZ. Similarly to the way we have interpreted the AnPIT curves, the PIT curves indicate good calibration when they lie close to the identity line, meaning the predictive distributions accurately reflect the observed variability in the test sets. The results shown in @fig-maln-pit demonstrate that, for all ten test sets and for both HAZ and WAZ, the PIT curves closely align with the identity line, confirming that the models are well-calibrated and provide reliable uncertainty quantification.
 
 ```{r}
-#| label: fig-maln-anpit
-#| fig-cap: "Assessment of predictive performance and calibration. The left panel shows the aggregated PIT histogram for HAZ, and the right panel for WAZ."
+#| label: fig-maln-pit
+#| fig-cap: "Assessment of the models calibration. The left panel shows the probability integral transform (PIT) curve for HAZ, and the right panel for WAZ. In both panels, the red dahsed line corresponds to the identity line."
 #| fig-subcap: ["PIT: HAZ", "PIT: WAZ"]
 #| fig-width: 10
 #| fig-height: 4
@@ -341,7 +357,13 @@ library(gridExtra)
 grid.arrange(p_haz, p_waz, ncol = 2)
 ```
 
+### Summary and conclusions
 
+This case study demonstrated the utility of geostatistical modeling for mapping child malnutrition in Ghana using continuous anthropometric measurements, namely HAZ and WAZ Z-scores. By modeling these outcomes directly, we were able to define stunting and underweight prevalence as predictive probabilities based on threshold exceedance (e.g., HAZ < -2), rather than by dichotomizing the data prior to analysis. This approach allowed us to retain the full information content of the measurements and to produce spatially resolved predictions of prevalence along with associated uncertainty estimates. Readers interested in a more in-depth treatment of this modeling strategy are referred to @kyomuhangi2021, which discusses the loss of information and degradation in predictive performance that can result from dichotomizing continuous outcomes in geostatistical settings.
+
+More broadly, this case study illustrated how geostatistical models can be used to analyze individual-level outcomes while accounting for both child-level and household-level covariates. Aggregation of data across individuals, such as using average HAZ or WAZ scores per location, is not required and can in fact introduce several complications. In particular, the number of children per cluster varies, which implies that an analysis based on cluster-level averages would require a heteroscedastic specification for the residual term to appropriately reflect varying precision across locations. Ignoring this could lead to unreliable predictive inferences.
+
+In conclusion, this analysis showed that neither dichotomization nor aggregation is necessary in geostaistical analysis. Instead, geostatistical models should be fitted to individual-level continuous outcomes, and suitable predictive targets and summaries of uncertainty can then be derived from the fitted model.
 
 ## Mapping river blindness in Malawi
 

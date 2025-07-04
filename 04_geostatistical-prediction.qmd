@@ -93,7 +93,7 @@ cluster_scores <- cluster
 load("./data/pred_shp.RData")
 load("data/pred_shp_w.RData")
 load("data/fit_sp_lib.RData")
-
+library(dplyr)
 res_sim_grid <- readRDS("data/sim_grid_mse.rds")
 
 res_sim_area <- readRDS("data/sim_area_cl.rds")
