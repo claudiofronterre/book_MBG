@@ -52,13 +52,13 @@ It is advised that you obtain the latest 64-bit version of R in order to run the
 
 The list of the R packages used in this book is provided in @tbl-packages.
 
-| R packages      | Used for                                                   |
-|------------------|------------------------------------------------------|
-| `RiskMap` (E)   | Estimating of geostatistical models and spatial prediction |
-| `sf` (E)        | Handling of spatial data in R                              |
-| `terra` (E)     | Handling of raster files in R                              |
-| `ggplot2` (E)   | Creating maps and exploratory plots                        |
-| `crsuggest` (R) | Guessing a coordinate reference systems when unknown       |
+| R packages | Used for |
+|------------------------------------|------------------------------------|
+| `RiskMap` (E) | Estimating of geostatistical models and spatial prediction |
+| `sf` (E) | Handling of spatial data in R |
+| `terra` (E) | Handling of raster files in R |
+| `ggplot2` (E) | Creating maps and exploratory plots |
+| `crsuggest` (R) | Guessing a coordinate reference systems when unknown |
 
 : List of the R packages that will be used in the book with a description of their use in the data analysis. The packages marked by (E) are essential for the geostatistical analysis. Those instead marked by (R) are recommended and can be helpful to overcome issues as described under the column "Used for". {#tbl-packages}
 
@@ -80,13 +80,13 @@ data(NAME_OF_THE_DATASET)
 
 where in place of `NAME_OF_THE_DATASET` you should type of the name of one of the data-sets listed in @tbl-data-sets.
 
-| Names of the data-set | Short description                                                                     | Used in this book as |
-|------------------|-------------------------------------|------------------|
-| `galicia`             | Lead concentration m from moss samples collected in Galicia, Northern Spain           | Example              |
-| `liberia`             | Prevalence data on river-blindness from Liberia                                       | Example              |
-| `malkenya`            | Malaria prevalence data from a community and school survey conducted in Western Kenya | Example              |
-| `italy_sim`           | Simulated geostatistical data-set within the Italian national boundaries              | Example              |
-| `malnutrition`        | Data on stunting among children in Ghana                                              | Case study           |
+| Names of the data-set | Short description | Used in this book as |
+|------------------------|------------------------|------------------------|
+| `galicia` | Lead concentration m from moss samples collected in Galicia, Northern Spain | Example |
+| `liberia` | Prevalence data on river-blindness from Liberia | Example |
+| `malkenya` | Malaria prevalence data from a community and school survey conducted in Western Kenya | Example |
+| `italy_sim` | Simulated geostatistical data-set within the Italian national boundaries | Example |
+| `malnutrition` | Data on stunting among children in Ghana | Case study |
 
 : List of data-sets available from the `RiskMap` package. Data-sets listed as "Example" are used throughout the book to illustrate the use of R functions. Data-sets listed as "Case study" are analysed in @sec-case-studies. {#tbl-data-sets}
 
@@ -216,7 +216,7 @@ $$
 [Y | S] = \prod_{i=1}^n [Y_i | S(x_i)].
 $$ {#eq-glm-ch1}
 
-The final step then consists of specifying a distribution for $[Y_i | S(x_i)]$. @tbl-glm gives the range, mean and variance of the three specifications for $[Y_i | S(x_i)]\$\$ which we will consider in this book. In @tbl-glm, the *canonical function*, say $g(\cdot)$, denotes the natural transformation of the mean component $\mu_i$ that allows us to introduce both covariates and the spatial process $S(x_i)$ into the model so as to explain the variation in $\mu_i$ as
+The final step then consists of specifying a distribution for $[Y_i | S(x_i)]$. @tbl-glm gives the range, mean and variance of the three specifications for \$\[Y_i \| S(x_i)\]\$\$ which we will consider in this book. In @tbl-glm, the *canonical function*, say $g(\cdot)$, denotes the natural transformation of the mean component $\mu_i$ that allows us to introduce both covariates and the spatial process $S(x_i)$ into the model so as to explain the variation in $\mu_i$ as
 
 $$
 g(\mu_i) = d(x_i)^\top \beta + S(x_i).
@@ -224,11 +224,11 @@ $$ {#eq-linear-predictor-ch1}
 
 where $d(x_i)$ is a vector of spatially referenced covariates with associated regression coefficients $\beta$. Finally, the quantity $m_i$, which appears in the formulation of the Binomial and Poisson distributions, is an offset quantity and is used to account for the number of *tests* or the population size at a given location $x_i$.
 
-| Distribution | Range of $Y_i$       | Mean of $[Y_i | S(x_i)]$ | Variance of $[Y_i | S(x_i)]$ | Canonical link                         |
+| Distribution | Range of $Y_i$ | Mean of $[Y_i | S(x_i)]$ | Variance of $[Y_i | S(x_i)]$ | Canonical link |
 |---------------|---------------|---------------|---------------|---------------|
-| Gaussian     | $(-\infty, +\infty)$ | $\mu_i$                  | $\tau^2$                     | $g(\mu_i) = \mu_i$                     |
-| Binomial     | $1,\dots,m_i$        | $m_i\mu_i$               | $m_i\mu_i(1-\mu_i)$          | $g(\mu_i) = \log\{ \mu_i/(1-\mu_i) \}$ |
-| Poisson      | $1,2,\ldots,\infty$  | $m_i\mu_i$               | $m_i\mu_i$                   | $g(\mu_i) = \log\{ \mu_i \}$           |
+| Gaussian | $(-\infty, +\infty)$ | $\mu_i$ | $\tau^2$ | $g(\mu_i) = \mu_i$ |
+| Binomial | $1,\dots,m_i$ | $m_i\mu_i$ | $m_i\mu_i(1-\mu_i)$ | $g(\mu_i) = \log\{ \mu_i/(1-\mu_i) \}$ |
+| Poisson | $1,2,\ldots,\infty$ | $m_i\mu_i$ | $m_i\mu_i$ | $g(\mu_i) = \log\{ \mu_i \}$ |
 
 : Type of outcomes $Y_{i}$ considered in this book. {#tbl-glm}
 
@@ -376,8 +376,6 @@ In the remainder of this book, each chapter focuses on a specific stage as shown
 @sec-handling-data will provide an overview of how to handle spatial data in R, in particular raster and vector data (both points and polygons). The skills learned in this chapter will be applied throughout the book, and will especially be useful in @sec-geo-prediction and @sec-case-studies for generating predictive maps of the modeled outcome.
 
 @sec-estimation focuses on the model building process and estimation of geostatistical models. This chapter will show how to carry out initial exploratory analyses of the data to inform the formulation of suitable geostatistical models and how these can be fitted using maximum likelihood estimation methods.
-
-@sec-validation illustrates the use of methods that can be used to validate the assumptions and calibration of statistical models.
 
 @sec-geo-prediction shows how geostatistical models can be used to carry out spatial prediction of a health outcome of interest both on a spatially continuous and spatially aggregated scales.
 

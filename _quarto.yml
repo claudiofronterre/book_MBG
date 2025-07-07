@@ -30,9 +30,8 @@ book:
     - 01_intro.qmd
     - 02_handling-spatial-data.qmd
     - 03_model-fitting.qmd
-    - 04_model-validation.qmd
-    - 05_geostatistical-prediction.qmd
-    - 06_case-studies.qmd
+    - 04_geostatistical-prediction.qmd
+    - 05_case-studies.qmd
     - references.qmd
     - appendix.qmd
 

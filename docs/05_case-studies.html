@@ -1,0 +1,1355 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.42">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>5&nbsp; Case studies – Model-based geostatistics for global public health using R</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./references.html" rel="next">
+<link href="./04_geostatistical-prediction.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-0de45b8b5f35a93596f1d788d60c4c11.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-b4a315dc253c0adfed1371f8f6efb9a0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/quarto-contrib/line-highlight-1.0.0/line-highlight.css" rel="stylesheet"><script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script><link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
+<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script><script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script><script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script><script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+</head>
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top"><nav class="quarto-secondary-nav"><div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./05_case-studies.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Case studies</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav></header><!-- content --><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto"><div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Model-based geostatistics for global public health using R</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./author.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Author</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01_intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02_handling-spatial-data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Handling of spatial data in R</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03_model-fitting.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Model formulation and parameter estimation</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04_geostatistical-prediction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Geostatistical prediction</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05_case-studies.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Case studies</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./appendix.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Appendix</span></a>
+  </div>
+</li>
+    </ul>
+</div>
+</nav><div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active"><h2 id="toc-title">Contents</h2>
+   
+  <ul>
+<li>
+<a href="#mapping-stunting-and-underwieght-risk-in-ghana" id="toc-mapping-stunting-and-underwieght-risk-in-ghana" class="nav-link active" data-scroll-target="#mapping-stunting-and-underwieght-risk-in-ghana"><span class="header-section-number">5.1</span> Mapping stunting and underwieght risk in Ghana</a>
+  <ul class="collapse">
+<li><a href="#exploratory-analysis" id="toc-exploratory-analysis" class="nav-link" data-scroll-target="#exploratory-analysis"><span class="header-section-number">5.1.1</span> Exploratory analysis</a></li>
+  <li><a href="#assessing-residual-spatial-correlation-and-model-fitting" id="toc-assessing-residual-spatial-correlation-and-model-fitting" class="nav-link" data-scroll-target="#assessing-residual-spatial-correlation-and-model-fitting"><span class="header-section-number">5.1.2</span> Assessing residual spatial correlation and model fitting</a></li>
+  <li><a href="#prediction-and-assessment-of-model-calibration" id="toc-prediction-and-assessment-of-model-calibration" class="nav-link" data-scroll-target="#prediction-and-assessment-of-model-calibration"><span class="header-section-number">5.1.3</span> Prediction and assessment of model calibration</a></li>
+  <li><a href="#summary-and-conclusions" id="toc-summary-and-conclusions" class="nav-link" data-scroll-target="#summary-and-conclusions"><span class="header-section-number">5.1.4</span> Summary and conclusions</a></li>
+  </ul>
+</li>
+  <li><a href="#mapping-river-blindness-in-malawi" id="toc-mapping-river-blindness-in-malawi" class="nav-link" data-scroll-target="#mapping-river-blindness-in-malawi"><span class="header-section-number">5.2</span> Mapping river blindness in Malawi</a></li>
+  <li><a href="#mapping-mosquitoes-abundance-in-cameroon" id="toc-mapping-mosquitoes-abundance-in-cameroon" class="nav-link" data-scroll-target="#mapping-mosquitoes-abundance-in-cameroon"><span class="header-section-number">5.3</span> Mapping mosquitoes abundance in Cameroon</a></li>
+  </ul></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><div class="quarto-title">
+<h1 class="title"><span id="sec-case-studies" class="quarto-section-identifier"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Case studies</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header><section id="mapping-stunting-and-underwieght-risk-in-ghana" class="level2" data-number="5.1"><h2 data-number="5.1" class="anchored" data-anchor-id="mapping-stunting-and-underwieght-risk-in-ghana">
+<span class="header-section-number">5.1</span> Mapping stunting and underwieght risk in Ghana</h2>
+<p>Malnutrition remains a critical public health issue in many low- and middle-income countries, particularly affecting children under five years of age. It can have long-term consequences on physical growth, cognitive development, and susceptibility to disease. Monitoring childhood nutritional status is essential for evaluating the effectiveness of health interventions and informing policy decisions.</p>
+<p>Two widely used anthropometric indicators derived from child growth measurements are:</p>
+<ul>
+<li><p>Height-for-Age Z-score (HAZ): A measure of stunting, which reflects chronic malnutrition. Children with a HAZ below -2 standard deviations from the WHO growth reference median are considered stunted, indicating long-term nutritional deprivation or repeated infections.</p></li>
+<li><p>Weight-for-Age Z-score (WAZ): A composite indicator of underweight, capturing both acute and chronic malnutrition. Children with WAZ below -2 are considered underweight. This measure is commonly used in population-based surveys because it is relatively easy to collect and interpret.</p></li>
+</ul>
+<p>These Z-scores are calculated by comparing individual anthropometric measurements to the WHO Child Growth Standards, which were developed based on data from healthy children under optimal environmental and nutritional conditions <span class="citation" data-cites="who2006">(<a href="references.html#ref-who2006" role="doc-biblioref">WHO 2006</a>)</span>.</p>
+<p>Geostatistical models applied to HAZ and WAZ, or to the prevalence of stunting and underweight derived from these scores, can help answer critical questions such as: <em>Where is the burden of malnutrition highest? How does it relate to socioeconomic or environmental factors? And which areas should be prioritized for targeted nutritional interventions?</em></p>
+<p>In this case study, we analyse HAZ and WAZ as continuous outcomes to assess the spatial variation in child malnutrition across Ghana and its association with socioeconomic and demographic covariates.</p>
+<section id="exploratory-analysis" class="level3" data-number="5.1.1"><h3 data-number="5.1.1" class="anchored" data-anchor-id="exploratory-analysis">
+<span class="header-section-number">5.1.1</span> Exploratory analysis</h3>
+<p>We begin by loading the necessary R packages and the <code>malnutrition</code> dataset. This geostatistical dataset is derived from the 2014 Ghana Demographic and Health Survey (DHS) <span class="citation" data-cites="ghanaDHS2014">(<a href="references.html#ref-ghanaDHS2014" role="doc-biblioref">Ghana Statistical Service, Ghana Health Service, and ICF International 2015</a>)</span>, which provides nationally representative data on child health and nutrition. The dataset includes anthropometric measurements, household characteristics, and georeferenced sampling cluster coordinates, making it suitable for spatial analysis of child malnutrition.</p>
+<div class="cell">
+<div class="sourceCode" id="cb1" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Load packages</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://claudiofronterre.github.io/RiskMap/">RiskMap</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://patchwork.data-imaginist.com">patchwork</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Load the data</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">malnutrition</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The explanatory variables considered in this analysis are <code>age</code> and <code>wealth</code>. Figure <a href="#fig-maln-expl" class="quarto-xref">Figure&nbsp;<span>5.1</span></a> displays scatterplots of the two nutritional outcomes (<code>HAZ</code> and <code>WAZ</code>) against age, alongside boxplots stratified by the three levels of the <code>wealth</code> variable.</p>
+<p>To explore the relationship between age and nutritional status, the code below applies locally estimated scatterplot smoothing (LOESS) to highlight potential non-linear trends. In addition, we fit linear splines using the function <code><a href="https://rdrr.io/r/base/Extremes.html">pmax()</a></code> to model a change in slope at specified knots—2 months for HAZ and 1 month for WAZ. These change points were selected heuristically based on visual inspection of the LOESS curves.</p>
+<p>As shown in Figure <a href="#fig-maln-expl" class="quarto-xref">Figure&nbsp;<span>5.1</span></a>, the linear splines (green dashed lines) closely follow the LOESS fits (solid red lines), indicating that the piecewise linear models provide an adequate approximation of the age-nutrition relationship.</p>
+<div class="cell">
+<div class="sourceCode" id="cb2" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Filter complete cases for relevant variables</span></span>
+<span><span class="va">mal</span> <span class="op">&lt;-</span> <span class="va">malnutrition</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">HAZ</span><span class="op">)</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">WAZ</span><span class="op">)</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">age</span><span class="op">)</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">wealth</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Fit spline model for HAZ with knot at 2 months</span></span>
+<span><span class="va">mod_haz</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">HAZ</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">pmax</a></span><span class="op">(</span><span class="va">age</span> <span class="op">-</span> <span class="fl">2</span>, <span class="fl">0</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">mal</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Fit spline model for WAZ with knot at 1 month</span></span>
+<span><span class="va">mod_waz</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">WAZ</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">pmax</a></span><span class="op">(</span><span class="va">age</span> <span class="op">-</span> <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">mal</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Prediction grid for HAZ</span></span>
+<span><span class="va">newdat_haz</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>age <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">mal</span><span class="op">$</span><span class="va">age</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">mal</span><span class="op">$</span><span class="va">age</span><span class="op">)</span>, length.out <span class="op">=</span> <span class="fl">200</span><span class="op">)</span><span class="op">)</span> </span>
+<span><span class="va">newdat_haz</span><span class="op">$</span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span><span class="op">(</span><span class="va">mod_haz</span>, newdata <span class="op">=</span> <span class="va">newdat_haz</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Prediction grid for WAZ</span></span>
+<span><span class="va">newdat_waz</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>age <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">mal</span><span class="op">$</span><span class="va">age</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">mal</span><span class="op">$</span><span class="va">age</span><span class="op">)</span>, length.out <span class="op">=</span> <span class="fl">200</span><span class="op">)</span><span class="op">)</span> </span>
+<span><span class="va">newdat_waz</span><span class="op">$</span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span><span class="op">(</span><span class="va">mod_waz</span>, newdata <span class="op">=</span> <span class="va">newdat_waz</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Plot HAZ vs Age</span></span>
+<span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">mal</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">age</span>, y <span class="op">=</span> <span class="va">HAZ</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html">geom_smooth</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"loess"</span>, colour <span class="op">=</span> <span class="st">"red"</span>, se <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">newdat_haz</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">age</span>, y <span class="op">=</span> <span class="va">fit</span><span class="op">)</span>, </span>
+<span>            colour <span class="op">=</span> <span class="st">"green"</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span>, linewidth <span class="op">=</span> <span class="fl">1.2</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"HAZ vs Age"</span>, x <span class="op">=</span> <span class="st">"Age (months)"</span>, y <span class="op">=</span> <span class="st">"HAZ"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Plot WAZ vs Age</span></span>
+<span><span class="va">p2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">mal</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">age</span>, y <span class="op">=</span> <span class="va">WAZ</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html">geom_smooth</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"loess"</span>, colour <span class="op">=</span> <span class="st">"red"</span>, se <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">newdat_waz</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">age</span>, y <span class="op">=</span> <span class="va">fit</span><span class="op">)</span>, </span>
+<span>            colour <span class="op">=</span> <span class="st">"green"</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span>, linewidth <span class="op">=</span> <span class="fl">1.2</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"WAZ vs Age"</span>, x <span class="op">=</span> <span class="st">"Age (months)"</span>, y <span class="op">=</span> <span class="st">"WAZ"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Boxplots for HAZ and WAZ by wealth</span></span>
+<span><span class="va">p3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">mal</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">wealth</span><span class="op">)</span>, y <span class="op">=</span> <span class="va">HAZ</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html">geom_boxplot</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"lightblue"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"HAZ by Wealth Group"</span>, x <span class="op">=</span> <span class="st">"Wealth (1 = Poor, 3 = Rich)"</span>, y <span class="op">=</span> <span class="st">"HAZ"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">p4</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">mal</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">wealth</span><span class="op">)</span>, y <span class="op">=</span> <span class="va">WAZ</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html">geom_boxplot</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"lightgreen"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"WAZ by Wealth Group"</span>, x <span class="op">=</span> <span class="st">"Wealth (1 = Poor, 3 = Rich)"</span>, y <span class="op">=</span> <span class="st">"WAZ"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Combine plots</span></span>
+<span><span class="op">(</span><span class="va">p1</span> <span class="op">|</span> <span class="va">p2</span><span class="op">)</span> <span class="op">/</span> <span class="op">(</span><span class="va">p3</span> <span class="op">|</span> <span class="va">p4</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-maln-expl" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-maln-expl-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="05_case-studies_files/figure-html/fig-maln-expl-1.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-maln-expl-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.1: Exploratory analysis of HAZ and WAZ by age and wealth. The red lines correspond to LOESS smoothed curves and the green lines to linear splines with change points at 2 months (HAZ) and 1 month (WAZ) of age. Boxplots show variation by household wealth group.
+</figcaption></figure>
+</div>
+</div>
+</div>
+<p>We begin by fitting a non-spatial model to assess whether there is residual spatial correlation that remains after accounting for the effects of age and wealth. Let <span class="math inline">\(Y_{ij}\)</span> represent either the HAZ or WAZ score for the <span class="math inline">\(j\)</span>-th child in the <span class="math inline">\(i\)</span>-th cluster. The model takes the following form:</p>
+<p><span id="eq-model-haz-waz"><span class="math display">\[
+Y_{ij} = \beta_0 + \beta_1 a_{ij} + \beta_2 \max\{a_{ij} - c, 0\} + \beta_3 w_i + Z_i + U_{ij},
+\tag{5.1}\]</span></span></p>
+<p>where <span class="math inline">\(a_{ij}\)</span> denotes the age in months of child <span class="math inline">\(j\)</span> in cluster <span class="math inline">\(i\)</span>, and <span class="math inline">\(w_i\)</span> is the wealth score associated with cluster <span class="math inline">\(i\)</span>; as previously stated, the change point <span class="math inline">\(c\)</span> of the linear spline is set to 2 months for HAZ and 1 month for WAZ. The term <span class="math inline">\(Z_i\)</span> is a Gaussian random effect with mean zero and variance <span class="math inline">\(\tau^2\)</span>, capturing between-cluster variation not explained by the covariates. The error term <span class="math inline">\(U_{ij}\)</span> represents child-specific residual variation and is assumed to be Gaussian with mean zero and variance <span class="math inline">\(\omega^2\)</span>.</p>
+<p>To fit this model, we create a cluster ID variable based on the sampling coordinates and include it as a random intercept in the <code>lmer</code> function to incorporate the term <span class="math inline">\(Z_i\)</span>.</p>
+<div class="cell">
+<div class="sourceCode" id="cb3" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Create ID for the location</span></span>
+<span><span class="va">malnutrition</span> <span class="op">&lt;-</span> <span class="va">malnutrition</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">lng</span>, <span class="va">lat</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>loc_id <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">cur_group_id</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">ungroup</a></span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We then fit the models using the <code>lmer</code> function.</p>
+<div class="cell">
+<div class="sourceCode" id="cb4" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/lme4/lme4/">lme4</a></span><span class="op">)</span></span>
+<span><span class="va">haz_lmer</span> <span class="op">&lt;-</span> </span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/lme4/man/lmer.html">lmer</a></span><span class="op">(</span><span class="va">HAZ</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">pmax</a></span><span class="op">(</span><span class="va">age</span> <span class="op">-</span> <span class="fl">2</span>, <span class="fl">0</span><span class="op">)</span> <span class="op">+</span> <span class="va">wealth</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">loc_id</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">malnutrition</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">haz_lmer</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre data-code-line-numbers=""><code>Linear mixed model fit by REML ['lmerMod']
+Formula: HAZ ~ age + pmax(age - 2, 0) + wealth + (1 | loc_id)
+   Data: malnutrition
+
+REML criterion at convergence: 8593.6
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-4.6407 -0.5992  0.0154  0.6098  5.6443 
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ loc_id   (Intercept) 0.06939  0.2634  
+ Residual             1.39362  1.1805  
+Number of obs: 2671, groups:  loc_id, 410
+
+Fixed effects:
+                 Estimate Std. Error t value
+(Intercept)      -0.39571    0.08170  -4.844
+age              -0.77185    0.04471 -17.265
+pmax(age - 2, 0)  0.88486    0.06698  13.211
+wealth            0.38630    0.03611  10.699
+
+Correlation of Fixed Effects:
+            (Intr) age    p(-2,0
+age         -0.654              
+pmax(g-2,0)  0.521 -0.932       
+wealth      -0.616 -0.034  0.038</code></pre>
+</div>
+<div class="sourceCode" id="cb6" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">waz_lmer</span> <span class="op">&lt;-</span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/lme4/man/lmer.html">lmer</a></span><span class="op">(</span><span class="va">WAZ</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">pmax</a></span><span class="op">(</span><span class="va">age</span> <span class="op">-</span> <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span> <span class="op">+</span> <span class="va">wealth</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">loc_id</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">malnutrition</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">waz_lmer</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre data-code-line-numbers=""><code>Linear mixed model fit by REML ['lmerMod']
+Formula: WAZ ~ age + pmax(age - 1, 0) + wealth + (1 | loc_id)
+   Data: malnutrition
+
+REML criterion at convergence: 7997.3
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-6.5967 -0.5816  0.0098  0.6312  5.7860 
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ loc_id   (Intercept) 0.05625  0.2372  
+ Residual             1.11823  1.0575  
+Number of obs: 2668, groups:  loc_id, 410
+
+Fixed effects:
+                 Estimate Std. Error t value
+(Intercept)      -0.50444    0.08951  -5.636
+age              -0.72230    0.09615  -7.512
+pmax(age - 1, 0)  0.73510    0.10754   6.835
+wealth            0.27359    0.03238   8.450
+
+Correlation of Fixed Effects:
+            (Intr) age    p(-1,0
+age         -0.765              
+pmax(g-1,0)  0.716 -0.989       
+wealth      -0.494 -0.036  0.037</code></pre>
+</div>
+</div>
+<p>Of particular interest in the summary of the fitted models above are the estimates of the variances associated with the random effects: <span class="math inline">\(\tau^2\)</span> for the cluster-level terms <span class="math inline">\(Z_i\)</span>, and <span class="math inline">\(\omega^2\)</span> for the child-specific residuals <span class="math inline">\(U_{ij}\)</span>. The estimates suggest that <span class="math inline">\(\omega^2\)</span> is more than twenty times larger than <span class="math inline">\(\tau^2\)</span>, indicating that the majority of the unexplained variation occurs at the individual child level rather than between clusters. This has important implications for interpretation: any subsequent mapping of the prevalence of stunting or underweight should acknowledge the high degree of within-cluster variability as a limitation. In particular, predictions at unsampled locations may be subject to substantial uncertainty driven by this fine-scale heterogeneity.</p>
+</section><section id="assessing-residual-spatial-correlation-and-model-fitting" class="level3" data-number="5.1.2"><h3 data-number="5.1.2" class="anchored" data-anchor-id="assessing-residual-spatial-correlation-and-model-fitting">
+<span class="header-section-number">5.1.2</span> Assessing residual spatial correlation and model fitting</h3>
+<p>We next explore the residual spatial correlation through the empirical variogram. Hence, we extract the estimate of the random effects from <a href="#eq-model-haz-waz" class="quarto-xref">Equation&nbsp;<span>5.2</span></a> and input these into the <code>s_variogram</code> function that generates the empirical variogram.</p>
+<div class="cell">
+<div class="sourceCode" id="cb8" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Extract random effects for HAZ and WAZ and combine them</span></span>
+<span><span class="va">re</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span></span>
+<span>  loc_id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/nlme/man/random.effects.html">ranef</a></span><span class="op">(</span><span class="va">haz_lmer</span><span class="op">)</span><span class="op">$</span><span class="va">loc_id</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  Z_hat_haz <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/nlme/man/random.effects.html">ranef</a></span><span class="op">(</span><span class="va">haz_lmer</span><span class="op">)</span><span class="op">$</span><span class="va">loc_id</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span>,</span>
+<span>  Z_hat_waz <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/nlme/man/random.effects.html">ranef</a></span><span class="op">(</span><span class="va">waz_lmer</span><span class="op">)</span><span class="op">$</span><span class="va">loc_id</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Extract one row per location with coordinates</span></span>
+<span><span class="va">loc_coords</span> <span class="op">&lt;-</span> <span class="va">malnutrition</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">loc_id</span>, <span class="va">lng</span>, <span class="va">lat</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html">distinct</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Merge coordinates into random effects</span></span>
+<span><span class="va">re</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span><span class="op">(</span><span class="va">re</span>, <span class="va">loc_coords</span>, by <span class="op">=</span> <span class="st">"loc_id"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Convert to sf and transform into UTM</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/">sf</a></span><span class="op">)</span></span>
+<span><span class="va">re</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html">st_as_sf</a></span><span class="op">(</span><span class="va">re</span>, coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"lng"</span>,<span class="st">"lat"</span><span class="op">)</span>, crs <span class="op">=</span> <span class="fl">4326</span><span class="op">)</span></span>
+<span><span class="va">re</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_transform.html">st_transform</a></span><span class="op">(</span><span class="va">re</span>, crs <span class="op">=</span> <span class="fu"><a href="https://claudiofronterre.github.io/RiskMap/reference/propose_utm.html">propose_utm</a></span><span class="op">(</span><span class="va">re</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Variogram for HAZ</span></span>
+<span><span class="va">var_haz</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://claudiofronterre.github.io/RiskMap/reference/s_variogram.html">s_variogram</a></span><span class="op">(</span><span class="va">re</span>, <span class="st">"Z_hat_haz"</span>, scale_to_km <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                       n_permutation <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span>
+<span><span class="va">var_waz</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://claudiofronterre.github.io/RiskMap/reference/s_variogram.html">s_variogram</a></span><span class="op">(</span><span class="va">re</span>, <span class="st">"Z_hat_waz"</span>, scale_to_km <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                       n_permutation <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://patchwork.data-imaginist.com">patchwork</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Create ggplot objects</span></span>
+<span><span class="va">p_haz</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://claudiofronterre.github.io/RiskMap/reference/plot_s_variogram.html">plot_s_variogram</a></span><span class="op">(</span><span class="va">var_haz</span>, plot_envelope <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"HAZ"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">p_waz</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://claudiofronterre.github.io/RiskMap/reference/plot_s_variogram.html">plot_s_variogram</a></span><span class="op">(</span><span class="va">var_waz</span>, plot_envelope <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"WAZ"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">p_haz</span> <span class="op">+</span> <span class="va">p_waz</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-maln-vari" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-maln-vari-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="05_case-studies_files/figure-html/fig-maln-vari-1.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-maln-vari-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.2: Empirical variograms for HAZ and WAZ based on the estimated random effects from <a href="#eq-model-haz-waz" class="quarto-xref">Equation&nbsp;<span>5.2</span></a>.
+</figcaption></figure>
+</div>
+</div>
+</div>
+<p><a href="#fig-maln-vari" class="quarto-xref">Figure&nbsp;<span>5.2</span></a> shows the variogram for both HAZ and WAZ. In both cases, we observe that is residual spatial correlation in the data that is not explained by either age or the wealth index. We next extend the model in <a href="#eq-model-haz-waz" class="quarto-xref">Equation&nbsp;<span>5.2</span></a> to address this issue.</p>
+<p>For our geostatistical analysis of HAZ and WAZ, we consider the following model:</p>
+<p><span id="eq-model-haz-waz"><span class="math display">\[
+Y_{ij} = \beta_0 + \beta_1 a_{ij} + \beta_2 \max\{a_{ij} - c, 0\} + \beta_3 w_i + S(x_i) + U_{ij},
+\tag{5.2}\]</span></span></p>
+<p>where <span class="math inline">\(S(x)\)</span> is a zero-mean, stationary, and isotropic Gaussian process with variance <span class="math inline">\(\sigma^2\)</span> and an exponential correlation function with scale parameter <span class="math inline">\(\phi\)</span>. In this geostatistical extension, we replace the cluster-level random effect <span class="math inline">\(Z_i\)</span> from <a href="#eq-model-haz-waz" class="quarto-xref">Equation&nbsp;<span>5.2</span></a> with the spatial process <span class="math inline">\(S(x_i)\)</span>. The random effect <span class="math inline">\(Z_i\)</span> was previously used in the Binomial mixed model to account for unexplained variation between clusters. It is also possible to include both <span class="math inline">\(S(x_i)\)</span> and <span class="math inline">\(Z_i\)</span> in the model, so that the total unexplained variation between clusters is decomposed into a spatially structured component, <span class="math inline">\(S(x_i)\)</span>, and an unstructured component, <span class="math inline">\(Z_i\)</span>. However, this approach is not recommended in the initial model specification, as it may lead to identifiability issues. It can be considered later in the analysis if justified by model diagnostics.</p>
+<div class="cell">
+<div class="sourceCode" id="cb9" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Remove missing data from the WAZ outcome</span></span>
+<span><span class="va">malnutrition</span> <span class="op">&lt;-</span> <span class="va">malnutrition</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/stats/complete.cases.html">complete.cases</a></span><span class="op">(</span><span class="va">malnutrition</span><span class="op">[</span>,<span class="st">"WAZ"</span><span class="op">]</span><span class="op">)</span>,<span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Converting the data-frame into an sf object</span></span>
+<span><span class="va">malnutrition_sf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html">st_as_sf</a></span><span class="op">(</span><span class="va">malnutrition</span>, coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"lng"</span>, <span class="st">"lat"</span><span class="op">)</span>, crs <span class="op">=</span> <span class="fl">4326</span><span class="op">)</span></span>
+<span><span class="va">malnutrition_sf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_transform.html">st_transform</a></span><span class="op">(</span><span class="va">malnutrition_sf</span>, crs <span class="op">=</span> <span class="fu"><a href="https://claudiofronterre.github.io/RiskMap/reference/propose_utm.html">propose_utm</a></span><span class="op">(</span><span class="va">malnutrition_sf</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Maximum likelihood estimation for the HAZ and WAZ outcomes</span></span>
+<span><span class="va">haz_fit</span> <span class="op">&lt;-</span> </span>
+<span><span class="fu"><a href="https://claudiofronterre.github.io/RiskMap/reference/glgpm.html">glgpm</a></span><span class="op">(</span><span class="va">HAZ</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">pmax</a></span><span class="op">(</span><span class="va">age</span> <span class="op">-</span> <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span> <span class="op">+</span> <span class="va">wealth</span> <span class="op">+</span> <span class="fu"><a href="https://claudiofronterre.github.io/RiskMap/reference/gp.html">gp</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>      data<span class="op">=</span><span class="va">malnutrition_sf</span>, family <span class="op">=</span> <span class="st">"gaussian"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">waz_fit</span> <span class="op">&lt;-</span> </span>
+<span>  <span class="fu"><a href="https://claudiofronterre.github.io/RiskMap/reference/glgpm.html">glgpm</a></span><span class="op">(</span><span class="va">HAZ</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">pmax</a></span><span class="op">(</span><span class="va">age</span> <span class="op">-</span> <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span> <span class="op">+</span> <span class="va">wealth</span> <span class="op">+</span> <span class="fu"><a href="https://claudiofronterre.github.io/RiskMap/reference/gp.html">gp</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>        data<span class="op">=</span><span class="va">malnutrition_sf</span>, family <span class="op">=</span> <span class="st">"gaussian"</span><span class="op">)</span> </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We then summarize the fit of models.</p>
+<div class="cell">
+<div class="sourceCode" id="cb10" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">haz_fit</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre data-code-line-numbers=""><code>Linear geostatsitical model 
+'Lower limit' and 'Upper limit' are the limits of the 95% confidence level intervals 
+
+ Regression coefficients 
+                   Estimate Lower limit Upper limit     StdErr  z.value p.value
+(Intercept)      -0.2158950  -0.4338747   0.0020848  0.1112162  -1.9412 0.05223
+age              -1.3073560  -1.4135715  -1.2011404  0.0541926 -24.1243 &lt; 2e-16
+pmax(age - 1, 0)  1.2288215   1.1496224   1.3080207  0.0404085  30.4100 &lt; 2e-16
+wealth            0.3520544   0.3319696   0.3721393  0.0102476  34.3550 &lt; 2e-16
+                    
+(Intercept)      .  
+age              ***
+pmax(age - 1, 0) ***
+wealth           ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+Offset included into the linear predictor 
+
+                         Estimate Lower limit Upper limit
+Measuremment error var.   1.4371      1.4254      1.4489
+
+ Spatial Guassian process 
+Matern covariance parameters (kappa=0.5) 
+                      Estimate Lower limit Upper limit
+Spatial process var.  0.069453    0.061423      0.0785
+Spatial corr. scale  36.529380   30.187727     44.2032
+Variance of the nugget effect fixed at 0 
+
+ Log-likelihood: -1859.246
+
+ AIC: 3718.491
+ </code></pre>
+</div>
+<div class="sourceCode" id="cb12" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">waz_fit</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre data-code-line-numbers=""><code>Linear geostatsitical model 
+'Lower limit' and 'Upper limit' are the limits of the 95% confidence level intervals 
+
+ Regression coefficients 
+                   Estimate Lower limit Upper limit     StdErr  z.value
+(Intercept)      -0.4580088  -0.6499668  -0.2660509  0.0979395  -4.6764
+age              -0.7295504  -0.8235412  -0.6355596  0.0479554 -15.2131
+pmax(age - 1, 0)  0.7421647   0.6720850   0.8122443  0.0357556  20.7566
+wealth            0.2254477   0.2076797   0.2432157  0.0090655  24.8689
+                   p.value    
+(Intercept)      2.919e-06 ***
+age              &lt; 2.2e-16 ***
+pmax(age - 1, 0) &lt; 2.2e-16 ***
+wealth           &lt; 2.2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+Offset included into the linear predictor 
+
+                         Estimate Lower limit Upper limit
+Measuremment error var.   1.1253      1.1161      1.1346
+
+ Spatial Guassian process 
+Matern covariance parameters (kappa=0.5) 
+                      Estimate Lower limit Upper limit
+Spatial process var.  0.049912    0.043750      0.0569
+Spatial corr. scale  35.836303   28.815346     44.5679
+Variance of the nugget effect fixed at 0 
+
+ Log-likelihood: -1530.593
+
+ AIC: 3061.187
+ </code></pre>
+</div>
+</div>
+<p>The spatial component of the models reveals a moderate degree of spatial structure in the HAZ and WAZ outcomes. For HAZ, the estimated spatial variance is approximately 0.069, while the individual-level radom effect’s variance is substantially larger at around 1.437. For WAZ, the spatial variance is estimated at 0.050, compared to the variance of the individual-level radom effect’s variance of 1.125. In both models, as already observed when fitting Binomial mixed models, this indicates that the majority of the residual variation is due to individual-level noise or unstructured heterogeneity rather than spatially structured effects. The relative contribution of the spatial process to the total unexplained variation is therefore relatively small. Nevertheless, geostatistical analysis remains valuable also in this context. Even when spatial effects explain only a modest proportion of the variation, the model still enables spatial prediction of the average spatial pattern for the outcome of interest across the study area. This is useful for identifying areas where child malnutrition is systematically higher or lower, guiding targeted interventions and informing resource allocation. We explore these implications further in the next section on geostatistical prediction for HAZ and WAZ.</p>
+</section><section id="prediction-and-assessment-of-model-calibration" class="level3" data-number="5.1.3"><h3 data-number="5.1.3" class="anchored" data-anchor-id="prediction-and-assessment-of-model-calibration">
+<span class="header-section-number">5.1.3</span> Prediction and assessment of model calibration</h3>
+<p>Stunting and underweight are standard indicators used to assess child malnutrition. A child is defined as if their height-for-age <span class="math inline">\(z\)</span>-score (HAZ) is below <span class="math inline">\(-2\)</span> standard deviations from the median of the WHO Child Growth Standards, i.e., HAZ &lt; -2. Similarly, a child is considered if their weight-for-age <span class="math inline">\(z\)</span>-score (WAZ) falls below <span class="math inline">\(-2\)</span>, i.e., WAZ &lt; -2 <span class="citation" data-cites="sdg2201meta2025">(<a href="references.html#ref-sdg2201meta2025" role="doc-biblioref">United Nations Statistics Division, World Health Organization, and UNICEF 2025</a>)</span>. These thresholds are based on the World Health Organization (WHO) growth reference standards, which provide a normative basis for assessing nutritional status in children under five years of age <span class="citation" data-cites="who_underweight2024">(<a href="references.html#ref-who_underweight2024" role="doc-biblioref">Organization 2024</a>)</span>.</p>
+<p>We now define the predictive targets for stunting and underweight prevalence in terms of the adopted geostatistical model. Both indicators correspond to the probability that a child’s z-score falls below <span class="math inline">\(-2\)</span>, that is, <span class="math inline">\(Y(x) &lt; -2\)</span>, where <span class="math inline">\(Y(x)\)</span> denotes either the HAZ or WAZ score at location <span class="math inline">\(x\)</span>. Under the model specification, the prevalence is therefore defined as</p>
+<p><span id="eq-prev-maln"><span class="math display">\[
+T(x) = P\left\{ Y(x) &lt; -2 \,\middle|\, S(x) \right\} = \Phi\left( -\frac{\mu + S(x) + 2}{\omega} \right),
+\tag{5.3}\]</span></span></p>
+<p>where <span class="math inline">\(\Phi(\cdot)\)</span> is the cumulative distribution function of the standard normal distribution, <span class="math inline">\(\mu\)</span> is the linear predictor including the effects of covariates at individual- and cluster-level (as defined by the coefficients <span class="math inline">\(\beta_1\)</span> to <span class="math inline">\(\beta_3\)</span> of <a href="#eq-model-haz-waz" class="quarto-xref">Equation&nbsp;<span>5.2</span></a>) as well as the intercept, and <span class="math inline">\(\omega^2\)</span> is the variance of the individual-level residual term. In <a href="#eq-prev-maln" class="quarto-xref">Equation&nbsp;<span>5.3</span></a>, we condition on <span class="math inline">\(S(x)\)</span> because this allows us to define both stunting an underweight prevalence as a spatially varying predictive target.</p>
+<p>To implement this in <code>RiskMap</code>, we begin by generating a predictive grid over the study region. In this case, we use a regular grid with 10 km by 10 km resolution. We then draw predictive samples of the spatial effect <span class="math inline">\(S(x)\)</span> at each grid location, conditional on the observed data. For the <code>age</code> variable, we fix it at 2 months for HAZ and 1 month for WAZ, respectively. The <code>wealth</code> variable is set to its lowest value of 1. These choices are made to visualize the predictive target for the subgroup of children most at risk of stunting and underweight, as identified through exploratory analysis and the estimated regression coefficients. The code below illustrates this procedure.</p>
+<div class="cell">
+<div class="sourceCode" id="cb14" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Boundaries of Ghana</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/wmgeolab/rgeoboundaries">rgeoboundaries</a></span><span class="op">)</span></span>
+<span><span class="va">ghana</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/rgeoboundaries/man/geoboundaries.html">geoboundaries</a></span><span class="op">(</span>country <span class="op">=</span> <span class="st">"Ghana"</span>, adm_lvl <span class="op">=</span> <span class="st">"adm0"</span><span class="op">)</span></span>
+<span><span class="va">ghana</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_transform.html">st_transform</a></span><span class="op">(</span><span class="va">ghana</span>, <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_crs.html">st_crs</a></span><span class="op">(</span><span class="va">malnutrition_sf</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">ghana_grid</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://claudiofronterre.github.io/RiskMap/reference/create_grid.html">create_grid</a></span><span class="op">(</span><span class="va">ghana</span>, spat_res <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">n_pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_coordinates.html">st_coordinates</a></span><span class="op">(</span><span class="va">ghana_grid</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Prediction of S(x) and covariates effects over the grid for</span></span>
+<span></span>
+<span><span class="co"># HAZ</span></span>
+<span><span class="va">haz_pred_grid</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://claudiofronterre.github.io/RiskMap/reference/pred_over_grid.html">pred_over_grid</a></span><span class="op">(</span><span class="va">haz_fit</span>,</span>
+<span>                                grid_pred <span class="op">=</span> <span class="va">ghana_grid</span>,</span>
+<span>                                predictors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span></span>
+<span>                                  <span class="co"># Setting age to 2 months</span></span>
+<span>                                  age <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fl">2</span>, <span class="va">n_pred</span><span class="op">)</span>,</span>
+<span>                                  <span class="co"># Setting wealth to 1 (least wealthy)</span></span>
+<span>                                  wealth <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="va">n_pred</span><span class="op">)</span></span>
+<span>                                <span class="op">)</span><span class="op">)</span></span>
+<span><span class="co"># WAZ</span></span>
+<span><span class="va">waz_pred_grid</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://claudiofronterre.github.io/RiskMap/reference/pred_over_grid.html">pred_over_grid</a></span><span class="op">(</span><span class="va">waz_fit</span>,</span>
+<span>                                grid_pred <span class="op">=</span> <span class="va">ghana_grid</span>,</span>
+<span>                                predictors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span></span>
+<span>                                  <span class="co"># Setting age to 1 month</span></span>
+<span>                                  age <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="va">n_pred</span><span class="op">)</span>,</span>
+<span>                                  <span class="co"># Setting wealth to 1 (least wealthy)</span></span>
+<span>                                  wealth <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="va">n_pred</span><span class="op">)</span></span>
+<span>                                <span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We then use the <code>pred_target_grid</code> function to generate predictive summaries of stunting and underweight prevalence, as defined in <a href="#eq-prev-maln" class="quarto-xref">Equation&nbsp;<span>5.3</span></a>. To quantify uncertainty in the predictions, we report the coefficient of variation, which provides a standardized measure of relative uncertainty across the prediction grid.</p>
+<div class="cell">
+<div class="sourceCode" id="cb15" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Prediction of stunting prevalence</span></span>
+<span><span class="va">sd_ind_haz</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html">coef</a></span><span class="op">(</span><span class="va">haz_fit</span><span class="op">)</span><span class="op">$</span><span class="va">sigma2_me</span><span class="op">)</span></span>
+<span><span class="va">stunting_prev</span> <span class="op">&lt;-</span></span>
+<span><span class="fu"><a href="https://claudiofronterre.github.io/RiskMap/reference/pred_target_grid.html">pred_target_grid</a></span><span class="op">(</span><span class="va">haz_pred_grid</span>,</span>
+<span>                 f_target <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>prev <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">pnorm</a></span><span class="op">(</span><span class="op">(</span><span class="op">-</span><span class="fl">2</span><span class="op">-</span><span class="va">x</span><span class="op">)</span><span class="op">/</span><span class="va">sd_ind_haz</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>                 pd_summary <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>mean <span class="op">=</span> <span class="va">mean</span>,</span>
+<span>                                       cv <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html">sd</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Prediction of underweight prevalence</span></span>
+<span><span class="va">sd_ind_waz</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html">coef</a></span><span class="op">(</span><span class="va">waz_fit</span><span class="op">)</span><span class="op">$</span><span class="va">sigma2_me</span><span class="op">)</span></span>
+<span><span class="va">underw_prev</span> <span class="op">&lt;-</span></span>
+<span>  <span class="fu"><a href="https://claudiofronterre.github.io/RiskMap/reference/pred_target_grid.html">pred_target_grid</a></span><span class="op">(</span><span class="va">waz_pred_grid</span>,</span>
+<span>                   f_target <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>prev <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">pnorm</a></span><span class="op">(</span><span class="op">(</span><span class="op">-</span><span class="fl">2</span><span class="op">-</span><span class="va">x</span><span class="op">)</span><span class="op">/</span><span class="va">sd_ind_waz</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>                   pd_summary <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>mean <span class="op">=</span> <span class="va">mean</span>,</span>
+<span>                                     cv <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html">sd</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Finally, we visualize the results in the map shown in <a href="#fig-maln-pred" class="quarto-xref">Figure&nbsp;<span>5.3</span></a>. The maps reveal a clear hotspot for both stunting and underweight, with predicted prevalence values reaching approximately <span class="math inline">\(45\%\)</span> and <span class="math inline">\(24\%\)</span>, respectively. Notably, this same region also exhibits lower predictive uncertaint, measured by the coefficient of variation, compared to other areas in Ghana.</p>
+<div class="cell">
+<div class="sourceCode" id="cb16" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Set up a 2x2 layout</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/layout.html">layout</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, nrow <span class="op">=</span> <span class="fl">2</span>, byrow <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span><span class="op">(</span>mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">4</span>, <span class="fl">4</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span>  <span class="co"># Adjust margins</span></span>
+<span></span>
+<span><span class="co"># Top row: stunting</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">stunting_prev</span>, which_target <span class="op">=</span> <span class="st">"prev"</span>, which_summary <span class="op">=</span> <span class="st">"mean"</span>,</span>
+<span>     main <span class="op">=</span> <span class="st">"Stunting: Predictive Mean"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">stunting_prev</span>, which_target <span class="op">=</span> <span class="st">"prev"</span>, which_summary <span class="op">=</span> <span class="st">"cv"</span>,</span>
+<span>     main <span class="op">=</span> <span class="st">"Stunting: Coefficient of Variation"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Bottom row: underweight</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">underw_prev</span>, which_target <span class="op">=</span> <span class="st">"prev"</span>, which_summary <span class="op">=</span> <span class="st">"mean"</span>,</span>
+<span>     main <span class="op">=</span> <span class="st">"Underweight: Predictive Mean"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">underw_prev</span>, which_target <span class="op">=</span> <span class="st">"prev"</span>, which_summary <span class="op">=</span> <span class="st">"cv"</span>,</span>
+<span>     main <span class="op">=</span> <span class="st">"Underweight: Coefficient of Variation"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-maln-pred" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-maln-pred-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="05_case-studies_files/figure-html/fig-maln-pred-1.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-maln-pred-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.3: Predictive mean and coefficient of variation for stunting and underweight prevalence estimates. The top row shows predictions for stunting, while the bottom row corresponds to underweight. For each indicator, the left panel shows the predictive mean and the right panel the coefficient of variation.
+</figcaption></figure>
+</div>
+</div>
+</div>
+<p>To assess the predictive performance and calibration of our geostatistical models for HAZ and WAZ, we perform a cross-validation exercise using the <code>assess_pp</code> function. Cross-validation is conducted by repeatedly splitting the data into training and testing sets, ensuring that prediction locations are at least 5 km away from the nearest training point. Specifically, we set <code>n_size = 100</code> prediction locations for the test set, impose a minimum distance constraint of 5 km (<code>min_dist = 5</code>), and repeat the process over 10 test sets randomly drawn under those conditions (<code>iter = 10</code>) using <code>method="regularized"</code> as the sampling method.</p>
+<div class="cell">
+<div class="sourceCode" id="cb17" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># HAZ</span></span>
+<span><span class="va">assess_haz</span> <span class="op">&lt;-</span></span>
+<span><span class="fu"><a href="https://claudiofronterre.github.io/RiskMap/reference/assess_pp.html">assess_pp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>HAZ <span class="op">=</span> <span class="va">haz_fit</span><span class="op">)</span>,</span>
+<span>          n_size <span class="op">=</span> <span class="fl">100</span>,</span>
+<span>          min_dist <span class="op">=</span> <span class="fl">5</span>,</span>
+<span>          iter <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>          method <span class="op">=</span> <span class="st">"regularized"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># WAZ</span></span>
+<span><span class="va">assess_waz</span> <span class="op">&lt;-</span></span>
+<span>  <span class="fu"><a href="https://claudiofronterre.github.io/RiskMap/reference/assess_pp.html">assess_pp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>WAZ <span class="op">=</span> <span class="va">waz_fit</span><span class="op">)</span>,</span>
+<span>            n_size <span class="op">=</span> <span class="fl">100</span>,</span>
+<span>            min_dist <span class="op">=</span> <span class="fl">5</span>,</span>
+<span>            iter <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>            method <span class="op">=</span> <span class="st">"regularized"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We note that for a Gaussian linear geostatistical model, the <code>assess_pp</code> function does not compute the average non-randomized probability integral transform (AnPIT, introduced in <a href="04_geostatistical-prediction.html#sec-anpit" class="quarto-xref"><span>Section 4.5.2</span></a>), as this measure is specifically designed for count outcomes. Instead, it employs the standard probability integral transform (PIT), defined as <span class="math inline">\(\text{PIT}(y) = F_{M}(y)\)</span>, where <span class="math inline">\(F_{M}(y)\)</span> is the cumulative distribution function of the predictive distribution evaluated at the observed value <span class="math inline">\(y\)</span>. The PIT transforms the observed outcomes in the test set such that, if the model is well-calibrated, these transformed values should follow a uniform distribution. Deviations from uniformity indicate potential issues with calibration and predictive accuracy.</p>
+<p><a href="#fig-maln-pit" class="quarto-xref">Figure&nbsp;<span>5.4</span></a> shows the results of the cross-validation exercise visualized through PIT curves for HAZ and WAZ. Similarly to the way we have interpreted the AnPIT curves, the PIT curves indicate good calibration when they lie close to the identity line, meaning the predictive distributions accurately reflect the observed variability in the test sets. The results shown in <a href="#fig-maln-pit" class="quarto-xref">Figure&nbsp;<span>5.4</span></a> demonstrate that, for all ten test sets and for both HAZ and WAZ, the PIT curves closely align with the identity line, confirming that the models are well-calibrated and provide reliable uncertainty quantification.</p>
+<div class="cell">
+<div class="sourceCode" id="cb18" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Generate PIT plots</span></span>
+<span><span class="va">p_haz</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://claudiofronterre.github.io/RiskMap/reference/plot_AnPIT.html">plot_AnPIT</a></span><span class="op">(</span><span class="va">assess_haz</span>, mode <span class="op">=</span> <span class="st">"all"</span><span class="op">)</span></span>
+<span><span class="va">p_waz</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://claudiofronterre.github.io/RiskMap/reference/plot_AnPIT.html">plot_AnPIT</a></span><span class="op">(</span><span class="va">assess_waz</span>, mode <span class="op">=</span> <span class="st">"all"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Arrange side-by-side</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">gridExtra</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/gridExtra/man/arrangeGrob.html">grid.arrange</a></span><span class="op">(</span><span class="va">p_haz</span>, <span class="va">p_waz</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-maln-pit" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-maln-pit-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="05_case-studies_files/figure-html/fig-maln-pit-1.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-maln-pit-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.4: Assessment of the models calibration. The left panel shows the probability integral transform (PIT) curve for HAZ, and the right panel for WAZ. In both panels, the red dahsed line corresponds to the identity line.
+</figcaption></figure>
+</div>
+</div>
+</div>
+</section><section id="summary-and-conclusions" class="level3" data-number="5.1.4"><h3 data-number="5.1.4" class="anchored" data-anchor-id="summary-and-conclusions">
+<span class="header-section-number">5.1.4</span> Summary and conclusions</h3>
+<p>This case study demonstrated the utility of geostatistical modeling for mapping child malnutrition in Ghana using continuous anthropometric measurements, namely HAZ and WAZ Z-scores. By modeling these outcomes directly, we were able to define stunting and underweight prevalence as predictive probabilities based on threshold exceedance (e.g., HAZ &lt; -2), rather than by dichotomizing the data prior to analysis. This approach allowed us to retain the full information content of the measurements and to produce spatially resolved predictions of prevalence along with associated uncertainty estimates. Readers interested in a more in-depth treatment of this modeling strategy are referred to <span class="citation" data-cites="kyomuhangi2021">Kyomuhangi et al. (<a href="references.html#ref-kyomuhangi2021" role="doc-biblioref">2021</a>)</span>, which discusses the loss of information and degradation in predictive performance that can result from dichotomizing continuous outcomes in geostatistical settings.</p>
+<p>More broadly, this case study illustrated how geostatistical models can be used to analyze individual-level outcomes while accounting for both child-level and household-level covariates. Aggregation of data across individuals, such as using average HAZ or WAZ scores per location, is not required and can in fact introduce several complications. In particular, the number of children per cluster varies, which implies that an analysis based on cluster-level averages would require a heteroscedastic specification for the residual term to appropriately reflect varying precision across locations. Ignoring this could lead to unreliable predictive inferences.</p>
+<p>In conclusion, this analysis showed that neither dichotomization nor aggregation is necessary in geostaistical analysis. Instead, geostatistical models should be fitted to individual-level continuous outcomes, and suitable predictive targets and summaries of uncertainty can then be derived from the fitted model.</p>
+</section></section><section id="mapping-river-blindness-in-malawi" class="level2" data-number="5.2"><h2 data-number="5.2" class="anchored" data-anchor-id="mapping-river-blindness-in-malawi">
+<span class="header-section-number">5.2</span> Mapping river blindness in Malawi</h2>
+</section><section id="mapping-mosquitoes-abundance-in-cameroon" class="level2" data-number="5.3"><h2 data-number="5.3" class="anchored" data-anchor-id="mapping-mosquitoes-abundance-in-cameroon">
+<span class="header-section-number">5.3</span> Mapping mosquitoes abundance in Cameroon</h2>
+
+
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
+<div id="ref-amazigo2008" class="csl-entry" role="listitem">
+Amazigo, U. 2008. <span>“The African Programme for Onchocerciasis Control (APOC).”</span> <em>Ann Trop Med Parasitol</em> 102 (Suppl 1): 19–22. <a href="https://doi.org/10.1179/136485908X337436">https://doi.org/10.1179/136485908X337436</a>.
+</div>
+<div id="ref-bates2015" class="csl-entry" role="listitem">
+Bates, Douglas, Martin Mächler, Ben Bolker, and Steve Walker. 2015. <span>“Fitting Linear Mixed-Effects Models Using <span class="nocase">lme4</span>.”</span> <em>Journal of Statistical Software</em> 67 (1): 1–48. <a href="https://doi.org/10.18637/jss.v067.i01">https://doi.org/10.18637/jss.v067.i01</a>.
+</div>
+<div id="ref-bishop2006" class="csl-entry" role="listitem">
+Bishop, Christopher M. 2006. <em>Pattern Recognition and Machine Learning</em>. Springer.
+</div>
+<div id="ref-bolin2023" class="csl-entry" role="listitem">
+Bolin, David, and Jonas Wallin. 2023. <span>“<span class="nocase">Local scale invariance and robustness of proper scoring rules</span>.”</span> <em>Statistical Science</em> 38 (1): 140–59. <a href="https://doi.org/10.1214/22-STS864">https://doi.org/10.1214/22-STS864</a>.
+</div>
+<div id="ref-bowman1997" class="csl-entry" role="listitem">
+Bowman, A. W. 1997. <em>Applied Smoothing Techniques for Data Analysis : The Kernel Approach with s-Plus Illustrations</em>. Oxford Statistical Science Series ; 18. Oxford : New York: Clarendon Press ; Oxford University Press.
+</div>
+<div id="ref-breslow1993" class="csl-entry" role="listitem">
+Breslow, N. E., and D. G. Clayton. 1993. <span>“Approximate Inference in Generalized Linear Mixed Models.”</span> <em>Journal of the American Statistical Association</em> 88: 9–25.
+</div>
+<div id="ref-brooks2011handbook" class="csl-entry" role="listitem">
+Brooks, Steve, Andrew Gelman, Galin L. Jones, and Xiao-Li Meng. 2011. <em>Handbook of Markov Chain Monte Carlo</em>. CRC Press.
+</div>
+<div id="ref-chilesdelfiner2016" class="csl-entry" role="listitem">
+Chilès, J-P, and P. Delfiner. 2016. <em>Geostatistics (Second Edition)</em>. Hoboken: Wiley.
+</div>
+<div id="ref-christensen2006" class="csl-entry" role="listitem">
+Christensen, OF, GO Roberts, and M Sköld. 2006. <span>“Robust Markov Chain Monte Carlo Methods for Spatial Generalized Linear Mixed Models.”</span> <em>Journal of Computational and Graphical Statistics</em> 15 (1): 1–17.
+</div>
+<div id="ref-christensen2004" class="csl-entry" role="listitem">
+Christensen, Ole F. 2004. <span>“Monte Carlo Maximum Likelihood in Model-Based Geostatistics.”</span> <em>Journal of Computational and Graphical Statistics</em> 13 (3): 702–18.
+</div>
+<div id="ref-cowles1996markov" class="csl-entry" role="listitem">
+Cowles, Mary Kathryn, and Bradley P. Carlin. 1996. <span>“Markov Chain Monte Carlo Convergence Diagnostics: A Comparative Review.”</span> <em>Journal of the American Statistical Association</em> 91 (434): 883–904.
+</div>
+<div id="ref-cressie1991" class="csl-entry" role="listitem">
+Cressie, N. A. C. 1991. <em>Statistics for Spatial Data</em>. New York: Wiley.
+</div>
+<div id="ref-cressie1985" class="csl-entry" role="listitem">
+Cressie, Noel. 1985. <span>“Fitting Variogram Models by Weighted Least Squares.”</span> <em>Mathematical Geology</em> 17 (5): 563–86.
+</div>
+<div id="ref-czado2009" class="csl-entry" role="listitem">
+Czado, Claudia, Tilmann Gneiting, and Leonhard Held. 2009. <span>“<span class="nocase">Predictive Model Assessment for Count Data</span>.”</span> <em>Biometrics</em> 65 (4): 1254–61. <a href="https://doi.org/10.1111/j.1541-0420.2009.01191.x">https://doi.org/10.1111/j.1541-0420.2009.01191.x</a>.
+</div>
+<div id="ref-dawid1984" class="csl-entry" role="listitem">
+Dawid, A. P. 1984. <span>“Statistical Theory: The Prequential Approach.”</span> <em>Journal of the Royal Statistical Society: Series A (General)</em> 147 (2): 278–92.
+</div>
+<div id="ref-diggleBook2019" class="csl-entry" role="listitem">
+Diggle, P J, and E Giorgi. 2019. <em>Model-Based Geostatistics for Global Public Health : Methods and Applications.</em> Chapman and Hall/CRC Interdisciplinary Statistics Ser. Milton: Chapman; Hall/CRC.
+</div>
+<div id="ref-diggle1998" class="csl-entry" role="listitem">
+Diggle, P. J., J. A. Tawn, and R. A. Moyeed. 1998. <span>“Model-Based Geostatistics.”</span> <em>Journal of the Royal Statistical Society: Series C (Applied Statistics)</em> 47 (3): 299–350. <a href="https://doi.org/10.1111/1467-9876.00113">https://doi.org/10.1111/1467-9876.00113</a>.
+</div>
+<div id="ref-diggle2007book" class="csl-entry" role="listitem">
+Diggle, Peter, and Paulo Justiniano Ribeiro. 2007. <em>Model-Based Geostatistics</em>. Springer Series in Statistics. Springer.
+</div>
+<div id="ref-dobson2008" class="csl-entry" role="listitem">
+Dobson, A. J., and A. Barnett. 2008. <em>An Introduction to Generalized Linear Models</em>. Third. Chapman; Hall/CRC.
+</div>
+<div id="ref-efron1979" class="csl-entry" role="listitem">
+Efron, Bradley. 1979. <span>“Bootstrap Methods: Another Look at the Jackknife.”</span> <em>The Annals of Statistics</em> 7 (1): 1–26.
+</div>
+<div id="ref-evans2021" class="csl-entry" role="listitem">
+Evans, Jeffrey S., and Melanie A. Murphy. 2021. <em>spatialEco</em>. <a href="https://github.com/jeffreyevans/spatialEco">https://github.com/jeffreyevans/spatialEco</a>.
+</div>
+<div id="ref-fernandez2000" class="csl-entry" role="listitem">
+Fernández, J. A, A Rey, and A Carballeira. 2000. <span>“An Extended Study of Heavy Metal Deposition in Galicia (NW Spain) Based on Moss Analysis.”</span> <em>Science of The Total Environment</em> 254 (1): 31–44. <a href="https://doi.org/10.1016/S0048-9697(00)00431-9">https://doi.org/10.1016/S0048-9697(00)00431-9</a>.
+</div>
+<div id="ref-gelman2013bayesian" class="csl-entry" role="listitem">
+Gelman, Andrew, John B. Carlin, Hal S. Stern, David B. Dunson, Aki Vehtari, and Donald B. Rubin. 2013. <em>Bayesian Data Analysis</em>. 3rd ed. CRC Press.
+</div>
+<div id="ref-gelman1992inference" class="csl-entry" role="listitem">
+Gelman, Andrew, and Donald B Rubin. 1992. <span>“Inference from Iterative Simulation Using Multiple Sequences.”</span> <em>Statistical Science</em> 7 (4): 457–72.
+</div>
+<div id="ref-geweke1992evaluating" class="csl-entry" role="listitem">
+Geweke, John. 1992. <span>“Evaluating the Accuracy of Sampling‐based Approaches to the Calculation of Posterior Moments.”</span> Edited by Jose M. Bernardo, James O. Berger, A. Philip Dawid, and Adrian F. M. Smith, 169–93.
+</div>
+<div id="ref-geyer1991" class="csl-entry" role="listitem">
+Geyer, Charles J. 1991. <span>“Markov Chain Monte Carlo Maximum Likelihood.”</span> <em>Journal of Computational and Graphical Statistics</em> 1 (4): 39–55.
+</div>
+<div id="ref-geyer1994" class="csl-entry" role="listitem">
+Geyer, Charles J. 1994. <span>“Likelihood and Exponential Families.”</span> <em>Department of Statistics, University of Minnesota</em>.
+</div>
+<div id="ref-geyer1996" class="csl-entry" role="listitem">
+———. 1996. <span>“Markov Chain Monte Carlo Maximum Likelihood.”</span> <em>Department of Statistics, University of Minnesota</em>.
+</div>
+<div id="ref-geyer2019handbook" class="csl-entry" role="listitem">
+———. 2019. <span>“Monte Carlo Methods in MCMC.”</span> In <em>Handbook of MCMC</em>, edited by Steve Brooks, Andrew Gelman, Galin L. Jones, and Xiao-Li Meng, 3–48. CRC Press.
+</div>
+<div id="ref-ghanaDHS2014" class="csl-entry" role="listitem">
+Ghana Statistical Service, Ghana Health Service, and ICF International. 2015. <em>Ghana Demographic and Health Survey 2014</em>. Rockville, Maryland, USA: Ghana Statistical Service, Ghana Health Service,; ICF International. <a href="https://dhsprogram.com/publications/publication-FR307-DHS-Final-Reports.cfm">https://dhsprogram.com/publications/publication-FR307-DHS-Final-Reports.cfm</a>.
+</div>
+<div id="ref-gneiting2007" class="csl-entry" role="listitem">
+Gneiting, Tilmann, Fadoua Balabdaoui, and Adrian E Raftery. 2007. <span>“Probabilistic Forecasts, Calibration and Sharpness.”</span> <em>Journal of the Royal Statistical Society: Series B (Statistical Methodology)</em> 69 (2): 243–68.
+</div>
+<div id="ref-gneiting2007jasa" class="csl-entry" role="listitem">
+Gneiting, Tilmann, and Adrian E Raftery. 2007. <span>“Strictly Proper Scoring Rules, Prediction, and Estimation.”</span> <em>Journal of the American Statistical Association</em> 102 (477): 359–78. <a href="https://doi.org/10.1198/016214506000001437">https://doi.org/10.1198/016214506000001437</a>.
+</div>
+<div id="ref-hastie2001" class="csl-entry" role="listitem">
+Hastie, Trevor, Robert Tibshirani, and Jerome Friedman. 2001. <em>The Elements of Statistical Learning</em>. Springer Series in Statistics. New York, NY, USA: Springer New York Inc.
+</div>
+<div id="ref-hastings1970monte" class="csl-entry" role="listitem">
+Hastings, W. K. 1970. <span>“Monte Carlo Sampling Methods Using Markov Chains and Their Applications.”</span> <em>Biometrika</em> 57 (1): 97–109.
+</div>
+<div id="ref-johnson2021" class="csl-entry" role="listitem">
+Johnson, Olatunji, Claudio Fronterre, Benjamin Amoah, Antonio Montresor, Emanuele Giorgi, Nicholas Midzi, Masceline Jenipher Mutsaka-Makuvaza, et al. 2021. <span>“Model-Based Geostatistical Methods Enable Efficient Design and Analysis of Prevalence Surveys for Soil-Transmitted Helminth Infection and Other Neglected Tropical Diseases.”</span> <em>Clinical Infectious Diseases</em> 72 (Supplement_3): S172–79. <a href="https://doi.org/10.1093/cid/ciab192">https://doi.org/10.1093/cid/ciab192</a>.
+</div>
+<div id="ref-gates2020" class="csl-entry" role="listitem">
+Katz, Elizabeth, and Bill &amp; Melinda Gates Foundation. 2020. <span>“Gender and Malaria Evidence Reivew.”</span> Bill &amp; Melinda Gates Foundation. <a href="https://www.gatesgenderequalitytoolbox.org/wp-content/uploads/BMGF_Malaria-Review_FC.pdf">https://www.gatesgenderequalitytoolbox.org/wp-content/uploads/BMGF_Malaria-Review_FC.pdf</a>.
+</div>
+<div id="ref-krige1951" class="csl-entry" role="listitem">
+Krige, D. G. 1951. <span>“A Statistical Approach to Some Basic Mine Valuation Problems on the Witwatersrand.”</span> <em>Journal of the Chemical, Metallurgical and Mining Society of South Africa</em> 52: 119–39.
+</div>
+<div id="ref-kyomuhangi2021" class="csl-entry" role="listitem">
+Kyomuhangi, Irene, Tarekegn A. Abeku, Matthew J. Kirby, Gezahegn Tesfaye, and Emanuele Giorgi. 2021. <span>“Understanding the Effects of Dichotomization of Continuous Outcomes on Geostatistical Inference.”</span> <em>Spatial Statistics</em> 42: 100424. https://doi.org/<a href="https://doi.org/10.1016/j.spasta.2020.100424">https://doi.org/10.1016/j.spasta.2020.100424</a>.
+</div>
+<div id="ref-mahoney2023" class="csl-entry" role="listitem">
+Mahoney, Michael J, Lucas K Johnson, Julia Silge, Hannah Frick, Max Kuhn, and Colin M Beier. 2023. <span>“Assessing the Performance of Spatial Cross-Validation Approaches for Models of Spatially Structured Data.”</span> <a href="https://doi.org/10.48550/arXiv.2303.07334">https://doi.org/10.48550/arXiv.2303.07334</a>.
+</div>
+<div id="ref-matern2013" class="csl-entry" role="listitem">
+Matern, B. 2013. <em>Spatial Variation</em>. Lecture Notes in Statistics. Springer New York. <a href="https://books.google.co.uk/books?id=HrbSBwAAQBAJ">https://books.google.co.uk/books?id=HrbSBwAAQBAJ</a>.
+</div>
+<div id="ref-matheron1963" class="csl-entry" role="listitem">
+Matheron, G. 1963. <span>“Principles of Geostatistics.”</span> <em>Economic Geology</em> 58: 1246–66.
+</div>
+<div id="ref-metropolis1953equation" class="csl-entry" role="listitem">
+Metropolis, Nicholas, Arianna W. Rosenbluth, Marshall N. Rosenbluth, Augusta H. Teller, and Edward Teller. 1953. <span>“Equation of State Calculations by Fast Computing Machines.”</span> <em>The Journal of Chemical Physics</em> 21 (6): 1087–92.
+</div>
+<div id="ref-nelder1972" class="csl-entry" role="listitem">
+Nelder, J. A., and R. W. M. Wedderburn. 1972. <span>“Generalized Linear Models.”</span> <em>Journal of the Royal Statistical Society A</em> 135: 370–84.
+</div>
+<div id="ref-who_underweight2024" class="csl-entry" role="listitem">
+Organization, World Health. 2024. <span>“Indicator Metadata Registry: Child Malnutrition—Underweight Among Children Under Five Years of Age (Weight-for-Age &lt;-2 SD).”</span> <a href="https://www.who.int/data/gho/indicator-metadata-registry/imr-details/27" class="uri">https://www.who.int/data/gho/indicator-metadata-registry/imr-details/27</a>.
+</div>
+<div id="ref-pawitan2001" class="csl-entry" role="listitem">
+Pawitan, Yudi. 2001. <em>In All Likelihood : Statistical Modelling and Inference Using Likelihood</em>. Oxford ; New York: Clarendon Press : Oxford University Press.
+</div>
+<div id="ref-puranik2024" class="csl-entry" role="listitem">
+Puranik, Amitha, Peter J. Diggle, Maurice R. Odiere, Katherine Gass, Stella Kepha, Collins Okoyo, Charles Mwandawiro, et al. 2024. <span>“Understanding the Impact of Covariates on the Classification of Implementation Units for Soil-Transmitted Helminths Control: A Case Study from Kenya.”</span> <em>BMC Medical Research Methodology</em> 24 (1): 294. <a href="https://doi.org/10.1186/s12874-024-02420-1">https://doi.org/10.1186/s12874-024-02420-1</a>.
+</div>
+<div id="ref-ripley1981" class="csl-entry" role="listitem">
+Ripley, B. D. 1981. <em>Spatial Statistics</em>. New York: Wiley.
+</div>
+<div id="ref-roberts1996exponential" class="csl-entry" role="listitem">
+Roberts, Gareth O., and Richard L. Tweedie. 1996. <span>“Exponential Convergence of Langevin Distributions and Their Discrete Approximations.”</span> <em>Bernoulli</em> 2 (4): 341–63.
+</div>
+<div id="ref-ross2013" class="csl-entry" role="listitem">
+Ross, Sheldon. 2013. <em>First Course in Probability, a.</em> 9th ed. Harlow: Pearson Education UK.
+</div>
+<div id="ref-rossky1978brownian" class="csl-entry" role="listitem">
+Rossky, Peter J., J. D. Doll, and Harold L. Friedman. 1978. <span>“Brownian Dynamics as Smart Monte Carlo Simulation.”</span> <em>The Journal of Chemical Physics</em> 69 (10): 4628–33.
+</div>
+<div id="ref-rue2009" class="csl-entry" role="listitem">
+Rue, H., S. Martino, and N. Chopin. 2009. <span>“Approximate Bayesian Inference for Latent Gaussian Models by Using Integrated Nested Laplace Approximations.”</span> <em>Journal of the Royal Statistical Society: Series B (Statistical Methodology)</em> 71 (2): 319–92. <a href="https://doi.org/10.1111/j.1467-9868.2008.00700.x">https://doi.org/10.1111/j.1467-9868.2008.00700.x</a>.
+</div>
+<div id="ref-shmueli2010" class="csl-entry" role="listitem">
+Shmueli, Galit. 2010. <span>“To Explain or to Predict?”</span> <em>Statistical Science</em> 25 (3): 289–310.
+</div>
+<div id="ref-smith2007" class="csl-entry" role="listitem">
+Smith, David L, Carlos A Guerra, Robert W Snow, and Simon I Hay. 2007. <span>“Standardizing Estimates of the Plasmodium Falciparum Parasite Rate.”</span> <em>Malaria Journal</em> 6 (1): 131–31.
+</div>
+<div id="ref-stein1999" class="csl-entry" role="listitem">
+Stein, Michael L. 1999. <em>Interpolation of Spatial Data Some Theory for Kriging</em>. 1st ed. 1999. Springer Series in Statistics. New York, NY: Springer New York : Imprint: Springer.
+</div>
+<div id="ref-stevenson2013" class="csl-entry" role="listitem">
+Stevenson, Gillian H. AND Gitonga, Jennifer C. AND Stresman. 2013. <span>“Reliability of School Surveys in Estimating Geographic Variation in Malaria Transmission in the Western Kenyan Highlands.”</span> <em>PLOS ONE</em> 8 (10). <a href="https://doi.org/10.1371/journal.pone.0077641">https://doi.org/10.1371/journal.pone.0077641</a>.
+</div>
+<div id="ref-fossog2015" class="csl-entry" role="listitem">
+Tene Fossog, Billy, Diego Ayala, Pelayo Acevedo, Pierre Kengne, Ignacio Ngomo Abeso Mebuy, Boris Makanga, Julie Magnus, et al. 2015. <span>“Habitat Segregation and Ecological Character Displacement in Cryptic African Malaria Mosquitoes.”</span> <em>Evolutionary Applications</em> 8 (4): 326–45. <a href="https://doi.org/10.1111/eva.12242">https://doi.org/10.1111/eva.12242</a>.
+</div>
+<div id="ref-tobler1970" class="csl-entry" role="listitem">
+Tobler, W. R. 1970. <span>“A Computer Movie Simulating Urban Growth in the Detroit Region.”</span> <em>Economic Geography</em> 46: 234–40.
+</div>
+<div id="ref-sdg2201meta2025" class="csl-entry" role="listitem">
+United Nations Statistics Division, World Health Organization, and UNICEF. 2025. <span>“SDG Indicator 2.2.1 Metadata: Prevalence of Stunting (Height-for-Age &lt;-2 SD) Among Children Under Five Years of Age.”</span> <a href="https://unstats.un.org/sdgs/metadata/files/Metadata-02-02-01.pdf" class="uri">https://unstats.un.org/sdgs/metadata/files/Metadata-02-02-01.pdf</a>.
+</div>
+<div id="ref-watson1971" class="csl-entry" role="listitem">
+Watson, G. S. 1971. <span>“Trend -Surface Analysis.”</span> <em>Mathematical Geology</em> 3: 215–26.
+</div>
+<div id="ref-watson1972" class="csl-entry" role="listitem">
+———. 1972. <span>“Trend Surface Analysis and Spatial Correlation.”</span> <em>Geological Society of America Special Paper</em> 146: 39–46.
+</div>
+<div id="ref-weisberg2014" class="csl-entry" role="listitem">
+Weisberg, Sanford. 2014. <em>Applied Linear Regression</em>. Fourth. Hoboken <span>NJ</span>: Wiley. <a href="http://z.umn.edu/alr4ed">http://z.umn.edu/alr4ed</a>.
+</div>
+<div id="ref-who2006" class="csl-entry" role="listitem">
+WHO. 2006. <span>“WHO Child Growth Standards: Length/Height-for-Age, Weight-for-Age, Weight-for-Length, Weight-for-Height and Body Mass Index-for-Age: Methods and Development.”</span> Geneva: WHO. <a href="https://www.who.int/publications/i/item/924154693X">https://www.who.int/publications/i/item/924154693X</a>.
+</div>
+<div id="ref-yin2024" class="csl-entry" role="listitem">
+Yin, Hui, Yutong Wang, Yuxin Wang, Zihan Li, Yujie Li, and Yuxin Wang. 2024. <span>“A Rapid Review of Clustering Algorithms.”</span> <em>arXiv Preprint arXiv:2401.07389</em>.
+</div>
+<div id="ref-zhang2002" class="csl-entry" role="listitem">
+Zhang, Hao. 2002. <span>“On Estimation and Prediction for Spatial Generalized Linear Mixed Models.”</span> <em>Biometrics</em> 58 (1): 129–36.
+</div>
+<div id="ref-zhang2004" class="csl-entry" role="listitem">
+———. 2004. <span>“Inconsistent Estimation and Asymptotically Equal Interpolations in Model-Based Geostatistics.”</span> <em>Journal of the American Statistical Association</em> 99 (465): 250–61.
+</div>
+<div id="ref-zoure2014" class="csl-entry" role="listitem">
+Zouré, Honorat GM, Mounkaila Noma, Afework H Tekle, Uche V Amazigo, Peter J Diggle, Emanuele Giorgi, and Jan HF Remme. 2014. <span>“Geographic Distribution of Onchocerciasis in the 20 Participating Countries of the African Programme for Onchocerciasis Control: (2) Pre-Control Endemicity Levels and Estimated Number Infected.”</span> <em>Parasites &amp; Vectors</em> 7 (1): 326–26.
+</div>
+</div>
+</section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script><nav class="page-navigation"><div class="nav-page nav-page-previous">
+      <a href="./04_geostatistical-prediction.html" class="pagination-link" aria-label="Geostatistical prediction">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Geostatistical prediction</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./references.html" class="pagination-link" aria-label="References">
+        <span class="nav-page-text">References</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+<script src="site_libs/quarto-contrib/line-highlight-1.0.0/line-highlight.js" defer="true"></script>
+</body></html>
