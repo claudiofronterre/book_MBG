@@ -2,10 +2,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.33">
+<meta name="generator" content="quarto-1.9.35">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <title>1&nbsp; Introduction – Model-based geostatistics for global public health using R</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -56,7 +59,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 div.csl-bib-body { }
 div.csl-entry {
   clear: both;
-  margin-bottom: 0em;
 }
 .hanging-indent div.csl-entry {
   margin-left:2em;
@@ -89,10 +91,10 @@ div.csl-indent {
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-425560e6e27c88e19529b7c03591d40d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-8c37e94934072dbafab1ae8ca0ced594.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-21c7f0257b9bb094a624d430cf8b6a6a.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light"><script id="quarto-search-options" type="application/json">{
+<link href="site_libs/bootstrap/bootstrap-438917a6218f4401d765e26398c0903b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light"><script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
   "collapse-after": 3,
@@ -119,7 +121,7 @@ div.csl-indent {
     "search-label": "Search"
   }
 }</script><link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
-<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script><script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script><script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script><script type="text/javascript">
+<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script><script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script><script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script><script type="text/javascript">
 const typesetMath = (el) => {
   if (window.MathJax) {
     // MathJax Typeset
@@ -130,7 +132,7 @@ const typesetMath = (el) => {
     var macros = [];
     for (var i = 0; i < mathElements.length; i++) {
       var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
         window.katex.render(texText.data, mathElements[i], {
           displayMode: mathElements[i].classList.contains('display'),
           throwOnError: false,
@@ -183,7 +185,7 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./author.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Author</span></a>
+ <span class="menu-text">Authors</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -400,19 +402,19 @@ Note
 </div>
 <p>To install packages in R for the first time, you can use the command <code>install.packages</code> in the R console. For example, to install the stable CRAN release of the <code>RiskMap</code> package, run:</p>
 <div class="cell">
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"RiskMap"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"RiskMap"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Alternatively, you can install the development version of <code>RiskMap</code> from GitHub, which is updated more frequently but should be considered a testing version. This requires the <code>remotes</code> package:</p>
 <div class="cell">
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span></span>
-<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"giorgistat/RiskMap"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span></span>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"giorgistat/RiskMap"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section><section id="sec-examples-ch1" class="level2" data-number="1.4"><h2 data-number="1.4" class="anchored" data-anchor-id="sec-examples-ch1">
 <span class="header-section-number">1.4</span> Data-sets used in the book</h2>
 <p>In this book, we use data available from the <code>RiskMap</code> package. These data-sets are grouped into two categories: <em>examples</em>, which are used to demonstrate the application of R functions and modelling steps, and <em>case studies</em>, which are analysed in greater depth to illustrate the use of complete geostatistical workflows. In this introductory chapter, we focus on presenting the <em>example</em> data-sets, while leaving the detailed presentation and analysis of the <em>case study</em> data-sets to <a href="05_case-studies.html" class="quarto-xref"><span>Chapter 5</span></a>.</p>
 <p>Each of the data-sets, whether <em>example</em> or <em>case-study</em>, can be loaded directly from the <code>RiskMap</code> package using the command:</p>
 <div class="cell">
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">NAME_OF_THE_DATASET</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">NAME_OF_THE_DATASET</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>where <code>NAME_OF_THE_DATASET</code> should be replaced with the name of one of the data-sets listed in <a href="#tbl-data-sets" class="quarto-xref">Table&nbsp;<span>1.2</span></a>.</p>
 <div id="tbl-data-sets" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -484,7 +486,7 @@ Table&nbsp;1.2: List of data-sets available from the <code>RiskMap</code> packag
 Figure&nbsp;1.1: Data on the measured lead concentration (in micrograms per gram dry weight) in moss samples collected in Galicia, North-West of Spain.
 </figcaption></figure>
 </div>
-<p>Lead is a heavy metal that, at high concentrations, can cause chronic damage to living organisms over prolonged periods. For this reason, its distribution and sources require regular monitoring. A common approach is to measure lead concentrations in plants, which act as bioindicators of environmental contamination. The data considered here (<a href="#fig-galicia-ch1" class="quarto-xref">Figure&nbsp;<span>1.1</span></a>) consist of measurements from 132 moss samples collected in the year 2000 in and around Galicia, a region in north-western Spain. One of the main objectives of the survey was to map the spatial distribution of lead concentration in order to identify potential sources of contamination; for further details, see <span class="citation" data-cites="fernandez2000">Fernández, Rey, and Carballeira (<a href="references.html#ref-fernandez2000" role="doc-biblioref">2000</a>)</span>.</p>
+<p>Lead is a heavy metal that, at high concentrations, can cause chronic damage to living organisms over prolonged periods. For this reason, its distribution and sources require regular monitoring. A common approach is to measure lead concentrations in plants, which act as bioindicators of environmental contamination. The data considered here (<a href="#fig-galicia-ch1" class="quarto-xref">Figure&nbsp;<span>1.1</span></a>) consist of measurements from 132 moss samples collected in the year 2000 in and around Galicia, a region in north-western Spain. One of the main objectives of the survey was to map the spatial distribution of lead concentration in order to identify potential sources of contamination; for further details, see <span class="citation" data-cites="fernandez2000">Fernández et al. (<a href="references.html#ref-fernandez2000" role="doc-biblioref">2000</a>)</span>.</p>
 <p>Geostatistical modelling provides a framework for predicting lead concentrations across Galicia and for distinguishing between random variation, for instance due to measurement error, and genuine spatial variation, which is the principal focus of analysis.</p>
 <p>This dataset will be used throughout the book to illustrate the spatial analysis of continuously measured variables using linear geostatistical models.</p>
 </section><section id="sec-rb-ch1" class="level3" data-number="1.4.2"><h3 data-number="1.4.2" class="anchored" data-anchor-id="sec-rb-ch1">
@@ -547,11 +549,11 @@ Figure&nbsp;1.4: Map of the collected number of <em>Anopheles gambiae</em> mosqu
 Figure&nbsp;1.5: Map of the locations of the simulated data-set generated over Italy for a continuous outcome.
 </figcaption></figure>
 </div>
-<p>The data-set reported in <a href="#fig-italy-sim-ch1" class="quarto-xref">Figure&nbsp;<span>1.5</span></a> was generated using a geostatistical model, with the addition of unstructured random effects at provincial and regional level. More details on how this data-set was generated will be provided in <a href="03_model-fitting.html#sec-linear-model" class="quarto-xref"><span>Section 3.2</span></a>. Whilst this data-set does not have any scientific relevance, it will serve us to illustrate some of the more advanced features of the <code>RiskMap</code> package that enable the inclusion of random effects, in addition to the latent Gaussian process that is common to all geostatistical models. The skills you will acquire through the analysis of this data-set will be useful for the analysis of data-sets presented as case studies in <a href="05_case-studies.html" class="quarto-xref"><span>Chapter 5</span></a>.</p>
+<p>The data-set reported in <a href="#fig-italy-sim-ch1" class="quarto-xref">Figure&nbsp;<span>1.5</span></a> was generated using a geostatistical model, with the addition of unstructured random effects at provincial and regional level. More details on how this data-set was generated will be provided in <span class="quarto-unresolved-ref">?sec-linear-model</span>. Whilst this data-set does not have any scientific relevance, it will serve us to illustrate some of the more advanced features of the <code>RiskMap</code> package that enable the inclusion of random effects, in addition to the latent Gaussian process that is common to all geostatistical models. The skills you will acquire through the analysis of this data-set will be useful for the analysis of data-sets presented as case studies in <a href="05_case-studies.html" class="quarto-xref"><span>Chapter 5</span></a>.</p>
 </section></section><section id="sec-geostat-models" class="level2" data-number="1.5"><h2 data-number="1.5" class="anchored" data-anchor-id="sec-geostat-models">
 <span class="header-section-number">1.5</span> Geostatistical problems and geostatistical models</h2>
 <p>What the examples of the previous section have in common is that, in each case, the goal of the statistical analysis is to draw inferences on an unobserved spatially continuous surface using data collected from a finite set of locations. The lead concentration in Galicia, the prevalence for river-blindness in Liberia and the abundance of <em>A. gambiae</em> mosquitoes in Cameroon can all be represented as spatially continuous processes that originate from the combined effects of environmental factors. We denote this class of inferential problems as <em>geostatistical problems</em> for which a solution can be found through the development and application of suitable <em>geostatistical models</em>, which are the subject of this book.</p>
-<p>As one can soon realize, geostatistical problems are not unique to global health but arise in many other fields of science, including economics, physics, biology and geology. It thus comes to no surprise that geostatistics was initially developed in the South African mining industry in the 1950s <span class="citation" data-cites="krige1951">(<a href="references.html#ref-krige1951" role="doc-biblioref">Krige 1951</a>)</span>. This was then further developed as a self-contained discipline by Georges Matheron and other researchers at Fontainebleau, in France <span class="citation" data-cites="matheron1963 chilesdelfiner2016">(<a href="references.html#ref-matheron1963" role="doc-biblioref">Matheron 1963</a>; <a href="references.html#ref-chilesdelfiner2016" role="doc-biblioref">Chilès and Delfiner 2016</a>)</span>. In <span class="citation" data-cites="watson1971">Watson (<a href="references.html#ref-watson1971" role="doc-biblioref">1971</a>)</span> and <span class="citation" data-cites="watson1972">Watson (<a href="references.html#ref-watson1972" role="doc-biblioref">1972</a>)</span> a first connection is drawn between geostatistics and the prediction of stochastic processes. However, it is only with <span class="citation" data-cites="ripley1981">Ripley (<a href="references.html#ref-ripley1981" role="doc-biblioref">1981</a>)</span> and then <span class="citation" data-cites="cressie1991">N. A. C. Cressie (<a href="references.html#ref-cressie1991" role="doc-biblioref">1991</a>)</span> that geostatistics is explicitly brought into a classical statistical framework for the analysis of spatially referenced data. <span class="citation" data-cites="diggle1998">P. J. Diggle, Tawn, and Moyeed (<a href="references.html#ref-diggle1998" role="doc-biblioref">1998</a>)</span> coined the term <em>model-based geostatistics</em> and introduced this as belonging to the general class of generalized linear mixed models <span class="citation" data-cites="breslow1993">(<a href="references.html#ref-breslow1993" role="doc-biblioref">Breslow and Clayton 1993</a>)</span>, while emphasizing the use of likelihood-based methods of inference. As in <span class="citation" data-cites="diggle1998">P. J. Diggle, Tawn, and Moyeed (<a href="references.html#ref-diggle1998" role="doc-biblioref">1998</a>)</span>, also in this book, we advocate the application of model-based geostatistical models as a class of parametric statistical models on which inference can be carried out using either maximum likelihood estimation or Bayesian methods.</p>
+<p>As one can soon realize, geostatistical problems are not unique to global health but arise in many other fields of science, including economics, physics, biology and geology. It thus comes to no surprise that geostatistics was initially developed in the South African mining industry in the 1950s <span class="citation" data-cites="krige1951">(<a href="references.html#ref-krige1951" role="doc-biblioref">Krige 1951</a>)</span>. This was then further developed as a self-contained discipline by Georges Matheron and other researchers at Fontainebleau, in France <span class="citation" data-cites="matheron1963 chilesdelfiner2016">(<a href="references.html#ref-matheron1963" role="doc-biblioref">Matheron 1963</a>; <a href="references.html#ref-chilesdelfiner2016" role="doc-biblioref">Chilès and Delfiner 2016</a>)</span>. In <span class="citation" data-cites="watson1971">Watson (<a href="references.html#ref-watson1971" role="doc-biblioref">1971</a>)</span> and <span class="citation" data-cites="watson1972">Watson (<a href="references.html#ref-watson1972" role="doc-biblioref">1972</a>)</span> a first connection is drawn between geostatistics and the prediction of stochastic processes. However, it is only with <span class="citation" data-cites="ripley1981">Ripley (<a href="references.html#ref-ripley1981" role="doc-biblioref">1981</a>)</span> and then <span class="citation" data-cites="cressie1991">Cressie (<a href="references.html#ref-cressie1991" role="doc-biblioref">1991</a>)</span> that geostatistics is explicitly brought into a classical statistical framework for the analysis of spatially referenced data. <span class="citation" data-cites="diggle1998">Diggle et al. (<a href="references.html#ref-diggle1998" role="doc-biblioref">1998</a>)</span> coined the term <em>model-based geostatistics</em> and introduced this as belonging to the general class of generalized linear mixed models <span class="citation" data-cites="breslow1993">(<a href="references.html#ref-breslow1993" role="doc-biblioref">Breslow and Clayton 1993</a>)</span>, while emphasizing the use of likelihood-based methods of inference. As in <span class="citation" data-cites="diggle1998">Diggle et al. (<a href="references.html#ref-diggle1998" role="doc-biblioref">1998</a>)</span>, also in this book, we advocate the application of model-based geostatistical models as a class of parametric statistical models on which inference can be carried out using either maximum likelihood estimation or Bayesian methods.</p>
 <p>More precisely, our attention will be directed at the class of <em>generalized linear geostatistical models</em>, or GLGMs. To formally specify this, we define the spatial stochastic process <span class="math inline">\(S(\cdot)\)</span>, representing an unobserved spatially continuous random field. For a set of locations <span class="math inline">\(X = (x_1, \ldots, x_n)\)</span>, we denote by</p>
 <p><span class="math display">\[
 S = (S(x_1), \ldots, S(x_n))
@@ -684,7 +686,7 @@ Figure&nbsp;1.8: Stages of a statistical analysis
 <p>In the remainder of this book, each chapter focuses on one or more of these stages as shown in <a href="#fig-stages" class="quarto-xref">Figure&nbsp;<span>1.8</span></a>. <a href="02_handling-spatial-data.html" class="quarto-xref"><span>Chapter 2</span></a> introduces methods for working with spatial data in R, with a focus on raster and vector formats, including points and polygons. The skills developed in this chapter are applied throughout the book and are especially important in <a href="04_geostatistical-prediction.html" class="quarto-xref"><span>Chapter 4</span></a> and <a href="05_case-studies.html" class="quarto-xref"><span>Chapter 5</span></a>, where predictive maps of health outcomes are generated. <a href="03_model-fitting.html" class="quarto-xref"><span>Chapter 3</span></a> then describes the process of model formulation and estimation, showing how exploratory analyses inform the choice of model and how maximum likelihood methods can be used for parameter estimation. <a href="04_geostatistical-prediction.html" class="quarto-xref"><span>Chapter 4</span></a> builds on this by demonstrating how fitted models can be used for spatial prediction on both continuous and aggregated scales, and how predictive performance can be assessed to identify the most suitable model. Finally, <a href="05_case-studies.html" class="quarto-xref"><span>Chapter 5</span></a> presents complete applications of all methods to three datasets, summarizing the full geostatistical workflow and illustrating additional features of the <code>RiskMap</code> R package not covered in earlier chapters.</p>
 
 
-<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
+<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
 <div id="ref-amazigo2008" class="csl-entry" role="listitem">
 Amazigo, U. 2008. <span>“The African Programme for Onchocerciasis Control (APOC).”</span> <em>Ann Trop Med Parasitol</em> 102 (Suppl 1): 19–22. <a href="https://doi.org/10.1179/136485908X337436">https://doi.org/10.1179/136485908X337436</a>.
 </div>
@@ -704,7 +706,7 @@ Bolin, David, and Jonas Wallin. 2023. <span>“<span class="nocase">Local scale 
 Bolling, Bethany G., Christopher M. Barker, Chester G. Moore, W. John Pape, and Lars Eisen. 2009. <span>“Seasonal Patterns for Entomological Measures of Risk for Exposure to <em>Culex</em> Vectors and West Nile Virus in Relation to Human Disease Cases in Northeastern Colorado.”</span> <em>Journal of Medical Entomology</em> 46 (6): 1519–31. <a href="https://doi.org/10.1603/033.046.0641">https://doi.org/10.1603/033.046.0641</a>.
 </div>
 <div id="ref-bowman1997" class="csl-entry" role="listitem">
-Bowman, A. W. 1997. <em>Applied Smoothing Techniques for Data Analysis : The Kernel Approach with s-Plus Illustrations</em>. Oxford Statistical Science Series ; 18. Oxford : New York: Clarendon Press ; Oxford University Press.
+Bowman, A. W. 1997. <em>Applied Smoothing Techniques for Data Analysis : The Kernel Approach with s-Plus Illustrations</em>. Oxford Statistical Science Series ; 18. Clarendon Press ; Oxford University Press.
 </div>
 <div id="ref-breslow1993" class="csl-entry" role="listitem">
 Breslow, N. E., and D. G. Clayton. 1993. <span>“Approximate Inference in Generalized Linear Mixed Models.”</span> <em>Journal of the American Statistical Association</em> 88: 9–25.
@@ -713,10 +715,10 @@ Breslow, N. E., and D. G. Clayton. 1993. <span>“Approximate Inference in Gener
 Brooks, Steve, Andrew Gelman, Galin L. Jones, and Xiao-Li Meng. 2011. <em>Handbook of Markov Chain Monte Carlo</em>. CRC Press.
 </div>
 <div id="ref-cdph2025response" class="csl-entry" role="listitem">
-California Department of Public Health. 2025. <span>“California Mosquito-Borne Virus Surveillance and Response Plan.”</span> Online.
+California Department of Public Health. 2025. <em>California Mosquito-Borne Virus Surveillance and Response Plan</em>. Online.
 </div>
 <div id="ref-cdc_wnv_guidelines_2024" class="csl-entry" role="listitem">
-Centers for Disease Control and Prevention. 2024. <span>“West Nile Virus Surveillance and Control Guidelines.”</span> CDC guidance. <a href="https://www.cdc.gov/west-nile-virus/php/surveillance-and-control-guidelines/index.html">https://www.cdc.gov/west-nile-virus/php/surveillance-and-control-guidelines/index.html</a>.
+Centers for Disease Control and Prevention. 2024. <em>West Nile Virus Surveillance and Control Guidelines</em>. CDC guidance. <a href="https://www.cdc.gov/west-nile-virus/php/surveillance-and-control-guidelines/index.html">https://www.cdc.gov/west-nile-virus/php/surveillance-and-control-guidelines/index.html</a>.
 </div>
 <div id="ref-chilesdelfiner2016" class="csl-entry" role="listitem">
 Chilès, J-P, and P. Delfiner. 2016. <em>Geostatistics (Second Edition)</em>. Hoboken: Wiley.
@@ -728,13 +730,13 @@ Christensen, OF, GO Roberts, and M Sköld. 2006. <span>“Robust Markov Chain Mo
 Christensen, Ole F. 2004. <span>“Monte Carlo Maximum Likelihood in Model-Based Geostatistics.”</span> <em>Journal of Computational and Graphical Statistics</em> 13 (3): 702–18.
 </div>
 <div id="ref-cityofboulder_wnv_vectorindex_2025" class="csl-entry" role="listitem">
-City of Boulder. 2025. <span>“West Nile Virus — Estimating Risk to People: The Vector Index.”</span> <a href="https://bouldercolorado.gov/west-nile-virus">https://bouldercolorado.gov/west-nile-virus</a>.
+City of Boulder. 2025. <em>West Nile Virus — Estimating Risk to People: The Vector Index</em>. <a href="https://bouldercolorado.gov/west-nile-virus">https://bouldercolorado.gov/west-nile-virus</a>.
 </div>
 <div id="ref-fortcollins_wnv_program_manual_2014" class="csl-entry" role="listitem">
-City of Fort Collins. 2014. <span>“West Nile Virus Program Manual.”</span> City of Fort Collins. <a href="https://www.fcgov.com/westnile/pdf/wnv_program_manual.pdf">https://www.fcgov.com/westnile/pdf/wnv_program_manual.pdf</a>.
+City of Fort Collins. 2014. <em>West Nile Virus Program Manual</em>. City of Fort Collins. <a href="https://www.fcgov.com/westnile/pdf/wnv_program_manual.pdf">https://www.fcgov.com/westnile/pdf/wnv_program_manual.pdf</a>.
 </div>
 <div id="ref-fortcollins_localdata_vi_2025" class="csl-entry" role="listitem">
-———. 2025. <span>“Local Data — West Nile Virus.”</span> <a href="https://www.fcgov.com/westnile/local-data">https://www.fcgov.com/westnile/local-data</a>.
+City of Fort Collins. 2025. <em>Local Data — West Nile Virus</em>. <a href="https://www.fcgov.com/westnile/local-data">https://www.fcgov.com/westnile/local-data</a>.
 </div>
 <div id="ref-cowles1996markov" class="csl-entry" role="listitem">
 Cowles, Mary Kathryn, and Bradley P. Carlin. 1996. <span>“Markov Chain Monte Carlo Convergence Diagnostics: A Comparative Review.”</span> <em>Journal of the American Statistical Association</em> 91 (434): 883–904.
@@ -752,7 +754,7 @@ Czado, Claudia, Tilmann Gneiting, and Leonhard Held. 2009. <span>“<span class=
 Dawid, A. P. 1984. <span>“Statistical Theory: The Prequential Approach.”</span> <em>Journal of the Royal Statistical Society: Series A (General)</em> 147 (2): 278–92.
 </div>
 <div id="ref-diggleBook2019" class="csl-entry" role="listitem">
-Diggle, P J, and E Giorgi. 2019. <em>Model-Based Geostatistics for Global Public Health : Methods and Applications.</em> Chapman and Hall/CRC Interdisciplinary Statistics Ser. Milton: Chapman; Hall/CRC.
+Diggle, P J, and E Giorgi. 2019. <em>Model-Based Geostatistics for Global Public Health : Methods and Applications.</em> Chapman and Hall/CRC Interdisciplinary Statistics Ser. Chapman; Hall/CRC.
 </div>
 <div id="ref-diggle1998" class="csl-entry" role="listitem">
 Diggle, P. J., J. A. Tawn, and R. A. Moyeed. 1998. <span>“Model-Based Geostatistics.”</span> <em>Journal of the Royal Statistical Society: Series C (Applied Statistics)</em> 47 (3): 299–350. <a href="https://doi.org/10.1111/1467-9876.00113">https://doi.org/10.1111/1467-9876.00113</a>.
@@ -779,7 +781,7 @@ Gelman, Andrew, John B. Carlin, Hal S. Stern, David B. Dunson, Aki Vehtari, and 
 Gelman, Andrew, and Donald B Rubin. 1992. <span>“Inference from Iterative Simulation Using Multiple Sequences.”</span> <em>Statistical Science</em> 7 (4): 457–72.
 </div>
 <div id="ref-geweke1992evaluating" class="csl-entry" role="listitem">
-Geweke, John. 1992. <span>“Evaluating the Accuracy of Sampling‐based Approaches to the Calculation of Posterior Moments.”</span> Edited by Jose M. Bernardo, James O. Berger, A. Philip Dawid, and Adrian F. M. Smith, 169–93.
+Geweke, John. 1992. <em>Evaluating the Accuracy of Sampling‐based Approaches to the Calculation of Posterior Moments</em>. 169–93.
 </div>
 <div id="ref-geyer1991" class="csl-entry" role="listitem">
 Geyer, Charles J. 1991. <span>“Markov Chain Monte Carlo Maximum Likelihood.”</span> <em>Journal of Computational and Graphical Statistics</em> 1 (4): 39–55.
@@ -788,13 +790,13 @@ Geyer, Charles J. 1991. <span>“Markov Chain Monte Carlo Maximum Likelihood.”
 Geyer, Charles J. 1994. <span>“Likelihood and Exponential Families.”</span> <em>Department of Statistics, University of Minnesota</em>.
 </div>
 <div id="ref-geyer1996" class="csl-entry" role="listitem">
-———. 1996. <span>“Markov Chain Monte Carlo Maximum Likelihood.”</span> <em>Department of Statistics, University of Minnesota</em>.
+Geyer, Charles J. 1996. <span>“Markov Chain Monte Carlo Maximum Likelihood.”</span> <em>Department of Statistics, University of Minnesota</em>.
 </div>
 <div id="ref-geyer2019handbook" class="csl-entry" role="listitem">
-———. 2019. <span>“Monte Carlo Methods in MCMC.”</span> In <em>Handbook of MCMC</em>, edited by Steve Brooks, Andrew Gelman, Galin L. Jones, and Xiao-Li Meng, 3–48. CRC Press.
+Geyer, Charles J. 2019. <span>“Monte Carlo Methods in MCMC.”</span> In <em>Handbook of MCMC</em>, edited by Steve Brooks, Andrew Gelman, Galin L. Jones, and Xiao-Li Meng. CRC Press.
 </div>
 <div id="ref-ghanaDHS2014" class="csl-entry" role="listitem">
-Ghana Statistical Service, Ghana Health Service, and ICF International. 2015. <em>Ghana Demographic and Health Survey 2014</em>. Rockville, Maryland, USA: Ghana Statistical Service, Ghana Health Service,; ICF International. <a href="https://dhsprogram.com/publications/publication-FR307-DHS-Final-Reports.cfm">https://dhsprogram.com/publications/publication-FR307-DHS-Final-Reports.cfm</a>.
+Ghana Statistical Service, Ghana Health Service, and ICF International. 2015. <em>Ghana Demographic and Health Survey 2014</em>. Ghana Statistical Service, Ghana Health Service,; ICF International. <a href="https://dhsprogram.com/publications/publication-FR307-DHS-Final-Reports.cfm">https://dhsprogram.com/publications/publication-FR307-DHS-Final-Reports.cfm</a>.
 </div>
 <div id="ref-giorgi2017" class="csl-entry" role="listitem">
 Giorgi, Emanuele, and Peter J. Diggle. 2017. <span>“PrevMap: An r Package for Prevalence Mapping.”</span> <em>Journal of Statistical Software</em> 78 (8): 1–29. <a href="https://doi.org/10.18637/jss.v078.i08">https://doi.org/10.18637/jss.v078.i08</a>.
@@ -806,22 +808,22 @@ Gneiting, Tilmann, Fadoua Balabdaoui, and Adrian E Raftery. 2007. <span>“Proba
 Gneiting, Tilmann, and Adrian E Raftery. 2007. <span>“Strictly Proper Scoring Rules, Prediction, and Estimation.”</span> <em>Journal of the American Statistical Association</em> 102 (477): 359–78. <a href="https://doi.org/10.1198/016214506000001437">https://doi.org/10.1198/016214506000001437</a>.
 </div>
 <div id="ref-harrell2015" class="csl-entry" role="listitem">
-Harrell, Frank E. 2015. <em>Regression Modeling Strategies</em>. 2nd ed. New York: Springer.
+Harrell, Frank E. 2015. <em>Regression Modeling Strategies</em>. 2nd ed. Springer.
 </div>
 <div id="ref-hastie2001" class="csl-entry" role="listitem">
-Hastie, Trevor, Robert Tibshirani, and Jerome Friedman. 2001. <em>The Elements of Statistical Learning</em>. Springer Series in Statistics. New York, NY, USA: Springer New York Inc.
+Hastie, Trevor, Robert Tibshirani, and Jerome Friedman. 2001. <em>The Elements of Statistical Learning</em>. Springer Series in Statistics. Springer New York Inc.
 </div>
 <div id="ref-hastings1970monte" class="csl-entry" role="listitem">
 Hastings, W. K. 1970. <span>“Monte Carlo Sampling Methods Using Markov Chains and Their Applications.”</span> <em>Biometrika</em> 57 (1): 97–109.
 </div>
 <div id="ref-johnson2021" class="csl-entry" role="listitem">
-Johnson, Olatunji, Claudio Fronterre, Benjamin Amoah, Antonio Montresor, Emanuele Giorgi, Nicholas Midzi, Masceline Jenipher Mutsaka-Makuvaza, et al. 2021. <span>“Model-Based Geostatistical Methods Enable Efficient Design and Analysis of Prevalence Surveys for Soil-Transmitted Helminth Infection and Other Neglected Tropical Diseases.”</span> <em>Clinical Infectious Diseases</em> 72 (Supplement_3): S172–79. <a href="https://doi.org/10.1093/cid/ciab192">https://doi.org/10.1093/cid/ciab192</a>.
+Johnson, Olatunji, Claudio Fronterre, Benjamin Amoah, et al. 2021. <span>“Model-Based Geostatistical Methods Enable Efficient Design and Analysis of Prevalence Surveys for Soil-Transmitted Helminth Infection and Other Neglected Tropical Diseases.”</span> <em>Clinical Infectious Diseases</em> 72 (Supplement_3): S172–79. <a href="https://doi.org/10.1093/cid/ciab192">https://doi.org/10.1093/cid/ciab192</a>.
 </div>
 <div id="ref-jones2011vi" class="csl-entry" role="listitem">
-Jones, Roderick C., Kingsley N. Weaver, Shamika Smith, Claudia Blanco, Cristina Flores, Kevin Gibbs, Daniel Markowski, and John-Paul Mutebi. 2011. <span>“Use of the Vector Index and Geographic Information System to Prospectively Inform West Nile Virus Interventions.”</span> <em>Journal of the American Mosquito Control Association</em> 27 (3): 315–19. <a href="https://doi.org/10.2987/10-6098.1">https://doi.org/10.2987/10-6098.1</a>.
+Jones, Roderick C., Kingsley N. Weaver, Shamika Smith, et al. 2011. <span>“Use of the Vector Index and Geographic Information System to Prospectively Inform West Nile Virus Interventions.”</span> <em>Journal of the American Mosquito Control Association</em> 27 (3): 315–19. <a href="https://doi.org/10.2987/10-6098.1">https://doi.org/10.2987/10-6098.1</a>.
 </div>
 <div id="ref-gates2020" class="csl-entry" role="listitem">
-Katz, Elizabeth, and Bill &amp; Melinda Gates Foundation. 2020. <span>“Gender and Malaria Evidence Reivew.”</span> Bill &amp; Melinda Gates Foundation. <a href="https://www.gatesgenderequalitytoolbox.org/wp-content/uploads/BMGF_Malaria-Review_FC.pdf">https://www.gatesgenderequalitytoolbox.org/wp-content/uploads/BMGF_Malaria-Review_FC.pdf</a>.
+Katz, Elizabeth, and Bill &amp; Melinda Gates Foundation. 2020. <em>Gender and Malaria Evidence Reivew</em>. Bill &amp; Melinda Gates Foundation. <a href="https://www.gatesgenderequalitytoolbox.org/wp-content/uploads/BMGF_Malaria-Review_FC.pdf">https://www.gatesgenderequalitytoolbox.org/wp-content/uploads/BMGF_Malaria-Review_FC.pdf</a>.
 </div>
 <div id="ref-kilpatrick2013predicting" class="csl-entry" role="listitem">
 Kilpatrick, A. Marm, and W. John Pape. 2013. <span>“Predicting Human West Nile Virus Infections with Mosquito Surveillance Data.”</span> <em>American Journal of Epidemiology</em> 178 (5): 829–35. <a href="https://doi.org/10.1093/aje/kwt046">https://doi.org/10.1093/aje/kwt046</a>.
@@ -836,13 +838,13 @@ Krige, D. G. 1951. <span>“A Statistical Approach to Some Basic Mine Valuation 
 Kyomuhangi, Irene, Tarekegn A. Abeku, Matthew J. Kirby, Gezahegn Tesfaye, and Emanuele Giorgi. 2021. <span>“Understanding the Effects of Dichotomization of Continuous Outcomes on Geostatistical Inference.”</span> <em>Spatial Statistics</em> 42: 100424. https://doi.org/<a href="https://doi.org/10.1016/j.spasta.2020.100424">https://doi.org/10.1016/j.spasta.2020.100424</a>.
 </div>
 <div id="ref-Lovelace2020-iq" class="csl-entry" role="listitem">
-Lovelace, Robin, Jakub Nowosad, and Jannes Muenchow. 2020. <em>Geocomputation with <span>R</span></em>. London, England: CRC Press. <a href="https://r.geocompx.org/">https://r.geocompx.org/</a>.
+Lovelace, Robin, Jakub Nowosad, and Jannes Muenchow. 2020. <em>Geocomputation with <span>R</span></em>. CRC Press. <a href="https://r.geocompx.org/">https://r.geocompx.org/</a>.
 </div>
 <div id="ref-malariaAtlas" class="csl-entry" role="listitem">
-Lucas, Tim C. D., Anita K. Nandi, Rosalind E. Howes, Daniel J. Weiss, Ewan Cameron, Nick Golding, and Peter W. Gething. 2020. <span>“malariaAtlas: An r Interface to Global Malariometric Data Hosted by the Malaria Atlas Project.”</span> <em>Wellcome Open Research</em> 5: 74. <a href="https://doi.org/10.12688/wellcomeopenres.15987.1">https://doi.org/10.12688/wellcomeopenres.15987.1</a>.
+Lucas, Tim C. D., Anita K. Nandi, Rosalind E. Howes, et al. 2020. <span>“malariaAtlas: An r Interface to Global Malariometric Data Hosted by the Malaria Atlas Project.”</span> <em>Wellcome Open Research</em> 5: 74. <a href="https://doi.org/10.12688/wellcomeopenres.15987.1">https://doi.org/10.12688/wellcomeopenres.15987.1</a>.
 </div>
 <div id="ref-mahoney2023" class="csl-entry" role="listitem">
-Mahoney, Michael J, Lucas K Johnson, Julia Silge, Hannah Frick, Max Kuhn, and Colin M Beier. 2023. <span>“Assessing the Performance of Spatial Cross-Validation Approaches for Models of Spatially Structured Data.”</span> <a href="https://doi.org/10.48550/arXiv.2303.07334">https://doi.org/10.48550/arXiv.2303.07334</a>.
+Mahoney, Michael J, Lucas K Johnson, Julia Silge, Hannah Frick, Max Kuhn, and Colin M Beier. 2023. <em>Assessing the Performance of Spatial Cross-Validation Approaches for Models of Spatially Structured Data</em>. <a href="https://doi.org/10.48550/arXiv.2303.07334">https://doi.org/10.48550/arXiv.2303.07334</a>.
 </div>
 <div id="ref-matern2013" class="csl-entry" role="listitem">
 Matern, B. 2013. <em>Spatial Variation</em>. Lecture Notes in Statistics. Springer New York. <a href="https://books.google.co.uk/books?id=HrbSBwAAQBAJ">https://books.google.co.uk/books?id=HrbSBwAAQBAJ</a>.
@@ -860,16 +862,16 @@ Neal, Radford M. 2003. <span>“Slice Sampling.”</span> <em>The Annals of Stat
 Nelder, J. A., and R. W. M. Wedderburn. 1972. <span>“Generalized Linear Models.”</span> <em>Journal of the Royal Statistical Society A</em> 135: 370–84.
 </div>
 <div id="ref-who_underweight2024" class="csl-entry" role="listitem">
-Organization, World Health. 2024. <span>“Indicator Metadata Registry: Child Malnutrition—Underweight Among Children Under Five Years of Age (Weight-for-Age &lt;-2 SD).”</span> <a href="https://www.who.int/data/gho/indicator-metadata-registry/imr-details/27" class="uri">https://www.who.int/data/gho/indicator-metadata-registry/imr-details/27</a>.
+Organization, World Health. 2024. <em>Indicator Metadata Registry: Child Malnutrition—Underweight Among Children Under Five Years of Age (Weight-for-Age &lt;-2 SD)</em>. <a href="https://www.who.int/data/gho/indicator-metadata-registry/imr-details/27" class="uri">Https://www.who.int/data/gho/indicator-metadata-registry/imr-details/27</a>.
 </div>
 <div id="ref-pawitan2001" class="csl-entry" role="listitem">
-Pawitan, Yudi. 2001. <em>In All Likelihood : Statistical Modelling and Inference Using Likelihood</em>. Oxford ; New York: Clarendon Press : Oxford University Press.
+Pawitan, Yudi. 2001. <em>In All Likelihood : Statistical Modelling and Inference Using Likelihood</em>. Clarendon Press : Oxford University Press.
 </div>
 <div id="ref-petersen2013wnv" class="csl-entry" role="listitem">
 Petersen, Lyle R., Aaron C. Brault, and Roger S. Nasci. 2013. <span>“West Nile Virus: Review of the Literature.”</span> <em>JAMA</em> 310 (3): 308–15. <a href="https://doi.org/10.1001/jama.2013.8042">https://doi.org/10.1001/jama.2013.8042</a>.
 </div>
 <div id="ref-puranik2024" class="csl-entry" role="listitem">
-Puranik, Amitha, Peter J. Diggle, Maurice R. Odiere, Katherine Gass, Stella Kepha, Collins Okoyo, Charles Mwandawiro, et al. 2024. <span>“Understanding the Impact of Covariates on the Classification of Implementation Units for Soil-Transmitted Helminths Control: A Case Study from Kenya.”</span> <em>BMC Medical Research Methodology</em> 24 (1): 294. <a href="https://doi.org/10.1186/s12874-024-02420-1">https://doi.org/10.1186/s12874-024-02420-1</a>.
+Puranik, Amitha, Peter J. Diggle, Maurice R. Odiere, et al. 2024. <span>“Understanding the Impact of Covariates on the Classification of Implementation Units for Soil-Transmitted Helminths Control: A Case Study from Kenya.”</span> <em>BMC Medical Research Methodology</em> 24 (1): 294. <a href="https://doi.org/10.1186/s12874-024-02420-1">https://doi.org/10.1186/s12874-024-02420-1</a>.
 </div>
 <div id="ref-ripley1981" class="csl-entry" role="listitem">
 Ripley, B. D. 1981. <em>Spatial Statistics</em>. New York: Wiley.
@@ -881,7 +883,7 @@ Robert, Christian P, and George Casella. 2004. <em>Monte Carlo Statistical Metho
 Roberts, Gareth O., and Richard L. Tweedie. 1996. <span>“Exponential Convergence of Langevin Distributions and Their Discrete Approximations.”</span> <em>Bernoulli</em> 2 (4): 341–63.
 </div>
 <div id="ref-ross2013" class="csl-entry" role="listitem">
-Ross, Sheldon. 2013. <em>First Course in Probability, a.</em> 9th ed. Harlow: Pearson Education UK.
+Ross, Sheldon. 2013. <em>First Course in Probability, a.</em> 9th ed. Pearson Education UK.
 </div>
 <div id="ref-rossky1978brownian" class="csl-entry" role="listitem">
 Rossky, Peter J., J. D. Doll, and Harold L. Friedman. 1978. <span>“Brownian Dynamics as Smart Monte Carlo Simulation.”</span> <em>The Journal of Chemical Physics</em> 69 (10): 4628–33.
@@ -890,7 +892,7 @@ Rossky, Peter J., J. D. Doll, and Harold L. Friedman. 1978. <span>“Brownian Dy
 Rue, H., S. Martino, and N. Chopin. 2009. <span>“Approximate Bayesian Inference for Latent Gaussian Models by Using Integrated Nested Laplace Approximations.”</span> <em>Journal of the Royal Statistical Society: Series B (Statistical Methodology)</em> 71 (2): 319–92. <a href="https://doi.org/10.1111/j.1467-9868.2008.00700.x">https://doi.org/10.1111/j.1467-9868.2008.00700.x</a>.
 </div>
 <div id="ref-sacramento2018annual" class="csl-entry" role="listitem">
-Sacramento-Yolo Mosquito and Vector Control District. 2018. <span>“2018 Annual Report.”</span> Online.
+Sacramento-Yolo Mosquito and Vector Control District. 2018. <em>2018 Annual Report</em>. Online.
 </div>
 <div id="ref-shmueli2010" class="csl-entry" role="listitem">
 Shmueli, Galit. 2010. <span>“To Explain or to Predict?”</span> <em>Statistical Science</em> 25 (3): 289–310.
@@ -899,31 +901,34 @@ Shmueli, Galit. 2010. <span>“To Explain or to Predict?”</span> <em>Statistic
 Smith, David L, Carlos A Guerra, Robert W Snow, and Simon I Hay. 2007. <span>“Standardizing Estimates of the Plasmodium Falciparum Parasite Rate.”</span> <em>Malaria Journal</em> 6 (1): 131–31.
 </div>
 <div id="ref-stein1999" class="csl-entry" role="listitem">
-Stein, Michael L. 1999. <em>Interpolation of Spatial Data Some Theory for Kriging</em>. 1st ed. 1999. Springer Series in Statistics. New York, NY: Springer New York : Imprint: Springer.
+Stein, Michael L. 1999. <em>Interpolation of Spatial Data Some Theory for Kriging</em>. 1st ed. 1999. Springer Series in Statistics. Springer New York : Imprint: Springer.
 </div>
 <div id="ref-stevenson2013" class="csl-entry" role="listitem">
 Stevenson, Gillian H. AND Gitonga, Jennifer C. AND Stresman. 2013. <span>“Reliability of School Surveys in Estimating Geographic Variation in Malaria Transmission in the Western Kenyan Highlands.”</span> <em>PLOS ONE</em> 8 (10). <a href="https://doi.org/10.1371/journal.pone.0077641">https://doi.org/10.1371/journal.pone.0077641</a>.
 </div>
 <div id="ref-fossog2015" class="csl-entry" role="listitem">
-Tene Fossog, Billy, Diego Ayala, Pelayo Acevedo, Pierre Kengne, Ignacio Ngomo Abeso Mebuy, Boris Makanga, Julie Magnus, et al. 2015. <span>“Habitat Segregation and Ecological Character Displacement in Cryptic African Malaria Mosquitoes.”</span> <em>Evolutionary Applications</em> 8 (4): 326–45. <a href="https://doi.org/10.1111/eva.12242">https://doi.org/10.1111/eva.12242</a>.
+Tene Fossog, Billy, Diego Ayala, Pelayo Acevedo, et al. 2015. <span>“Habitat Segregation and Ecological Character Displacement in Cryptic African Malaria Mosquitoes.”</span> <em>Evolutionary Applications</em> 8 (4): 326–45. <a href="https://doi.org/10.1111/eva.12242">https://doi.org/10.1111/eva.12242</a>.
 </div>
 <div id="ref-tobler1970" class="csl-entry" role="listitem">
-Tobler, W. R. 1970. <span>“A Computer Movie Simulating Urban Growth in the Detroit Region.”</span> <em>Economic Geography</em> 46: 234–40.
+Tobler, W. R. 1970. <span>“A Computer Movie Simulating Urban Growth in the Detroit Region.”</span> <em>Economic Geography</em> (Worcester, Mass) 46: 234–40.
 </div>
 <div id="ref-sdg2201meta2025" class="csl-entry" role="listitem">
-United Nations Statistics Division, World Health Organization, and UNICEF. 2025. <span>“SDG Indicator 2.2.1 Metadata: Prevalence of Stunting (Height-for-Age &lt;-2 SD) Among Children Under Five Years of Age.”</span> <a href="https://unstats.un.org/sdgs/metadata/files/Metadata-02-02-01.pdf" class="uri">https://unstats.un.org/sdgs/metadata/files/Metadata-02-02-01.pdf</a>.
+United Nations Statistics Division, World Health Organization, and UNICEF. 2025. <em>SDG Indicator 2.2.1 Metadata: Prevalence of Stunting (Height-for-Age &lt;-2 SD) Among Children Under Five Years of Age</em>. <a href="https://unstats.un.org/sdgs/metadata/files/Metadata-02-02-01.pdf" class="uri">Https://unstats.un.org/sdgs/metadata/files/Metadata-02-02-01.pdf</a>.
 </div>
 <div id="ref-watson1971" class="csl-entry" role="listitem">
 Watson, G. S. 1971. <span>“Trend -Surface Analysis.”</span> <em>Mathematical Geology</em> 3: 215–26.
 </div>
 <div id="ref-watson1972" class="csl-entry" role="listitem">
-———. 1972. <span>“Trend Surface Analysis and Spatial Correlation.”</span> <em>Geological Society of America Special Paper</em> 146: 39–46.
+Watson, G. S. 1972. <span>“Trend Surface Analysis and Spatial Correlation.”</span> <em>Geological Society of America Special Paper</em> 146: 39–46.
 </div>
 <div id="ref-weisberg2014" class="csl-entry" role="listitem">
-Weisberg, Sanford. 2014. <em>Applied Linear Regression</em>. Fourth. Hoboken <span>NJ</span>: Wiley. <a href="http://z.umn.edu/alr4ed">http://z.umn.edu/alr4ed</a>.
+Weisberg, Sanford. 2014. <em>Applied Linear Regression</em>. Fourth. Wiley. <a href="http://z.umn.edu/alr4ed">http://z.umn.edu/alr4ed</a>.
 </div>
 <div id="ref-who2006" class="csl-entry" role="listitem">
-WHO. 2006. <span>“WHO Child Growth Standards: Length/Height-for-Age, Weight-for-Age, Weight-for-Length, Weight-for-Height and Body Mass Index-for-Age: Methods and Development.”</span> Geneva: WHO. <a href="https://www.who.int/publications/i/item/924154693X">https://www.who.int/publications/i/item/924154693X</a>.
+WHO. 2006. <em>WHO Child Growth Standards: Length/Height-for-Age, Weight-for-Age, Weight-for-Length, Weight-for-Height and Body Mass Index-for-Age: Methods and Development</em>. WHO. <a href="https://www.who.int/publications/i/item/924154693X">https://www.who.int/publications/i/item/924154693X</a>.
+</div>
+<div id="ref-Wood2017-ad" class="csl-entry" role="listitem">
+Wood, Simon N. 2017. <em>Generalized Additive Models</em>. Chapman; Hall/CRC.
 </div>
 <div id="ref-yin2024" class="csl-entry" role="listitem">
 Yin, Hui, Yutong Wang, Yuxin Wang, Zihan Li, Yujie Li, and Yuxin Wang. 2024. <span>“A Rapid Review of Clustering Algorithms.”</span> <em>arXiv Preprint arXiv:2401.07389</em>.
@@ -932,10 +937,10 @@ Yin, Hui, Yutong Wang, Yuxin Wang, Zihan Li, Yujie Li, and Yuxin Wang. 2024. <sp
 Zhang, Hao. 2002. <span>“On Estimation and Prediction for Spatial Generalized Linear Mixed Models.”</span> <em>Biometrics</em> 58 (1): 129–36.
 </div>
 <div id="ref-zhang2004" class="csl-entry" role="listitem">
-———. 2004. <span>“Inconsistent Estimation and Asymptotically Equal Interpolations in Model-Based Geostatistics.”</span> <em>Journal of the American Statistical Association</em> 99 (465): 250–61.
+Zhang, Hao. 2004. <span>“Inconsistent Estimation and Asymptotically Equal Interpolations in Model-Based Geostatistics.”</span> <em>Journal of the American Statistical Association</em> 99 (465): 250–61.
 </div>
 <div id="ref-zoure2014" class="csl-entry" role="listitem">
-Zouré, Honorat GM, Mounkaila Noma, Afework H Tekle, Uche V Amazigo, Peter J Diggle, Emanuele Giorgi, and Jan HF Remme. 2014. <span>“Geographic Distribution of Onchocerciasis in the 20 Participating Countries of the African Programme for Onchocerciasis Control: (2) Pre-Control Endemicity Levels and Estimated Number Infected.”</span> <em>Parasites &amp; Vectors</em> 7 (1): 326–26.
+Zouré, Honorat GM, Mounkaila Noma, Afework H Tekle, et al. 2014. <span>“Geographic Distribution of Onchocerciasis in the 20 Participating Countries of the African Programme for Onchocerciasis Control: (2) Pre-Control Endemicity Levels and Estimated Number Infected.”</span> <em>Parasites &amp; Vectors</em> 7 (1): 326–26.
 </div>
 </div>
 </section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
@@ -989,13 +994,14 @@ Zouré, Honorat GM, Mounkaila Noma, Afework H Tekle, Uche V Amazigo, Peter J Dig
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy
@@ -1337,8 +1343,8 @@ Zouré, Honorat GM, Mounkaila Noma, Afework H Tekle, Uche V Amazigo, Peter J Dig
     }
   });
   </script><nav class="page-navigation"><div class="nav-page nav-page-previous">
-      <a href="./author.html" class="pagination-link" aria-label="Author">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Author</span>
+      <a href="./author.html" class="pagination-link" aria-label="Authors">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Authors</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">

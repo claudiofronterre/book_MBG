@@ -3,6 +3,8 @@ execute:
   freeze: auto
 fig-width: 5
 fig-asp: 0.75
+editor_options: 
+  chunk_output_type: console
 ---
 
 # Geostatistical prediction {#sec-geo-prediction}
@@ -11,12 +13,12 @@ fig-asp: 0.75
 
 | Function | R Package | Used for |
 |-------------------------|------------------|-----------------------------|
-| `pred_over_grid` | `RiskMap` | Predicting the different component of the linear predictor over a grid: the covariates effects and the random effects |
-| `pred_target_grid` | `RiskMap` | Predictions of target defined at pixel-level |
-| `pred_target_shp` | `RiskMap` | Predictions of targets defined at areal level |
-| `assess_pp` | `RiskMap` | Assessing the predictive performance of geostatistical models using cross-validation |
-| `surf_sim` | `RiskMap` | Simulating surfaces and data from geostatistical models |
-| `assess_sim` | `RiskMap` | Assessing the predictive performance of geostatistical models using simulations |
+| `pred_over_grid()` | *RiskMap* | Predicting the different component of the linear predictor over a grid: the covariates effects and the random effects |
+| `pred_target_grid()` | *RiskMap* | Predictions of target defined at pixel-level |
+| `pred_target_shp()` | *RiskMap* | Predictions of targets defined at areal level |
+| `assess_pp()` | *RiskMap* | Assessing the predictive performance of geostatistical models using cross-validation |
+| `surf_sim()` | *RiskMap* | Simulating surfaces and data from geostatistical models |
+| `assess_sim()` | *RiskMap* | Assessing the predictive performance of geostatistical models using simulations |
 
 Geostatistics was originally developed and applied as a predictive tool for improving mining operations and planning. In the seminal paper on model-based geostatistics (MBG) [@diggle1998], the authors begin by stating:
 
@@ -853,8 +855,11 @@ assess_pp(list(M0 = M0_fit, M1 = M1_fit),
 p1 <- plot_AnPIT(regularized, combine_panels = TRUE) +
       theme(plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "lines")) 
 
-p2 <- plot_AnPIT(regularized, mode = "all") +
-      theme(plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "lines")) 
+# For claudio: review this
+# p2 <- plot_AnPIT(regularized, mode = "all") +
+#       theme(plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "lines")) 
+
+p2 <- plot_AnPIT(regularized, mode = "all")
 
 grid.arrange(p1, p2, nrow = 2, heights = c(1, 1))
 ```
@@ -879,8 +884,8 @@ assess_pp(list(M0 = M0_fit, M1 = M1_fit),
 p1 <- plot_AnPIT(cluster, combine_panels = TRUE) +
       theme(plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "lines")) # Tighter margins
 
-p2 <- plot_AnPIT(cluster, mode = "all") +
-      theme(plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "lines")) # Tighter margins
+p2 <- plot_AnPIT(cluster, mode = "all") 
+      # theme(plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "lines")) # Tighter margins
 
 grid.arrange(p1, p2, nrow = 2, heights = c(1, 1)) # Equal heights
 ```
