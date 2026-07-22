@@ -1127,20 +1127,20 @@ section to the Liberia data on river-blindness.
 
 <!-- liberia_variog <- variogram(data = liberia, -->
 <!--                               variable = "Z_hat", -->
-<!--                               bins = c(15, 30, 40, 80, 120, -->
+<!--                               breaks = c(15, 30, 40, 80, 120, -->
 <!--                                        160, 200, 250, 300, 350), -->
 <!--                               scale_to_km = TRUE, -->
 <!--                               n_permutations = 200) -->
 
 <!-- ``` -->
 
-<!-- Through the argument `bins` we can specify the classes of distance, -->
+<!-- Through the argument `breaks` we can specify the classes of distance, -->
 
 <!-- previously denoted by $\mathcal{U}$; check the help page of -->
 
 <!-- `variogram` to see how this is defined by default. The values passed -->
 
-<!-- to `bins` in the code above correspond to define the following classes -->
+<!-- to `breaks` in the code above correspond to define the following classes -->
 
 <!-- of distance $\mathcal{U}$: $[15, 30]$, $(30, 40]$ and so forth, with the -->
 
@@ -1164,7 +1164,7 @@ section to the Liberia data on river-blindness.
 
 <!-- for gauging the extent of the area covered by your dataset, aiding in -->
 
-<!-- the selection of appropriate values to be passed to the `bins` argument. -->
+<!-- the selection of appropriate values to be passed to the `breaks` argument. -->
 
 <!-- In the provided output above, we observe that for the Liberia dataset, -->
 
@@ -1172,7 +1172,7 @@ section to the Liberia data on river-blindness.
 
 <!-- respectively. While there is not a one-size-fits-all recommendation for -->
 
-<!-- setting `bins`, two fundamental principles should inform your choice. -->
+<!-- setting `breaks`, two fundamental principles should inform your choice. -->
 
 <!-- Firstly, it is advisable to avoid choosing overly large distance -->
 
@@ -1186,7 +1186,7 @@ section to the Liberia data on river-blindness.
 
 <!-- behavior of the variogram at smaller distances. Consequently, it is -->
 
-<!-- generally advisable to experiment with different `bins` configurations -->
+<!-- generally advisable to experiment with different `breaks` configurations -->
 
 <!-- and observe how they impact the pattern of the empirical variogram. -->
 
@@ -1228,7 +1228,7 @@ section to the Liberia data on river-blindness.
 
 <!-- emphasize throughout this book, the empirical variogram's sensitivity to -->
 
-<!-- the choice of bins values renders it an unreliable tool for drawing -->
+<!-- the choice of breaks values renders it an unreliable tool for drawing -->
 
 <!-- statistical inferences. In other words, we recommend employing the -->
 
@@ -1338,7 +1338,7 @@ section to the Liberia data on river-blindness.
 
 <!--                               scale_to_km = TRUE, -->
 
-<!--                               bins = seq(10, 140, length = 15), -->
+<!--                               breaks = seq(10, 140, length = 15), -->
 
 <!--                               n_permutations = 10000) -->
 
@@ -3486,7 +3486,7 @@ section to the Liberia data on river-blindness.
 
 <!-- models, as well as the sensitivity of empirical variogram estimation to -->
 
-<!-- the chosen distance bins. -->
+<!-- the chosen distance breaks. -->
 
 <!-- To better illustrate some of the points above, we continue the analysis -->
 
@@ -3882,9 +3882,9 @@ section to the Liberia data on river-blindness.
 
 <!--     independence. Repeat this for different classes of distances by -->
 
-<!--     changing the input passed to `bins` in the `variogram` function. -->
+<!--     changing the input passed to `breaks` in the `variogram` function. -->
 
-<!--     How do the different specifications of `bins` affect the results? -->
+<!--     How do the different specifications of `breaks` affect the results? -->
 
 <!-- 6.  *Parametric bootstrap.* Using the model fitted to the Anopheles -->
 

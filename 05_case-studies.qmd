@@ -1230,7 +1230,7 @@ variogram(data = wnv_summary,
             variable = "Z_hat",
             n_permutations = 1000,
             scale_to_km = TRUE,
-            bins = seq(0,10, length = 15))
+            breaks = seq(0,10, length = 15))
 
 ```
 We plot the empirical variogram and add the envelope generated under the assumption of absence of spatial correlation.
