@@ -234,7 +234,7 @@ Of particular interest in the summary of the fitted models above are the estimat
 
 ### Assessing residual spatial correlation and model fitting
 
-We next explore the residual spatial correlation through the empirical variogram. Hence, we extract the estimate of the random effects from @eq-model-haz-waz and input these into the `s_variogram` function that generates the empirical variogram.
+We next explore the residual spatial correlation through the empirical variogram. Hence, we extract the estimate of the random effects from @eq-model-haz-waz and input these into the `variogram` function that generates the empirical variogram.
 
 ```{r}
 #| label: fig-maln-vari
@@ -261,17 +261,17 @@ re <- st_as_sf(re, coords = c("lng","lat"), crs = 4326)
 re <- st_transform(re, crs = propose_utm(re))
 
 # Variogram for HAZ
-var_haz <- s_variogram(re, "Z_hat_haz", scale_to_km = TRUE,
-                       n_permutation = 1000)
-var_waz <- s_variogram(re, "Z_hat_waz", scale_to_km = TRUE,
-                       n_permutation = 1000)
+var_haz <- variogram(re, "Z_hat_haz", scale_to_km = TRUE,
+                       n_permutations = 1000)
+var_waz <- variogram(re, "Z_hat_waz", scale_to_km = TRUE,
+                       n_permutations = 1000)
 library(patchwork)
 
 # Create ggplot objects
-p_haz <- plot_s_variogram(var_haz, plot_envelope = TRUE) + 
+p_haz <- plot_variogram(var_haz, plot_envelope = TRUE) + 
   ggtitle("HAZ")
 
-p_waz <- plot_s_variogram(var_waz, plot_envelope = TRUE) + 
+p_waz <- plot_variogram(var_waz, plot_envelope = TRUE) + 
   ggtitle("WAZ")
 
 p_haz + p_waz
@@ -1226,9 +1226,9 @@ wnv_summary$Z_hat <- ranef(glmer_wvn)$loc[,1]
 
 # Computing the empirical variogram
 variogram_wnv <- 
-s_variogram(data = wnv_summary, 
+variogram(data = wnv_summary, 
             variable = "Z_hat",
-            n_permutation = 1000,
+            n_permutations = 1000,
             scale_to_km = TRUE,
             bins = seq(0,10, length = 15))
 
@@ -1243,7 +1243,7 @@ variogram_wnv <- readRDS("data/variogram_wnv.rds")
 #| fig-align: "center"
 #| fig-width: 10
 #| fig-height: 15
-plot_s_variogram(variogram_wnv, plot_envelope = TRUE)
+plot_variogram(variogram_wnv, plot_envelope = TRUE)
 ```
 
 
