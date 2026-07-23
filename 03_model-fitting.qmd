@@ -19,7 +19,7 @@ editor_options:
 | `lmer()` | *lme4* | Fitting linear mixed models |
 | `glmer()` | *lme4* | Fitting generalized linear mixed models |
 | `glgpm()` | *RiskMap* | Fitting generalized linear geostatistical models |
-| `s_variogram()` | *RiskMap* | Computing the empirical variogram and carrying out permutation test for spatial independence |
+| `variogram()` | *RiskMap* | Computing the empirical variogram and carrying out permutation test for spatial independence |
 
 This chapter introduces the process of moving from exploratory analysis
 to the formal specification of statistical models, through to parameter
@@ -1120,33 +1120,33 @@ section to the Liberia data on river-blindness.
 
 <!-- Through the function `ranef` when extracting the estimates of the random -->
 <!-- effects $Z_i$ and save these in the data set. We then use the function -->
-<!-- `s_variogram` from the `RiskMap` package to compute the empirical -->
+<!-- `variogram` from the `RiskMap` package to compute the empirical -->
 <!-- variogram for the estimated $\hat{Z}_i$. -->
 
 <!-- ```{r} -->
 
-<!-- liberia_variog <- s_variogram(data = liberia, -->
+<!-- liberia_variog <- variogram(data = liberia, -->
 <!--                               variable = "Z_hat", -->
-<!--                               bins = c(15, 30, 40, 80, 120, -->
+<!--                               breaks = c(15, 30, 40, 80, 120, -->
 <!--                                        160, 200, 250, 300, 350), -->
 <!--                               scale_to_km = TRUE, -->
-<!--                               n_permutation = 200) -->
+<!--                               n_permutations = 200) -->
 
 <!-- ``` -->
 
-<!-- Through the argument `bins` we can specify the classes of distance, -->
+<!-- Through the argument `breaks` we can specify the classes of distance, -->
 
 <!-- previously denoted by $\mathcal{U}$; check the help page of -->
 
-<!-- `s_variogram` to see how this is defined by default. The values passed -->
+<!-- `variogram` to see how this is defined by default. The values passed -->
 
-<!-- to `bins` in the code above correspond to define the following classes -->
+<!-- to `breaks` in the code above correspond to define the following classes -->
 
 <!-- of distance $\mathcal{U}$: $[15, 30]$, $(30, 40]$ and so forth, with the -->
 
 <!-- last class being $[350, +\infty)$, i.e. all pairs of locations whose -->
 
-<!-- distances are above 350km. The argument `n_permutation` allows the user -->
+<!-- distances are above 350km. The argument `n_permutations` allows the user -->
 
 <!-- to specify the number of permutations that are performed to generate the -->
 
@@ -1164,7 +1164,7 @@ section to the Liberia data on river-blindness.
 
 <!-- for gauging the extent of the area covered by your dataset, aiding in -->
 
-<!-- the selection of appropriate values to be passed to the `bins` argument. -->
+<!-- the selection of appropriate values to be passed to the `breaks` argument. -->
 
 <!-- In the provided output above, we observe that for the Liberia dataset, -->
 
@@ -1172,7 +1172,7 @@ section to the Liberia data on river-blindness.
 
 <!-- respectively. While there is not a one-size-fits-all recommendation for -->
 
-<!-- setting `bins`, two fundamental principles should inform your choice. -->
+<!-- setting `breaks`, two fundamental principles should inform your choice. -->
 
 <!-- Firstly, it is advisable to avoid choosing overly large distance -->
 
@@ -1186,7 +1186,7 @@ section to the Liberia data on river-blindness.
 
 <!-- behavior of the variogram at smaller distances. Consequently, it is -->
 
-<!-- generally advisable to experiment with different `bins` configurations -->
+<!-- generally advisable to experiment with different `breaks` configurations -->
 
 <!-- and observe how they impact the pattern of the empirical variogram. -->
 
@@ -1196,13 +1196,13 @@ section to the Liberia data on river-blindness.
 
 <!-- #| fig-cap: "Plot of the empirical variogram (solid line) computed using the estimated random effects from the model in @eq-liberia-bin-mixed-elev. The blue shaded area is the 95% confidence level envelope generated using the permutation procedure described in @sec-expl-spatial."   -->
 
-<!-- plot_s_variogram(liberia_variog, -->
+<!-- plot_variogram(liberia_variog, -->
 
 <!--                  plot_envelope = TRUE) -->
 
 <!-- ``` -->
 
-<!-- Finally, the `plot_s_variogram` function enables us to visualize the -->
+<!-- Finally, the `plot_variogram` function enables us to visualize the -->
 
 <!-- empirical variogram and, through the `plot_envelope` argument, include -->
 
@@ -1228,7 +1228,7 @@ section to the Liberia data on river-blindness.
 
 <!-- emphasize throughout this book, the empirical variogram's sensitivity to -->
 
-<!-- the choice of bins values renders it an unreliable tool for drawing -->
+<!-- the choice of breaks values renders it an unreliable tool for drawing -->
 
 <!-- statistical inferences. In other words, we recommend employing the -->
 
@@ -1334,17 +1334,17 @@ section to the Liberia data on river-blindness.
 
 <!-- # and the 95% confidence level envelope for spatial independence -->
 
-<!-- galicia_variog <- s_variogram(galicia_sf, variable = "residuals", -->
+<!-- galicia_variog <- variogram(galicia_sf, variable = "residuals", -->
 
 <!--                               scale_to_km = TRUE, -->
 
-<!--                               bins = seq(10, 140, length = 15), -->
+<!--                               breaks = seq(10, 140, length = 15), -->
 
-<!--                               n_permutation = 10000) -->
+<!--                               n_permutations = 10000) -->
 
 <!-- # Plotting the results -->
 
-<!-- plot_s_variogram(galicia_variog, plot_envelope = TRUE) -->
+<!-- plot_variogram(galicia_variog, plot_envelope = TRUE) -->
 
 <!-- ``` -->
 
@@ -1426,15 +1426,15 @@ section to the Liberia data on river-blindness.
 
 <!-- # and the 95% confidence level envelope for spatial independence -->
 
-<!-- italy_sim_variog <- s_variogram(italy_sim_sf, variable = "rand_eff",  -->
+<!-- italy_sim_variog <- variogram(italy_sim_sf, variable = "rand_eff",  -->
 
 <!--                                 scale_to_km = TRUE, -->
 
-<!--                                 n_permutation = 200) -->
+<!--                                 n_permutations = 200) -->
 
 <!-- # Plotting the results -->
 
-<!-- plot_s_variogram(italy_sim_variog, plot_envelope = TRUE) -->
+<!-- plot_variogram(italy_sim_variog, plot_envelope = TRUE) -->
 
 <!-- ``` -->
 
@@ -3486,7 +3486,7 @@ section to the Liberia data on river-blindness.
 
 <!-- models, as well as the sensitivity of empirical variogram estimation to -->
 
-<!-- the chosen distance bins. -->
+<!-- the chosen distance breaks. -->
 
 <!-- To better illustrate some of the points above, we continue the analysis -->
 
@@ -3858,7 +3858,7 @@ section to the Liberia data on river-blindness.
 
 <!--         $$ Making use of the R code presented in -->
 
-<!--     @sec-empirical-variog-bin, use the function `s_variogram` to -->
+<!--     @sec-empirical-variog-bin, use the function `variogram` to -->
 
 <!--     generate the empirical variogram for this model and compare this to -->
 
@@ -3882,9 +3882,9 @@ section to the Liberia data on river-blindness.
 
 <!--     independence. Repeat this for different classes of distances by -->
 
-<!--     changing the input passed to `bins` in the `s_variogram` function. -->
+<!--     changing the input passed to `breaks` in the `variogram` function. -->
 
-<!--     How do the different specifications of `bins` affect the results? -->
+<!--     How do the different specifications of `breaks` affect the results? -->
 
 <!-- 6.  *Parametric bootstrap.* Using the model fitted to the Anopheles -->
 
