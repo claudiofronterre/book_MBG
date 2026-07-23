@@ -2236,13 +2236,13 @@ section to the Liberia data on river-blindness.
 
 <!-- ```{r, echo=FALSE, collapse=TRUE, message=FALSE} -->
 
-<!-- load("./data/fit_liberia_no_nugget.RData") -->
+<!-- load("./data/fit_liberia_no_nugget.rds") -->
 
-<!-- load("./data/fit_Liberia.RData") -->
+<!-- load("./data/fit_Liberia.rds") -->
 
-<!-- load("./data/fit_liberia2.RData") -->
+<!-- load("./data/fit_liberia2.rds") -->
 
-<!-- load("./data/par_boot.RData") -->
+<!-- load("./data/par_boot.rds") -->
 
 <!-- ``` -->
 
