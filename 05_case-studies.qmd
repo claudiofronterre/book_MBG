@@ -1219,24 +1219,26 @@ summary(glmer_wvn)
 The model summary indicates that, as expected, average mosquito counts decline over time. The effects associated with the different levels of `trap_group` also follow expectations, with high-yield traps having the highest average counts, followed by moderate- and low-yield traps. The relatively large estimate of the variance $\sigma^2$ of the random effect $Z_i$ suggests substantial extra-Poisson variation between traps that is not explained by the yearly decline and the type of trap. 
 
 We then use the empirical variogram computed on the estimated $Z_i$ to assess the presence of residual spatial correlation. 
+
 ```{r, eval=FALSE}
 
 # Extracting the estimates of the random effects
 wnv_summary$Z_hat <- ranef(glmer_wvn)$loc[,1]
 
 # Computing the empirical variogram
-variogram_wnv <- 
-variogram(data = wnv_summary, 
-            variable = "Z_hat",
-            n_permutations = 1000,
-            scale_to_km = TRUE,
-            breaks = seq(0,10, length = 15))
+variogram_wnv <-  variogram(data = wnv_summary, 
+                            variable = "Z_hat",
+                            n_permutations = 1000,
+                            scale_to_km = TRUE,
+                            breaks = seq(0,10, length = 15))
 
 ```
+
 We plot the empirical variogram and add the envelope generated under the assumption of absence of spatial correlation.
 ```{r,echo=FALSE}
 variogram_wnv <- readRDS("data/variogram_wnv.rds")
 ```
+
 ```{r,collapse=TRUE}
 #| label: fig-wnv-variogram
 #| fig-cap: "Empirical variogram (black line) for based on the random effects fitted from the model in @eq-wnv-counts. The shaded blue area correspond to the envelope of spatial independence at 95% confidence level generated using a permuation test. "

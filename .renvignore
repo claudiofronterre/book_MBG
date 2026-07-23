@@ -1,0 +1,12 @@
+# --- Files causing static parse errors in renv::dependencies() ---
+R/CH1.R
+R/options.R
+
+# --- Generated bookdown / quarto output and cache directories ---
+_book/
+_bookdown_files/
+*_cache/
+*_files/
+
+# --- RStudio project clutter ---
+.Rproj.user/

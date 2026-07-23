@@ -184,7 +184,7 @@
     "href": "03_model-fitting.html#list-of-the-main-functions-used-in-the-chapter",
     "title": "3  Model formulation and parameter estimation",
     "section": "",
-    "text": "Function\nR Package\nUsed for\n\n\n\nlmer()\nlme4\nFitting linear mixed models\n\n\nglmer()\nlme4\nFitting generalized linear mixed models\n\n\nglgpm()\nRiskMap\nFitting generalized linear geostatistical models\n\n\ns_variogram()\nRiskMap\nComputing the empirical variogram and carrying out permutation test for spatial independence",
+    "text": "Function\nR Package\nUsed for\n\n\n\nlmer()\nlme4\nFitting linear mixed models\n\n\nglmer()\nlme4\nFitting generalized linear mixed models\n\n\nglgpm()\nRiskMap\nFitting generalized linear geostatistical models\n\n\nvariogram()\nRiskMap\nComputing the empirical variogram and carrying out permutation test for spatial independence",
     "crumbs": [
       "<span class='chapter-number'>3</span>  <span class='chapter-title'>Model formulation and parameter estimation</span>"
     ]
