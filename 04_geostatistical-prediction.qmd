@@ -210,25 +210,25 @@ The R script below performs all these steps.
 library(sf)
 library(RiskMap)
 library(ggplot2)
-load("./data/fit_Liberia.rds")
+fit_liberia <- readRDS("data/fit_Liberia.rds")
 data("malkenya")
 malkenya_comm <- malkenya[malkenya$Survey=="community", ]
-load("./data/fit_malkenya.rds")
-load("./data/pred_age15.rds")
-load("./data/pred_aver_pop.rds")
-load("./data/lb_pred_S_m.rds")
+fit_malkenya <- readRDS("data/fit_malkenya.rds")
+pred_age15 <- readRDS("data/pred_age15.rds")
+pred_aver_pop <- readRDS("data/pred_aver_pop.rds")
+lb_pred_S_m <- readRDS("data/lb_pred_S_m.rds")
 lb_pred_S_m$obs_loc <- FALSE
-load("./data/lb_pred_S_j.rds")
+lb_pred_S_j <- readRDS("data/lb_pred_S_j.rds")
 lb_pred_S_j$obs_loc <- FALSE
 liberia_grid <- lb_pred_S_j$grid_pred
-an_fit <- readRDS("./data/an_fit.rds")
-load("./data/regularized.rds")
+an_fit <- readRDS("data/an_fit.rds")
+regularized <- readRDS("data/regularized.rds")
 regularized_scores <- regularized
-load("./data/cluster.rds")
+cluster <- readRDS("data/cluster.rds")
 cluster_scores <- cluster
-load("./data/pred_shp.rds")
-load("data/pred_shp_w.rds")
-load("data/fit_sp_lib.rds")
+pred_shp <- readRDS("data/pred_shp.rds")
+pred_shp_w <- readRDS("data/pred_shp_w.rds")
+true_model <- readRDS("data/fit_sp_lib.rds")
 library(dplyr)
 res_sim_grid <- readRDS("data/sim_grid_mse.rds")
 

@@ -23,7 +23,7 @@ stunting_prev <- readRDS("data/stuntin_prev.rds")
 underw_prev <- readRDS("data/underw_prev.rds")
 assess_haz <- readRDS("data/assess_haz.rds")
 assess_waz <- readRDS("data/assess_waz.rds")
-load("data/case_study2.rds")
+mean_nmosq <- readRDS("data/mean_nmosq.rds")
 mlw_admin0_sf <- readRDS("data/mlw_admin0_sf.rds")
 mlw_sf <- readRDS("data/mlw_sf.rds")
 mlw_pfpr <- readRDS("data/mlw_pfpr.rds")
@@ -1394,7 +1394,7 @@ invlink_wnv <- function(x) 1-(1-exp(x)/(1+exp(x)))^infect_sma$est_pool_n
 
 We then fit the model by passing the inverse link function to the argument `invlink` within the `glgpm` function. 
 ```{r,echo=FALSE}
-inf_fit <- readRDS("./data/inf_fit.rds")
+inf_fit <- readRDS("/data/inf_fit.rds")
 ```
 ```{r, eval=FALSE}
 inf_fit <-
@@ -1440,7 +1440,7 @@ pred_inf_grid <- pred_target_grid(pred_S_inf,
 
 ```
 ```{r, echo=FALSE}
-pred_inf_grid <- readRDS("./data/pred_inf_grid.rds")
+pred_inf_grid <- readRDS("/data/pred_inf_grid.rds")
 ```
 
 @fig-wnv-pred-map displays the predictive mean of $p(x)$ over the regular grid. Overall, the predicted prevalence of WNV is very low across the study area, with a small zone in the south‐west showing a relatively higher value of approximately $0.40\%$.
@@ -1499,7 +1499,7 @@ Several U.S. programs consider a vector index (VI) of 0.75 or higher as indicati
 
 
 ```{r, collapse=TRUE, echo=FALSE}
-vi_df <- readRDS("./data/vi_df.rds")
+vi_df <- readRDS("/data/vi_df.rds")
 ```
 ```{r}
 #| label: fig-vi

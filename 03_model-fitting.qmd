@@ -106,9 +106,8 @@ regression relationships in the case of prevalence data, it is
 convenient to use the so-called empirical logit in place of the
 empirical prevalence. The empirical logit is defined as
 
-$$
-l_{i} = \log\left\{\frac{y_i + 1/2}{n_i - y_i + 1/2}\right\}
-$$ {#eq-empirical-logit}
+$$l_{i} = \log\left\{\frac{y_i + 1/2}{n_i - y_i + 1/2}\right\}$$
+{#eq-empirical-logit}
 
 where $y_i$ denotes the number of individuals who tested positive for
 river-blindness and $n_i$ is the total number of people tested at
@@ -162,18 +161,18 @@ To capture this non-linear relationship, we can use the two following
 approaches. The first is based on a simple log-transformation of
 elevation and is represented in @fig-elogit-elev-liberia by the green
 line. If we express this relationship using a standard Binomial
-regression model, this would take the form $$
-\log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_0 + \beta_1 \log\{d(x_i)\}
-$$ {#eq-log-elev-glm} where $p(x_i)$ denote the the probability of
+regression model, this would take the form
+$$\log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_0 + \beta_1 \log\{d(x_i)\}$$
+{#eq-log-elev-glm} where $p(x_i)$ denote the the probability of
 river-blindness infection at sampled location $x_i$, and $d(x_i)$ is the
 elevation at that location.
 
 Alternatively, the non-linear effect of elevation on prevalence could be
 captured using a linear spline. Put in simple terms, we want to fit a
 linear regression model that allows for a change in slope above 150
-meters. Formally, this is expressed in a Binomial regression model as $$
-\log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_0 + \beta_1 d(x_i) + \beta_{2} \max\{d(x_i)-150, 0\}.
-$$ {#eq-lspline-elev-glm} Based on the equation above, the effect of
+meters. Formally, this is expressed in a Binomial regression model as
+$$\log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_0 + \beta_1 d(x_i) + \beta_{2} \max\{d(x_i)-150, 0\}.$$
+{#eq-lspline-elev-glm} Based on the equation above, the effect of
 elevation below 150 meters is quantified by the parameter $\beta_1$.
 Above 150 meters, instead, the effect of elevation becomes
 $\beta_1 + \beta_2$. Note that the function `pmax()` (and not the
@@ -310,17 +309,17 @@ age_class_data <- aggregate(RDT ~ Age_class + Gender,
 We then compute the empirical logit, using the total number of cases
 within each combination of age class and gender. For a given age group
 and gender, which we denote as $\mathcal{C}$, the empirical logit in
-@eq-empirical-logit, now takes the form $$
-l_{\mathcal{C}} = \log\left\{\frac{\sum_{i \in \mathcal{C}} y_{i} + 0.5}{|\mathcal{C}|- \sum_{i \in \mathcal{C}} y_{i} + 0.5} \right\}
-$$ {#eq-empirical-logit-bin} where $y_i$ are the individual binary
-outcomes and $i\in \mathcal{C}$ is used to indicate that the sum is
-carried out over all the individuals who belong the class $\mathcal{C}$,
-identified by a specific age group and gender. Finally, $|\mathcal{C}|$
-is the number of individuals who fall within $\mathcal{C}$. In the code
-above, the empirical logit in @eq-empirical-logit-bin is computed using
-the `aggregate()` function. An inspection of the object
-`age_class_data`, a data frame, shows that the empirical logit is found
-in the column named `RDT`.
+@eq-empirical-logit, now takes the form
+$$l_{\mathcal{C}} = \log\left\{\frac{\sum_{i \in \mathcal{C}} y_{i} + 0.5}{|\mathcal{C}|- \sum_{i \in \mathcal{C}} y_{i} + 0.5} \right\}$$
+{#eq-empirical-logit-bin} where $y_i$ are the individual binary outcomes
+and $i\in \mathcal{C}$ is used to indicate that the sum is carried out
+over all the individuals who belong the class $\mathcal{C}$, identified
+by a specific age group and gender. Finally, $|\mathcal{C}|$ is the
+number of individuals who fall within $\mathcal{C}$. In the code above,
+the empirical logit in @eq-empirical-logit-bin is computed using the
+`aggregate()` function. An inspection of the object `age_class_data`, a
+data frame, shows that the empirical logit is found in the column named
+`RDT`.
 
 ```{r, collapse=TRUE}
 # Computation of the average age by age class and gender
@@ -386,14 +385,12 @@ around 15 years of age, and then changes more gradually in adulthood, we
 can capture this non-linear relationship using a linear spline with two
 knots, at 15 and 40 years. This allows the effect of age to vary across
 three intervals: childhood, early adulthood, and later adulthood. This
-model can be expressed as $$
-\begin{aligned}
+model can be expressed as $$\begin{aligned}
 \log\left\{\frac{p_{j}(x_i)}{1-p_j(x_i)}\right\} = \beta_{0} + \beta_{1}a_{ij}+\beta_{2} \times\max\{a_{ij}-15, 0\} + \beta_{3}\max\{a_{ij}-40, 0\}
-\end{aligned}
-$$ {#eq-age-only-reg} where $a_{ij}$ is the age, in years, of the $j$-th
-individual at household $i$. This formulation defines a piecewise linear
-relationship between age and the log-odds of infection. In particular,
-the effect of age is $\beta_{1}$, for $a_{ij} < 15$,
+\end{aligned}$$ {#eq-age-only-reg} where $a_{ij}$ is the age, in years,
+of the $j$-th individual at household $i$. This formulation defines a
+piecewise linear relationship between age and the log-odds of infection.
+In particular, the effect of age is $\beta_{1}$, for $a_{ij} < 15$,
 $\beta_{1}+\beta_{2}$, for $15 < a_{ij} < 40$, and
 $\beta_{1}+\beta_{2}+\beta_{3}$ for $a_{ij} > 40$.
 
@@ -402,17 +399,16 @@ and gender, as the difference in RDT prevalence between males and
 females appears to vary with age, with wider gaps observed among
 individuals older than 20 years. To examine this pattern using a
 standard Binomial regression model, the linear predictor for RDT
-prevalence can be expressed as $$
-\begin{aligned}
+prevalence can be expressed as $$\begin{aligned}
 \log\left\{\frac{p_{j}(x_i)}{1-p_j(x_i)}\right\} = \beta_{0} + (\beta_{1} + \beta_{1}^*g_{ij})\times a_{ij}+(\beta_{2} + \beta_{2}^*g_{ij})\times\max\{a_{ij}-15, 0\} + \\
 (\beta_{3} + \beta_{3}^*g_{ij}) \times \max\{a_{ij}-40, 0\}
-\end{aligned}
-$$ {#eq-age-inter-reg} where $g_{ij}$ is the indicator for gender, with
-1 corresponding to male and 0 to female. The coefficients $\beta_{1}^*$,
-$\beta_{2}^*$ and $\beta_{3}^*$ thus quantify the differences in risk
-between the two genders for ages below 15 years, between 15 and 40
-years, and above 40 years, respectively. If all of those coefficients
-were 0, the model in @eq-age-only-reg would be recovered.
+\end{aligned}$$ {#eq-age-inter-reg} where $g_{ij}$ is the indicator for
+gender, with 1 corresponding to male and 0 to female. The coefficients
+$\beta_{1}^*$, $\beta_{2}^*$ and $\beta_{3}^*$ thus quantify the
+differences in risk between the two genders for ages below 15 years,
+between 15 and 40 years, and above 40 years, respectively. If all of
+those coefficients were 0, the model in @eq-age-only-reg would be
+recovered.
 
 ```{r, collapse = TRUE}
 # Fit binomial model with age (piecewise linear) and gender interaction
@@ -651,34 +647,34 @@ overdispersion is through the use of generalized linear mixed models
 (GLMMs). The class of GLMMs that we consider in this and the next
 section are obtained by replacing the spatial Gaussian process $S(x_i)$
 in introduced in @eq-linear-predictor-ch1 with a set of mutually
-independent random effects, which we denote as $Z_i$, and thus write $$
-g(\mu_i) = d(x_i)^\top \beta + Z_i.
-$$ {#eq-linear-predictor-glmms-ch2} The model above accounts for the
-overdispersion in the data through $Z_i$ whose variance can be
-interpreted as an indicator of the amount of overdispersion. To show
-this, we carry out a small simulation as follows. For simplicity, we
-consider the Binomial mixed model with an intercept only, hence $$
-\log\left\{\frac{\mu_i}{1-\mu_i}\right\} = \beta_0 + Z_i
-$$ {#eq-bin-glmm-example} and assume that the $Z_i$ follow a set of
+independent random effects, which we denote as $Z_i$, and thus write
+$$g(\mu_i) = d(x_i)^\top \beta + Z_i.$$ {#eq-linear-predictor-glmms-ch2}
+The model above accounts for the overdispersion in the data through
+$Z_i$ whose variance can be interpreted as an indicator of the amount of
+overdispersion. To show this, we carry out a small simulation as
+follows. For simplicity, we consider the Binomial mixed model with an
+intercept only, hence
+$$\log\left\{\frac{\mu_i}{1-\mu_i}\right\} = \beta_0 + Z_i$$
+{#eq-bin-glmm-example} and assume that the $Z_i$ follow a set of
 mutually independent Gaussian variables with mean 0 and variance
 $\tau^2$. In our simulation we vary $\beta_0$ over the set
 $\{-3, -2, -1, 0, 1, 2, 3\}$ and set $\tau^2=0.1$ and the binomial
 denominators to $n_i = 100$. For a given value of $\beta_0$, we then
 proceed through the following iterative steps.
 
--   Simulate 10,000 values for $Z_i$ from a Gaussian distribution with
-    mean 0 and variance $\tau^2$.
+- Simulate 10,000 values for $Z_i$ from a Gaussian distribution with
+  mean 0 and variance $\tau^2$.
 
--   Compute the probabilities $\mu_i$ based on @eq-bin-glmm-example.
+- Compute the probabilities $\mu_i$ based on @eq-bin-glmm-example.
 
--   Simulate 10,000 values from a Binomial model with probability of
-    success $\mu_i$ and denominator $n_i$.
+- Simulate 10,000 values from a Binomial model with probability of
+  success $\mu_i$ and denominator $n_i$.
 
--   Compute the empirical variance of the counts $y_i$ simulated in the
-    previous step.
+- Compute the empirical variance of the counts $y_i$ simulated in the
+  previous step.
 
--   Change the value of $\beta_0$ and repeat the previous steps, for all
-    the values of $\beta_0$.
+- Change the value of $\beta_0$ and repeat the previous steps, for all
+  the values of $\beta_0$.
 
 The code below shows the implementation of the above steps in R.
 
@@ -782,13 +778,11 @@ We now illustrate how to fit a generalized linear mixed, using the
 intercept-only model and one that uses elevation as a covariate. Let
 $\mu(x_i)$ be the number of mosquitoes captured at a location $x_i$;
 then the linear predictor with elevation as a covariate takes the form
-$$
-\log\{\mu_i\} = \beta_{0} + \beta_{1} d(x_i) + Z_i
-$$ {#eq-anopheles-glmm} where $d(x_i)$ indicates the elevation in meters
-at location $x_i$ and the $Z_i$ are independent and identically
-distributed Gaussian variables with mean 0 and variance $\tau^2$. The
-model with an intercept only is simply obtained by setting
-$\beta_1 = 0$.
+$$\log\{\mu_i\} = \beta_{0} + \beta_{1} d(x_i) + Z_i$$
+{#eq-anopheles-glmm} where $d(x_i)$ indicates the elevation in meters at
+location $x_i$ and the $Z_i$ are independent and identically distributed
+Gaussian variables with mean 0 and variance $\tau^2$. The model with an
+intercept only is simply obtained by setting $\beta_1 = 0$.
 
 We carry out the estimation in R using the `glmer()` function from the
 lme4 package (see @bates2015 for a detailed tutorial). The `glmer()`
@@ -931,20 +925,17 @@ function, exponentiating the coefficient gives the multiplicative effect
 on the expected mosquito count. In this case, a one-standard-deviation
 increase in elevation multiplies the expected mosquito count by
 $\exp(-0.19794)=0.82$, corresponding to an approximate reduction of
-$$
-100 \times \{\exp(-0.19794)-1\} \approx -18\%.
-$$
+$$100 \times \{\exp(-0.19794)-1\} \approx -18\%.$$
 
 Because elevation has been standardised, a one-unit increase corresponds
 to an increase in the original elevation variable equal to its standard
 deviation, which for the `elevation` variable is approximately 100
 metres.
 
-The exponentiated intercept reported in
-@tbl-glmer-elevation-coef also has a useful interpretation. Since
-elevation has been standardised to have mean 0, the intercept
-corresponds to the expected mosquito count at the mean elevation, for a
-location whose random effect is equal to zero.
+The exponentiated intercept reported in @tbl-glmer-elevation-coef also
+has a useful interpretation. Since elevation has been standardised to
+have mean 0, the intercept corresponds to the expected mosquito count at
+the mean elevation, for a location whose random effect is equal to zero.
 
 The comparison between the intercept-only model and the model including
 elevation is shown in @tbl-glmer-fit-comparison. From this table, we
@@ -993,29 +984,33 @@ to question the assumption of independently distributed random effects
 $Z_i$ by asking whether the $Z_i$ show evidence of spatial correlation.
 Let $Z_i$ and $Z_j$ be two random effects that are associated with two
 different locations $x_i$ and $x_j$, respectively, and let us take the
-squared difference between the two $$V_{ij} = (Z_i - Z_j)^2.$$ {#eq-squared-diff} How does the spatial correlation affect the value
-of $V_{ij}$? To answer this question, we can refer to the aforementioned
-Tobler's law of geography. When $x_i$ and $x_j$ will be closer to each
-other, then $Z_i$ and $Z_j$ will also tend to be more similar to each
-other, thus making $V_{ij}$ smaller, on average. On the contrary, when
-$x_i$ and $x_j$ will be further apart, then $V_{ij}$ will become larger,
-on average. We can then construct the empirical variogram by considering
-all possible pairs of locations $x_i$ and $x_j$, for which we then
-compute $V_{ij}$ and plot this against the distance between $x_i$ and
-$x_j$, which we denote as $u_{ij}$. If there is spatial correlation in
-the random effects $Z_i$, then this will manifest as an average increase
-in the $V_{ij}$ as $u_{ij}$ increases. However, there are still two
-issues that we have to address before we can generate and plot the
-empirical variogram.
+squared difference between the two
+$$V_{ij} = (Z_i - Z_j)^2.$$ {#eq-squared-diff} How does the spatial
+correlation affect the value of $V_{ij}$? To answer this question, we
+can refer to the aforementioned Tobler's law of geography. When $x_i$
+and $x_j$ will be closer to each other, then $Z_i$ and $Z_j$ will also
+tend to be more similar to each other, thus making $V_{ij}$ smaller, on
+average. On the contrary, when $x_i$ and $x_j$ will be further apart,
+then $V_{ij}$ will become larger, on average. We can then construct the
+empirical variogram by considering all possible pairs of locations $x_i$
+and $x_j$, for which we then compute $V_{ij}$ and plot this against the
+distance between $x_i$ and $x_j$, which we denote as $u_{ij}$. If there
+is spatial correlation in the random effects $Z_i$, then this will
+manifest as an average increase in the $V_{ij}$ as $u_{ij}$ increases.
+However, there are still two issues that we have to address before we
+can generate and plot the empirical variogram.
 
 The first issue is that we do not observe $Z_i$ as, by definition, this
 is a latent variable. Hence, we require an estimate for $Z_i$ which we
 can then feed into $V_{ij}$. To emphasize this point, from now on, we
-shall replace @eq-squared-diff with $$\hat{V}{ij} = (\hat{Z}{i} - \hat{Z}_j)^2.$$ {#eq-hat-squared-diff} Several options are available for estimating $Z_{i}$. Our choice is to use the model of the predictive distribution
-of $Z_i$, that is the distribution of $Z_{i}$ conditioned to the data
-$y_i$. This estimator for $Z_i$ is also readily available from the
-output of the `lmer` and `glmer` functions of the `lme4` package, as we
-will illustrate later in our example in this section.
+shall replace @eq-squared-diff with
+$$\hat{V}{ij} = (\hat{Z}{i} - \hat{Z}_j)^2.$$ {#eq-hat-squared-diff}
+Several options are available for estimating $Z_{i}$. Our choice is to
+use the model of the predictive distribution of $Z_i$, that is the
+distribution of $Z_{i}$ conditioned to the data $y_i$. This estimator
+for $Z_i$ is also readily available from the output of the `lmer` and
+`glmer` functions of the `lme4` package, as we will illustrate later in
+our example in this section.
 
 The second issue is that if we simply plot $\hat{V}_{ij}$ against the
 distances $u_{ij}$ (also known as *cloud variogram*; see Exercise 3 at
@@ -1024,15 +1019,16 @@ $\hat{V}_{ij}$, it may be quite difficult to assess the presence of an
 increasing trend in the $\hat{V}_{ij}$ and thus detect spatial
 correlation. Hence, it is general practice to group the distances
 $u_{ij}$ into classes, say $\mathcal{U}$, and then take average of all
-the $\hat{V}_{ij}$ that fall within $\mathcal{U}$.
-We can now write the formal definition of the empirical variogram as
+the $\hat{V}_{ij}$ that fall within $\mathcal{U}$. We can now write the
+formal definition of the empirical variogram as
 $$\hat{V}(\mathcal{U}) = \frac{1}{2 |\mathcal{U}|} \sum_{(i, j): (u_i,
-u_j) \in \mathcal{U}} \hat{V}{ij}$$ {#eq-empirical-variogram} where $|\mathcal{U}|$ denotes the number of
-pairs of locations that fall within the distance class $\mathcal{U}$.
-The rationale behind dividing by 2 in $1/2 |\mathcal{U}|$ from the above
-equation, will be elucidated in @sec-linear-model. When creating the
-empirical variogram plot, we select the midpoint values of the distance
-classes $\mathcal{U}$ to represent the x-axis values.
+u_j) \in \mathcal{U}} \hat{V}{ij}$$ {#eq-empirical-variogram} where
+$|\mathcal{U}|$ denotes the number of pairs of locations that fall
+within the distance class $\mathcal{U}$. The rationale behind dividing
+by 2 in $1/2 |\mathcal{U}|$ from the above equation, will be elucidated
+in @sec-linear-model. When creating the empirical variogram plot, we
+select the midpoint values of the distance classes $\mathcal{U}$ to
+represent the x-axis values.
 
 Before we can evaluate residual spatial correlation, there remains one
 crucial concern: relying solely on a visual inspection of the empirical
@@ -1048,22 +1044,22 @@ that allows us to generate empirical variograms under the assumption of
 absence of spatial correlation through the following iterative steps.
 
 1.  Permute the order of the locations in the data-set while keeping
-everything else fixed.
+    everything else fixed.
 
 2.  Compute the empirical variogram $\hat{V}(\mathcal{U})$ for the
-permuted data-set.
+    permuted data-set.
 
 3.  Repeat 1 and 2 a large number of times, say 10,000.
 
 4.  Use the resulting 10,000 empirical variograms to compute 95$\%$
-confidence intervals, by taking the 0.025 and 0.975 quantiles of
-these for each distance class $\hat{V}(\mathcal{U})$.
+    confidence intervals, by taking the 0.025 and 0.975 quantiles of
+    these for each distance class $\hat{V}(\mathcal{U})$.
 
 5.  If the observed empirical variogram lies entirely within the
-envelope generated in the previous step, we conclude that there is
-no evidence of residual spatial correlation in the data. When,
-instead, parts of the empirical variogram fall outside the envelope,
-this suggests the presence of residual spatial dependence.
+    envelope generated in the previous step, we conclude that there is
+    no evidence of residual spatial correlation in the data. When,
+    instead, parts of the empirical variogram fall outside the envelope,
+    this suggests the presence of residual spatial dependence.
 
 In point 5 above, the extent and pattern of these deviations can vary
 considerably. In many cases, the departures from the envelope are quite
@@ -1081,12 +1077,19 @@ We now show an application of all the concepts introduced in this
 section to the Liberia data on river-blindness.
 
 <!-- #### Example: assessing spatial correlation for the Liberia data {#sec-empirical-variog-bin} -->
+
 <!-- We consider the Binomial mixed model that uses the log-transformed -->
+
 <!-- elevation as a covariate to model river blindness prevalence, hence $$ -->
+
 <!-- \log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_{0} + \beta_{1}\log\{e(x_i)\} + Z_i -->
+
 <!-- $$ {#eq-liberia-bin-mixed-elev} where $e(x_i)$ is the elevation in -->
+
 <!-- meters at location $x_i$ and the $Z_i$ are i.i.d. Gaussian variables -->
+
 <!-- with mean 0 and variance $\tau^2$. We first fit the model above using -->
+
 <!-- the `glmer` function. -->
 
 <!-- ```{r} -->
@@ -1110,6 +1113,7 @@ section to the Liberia data on river-blindness.
 <!-- ``` -->
 
 <!-- From the output, we observe that the estimate for $\tau^2$ is about -->
+
 <!-- 0.003, indicating a moderate level of overdispersion in the data. -->
 
 <!-- ```{r} -->
@@ -1119,17 +1123,25 @@ section to the Liberia data on river-blindness.
 <!-- ``` -->
 
 <!-- Through the function `ranef` when extracting the estimates of the random -->
+
 <!-- effects $Z_i$ and save these in the data set. We then use the function -->
+
 <!-- `variogram` from the `RiskMap` package to compute the empirical -->
+
 <!-- variogram for the estimated $\hat{Z}_i$. -->
 
 <!-- ```{r} -->
 
 <!-- liberia_variog <- variogram(data = liberia, -->
+
 <!--                               variable = "Z_hat", -->
+
 <!--                               breaks = c(15, 30, 40, 80, 120, -->
+
 <!--                                        160, 200, 250, 300, 350), -->
+
 <!--                               scale_to_km = TRUE, -->
+
 <!--                               n_permutations = 200) -->
 
 <!-- ``` -->
@@ -2236,13 +2248,13 @@ section to the Liberia data on river-blindness.
 
 <!-- ```{r, echo=FALSE, collapse=TRUE, message=FALSE} -->
 
-<!-- load("./data/fit_liberia_no_nugget.rds") -->
+<!-- fit_liberia_no_nugget <- readRDS("data/fit_liberia_no_nugget.rds") -->
 
-<!-- load("./data/fit_Liberia.rds") -->
+<!-- fit_liberia <- readRDS("data/fit_Liberia.rds") -->
 
-<!-- load("./data/fit_liberia2.rds") -->
+<!-- fit_liberia2 <- readRDS("data/fit_liberia2.rds") -->
 
-<!-- load("./data/par_boot.rds") -->
+<!-- par_hat <- readRDS("data/par_boot.rds") -->
 
 <!-- ``` -->
 
