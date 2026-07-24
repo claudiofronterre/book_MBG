@@ -44,6 +44,7 @@ saveRDS(fit_liberia_no_nugget, file = "data/fit_liberia_no_nugget.rds")
 ## --- 2c. Refit with the nugget estimated and a much larger
 ##         MCMC sample (110000 iterations, burn-in 10000, thin 10)
 par0_liberia <- coef(fit_liberia)
+par0_liberia$tau2 <- 0.1 
 
 fit_liberia2 <-
   glgpm(npos ~ log(elevation) + gp(long, lat, nugget = NULL),

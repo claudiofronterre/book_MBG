@@ -534,8 +534,7 @@
       "NeedsCompilation": "yes",
       "Author": "Dirk Eddelbuettel [aut, cre] (<https://orcid.org/0000-0001-6419-907X>), Mark Gillard [aut] (Author of 'toml++' header library)",
       "Maintainer": "Dirk Eddelbuettel <edd@debian.org>",
-      "Repository": "RSPM",
-      "Encoding": "UTF-8"
+      "Repository": "CRAN"
     },
     "Rdpack": {
       "Package": "Rdpack",
@@ -611,16 +610,15 @@
       "Config/testthat/edition": "3",
       "Config/roxygen2/version": "8.0.0",
       "Config/roxygen2/markdown": "TRUE",
+      "Author": "Emanuele Giorgi [aut, cre] (ORCID: <https://orcid.org/0000-0003-0640-181X>), Claudio Fronterre [ctb] (ORCID: <https://orcid.org/0000-0001-6723-9727>), Simon Smart [ctb] (ORCID: <https://orcid.org/0000-0002-3624-8951>)",
+      "Maintainer": "Emanuele Giorgi <e.giorgi@bham.ac.uk>",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
       "RemoteRepo": "RiskMap",
       "RemoteUsername": "claudiofronterre",
       "RemotePkgRef": "claudiofronterre/RiskMap@dev",
       "RemoteRef": "dev",
-      "RemoteSha": "11f1d7e856d4a8a74ae46f5bb30ed71db05e433a",
-      "NeedsCompilation": "no",
-      "Author": "Emanuele Giorgi [aut, cre] (ORCID: <https://orcid.org/0000-0003-0640-181X>), Claudio Fronterre [ctb] (ORCID: <https://orcid.org/0000-0001-6723-9727>), Simon Smart [ctb] (ORCID: <https://orcid.org/0000-0002-3624-8951>)",
-      "Maintainer": "Emanuele Giorgi <e.giorgi@bham.ac.uk>"
+      "RemoteSha": "11f1d7e856d4a8a74ae46f5bb30ed71db05e433a"
     },
     "S7": {
       "Package": "S7",
@@ -2138,8 +2136,7 @@
       "URL": "https://github.com/dmurdoch/ellipse, https://dmurdoch.github.io/ellipse/",
       "BugReports": "https://github.com/dmurdoch/ellipse/issues",
       "NeedsCompilation": "no",
-      "Repository": "RSPM",
-      "Encoding": "UTF-8"
+      "Repository": "CRAN"
     },
     "emmeans": {
       "Package": "emmeans",
@@ -4294,8 +4291,7 @@
       "License": "GPL (>= 2)",
       "Maintainer": "Thomas Lumley <t.lumley@auckland.ac.nz>",
       "NeedsCompilation": "yes",
-      "Repository": "RSPM",
-      "Encoding": "UTF-8"
+      "Repository": "CRAN"
     },
     "lifecycle": {
       "Package": "lifecycle",
@@ -4752,8 +4748,7 @@
       "NeedsCompilation": "yes",
       "Author": "Olaf Mersmann [aut], Claudia Beleites [ctb], Rainer Hurling [ctb], Ari Friedman [ctb], Joshua M. Ulrich [cre]",
       "Maintainer": "Joshua M. Ulrich <josh.m.ulrich@gmail.com>",
-      "Repository": "RSPM",
-      "Encoding": "UTF-8"
+      "Repository": "CRAN"
     },
     "mime": {
       "Package": "mime",
@@ -5099,8 +5094,7 @@
       "VignetteBuilder": "knitr",
       "NeedsCompilation": "no",
       "Author": "Emmanuel Blondel [aut, cre] (ORCID: <https://orcid.org/0000-0002-5870-5762>), Alexandre Bennici [ctb] (ORCID: <https://orcid.org/0000-0003-2160-3487>), Norbert Billet [ctb]",
-      "Repository": "RSPM",
-      "Encoding": "UTF-8"
+      "Repository": "CRAN"
     },
     "parallelly": {
       "Package": "parallelly",
@@ -6178,15 +6172,14 @@
       "RoxygenNote": "7.3.2",
       "X-schema.org-applicationCategory": "Data Access",
       "X-schema.org-keywords": "geoboundaries, boundaries, gis, map, geographic, data, spatial, dataset",
+      "Author": "Ahmadou Dicko [aut], Andy South [ctb], Daniel Runfola [ctb, cre], Rohith Reddy Mandala [ctb]",
+      "Maintainer": "Daniel Runfola <team@geoboundaries.org>",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
       "RemoteRepo": "rgeoboundaries",
       "RemoteUsername": "wmgeolab",
       "RemoteRef": "HEAD",
-      "RemoteSha": "be0f3166c8af0dda1b57c3fd84bcc8744fd5d71e",
-      "NeedsCompilation": "no",
-      "Author": "Ahmadou Dicko [aut], Andy South [ctb], Daniel Runfola [ctb, cre], Rohith Reddy Mandala [ctb]",
-      "Maintainer": "Daniel Runfola <team@geoboundaries.org>"
+      "RemoteSha": "be0f3166c8af0dda1b57c3fd84bcc8744fd5d71e"
     },
     "rlang": {
       "Package": "rlang",
@@ -6863,8 +6856,7 @@
       "Copyright": "see file COPYRIGHTS",
       "RoxygenNote": "7.1.0",
       "NeedsCompilation": "no",
-      "Repository": "RSPM",
-      "Encoding": "UTF-8"
+      "Repository": "CRAN"
     },
     "slider": {
       "Package": "slider",

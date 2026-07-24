@@ -249,7 +249,7 @@ sampling_f_lib <- function() {
 lib_surf_sim <- surf_sim(n_sim = 200,
                          pred_grid = sim_pred_grid,
                          formula = ~ elevation + pmax(elevation - 150, 0) +
-                           gp(kappa = 0.5),
+                           gp(long,lat),
                          sampling_f = sampling_f_lib,
                          family = "binomial",
                          par0 = coef(true_model))
@@ -258,9 +258,9 @@ lib_surf_sim <- surf_sim(n_sim = 200,
 res_sim_grid <- assess_sim(lib_surf_sim,
                            models = list(M_T = ~ elevation +
                                            pmax(elevation - 150, 0) +
-                                           gp(long, lat),
+                                           gp(long,lat),
                                          M_C = ~ gp(long, lat)),
-                           f_grid_target = function(x) exp(x) / (1 + exp(x)),
+                           f_grid_target = function(x) 1/(1+exp(-x)),
                            pred_objective = "mse",
                            spatial_scale = "grid")
 

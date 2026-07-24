@@ -4,8 +4,6 @@ library(dplyr)
 library(ggplot2)
 library(lme4)
 
-dir.create("data", showWarnings = FALSE)
-
 ## ============================================================
 ## PART A: Ghana malnutrition (stunting / underweight) case study
 ## ============================================================
@@ -217,6 +215,7 @@ mod_all_cov <-
           built_up + gp(),
         den = examined,
         data = mlw_sf_model,
+        crs = 32736,
         family = "binomial")
 
 mod_pca <-
@@ -225,12 +224,14 @@ mod_pca <-
           built_up + gp(),
         den = examined,
         data = mlw_sf_model,
+        crs = 32736,
         family = "binomial")
 
 saveRDS(mod_all_cov, file = "data/mod_all_cov.rds")
 saveRDS(mod_pca, file = "data/mod_pca.rds")
 
 ## --- B4. Grid predictions for both models ---
+mlw_admin0_sf <- st_transform(mlw_admin0_sf, 32736)
 grid_mlw <- create_grid(mlw_admin0_sf, spat_res = 5)
 
 r_covs_p   <- terra::project(r_covs, paste0("epsg:", mlw_crs))
@@ -238,7 +239,11 @@ pc1_rast_p <- terra::project(pc1_rast, paste0("epsg:", mlw_crs))
 
 predictors <- cbind(terra::extract(r_covs_p,  st_coordinates(grid_mlw)),
                     terra::extract(pc1_rast_p, st_coordinates(grid_mlw)))
+complete_idx <- complete.cases(predictors)
 
+# subset both the grid and the predictors consistently
+grid_mlw   <- grid_mlw[complete_idx, ]
+predictors <- predictors[complete_idx, ]
 pred_all_cov <- pred_over_grid(mod_all_cov,
                                grid_pred = grid_mlw,
                                predictors = predictors)
@@ -378,7 +383,7 @@ anpit_wnv <- function(model, test_prop = 0.25, nsim = 2000,
   if (test_prop <= 0 || test_prop >= 1) stop("test_prop must be in (0,1)")
   
   D   <- model.matrix(model)
-  off <- model@offset; if (is.null(off)) off <- rep(0, nrow(D))
+  off <- model.offset(model.frame(model)); if (is.null(off)) off <- rep(0, nrow(D))
   y   <- model@resp$y
   beta <- lme4::fixef(model)
   sigma <- sqrt(as.numeric(lme4::VarCorr(model)[[1]][1]))
