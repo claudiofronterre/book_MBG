@@ -710,7 +710,7 @@ We continue our analysis of the Liberia data and consider areal-level
 targets. More specifically, we aim to predict the average prevalence
 over the regions which give the administrative level 1 of Liberia. By
 denoting with $A_i$ the i-th out of the 15 regions in Liberia. By
-denoting with $T(x)$ reiverblindness prevalence as defined in
+denoting with $T(x)$ riverblindness prevalence as defined in
 @eq-rb-prev-target, we define our predictive target as
 $$T_{i} = \frac{1}{|A_i|} \int_{A_i} T(x) \: dx.$$
 The R code below shows how predictions for $T_i$ can be performed using
@@ -750,7 +750,7 @@ $$T_{i}^* = \int_{A_i} \tilde{w_i}(x) T(x) \: dx.$$
 where $\tilde{w}_{i}(x)$ are the standardized weights that integrate to
 1 in $A_i$ (i.e. $\int_{A_i} \tilde{w}_i(x) \: dx = 1$).
 
-We first retrieve the population density data from the World Pop
+We first retrieve the population density data from the WorldPop
 database (see @sec-pop-data) and use these to derive the un-standardized
 weights $w(x)$.
 
@@ -826,7 +826,7 @@ for the more noticeable differences in this area.
 
 ### Example: predicting the total number of Anopheles gambiae mosquitoes (continuing from @sec-anopheles-fit) {#sec-anopheles-pred}
 
-For the analysis on Anopheles gambiae mosquitoes, we consider the
+For the analysis on *Anopheles gambiae* mosquitoes, we consider the
 prediction of the total number of mosquitoes within the study area. In
 this case, because there is not a natural definition of the study area
 borders as in the previous analysis, we consider the convex hull as
@@ -917,7 +917,7 @@ Since we are not standardizing the weights, there is no need to specify
 above, we printed the mean of the predictive distribution of $T$ along
 with the 95% prediction interval. The point estimate of approximately
 17,719 mosquitoes is likely an underestimate of the total number of
-Anopheles gambiae in the area, as the trap used to count the mosquitoes
+*Anopheles gambiae* in the area, as the trap used to count the mosquitoes
 may not capture all of them, particularly those outside the immediate
 trapping zone or those active at different times.
 
@@ -976,7 +976,7 @@ data. For instance, k-means minimizes within-cluster variance to produce
 compact, non-overlapping groups, while hierarchical clustering organizes
 data into nested clusters based on a linkage criterion like geographic
 distance. In the code below we show an example of the use of these
-methods for data splitting, using the `spatial_clusterin_cv` function
+methods for data splitting, using the `spatial_clustering_cv` function
 from the `spatialsample` package [@mahoney2023].
 
 ```{r, collapse = TRUE, fig.width=12, fig.height=6}
