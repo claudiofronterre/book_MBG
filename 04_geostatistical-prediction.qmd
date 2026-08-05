@@ -152,7 +152,7 @@ used for computing our target.
 
 ::: callout-note
 Here, we are overlooking the fact that when $T(x)$ is a linear
-transformation of $S(x)$ and themodel fitted to the data is a linear
+transformation of $S(x)$ and the model fitted to the data is a linear
 geostatistical model, then we can derive any summary of the predictive
 distribution analytically, without the need of carrying out any
 simulation. Although this may displease some of our fellow statisticians
@@ -194,7 +194,7 @@ former.
 We now show how the ideas and concepts discussed above are put into
 practice in an geostatistical analysis, using the Liberia data example.
 Using the fitted model in @sec-liberia-estim1, we use the
-`predict_over_grid` function in `RiskMap`, to sample from the predictive
+`pred_over_grid` function in `RiskMap`, to sample from the predictive
 distribution of the spatial Gaussian process $S(x)$ based on a regular
 grid spanning the country of Liberia.
 
@@ -311,7 +311,7 @@ distribution of the first component of $S(\tilde{X})$
 
 ```{r}
 #| label: fig-hist-first-comp-pd
-#| fig-cap: "Histrogram of the predictive distribution of the first component, $S(\\tilde{x}_1)$ of $S(\\tilde{X})$ for the Liberia data analysis."
+#| fig-cap: "Histogram of the predictive distribution of the first component, $S(\\tilde{x}_1)$ of $S(\\tilde{X})$ for the Liberia data analysis."
 
 hist(lb_pred_S_m$S_samples[,1], main = "Predictive distribution",
      xlab = expression(S(tilde(x)[1])))
@@ -2538,8 +2538,8 @@ The answer to this question is given in @sec-non-spar-covariates.
     models so that the same test sets are used. Is $M_2$ showing a
     better calibration? Why?
 
-3.  In the analysis of the *Anopheles gambiae* moqsuitoes data, consider
-    two models. One that uses elavation, with linear predictor
+3.  In the analysis of the *Anopheles gambiae* mosquitoes data, consider
+    two models. One that uses elevation, with linear predictor
     $$M_1\: : \: \log\{\lambda(x_i)\} = \beta_0 + \beta_1 e(x_i) + S(x_i)$$
     where $e(x)$ is the elevation in meters at location $x$ and $S(x_i)$
     is a stationary and isotropic Gaussian process with variance
