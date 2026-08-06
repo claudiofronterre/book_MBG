@@ -501,9 +501,8 @@ vi_df <- vi_df %>%
 
 saveRDS(vi_df, file = "data/vi_df.rds")
 
-## --- C8 (bundle for the ambiguous case_study2 load target) ---
-case_study2 <- list(mean_nmosq = mean_nmosq)
-saveRDS(case_study2, file = "data/case_study2.rds")
+## --- C8. Mean mosquito abundance used in the vector index ---
+saveRDS(mean_nmosq, file = "data/mean_nmosq.rds")
 
 ## ------------------------------------------------------------
 message("Done. All files written to ./data:")
