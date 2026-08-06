@@ -1,5 +1,6 @@
 library(sf)
 library(RiskMap)
+library(lme4)
 
 ## ------------------------------------------------------------
 ## 1. Italy administrative boundaries
@@ -15,7 +16,33 @@ saveRDS(italy_regions,   file = "data/ita_adm2_geoboundaries.rds")
 saveRDS(italy_provinces, file = "data/ita_adm3_geoboundaries.rds")
 
 ## ------------------------------------------------------------
-## 2. Liberia river-blindness models
+## 2. Empirical variogram for the Italy simulated data
+##    -> data/italy_sim_variog.rds
+## ------------------------------------------------------------
+data(italy_sim)  # from RiskMap
+
+lmer_fit <- lmer(y ~ log(pop_dens) + (1 | ID_loc), data = italy_sim)
+
+italy_sim$rand_eff <- ranef(lmer_fit)$ID_loc[italy_sim$ID_loc, 1]
+
+italy_sim_sf <- st_as_sf(
+  italy_sim,
+  coords = c("x1", "x2"),
+  crs = 32634
+)
+
+set.seed(1)
+italy_sim_variog <- variogram(
+  italy_sim_sf,
+  variable = "rand_eff",
+  scale_to_km = TRUE,
+  n_permutations = 1000
+)
+
+saveRDS(italy_sim_variog, file = "data/italy_sim_variog.rds")
+
+## ------------------------------------------------------------
+## 3. Liberia river-blindness models
 ##    -> data/fit_Liberia.rds             (fit_liberia)
 ##    -> data/fit_liberia_no_nugget.rds    (fit_liberia_no_nugget)
 ##    -> data/fit_liberia2.rds             (fit_liberia2)
@@ -60,7 +87,7 @@ fit_liberia2 <-
 saveRDS(fit_liberia2, file = "data/fit_liberia2.rds")
 
 ## ------------------------------------------------------------
-## 3. Parametric bootstrap for fit_liberia_no_nugget
+## 4. Parametric bootstrap for fit_liberia_no_nugget
 ##    -> data/par_boot.rds (object: par_hat)
 ## ------------------------------------------------------------
 n_sim <- 100  # increase to >= 1000 for production-quality CIs

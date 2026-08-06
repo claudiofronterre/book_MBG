@@ -66,7 +66,11 @@ Let us first consider the example of the river-blindness data in Liberia
 elevation. We first generate a plot of the prevalence against the
 measured elevation at each of the sample locations
 
-```{r, echo=FALSE, collapse=TRUE, message=FALSE}
+```{r}
+#| label: load-packages-data
+#| echo: false
+#| collapse: true
+#| message: false
 library(ggplot2)
 library(sf)
 library(RiskMap)
@@ -105,9 +109,9 @@ scale; see @tbl-glm in Section @sec-geostat-models. To explore
 regression relationships in the case of prevalence data, it is
 convenient to use the so-called empirical logit in place of the
 empirical prevalence. The empirical logit is defined as
-
-$$l_{i} = \log\left\{\frac{y_i + 1/2}{n_i - y_i + 1/2}\right\}$$
-{#eq-empirical-logit}
+$$
+l_{i} = \log\left\{\frac{y_i + 1/2}{n_i - y_i + 1/2}\right\}
+$$ {#eq-empirical-logit}
 
 where $y_i$ denotes the number of individuals who tested positive for
 river-blindness and $n_i$ is the total number of people tested at
@@ -162,8 +166,10 @@ approaches. The first is based on a simple log-transformation of
 elevation and is represented in @fig-elogit-elev-liberia by the green
 line. If we express this relationship using a standard Binomial
 regression model, this would take the form
-$$\log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_0 + \beta_1 \log\{d(x_i)\}$$
-{#eq-log-elev-glm} where $p(x_i)$ denote the the probability of
+$$
+\log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_0 + \beta_1 \log\{d(x_i)\}
+$$ {#eq-log-elev-glm} 
+where $p(x_i)$ denote the the probability of
 river-blindness infection at sampled location $x_i$, and $d(x_i)$ is the
 elevation at that location.
 
@@ -171,8 +177,10 @@ Alternatively, the non-linear effect of elevation on prevalence could be
 captured using a linear spline. Put in simple terms, we want to fit a
 linear regression model that allows for a change in slope above 150
 meters. Formally, this is expressed in a Binomial regression model as
-$$\log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_0 + \beta_1 d(x_i) + \beta_{2} \max\{d(x_i)-150, 0\}.$$
-{#eq-lspline-elev-glm} Based on the equation above, the effect of
+$$
+\log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_0 + \beta_1 d(x_i) + \beta_{2} \max\{d(x_i)-150, 0\}.
+$$ {#eq-lspline-elev-glm} 
+Based on the equation above, the effect of
 elevation below 150 meters is quantified by the parameter $\beta_1$.
 Above 150 meters, instead, the effect of elevation becomes
 $\beta_1 + \beta_2$. Note that the function `pmax()` (and not the
@@ -244,8 +252,9 @@ reported counts, if required. The variable `An.gambiae` in the
 `anopheles` dataset does not contain any 0, hence we simply apply the
 log transformation without adding 1.
 
-```{r, collapse=TRUE}
+```{r}
 #| label: fig-logcounts-elev-mosq
+#| collapse: true
 #| fig-cap: "Scatter plot of the log transformed number of *Anopheles gambiae* mosquitoes against elevation, measured in meters. The blue line is generated using the least squares fit. "
 # Apply log-transformation to Anopheles gambiaes counts
 anopheles$log_counts <- log(anopheles$An.gambiae)
@@ -274,7 +283,9 @@ plots. Throughout the book, we will consider the data from the community
 survey only, hence we work with a subset of the data which we shall name
 `malkenya_comm`
 
-```{r, collapse = TRUE}
+```{r}
+#| label: subset-malkenya-data
+#| collapse: true
 # Subset to community surveys only
 malkenya_comm <- malkenya[malkenya$Survey == "community", ]
 ```
@@ -284,12 +295,12 @@ age and gender. To generate a plot that can help us understand between
 the relationship with malaria prevalence and the two risk factors, we
 proceed as follows.
 
-```{r, collapse=TRUE}
+```{r}
+#| label: age-grouping
 # Grouping of ages into classes defined through "breaks"
 malkenya_comm$Age_class <- cut(malkenya_comm$Age, 
                                breaks = c(0, 5, 10, 15, 30, 40, 50, 100),
                                include.lowest = TRUE)
-
 ```
 
 Using the `cut()` function, we first split age (in years) into classes
@@ -299,7 +310,8 @@ For older ages, there is no strong requirement for a particular
 classification, and alternative groupings are equally plausible; the
 categories used here are intended purely for illustration.
 
-```{r, collapse=TRUE}
+```{r}
+#| label: age-class-elogit
 # Computation of the empirical logit by age class and gender
 age_class_data <- aggregate(RDT ~ Age_class + Gender, 
                             data = malkenya_comm, 
@@ -310,8 +322,10 @@ We then compute the empirical logit, using the total number of cases
 within each combination of age class and gender. For a given age group
 and gender, which we denote as $\mathcal{C}$, the empirical logit in
 @eq-empirical-logit, now takes the form
-$$l_{\mathcal{C}} = \log\left\{\frac{\sum_{i \in \mathcal{C}} y_{i} + 0.5}{|\mathcal{C}|- \sum_{i \in \mathcal{C}} y_{i} + 0.5} \right\}$$
-{#eq-empirical-logit-bin} where $y_i$ are the individual binary outcomes
+$$
+l_{\mathcal{C}} = \log\left\{\frac{\sum_{i \in \mathcal{C}} y_{i} + 0.5}{|\mathcal{C}|- \sum_{i \in \mathcal{C}} y_{i} + 0.5} \right\}
+$$ {#eq-empirical-logit-bin} 
+where $y_i$ are the individual binary outcomes
 and $i\in \mathcal{C}$ is used to indicate that the sum is carried out
 over all the individuals who belong the class $\mathcal{C}$, identified
 by a specific age group and gender. Finally, $|\mathcal{C}|$ is the
@@ -321,7 +335,8 @@ the empirical logit in @eq-empirical-logit-bin is computed using the
 data frame, shows that the empirical logit is found in the column named
 `RDT`.
 
-```{r, collapse=TRUE}
+```{r}
+#| label: average-age-class
 # Computation of the average age by age class and gender
 age_class_data$age_mean_point <- aggregate(Age ~ Age_class + Gender, 
                                            data = malkenya_comm, 
@@ -348,7 +363,6 @@ within each of the groups and place this in `n_obs`.
 ggplot(age_class_data, aes(x = age_mean_point, y = RDT)) + 
   geom_point(aes(size = n_obs, colour = Gender)) + 
   labs(x = "Age (years)", y = "Empirical logit")  
-
 ```
 
 The resulting plot in @fig-elogit-age-malkenya shows the empirical logit
@@ -385,9 +399,13 @@ around 15 years of age, and then changes more gradually in adulthood, we
 can capture this non-linear relationship using a linear spline with two
 knots, at 15 and 40 years. This allows the effect of age to vary across
 three intervals: childhood, early adulthood, and later adulthood. This
-model can be expressed as $$\begin{aligned}
+model can be expressed as 
+$$
+\begin{aligned}
 \log\left\{\frac{p_{j}(x_i)}{1-p_j(x_i)}\right\} = \beta_{0} + \beta_{1}a_{ij}+\beta_{2} \times\max\{a_{ij}-15, 0\} + \beta_{3}\max\{a_{ij}-40, 0\}
-\end{aligned}$$ {#eq-age-only-reg} where $a_{ij}$ is the age, in years,
+\end{aligned}
+$$ {#eq-age-only-reg} 
+where $a_{ij}$ is the age, in years,
 of the $j$-th individual at household $i$. This formulation defines a
 piecewise linear relationship between age and the log-odds of infection.
 In particular, the effect of age is $\beta_{1}$, for $a_{ij} < 15$,
@@ -399,10 +417,14 @@ and gender, as the difference in RDT prevalence between males and
 females appears to vary with age, with wider gaps observed among
 individuals older than 20 years. To examine this pattern using a
 standard Binomial regression model, the linear predictor for RDT
-prevalence can be expressed as $$\begin{aligned}
+prevalence can be expressed as 
+$$
+\begin{aligned}
 \log\left\{\frac{p_{j}(x_i)}{1-p_j(x_i)}\right\} = \beta_{0} + (\beta_{1} + \beta_{1}^*g_{ij})\times a_{ij}+(\beta_{2} + \beta_{2}^*g_{ij})\times\max\{a_{ij}-15, 0\} + \\
 (\beta_{3} + \beta_{3}^*g_{ij}) \times \max\{a_{ij}-40, 0\}
-\end{aligned}$$ {#eq-age-inter-reg} where $g_{ij}$ is the indicator for
+\end{aligned}
+$$ {#eq-age-inter-reg} 
+where $g_{ij}$ is the indicator for
 gender, with 1 corresponding to male and 0 to female. The coefficients
 $\beta_{1}^*$, $\beta_{2}^*$ and $\beta_{3}^*$ thus quantify the
 differences in risk between the two genders for ages below 15 years,
@@ -410,7 +432,8 @@ between 15 and 40 years, and above 40 years, respectively. If all of
 those coefficients were 0, the model in @eq-age-only-reg would be
 recovered.
 
-```{r, collapse = TRUE}
+```{r}
+#| label: fit-binom-age-gender
 # Fit binomial model with age (piecewise linear) and gender interaction
 glm_age_gender_interaction <- glm(RDT ~ Age + Gender:Age + 
                                   pmax(Age - 15, 0) + Gender:pmax(Age - 15, 0) + 
@@ -475,6 +498,7 @@ with and without the interaction terms should be compared using a
 likelihood ratio test, as shown below.
 
 ```{r}
+#| label: anova-glm
 #| results: false
 # Fit binomial model with age (piecewise linear)
 glm_age_gender_no_interaction <- glm(RDT ~ Age +  
@@ -547,6 +571,7 @@ household and not of the individual. Let us, for example, consider the
 variable `elevation` from the `malkenya` data-set.
 
 ```{r}
+#| label: split-elevation
 # Split elevation into classes by deciles
 malkenya_comm$elevation_class <- cut(malkenya_comm$elevation,
                                      breaks = quantile(malkenya_comm$elevation,
@@ -562,6 +587,7 @@ observations falling within each class of elevation is approximately the
 same.
 
 ```{r}
+#| label: group-by-elev
 # Computation of the empirical logit by classes of elevation
 elev_class_data <- aggregate(RDT ~ elevation_class, 
                              data = malkenya_comm, 
@@ -584,7 +610,7 @@ is computed as already defined in @eq-empirical-logit-bin, where now the
 definition of $\mathcal{C}$ is given by a specific decile used to split
 the distribution of elevation.
 
-```{r, collapse=TRUE}
+```{r}
 #| label: fig-elogit-elev-malkenya
 #| fig-cap: "Plot of the empirical logit against elevation measured in meters."
 # Scatterplot of the empirical logit of RDT vs. mean elevation
@@ -648,37 +674,42 @@ overdispersion is through the use of generalized linear mixed models
 section are obtained by replacing the spatial Gaussian process $S(x_i)$
 in introduced in @eq-linear-predictor-ch1 with a set of mutually
 independent random effects, which we denote as $Z_i$, and thus write
-$$g(\mu_i) = d(x_i)^\top \beta + Z_i.$$ {#eq-linear-predictor-glmms-ch2}
+$$
+g(\mu_i) = d(x_i)^\top \beta + Z_i.
+$$ {#eq-linear-predictor-glmms-ch2}
 The model above accounts for the overdispersion in the data through
 $Z_i$ whose variance can be interpreted as an indicator of the amount of
 overdispersion. To show this, we carry out a small simulation as
 follows. For simplicity, we consider the Binomial mixed model with an
 intercept only, hence
-$$\log\left\{\frac{\mu_i}{1-\mu_i}\right\} = \beta_0 + Z_i$$
-{#eq-bin-glmm-example} and assume that the $Z_i$ follow a set of
+$$
+\log\left\{\frac{\mu_i}{1-\mu_i}\right\} = \beta_0 + Z_i
+$$ {#eq-bin-glmm-example} 
+and assume that the $Z_i$ follow a set of
 mutually independent Gaussian variables with mean 0 and variance
 $\tau^2$. In our simulation we vary $\beta_0$ over the set
 $\{-3, -2, -1, 0, 1, 2, 3\}$ and set $\tau^2=0.1$ and the binomial
 denominators to $n_i = 100$. For a given value of $\beta_0$, we then
 proceed through the following iterative steps.
 
-- Simulate 10,000 values for $Z_i$ from a Gaussian distribution with
-  mean 0 and variance $\tau^2$.
+-   Simulate 10,000 values for $Z_i$ from a Gaussian distribution with
+    mean 0 and variance $\tau^2$.
 
-- Compute the probabilities $\mu_i$ based on @eq-bin-glmm-example.
+-   Compute the probabilities $\mu_i$ based on @eq-bin-glmm-example.
 
-- Simulate 10,000 values from a Binomial model with probability of
-  success $\mu_i$ and denominator $n_i$.
+-   Simulate 10,000 values from a Binomial model with probability of
+    success $\mu_i$ and denominator $n_i$.
 
-- Compute the empirical variance of the counts $y_i$ simulated in the
-  previous step.
+-   Compute the empirical variance of the counts $y_i$ simulated in the
+    previous step.
 
-- Change the value of $\beta_0$ and repeat the previous steps, for all
-  the values of $\beta_0$.
+-   Change the value of $\beta_0$ and repeat the previous steps, for all
+    the values of $\beta_0$.
 
 The code below shows the implementation of the above steps in R.
 
 ```{r}
+#| label: sim-binom-variance
 # Number of simulations
 n_sim <- 10000
 
@@ -720,7 +751,7 @@ probs_binomial <- exp(beta0) / (1 + exp(beta0))
 var_binomial <- bin_denom * probs_binomial * (1 - probs_binomial)
 ```
 
-```{r, collapse  = TRUE}
+```{r}
 #| label: fig-var-bin-glmm
 #| fig-cap: "Plot of the variances of the standard Binomial model and the Binomial mixed model (see @eq-bin-glmm-example) against  $\\beta_0$"  
 
@@ -778,8 +809,10 @@ We now illustrate how to fit a generalized linear mixed, using the
 intercept-only model and one that uses elevation as a covariate. Let
 $\mu(x_i)$ be the number of mosquitoes captured at a location $x_i$;
 then the linear predictor with elevation as a covariate takes the form
-$$\log\{\mu_i\} = \beta_{0} + \beta_{1} d(x_i) + Z_i$$
-{#eq-anopheles-glmm} where $d(x_i)$ indicates the elevation in meters at
+$$
+\log\{\mu_i\} = \beta_{0} + \beta_{1} d(x_i) + Z_i
+$$ {#eq-anopheles-glmm} 
+where $d(x_i)$ indicates the elevation in meters at
 location $x_i$ and the $Z_i$ are independent and identically distributed
 Gaussian variables with mean 0 and variance $\tau^2$. The model with an
 intercept only is simply obtained by setting $\beta_1 = 0$.
@@ -791,7 +824,8 @@ linear mixed models. The code below shows how `glmer()` is used to carry
 out this step for the model in @eq-anopheles-glmm and the one without
 covariates.
 
-```{r collapse=TRUE}
+```{r}
+#| label: anopheles-glmer
 # Create an ID for the location
 anopheles$ID_loc <- 1:nrow(anopheles)
 
@@ -925,7 +959,9 @@ function, exponentiating the coefficient gives the multiplicative effect
 on the expected mosquito count. In this case, a one-standard-deviation
 increase in elevation multiplies the expected mosquito count by
 $\exp(-0.19794)=0.82$, corresponding to an approximate reduction of
-$$100 \times \{\exp(-0.19794)-1\} \approx -18\%.$$
+$$
+100 \times \{\exp(-0.19794)-1\} \approx -18\%.
+$$
 
 Because elevation has been standardised, a one-unit increase corresponds
 to an increase in the original elevation variable equal to its standard
@@ -985,7 +1021,10 @@ $Z_i$ by asking whether the $Z_i$ show evidence of spatial correlation.
 Let $Z_i$ and $Z_j$ be two random effects that are associated with two
 different locations $x_i$ and $x_j$, respectively, and let us take the
 squared difference between the two
-$$V_{ij} = (Z_i - Z_j)^2.$$ {#eq-squared-diff} How does the spatial
+$$
+V_{ij} = (Z_i - Z_j)^2.
+$$ {#eq-squared-diff} 
+How does the spatial
 correlation affect the value of $V_{ij}$? To answer this question, we
 can refer to the aforementioned Tobler's law of geography. When $x_i$
 and $x_j$ will be closer to each other, then $Z_i$ and $Z_j$ will also
@@ -1004,7 +1043,9 @@ The first issue is that we do not observe $Z_i$ as, by definition, this
 is a latent variable. Hence, we require an estimate for $Z_i$ which we
 can then feed into $V_{ij}$. To emphasize this point, from now on, we
 shall replace @eq-squared-diff with
-$$\hat{V}{ij} = (\hat{Z}{i} - \hat{Z}_j)^2.$$ {#eq-hat-squared-diff}
+$$
+\hat{V}{ij} = (\hat{Z}{i} - \hat{Z}_j)^2.
+$$ {#eq-hat-squared-diff}
 Several options are available for estimating $Z_{i}$. Our choice is to
 use the model of the predictive distribution of $Z_i$, that is the
 distribution of $Z_{i}$ conditioned to the data $y_i$. This estimator
@@ -1021,8 +1062,11 @@ correlation. Hence, it is general practice to group the distances
 $u_{ij}$ into classes, say $\mathcal{U}$, and then take average of all
 the $\hat{V}_{ij}$ that fall within $\mathcal{U}$. We can now write the
 formal definition of the empirical variogram as
-$$\hat{V}(\mathcal{U}) = \frac{1}{2 |\mathcal{U}|} \sum_{(i, j): (u_i,
-u_j) \in \mathcal{U}} \hat{V}{ij}$$ {#eq-empirical-variogram} where
+$$
+\hat{V}(\mathcal{U}) = \frac{1}{2 |\mathcal{U}|} \sum_{(i, j): (u_i,
+u_j) \in \mathcal{U}} \hat{V}{ij}
+$$ {#eq-empirical-variogram} 
+where
 $|\mathcal{U}|$ denotes the number of pairs of locations that fall
 within the distance class $\mathcal{U}$. The rationale behind dividing
 by 2 in $1/2 |\mathcal{U}|$ from the above equation, will be elucidated
@@ -1076,987 +1120,738 @@ evidence on its own.
 We now show an application of all the concepts introduced in this
 section to the Liberia data on river-blindness.
 
-<!-- #### Example: assessing spatial correlation for the Liberia data {#sec-empirical-variog-bin} -->
-
-<!-- We consider the Binomial mixed model that uses the log-transformed -->
-
-<!-- elevation as a covariate to model river blindness prevalence, hence $$ -->
-
-<!-- \log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_{0} + \beta_{1}\log\{e(x_i)\} + Z_i -->
-
-<!-- $$ {#eq-liberia-bin-mixed-elev} where $e(x_i)$ is the elevation in -->
-
-<!-- meters at location $x_i$ and the $Z_i$ are i.i.d. Gaussian variables -->
-
-<!-- with mean 0 and variance $\tau^2$. We first fit the model above using -->
-
-<!-- the `glmer` function. -->
-
-<!-- ```{r} -->
-
-<!-- # Convert the data-set into an sf object -->
-
-<!-- liberia <- st_as_sf(liberia, coords = c("lat", "long"), crs = 4326) -->
-
-<!-- # Create the ID of the location -->
-
-<!-- liberia$ID_loc <- 1:nrow(liberia) -->
-
-<!-- # Binomial mixed model with log-elevation -->
-
-<!-- fit_glmer_lib <- glmer(cbind(npos, ntest) ~ log(elevation) + (1|ID_loc), family = binomial, -->
-
-<!--                         data = liberia, nAGQ = 25) -->
-
-<!-- summary(fit_glmer_lib) -->
-
-<!-- ``` -->
-
-<!-- From the output, we observe that the estimate for $\tau^2$ is about -->
-
-<!-- 0.003, indicating a moderate level of overdispersion in the data. -->
-
-<!-- ```{r} -->
-
-<!-- liberia$Z_hat <- ranef(fit_glmer_lib)$ID_loc[,1] -->
-
-<!-- ``` -->
-
-<!-- Through the function `ranef` when extracting the estimates of the random -->
-
-<!-- effects $Z_i$ and save these in the data set. We then use the function -->
-
-<!-- `variogram` from the `RiskMap` package to compute the empirical -->
-
-<!-- variogram for the estimated $\hat{Z}_i$. -->
-
-<!-- ```{r} -->
-
-<!-- liberia_variog <- variogram(data = liberia, -->
-
-<!--                               variable = "Z_hat", -->
-
-<!--                               breaks = c(15, 30, 40, 80, 120, -->
-
-<!--                                        160, 200, 250, 300, 350), -->
-
-<!--                               scale_to_km = TRUE, -->
-
-<!--                               n_permutations = 200) -->
-
-<!-- ``` -->
-
-<!-- Through the argument `breaks` we can specify the classes of distance, -->
-
-<!-- previously denoted by $\mathcal{U}$; check the help page of -->
-
-<!-- `variogram` to see how this is defined by default. The values passed -->
-
-<!-- to `breaks` in the code above correspond to define the following classes -->
-
-<!-- of distance $\mathcal{U}$: $[15, 30]$, $(30, 40]$ and so forth, with the -->
-
-<!-- last class being $[350, +\infty)$, i.e. all pairs of locations whose -->
-
-<!-- distances are above 350km. The argument `n_permutations` allows the user -->
-
-<!-- to specify the number of permutations that are performed to generate the -->
-
-<!-- envelope for absence of spatial correlation, previously described. -->
-
-<!-- ```{r collapse=TRUE} -->
-
-<!-- dist_summaries(data = liberia, -->
-
-<!--                scale_to_km = TRUE) -->
-
-<!-- ``` -->
-
-<!-- The `dist_summaries` function within the `RiskMap` package can be used -->
-
-<!-- for gauging the extent of the area covered by your dataset, aiding in -->
-
-<!-- the selection of appropriate values to be passed to the `breaks` argument. -->
-
-<!-- In the provided output above, we observe that for the Liberia dataset, -->
-
-<!-- the minimum and maximum distances are approximately 3km and 533km, -->
-
-<!-- respectively. While there is not a one-size-fits-all recommendation for -->
-
-<!-- setting `breaks`, two fundamental principles should inform your choice. -->
-
-<!-- Firstly, it is advisable to avoid choosing overly large distance -->
-
-<!-- intervals, as the uncertainty associated with the empirical variogram -->
-
-<!-- tends to increase with distance due to fewer available pairs of -->
-
-<!-- observations for estimation. Secondly, especially when spatial -->
-
-<!-- correlation is not strong, it is crucial to carefully explore the -->
-
-<!-- behavior of the variogram at smaller distances. Consequently, it is -->
-
-<!-- generally advisable to experiment with different `breaks` configurations -->
-
-<!-- and observe how they impact the pattern of the empirical variogram. -->
-
-<!-- ```{r collapse=TRUE} -->
-
-<!-- #| label: fig-liberia-variog -->
-
-<!-- #| fig-cap: "Plot of the empirical variogram (solid line) computed using the estimated random effects from the model in @eq-liberia-bin-mixed-elev. The blue shaded area is the 95% confidence level envelope generated using the permutation procedure described in @sec-expl-spatial."   -->
-
-<!-- plot_variogram(liberia_variog, -->
-
-<!--                  plot_envelope = TRUE) -->
-
-<!-- ``` -->
-
-<!-- Finally, the `plot_variogram` function enables us to visualize the -->
-
-<!-- empirical variogram and, through the `plot_envelope` argument, include -->
-
-<!-- the envelope generated by the permutation procedure. As illustrated in -->
-
-<!-- @fig-liberia-variog, we observe that the empirical variogram falls -->
-
-<!-- outside the envelope at relatively short distances, typically below -->
-
-<!-- 30km. However, for distances exceeding 30km, the behavior of the -->
-
-<!-- empirical variogram does not significantly differ from variograms -->
-
-<!-- generated under the assumption of spatial independence. In summary, we -->
-
-<!-- interpret the evidence presented in @fig-liberia-variog as indicative of -->
-
-<!-- residual spatial correlation within the data. Nevertheless, it is -->
-
-<!-- essential to exercise caution when attempting to ascertain the scale of -->
-
-<!-- the spatial correlation using the empirical variogram. As we will -->
-
-<!-- emphasize throughout this book, the empirical variogram's sensitivity to -->
-
-<!-- the choice of breaks values renders it an unreliable tool for drawing -->
-
-<!-- statistical inferences. In other words, we recommend employing the -->
-
-<!-- empirical variogram primarily to assess the presence of residual -->
-
-<!-- correlation. -->
-
-<!-- #### Exploring residual spatial correlation with linear Gaussian models {#sec-empirical-variog-lm} -->
-
-<!-- When using a linear model to assess spatial correlation, it is important -->
-
-<!-- to distinguish two cases: 1) when the data contain only one location per -->
-
-<!-- location; 2) when more than one observation per location is available. -->
-
-<!-- We now consider each of these two scenarios separately. -->
-
-<!-- ##### One observation per location -->
-
-<!-- To illustrate the use of the variogram in this context, we consider the -->
-
-<!-- Galicia data on lead concentration in moss samples. The simplest -->
-
-<!-- possible model for these data is a standard linear model without -->
-
-<!-- covariates, which assumes independence among observations: $$ -->
-
-<!-- Y_i = \beta_0 + U_i, -->
-
-<!-- $$ {#eq-std-lm-galicia} where the $U_i$ are independent Gaussian random -->
-
-<!-- variables with mean zero and variance $\omega^2$. Our goal at this stage -->
-
-<!-- is to assess whether this assumption of independence is supported by the -->
-
-<!-- data, or whether there is evidence of spatial correlation. -->
-
-<!-- However, measurement error from the sampling device may contribute to -->
-
-<!-- the observed variability in $Y_i$. If such error is large relative to -->
-
-<!-- the underlying spatial variation, it can obscure the detection of -->
-
-<!-- spatial correlation in the residuals. One might therefore consider -->
-
-<!-- introducing an additional, location-specific random effect, say $Z_i$, -->
-
-<!-- with mean zero and variance $\tau^2$, leading to the model $$ -->
-
-<!-- Y_i = \beta_0 + Z_i + U_i, -->
-
-<!-- $$ {#eq-std-lm2-galicia} where $Z_i$ represents spatially structured -->
-
-<!-- variation due to unmeasured covariates, and $U_i$ represents -->
-
-<!-- unstructured variation, such as measurement error. However, this model -->
-
-<!-- is not identifiable because the two random effects, $Z_i$ and $U_i$, -->
-
-<!-- both contribute additively to the total variance, making it impossible -->
-
-<!-- to separate their effects unless one of two conditions is met:\ -->
-
-<!-- (a) the measurement error variance $\omega^2$ is known from external -->
-
-<!-- information, or\ -->
-
-<!-- (b) multiple measurements are available at each location, allowing the -->
-
-<!-- two sources of variation to be estimated separately.\ -->
-
-<!-- We will explore the latter scenario in the next section. -->
-
-<!-- For the Galicia data, we do not know the measurement device precision -->
-
-<!-- and we only have one observation per location. However, this does not -->
-
-<!-- prevent us from using the variogram based on the residuals from -->
-
-<!-- @eq-std-lm-galicia, while keeping in mind the limitations and -->
-
-<!-- uncertainty that are inherent to this exploratory tool as remarked at -->
-
-<!-- the end of the last paragraph. -->
-
-<!-- ```{r, collapse=TRUE} -->
-
-<!-- #| label: fig-galicia-variog -->
-
-<!-- #| fig-cap: "Plot of the empirical variogram (solid line) computed using the estimated residuals from the model in @eq-std-lm-galicia. The blue shaded area is the 95% confidence level envelope generated using the permutation procedure described in @sec-expl-spatial."   -->
-
-<!-- # Fitting of the linear model and extraction of the residuals   -->
-
-<!-- lm_fit <- lm(log(lead) ~ 1, data = galicia) -->
-
-<!-- galicia$residuals <- lm_fit$residuals -->
-
-<!-- # Convert the galicia data frame into an "sf" object -->
-
-<!-- galicia_sf <- st_as_sf(galicia, coords = c("x", "y"), crs = 32629) -->
-
-<!-- # Compute the variogram, using the residuals from the linear model fit, -->
-
-<!-- # and the 95% confidence level envelope for spatial independence -->
-
-<!-- galicia_variog <- variogram(galicia_sf, variable = "residuals", -->
-
-<!--                               scale_to_km = TRUE, -->
-
-<!--                               breaks = seq(10, 140, length = 15), -->
-
-<!--                               n_permutations = 10000) -->
-
-<!-- # Plotting the results -->
-
-<!-- plot_variogram(galicia_variog, plot_envelope = TRUE) -->
-
-<!-- ``` -->
-
-<!-- In the code above, we first fit the linear model in @eq-std-lm-galicia -->
-
-<!-- and then extract the residuals from this. Note that for this simple -->
-
-<!-- model, the residuals of the model are obtained by simply centering the -->
-
-<!-- outcome to zero by subtracting its mean. -->
-
-<!-- @fig-galicia-variog shows the empirical variogram and the 95% envelope -->
-
-<!-- for spatial independence. This clearly shows that the measurements of -->
-
-<!-- lead concentration are spatially correlated. -->
-
-<!-- ##### More than one observation per location {#sec-explanal-lm} -->
-
-<!-- For the case of more than one observation per location, we shall -->
-
-<!-- consider the `italy_sim` data-set. This data-set contains 10 -->
-
-<!-- observations at each of 200 locations. The variable `ID_loc` is a -->
-
-<!-- numeric indicator that can be used to identify the location each -->
-
-<!-- observation belongs to. For this data-set, we use the population -->
-
-<!-- density, named `pop_dens`, as a log-transformed covariate; we leave you -->
-
-<!-- as an exercise to assess whether it is a reasonable modelling choice. -->
-
-<!-- To specify a non-spatial mixed model for the outcome, we then use two -->
-
-<!-- subscripts: $i$ to identify a given location; $j$ to identify the $j$-th -->
-
-<!-- observation for a given location $i$. We denote as $Z_i$ the -->
-
-<!-- location-specific random effect and as $U_{ij}$ the random variation due -->
-
-<!-- to the measurement error inherent to each observation. Hence, we write -->
-
-<!-- $$ -->
-
-<!-- Y_{ij} = \beta_0 + \beta_1 \log\{d(x_i)\} + Z_i + U_{ij}, -->
-
-<!-- $$ {#eq-italy-sim-lmm} where $d(x_i)$ is the population density at -->
-
-<!-- location $x_i$; as before, we use $\tau^2$ and $\omega^2$ to denote the -->
-
-<!-- variances of $Z_i$ and $U_{ij}$, respectively. To fit this model to the -->
-
-<!-- data we use the `lmer` function from the `lme4` package. -->
-
-<!-- ```{r, collapse=TRUE} -->
-
-<!-- #| label: fig-italy-sim-variog -->
-
-<!-- #| fig-cap: "Plot of the empirical variogram (solid line) computed using the estimated random effects from the model in @eq-italy-sim-lmm. The blue shaded area is the 95% confidence level envelope generated using the permutation procedure described in @sec-expl-spatial."  -->
-
-<!-- # Fitting a linear mixed model to the italy_sim data-set -->
-
-<!-- # See main text for model specification -->
-
-<!-- lmer_fit <- lmer(y ~ log(pop_dens) + (1|ID_loc), data = italy_sim) -->
-
-<!-- summary(lmer_fit) -->
-
-<!-- # Incorporating the estimated random effects into the data -->
-
-<!-- italy_sim$rand_eff <-ranef(lmer_fit)$ID_loc[italy_sim$ID_loc,1] -->
-
-<!-- # Converting the italy_sim data frame into an "sf" object  -->
-
-<!-- italy_sim_sf <- st_as_sf(italy_sim, coords=c("x1", "x2"), crs = 32634) -->
-
-<!-- # Compute the variogram, using the random effects from the linear mixed model fit, -->
-
-<!-- # and the 95% confidence level envelope for spatial independence -->
-
-<!-- italy_sim_variog <- variogram(italy_sim_sf, variable = "rand_eff",  -->
-
-<!--                                 scale_to_km = TRUE, -->
-
-<!--                                 n_permutations = 200) -->
-
-<!-- # Plotting the results -->
-
-<!-- plot_variogram(italy_sim_variog, plot_envelope = TRUE) -->
-
-<!-- ``` -->
-
-<!-- In the code above, the introduction of the $Z_i$ random effect is -->
-
-<!-- specified in the `lmer` function though `(1|ID_loc)` in the formula; -->
-
-<!-- recall that `ID_loc` is the numerical indicator that identifies each -->
-
-<!-- location. From the summary of the model, we obtain both the estimates of -->
-
-<!-- the regression coefficients $\beta_{0}$ and $\beta_{1}$, as well for the -->
-
-<!-- variances $\tau^2$ listed under `Random effects:`. The estimate of -->
-
-<!-- $\sigma^2$ is found on the line of printed output starting with -->
-
-<!-- `ID_loc`, whilst that for $\omega^2$ is next to `Residual`. -->
-
-<!-- The application of the empirical variogram, whose results are shown in -->
-
-<!-- @fig-italy-sim-variog, indicate the presence of residual correlation. -->
-
-<!-- This is because we observe that the solid line representing the -->
-
-<!-- empirical variogram falls outside of the 95% envelope for spatial -->
-
-<!-- independence. -->
-
-<!-- ## The linear geostatistical model {#sec-linear-model} -->
-
-<!-- In this section, we focus on spatially referenced outcomes $Y_i$ that -->
-
-<!-- are continuous. We first consider the simpler case of a single -->
-
-<!-- measurement $Y_i$ per location $x_i$. Recalling the class of generalized -->
-
-<!-- linear models introduced in @sec-geostat-models, the linear predictor -->
-
-<!-- takes the form $$ -->
-
-<!-- \mu_{i} = d(x_i)^\top \beta + S(x_i). -->
-
-<!-- $$ {#eq-linear-geostat-model-lp} Hence, in this case, we interpret -->
-
-<!-- $\beta$ as the effect on $\mu_i$ for a unit increase in $d(x_i)$. Let -->
-
-<!-- $U_i$ denote i.i.d. random variables representing the measurement error -->
-
-<!-- associated with $Y_i$, each having mean zero and variance $\omega^2$. -->
-
-<!-- Thanks to the linear properties of Gaussian random variables, we can -->
-
-<!-- also express the linear model in a compact expression, as $$ -->
-
-<!-- Y_i = \mu_i + U_i = d(x_i)^\top \beta + S(x_i) + U_i. -->
-
-<!-- $$ {#eq-linear-geostat-model} To fully specify a geostatistical model -->
-
-<!-- for our dataset, we must address two critical aspects. -->
-
-<!-- 1.  Defining the relationship between each covariate and the mean value -->
-
-<!--     $\mu_i$. -->
-
-<!-- 2.  Selecting an appropriate correlation function for $S(x)$. -->
-
-<!-- As illustrated in the previous sections, the initial step of exploratory -->
-
-<!-- analysis allows us to handle the first aspect, where we determine the -->
-
-<!-- regression relationship between covariates and the mean value $\mu_i$. -->
-
-<!-- However, based on existing methods of exploratory analysis, it is -->
-
-<!-- difficult to understand what is a suitable correlation function at this -->
-
-<!-- stage. A commonly recommended starting point is the Matern correlation -->
-
-<!-- function (see @eq-matern), which offers considerable flexibility in -->
-
-<!-- capturing a wide range of correlation structures, under the assumption -->
-
-<!-- of stationarity and isotropy. As we shall illustrate in the next -->
-
-<!-- example, even estimating a Matern correlation function is a task that -->
-
-<!-- poses many inferential challenges, especially due to the poor -->
-
-<!-- identifiability of its smoothness parameter $\kappa$. -->
-
-<!-- ### Evaluating the inclusion of the measurement error term $U_i$ and the specification of the smoothness parameter $\kappa$ {#sec-glm-parest} -->
-
-<!-- In this section we analyse the Galicia data using a linear -->
-
-<!-- geostatistical model for the log-transformed lead concentration, which -->
-
-<!-- we denote as $Y_i$. Since we do not use covariates, we then write the -->
-
-<!-- model as $$ -->
-
-<!-- Y_i = \mu + S(x_i) + U_i -->
-
-<!-- $$ {#eq-galicia-lgm} where were $S(x)$ is a Matern process with variance -->
-
-<!-- $\sigma^2$, scale parameter $\phi$ and and smoothness parameter -->
-
-<!-- $\kappa$; the $U_i$ correspond to the measurement error term and denote -->
-
-<!-- with $\omega^2$ their variance. -->
-
-<!-- We carry out the parameter estimation of the model using the `glgpm` -->
-
-<!-- function from the `RiskMap` package. This function implements maximum -->
-
-<!-- likelihood estimation for generalized linear mixed models using a Matern -->
-
-<!-- correlation function, while fixing the smoothness parameter $\kappa$ at -->
-
-<!-- a prespecified value by the user. The object passed to the argument -->
-
-<!-- `data` in `glpm` can either be a `data.frame` object or an `sf` object. -->
-
-<!-- Below we illustrate the use of `glgpm` while distinguishing between -->
-
-<!-- these two cases. -->
-
-<!-- ```{r, collapse=TRUE} -->
-
-<!-- # Parameter estimation when the argument passed to `data` is a data-frame -->
-
-<!-- fit_galicia <-  -->
-
-<!-- glgpm(log(lead) ~ gp(x, y, kappa = 1.5), data=galicia, family = "gaussian", -->
-
-<!--       crs = 32629, scale_to_km = TRUE, messages = FALSE) -->
-
-<!-- ``` -->
-
-<!-- The code above shows the use of `glgpm` by passing `galicia` as a -->
-
-<!-- `data.frame` object to `data`. The specification of the Gaussian process -->
-
-<!-- $S(x)$ is done through the addition of the term `gp()` in the formula. -->
-
-<!-- The function `gp` allows you to specify the columns of the coordinates -->
-
-<!-- in the data, in this case `x` and `y`, the smoothness parameter through -->
-
-<!-- the argument `kappa`, set to 1.5 in this example. In the help page of -->
-
-<!-- `gp`, you can see that by default the nugget term (denoted in this book -->
-
-<!-- by the random variable $Z_i$) is excluded from the model by default; to -->
-
-<!-- include and estimate the variance parameter of the nugget, you should -->
-
-<!-- set `nugget=NULL` in the `gp()` function. However, doing so for a linear -->
-
-<!-- model that only has one observation per location will generate an error -->
-
-<!-- message as this is a non-identifiable model for the same reasons given -->
-
-<!-- in @sec-explanal-lm. However, if the measurement error variance is known -->
-
-<!-- this can be fixed by the user using the argument `fix_var_me` and the -->
-
-<!-- inclusion of the nugget term is then possible (to better understand this -->
-
-<!-- point, try Exercise 7 at the end of this chapter). -->
-
-<!-- The argument `crs` is used to specify the coordinate reference system -->
-
-<!-- (CRS) of the data. For the Galicia data, as well as for every other -->
-
-<!-- data-set used in this book, the CRS is reported in the help page -->
-
-<!-- description of the data-set. If `crs` is not specified, the function -->
-
-<!-- will assume that the coordinates are in longitude/latitude format and -->
-
-<!-- will use these without applying any transformation. Finally, the -->
-
-<!-- argument `scale_to_km`, is used to specify whether the distances between -->
-
-<!-- locations should be scaled to kilometers or maintained in meters; this -->
-
-<!-- argument will not affect the scale, and thus the interpretation of the -->
-
-<!-- spatial correlation parameter $\phi$. -->
-
-<!-- ```{r, collapse=TRUE} -->
-
-<!-- # Parameter estimation when the argument passed to `data` is an sf object -->
-
-<!-- galicia_sf <- st_as_sf(galicia, coords = c("x", "y"), crs = 32629) -->
-
-<!-- fit_galicia_sf <-  -->
-
-<!-- glgpm(log(lead) ~ gp(kappa = 1.5), data = galicia_sf, family = "gaussian", -->
-
-<!--       scale_to_km = TRUE, messages = FALSE) -->
-
-<!-- ``` -->
-
-<!-- The code above shows the alternative approach to estimate the model, -->
-
-<!-- when the argument passed to `data` is an `sf` object. In this case, the -->
-
-<!-- data-set `galicia` is converted into an `sf` object before the use of -->
-
-<!-- the `glgpm` function using `st_as_sf`. When we then fit the linear -->
-
-<!-- geostatistical model by passing `galicia_sf` to the argument `data`, the -->
-
-<!-- only differences with the previous chunk of code that used `galicia` -->
-
-<!-- instead, is that the coordinates names in `gp()` and the `crs` argument -->
-
-<!-- in `glgpm` do not need to be specified as they are both directly -->
-
-<!-- obtained from `galicia_sf`. -->
-
-<!-- ```{r, collapse=TRUE} -->
-
-<!-- summary(fit_galicia) -->
-
-<!-- ``` -->
-
-<!-- We can then inspect the point and interval estimates for the model -->
-
-<!-- through the `summary` function of the model as shown in the code chunk -->
-
-<!-- above. This output is presented in three sections: in the first section, -->
-
-<!-- we have the results for the regression coefficients; in the second -->
-
-<!-- section, we have the estimate for the variance of the measurement error -->
-
-<!-- component, $\omega^2$ whose point estimate is about 0.015; in the final -->
-
-<!-- section, we have the estimates for the parameters of the spatial -->
-
-<!-- covariance function, $\sigma^2$ and $\phi$ which are about 0.171 and -->
-
-<!-- 9.021 (km), respectively. The message -->
-
-<!-- `Variance of the nugget effect fixed at 0` indicates that the nugget has -->
-
-<!-- not been included in the mode. -->
-
-<!-- At this point, you may be wondering, why we have used 1.5 for the value -->
-
-<!-- of $\kappa$ and whether there is a statistical approach to find the most -->
-
-<!-- suitable value for this. We show such an approach in the code below. -->
-
-<!-- However, before examining the code, we would like to point out an -->
-
-<!-- important aspect that relates to how the value of $\kappa$ can affect -->
-
-<!-- the estimate of the measurement error variance $\omega^2$. As we have -->
-
-<!-- shown, in @sec-matern-correlation, values of $\kappa$ that are closer to -->
-
-<!-- zero will give a rougher and less regular surface for $S(x)$. In the -->
-
-<!-- case of a single observation, when $\kappa$ is closer to zero, it will -->
-
-<!-- thus become increasingly difficult to estimate $\omega^2$ since the -->
-
-<!-- likelihood function may attribute most of the noisiness to $S(x)$ and -->
-
-<!-- rely less on $U_i$ to explain the unstructured random variation found in -->
-
-<!-- the data. As a consequence of this, we can expect that for value of -->
-
-<!-- $\kappa$ closer to zero, the estimates of $\omega^2$ will also be -->
-
-<!-- smaller and, on the contrary, when $\kappa$ is larger, the estimates of -->
-
-<!-- $\omega^2$ will also increase. The results generated in the code below -->
-
-<!-- clearly illustrate this point. -->
-
-<!-- ```{r, collapse=TRUE} -->
-
-<!-- # Number of the values chosen for kappa -->
-
-<!-- n_kappa <- 10 -->
-
-<!-- # Set of values for kappa -->
-
-<!-- kappa_values <- seq(0.5, 3.5, length = n_kappa) -->
-
-<!-- # Vector that will store the values of the likelihood function  -->
-
-<!-- # evaluated at the maximum likelihood estimate -->
-
-<!-- llik_values <- rep(NA, length = n_kappa) -->
-
-<!-- # Vector that will store the maximum likelihood estimates -->
-
-<!-- # of the variance of the measurement error -->
-
-<!-- sigma2_me_hat <- rep(NA, length = n_kappa) -->
-
-<!-- # List that will contain all the geostatistical models fitted for  -->
-
-<!-- # the different values of kappa specified in kappa_values -->
-
-<!-- fit_galicia_list <- list() -->
-
-<!-- for(i in 1:n_kappa) { -->
-
-<!--   fit_galicia_list[[i]] <- glgpm(log(lead) ~ gp(x, y, kappa = kappa_values[i]),  -->
-
-<!--                                  data=galicia, family = "gaussian", -->
-
-<!--                                  crs = 32629, scale_to_km = TRUE, messages = FALSE) -->
-
-<!--   llik_values[i] <-  fit_galicia_list[[i]]$log.lik -->
-
-<!--   sigma2_me_hat[i] <-  coef(fit_galicia_list[[i]])["sigma2_me"] -->
-
-<!-- } -->
-
-<!-- ``` -->
-
-<!-- ```{r, echo=FALSE, fig.align = "center", fig.height = 8, fig.width = 12,out.width = "8.5in"} -->
-
-<!-- #| label: fig-galicia-matern -->
-
-<!-- #| fig-cap: "(a) plot of the maximum likelihood estimate for the variance of the measurement error $U_i$, denoted in the text as $\\omega^2$, against the chosen fixed value for $\\kappa$; (b) profile likelihood for $\\kappa$ with the horizontal dashed line corresponding to the (approximate) threshold for constructing a 95% confidence interval based on a $\\chi^2$ with one degree of freedom. " -->
-
-<!-- par(mfrow=c(1,2)) -->
-
-<!-- plot(kappa_values, sigma2_me_hat, type="b", -->
-
-<!--      xlab = expression(kappa), ylab = expression(hat(omega)^2), main = "(a)") -->
-
-<!-- plot(kappa_values, llik_values, type="b", -->
-
-<!--      xlab = expression(kappa), ylab = "Likelihood function at MLE", main = "(b)") -->
-
-<!-- abline(h = max(llik_values)-pchisq(0.95, df = 2)/2, lty="dashed") -->
-
-<!-- ``` -->
-
-<!-- By examining the results shown in panel (a) of @fig-galicia-matern, we -->
-
-<!-- observe that, as expected, smaller values for $\kappa$ lead to smaller -->
-
-<!-- point estimates for $\omega^2$ and viceversa. This begs the question, -->
-
-<!-- what should be our chosen value for $\kappa$? -->
-
-<!-- To answer this question, a natural approach is to estimate the model for -->
-
-<!-- different values of $\kappa$ and see which one gives the best fit to the -->
-
-<!-- data, according to the likelihood function. In panel (b) of -->
-
-<!-- @fig-galicia-matern, we show the results of this approach where we -->
-
-<!-- considered 10 values for $\kappa$ within the range 0.5 to 3.5 (see code -->
-
-<!-- above). In this plot, we have also added a horizontal line to help us to -->
-
-<!-- approximate a range of the most plausible value for $\kappa$. More -->
-
-<!-- precisely, the horizontal dashed line is computed by taking the maximum -->
-
-<!-- observed values of the likelihoods computed for the different values of -->
-
-<!-- $\kappa$, say $\hat{M}$ and we subtract the quantile 0.95 of a $\chi^2$ -->
-
-<!-- distribution with 1 degree of freedom. In R this horizontal line is -->
-
-<!-- obtained as -->
-
-<!-- ```{r, eval=FALSE} -->
-
-<!-- max(llik_values)-pchisq(0.95, df = 2)/2 -->
-
-<!-- ``` -->
-
-<!-- where `llik_values` is as defined in the previous chunk of code. Note -->
-
-<!-- that this approach is essentially constructing the profile likelihood -->
-
-<!-- for $\kappa$ which one could use to derive a confidence interval for -->
-
-<!-- $\kappa$ with a finer segmentation for `kappa_values`. However, our -->
-
-<!-- current objective is not to derive the confidence interval for $\kappa$, -->
-
-<!-- but rather to gain a broad understanding of the $\kappa$ values -->
-
-<!-- supported by the dataset. The values of $\kappa$ that correspond to -->
-
-<!-- likelihood values above the horizontal line are approximately between -->
-
-<!-- 0.75 and 2.75. Hence, selecting $\kappa=1.5$ seems to be a reasonable -->
-
-<!-- choice in this case. Now, you may be pondering: are there values other -->
-
-<!-- than $\kappa=1.5$ that could fit the data even better? Our answer is -->
-
-<!-- that it is not worth the effort to try estimate $\kappa$ more precisely -->
-
-<!-- because it is empirically very difficult and, under some scenarios, even -->
-
-<!-- impossible. Estimating $\kappa$ poses a well-documented challenge in -->
-
-<!-- geostatistics (@zhang2004), which justifies our adoption of a pragmatic -->
-
-<!-- approach that sets it at a predefined value. This issue is also further -->
-
-<!-- exacerbated when analyzing count data, which tend to be less informative -->
-
-<!-- about the correlation structure than continuously measured data. -->
-
-<!-- ### Modelling hierarchical geostatistical data using the `re()` function {#sec-add-re-glgm} -->
-
-<!-- We now consider the analysis of geostatistical data with a hierarchical -->
-
-<!-- structure and show how to formulate and fit a geostatistical model that -->
-
-<!-- accounts for the effects of the different layers of the data. For this -->
-
-<!-- purpose, we use the `italy_sim` where each of the sampled locations can -->
-
-<!-- be grouped according to two administrative subdivisions of Italy, -->
-
-<!-- regions (Admin level 2) and provinces (Admin level 3), as shown in -->
-
-<!-- @fig-italy-maps. -->
-
-<!-- ```{r, echo=FALSE} -->
-
-<!-- italy_regions <- readRDS("data/ita_adm2_geoboundaries.rds") -->
-
-<!-- italy_provinces <- readRDS("data/ita_adm3_geoboundaries.rds") -->
-
-<!-- ``` -->
-
-<!-- ```{r, eval=FALSE} -->
-
-<!-- library(rgeoboundaries) -->
-
-<!-- library(mapview) -->
-
-<!-- italy_regions <- geoboundaries(country = "italy", adm_lvl = "adm2") -->
-
-<!-- italy_provinces <- geoboundaries(country = "italy", adm_lvl = "adm3") -->
-
-<!-- ``` -->
-
-<!-- ```{r, collapse=TRUE, message=FALSE} -->
-
-<!-- #| label: fig-italy-maps -->
-
-<!-- #| fig-cap: "The plot shows the location of the data-set `italy_sim` (red crosses), with the boundaries of the regions (left) and provinces (right) of Italy." -->
-
-<!-- par(mfrow = c(1,2)) -->
-
-<!-- # Map of the data with the region boundaries -->
-
-<!-- map_regions <- ggplot() +  -->
-
-<!-- geom_sf(data = italy_sim_sf, pch = 4, color = "red") +  -->
-
-<!-- geom_sf(data = italy_regions, fill = NA) +  -->
-
-<!-- theme_void() + -->
-
-<!-- labs(title = "Regions") + -->
-
-<!-- theme(plot.title = element_text(hjust = 1/2)) -->
-
-<!-- # Map of the data with the province boundaries -->
-
-<!-- map_provinces <- ggplot() +  -->
-
-<!-- geom_sf(data = italy_sim_sf, pch = 4, color = "red") +  -->
-
-<!-- geom_sf(data = italy_provinces, fill = NA) +  -->
-
-<!-- theme_void() + -->
-
-<!-- labs(title = "Provinces") + -->
-
-<!-- theme(plot.title = element_text(hjust = 1/2)) -->
-
-<!-- library(gridExtra) -->
-
-<!-- grid.arrange(map_regions, map_provinces, ncol = 2) -->
-
-<!-- ``` -->
-
-<!-- Let $V_h$, for $h=1,\ldots,n_V$ and $Z_k$, for $k=1,\ldots,n_{Z}$, be a -->
-
-<!-- set of mutually independent Gaussian variables with zero means and -->
-
-<!-- variances $\sigma^2_{V}$ and $\sigma^2_{Z}$, respectively. Finally let -->
-
-<!-- $\mathcal{A}_h$, for $h=1,\ldots,n_V$ and $\mathcal{B}_k$, for -->
-
-<!-- $k=1,\ldots,n_{Z}$, denote the areas encompassed by the boundaries of -->
-
-<!-- the region and provinces, respectively. Since we have 10 repeated -->
-
-<!-- observations at each locations, we shall use $Y_{ij}$ to denote the -->
-
-<!-- $j$-th outcome (found in the data under the column `y`) at the $i$-th -->
-
-<!-- location $x_i$. The model from which we generated data $y_{ij}$ is $$ -->
-
-<!-- \begin{aligned} -->
-
-<!-- Y_{ij} = \beta_0 &+ \overbrace{\beta_1 d(x_i) + S(x_i)}^\text{Location-level effect} + \underbrace{\sum_{h=1}^{n_{V}} I(x_i \in \mathcal{A}_h) \times V_h}_\text{Region effect} \\ -->
-
-<!-- &+ \overbrace{\sum_{k=1}^{n_{Z}} I(x_i \in \mathcal{B}_k) \times Z_k}^\text{Province effect} + \underbrace{U_{ij}}_\text{Measurement error} -->
-
-<!-- \end{aligned} -->
-
-<!-- $$ {#eq-italy-sim-model} for $j=1,\ldots 10$ and $i=1,\ldots,200$, -->
-
-<!-- where, $d(x_i)$ is the log-transformed population density, -->
-
-<!-- $I(x \in \mathcal{R})$ is an indicator function that takes value 1 if -->
-
-<!-- the location $x$ falls within the boundaries of the area denoted by -->
-
-<!-- $\mathcal{R}$ and 0 otherwise. The covariance function chosen in the -->
-
-<!-- generation of the data was an exponential correlation function hence -->
-
-<!-- ${\rm cov}\{S(x), S(x') = \sigma^2 \exp\{-||x-x'||/\phi\}$. -->
-
-<!-- The inclusion of the random effects $V_h$, for the region, and $Z_k$, -->
-
-<!-- for the province, can be included by using the `re()` function into the -->
-
-<!-- `formula` passed to `glgpm` as shown below. -->
-
-<!-- ```{r,collapse=TRUE,message=FALSE} -->
-
-<!--                         # Location-level effect -->
-
-<!-- italy_fit <- glgpm( y ~ log(pop_dens) + gp(kappa = 0.5, nugget = 0) + -->
-
-<!--                         # Region and province effects -->
-
-<!--                         re(region, province), -->
-
-<!--          data = italy_sim_sf, scale_to_km = TRUE, -->
-
-<!--          family = "gaussian") -->
-
-<!-- summary(italy_fit) -->
-
-<!-- ``` -->
-
-<!-- In the code above, the `factor` variables `region` and `province` found -->
-
-<!-- in `italy_sim` are passed to `re()` and these are estimated as -->
-
-<!-- unstructured random effects as defined by @eq-italy-sim-model. From the -->
-
-<!-- summary of the model, we then obtain the parameter and interval -->
-
-<!-- estimates as reported in @tbl-italy-sim-mle. -->
-
-<!-- | Parameter      | Point estimate | Lower limit | Upper limit | -->
-
-<!-- |----------------|----------------|-------------|-------------| -->
-
-<!-- | $\beta_0$      | -1.074         | -2.032      | -0.117      | -->
-
-<!-- | $\beta_1$      | 1.373          | 1.352       | 1.394       | -->
-
-<!-- | $\sigma^2$     | 0.917          | 0.595       | 1.414       | -->
-
-<!-- | $\phi$         | 214.520        | 153.608     | 299.587     | -->
-
-<!-- | $\sigma^2_{V}$ | 0.241          | 0.146       | 0.398       | -->
-
-<!-- | $\sigma^2_{Z}$ | 1.457          | 1.379       | 1.540       | -->
-
-<!-- | $\omega^2$     | 0.196          | 0.194       | 0.199       | -->
-
-<!-- : Maximum likelihood estimates and, lower and upper limits of the 95% -->
-
-<!-- confidence interval for the parameters of the model in -->
-
-<!-- @eq-italy-sim-lmm. {#tbl-italy-sim-mle} -->
-
-<!-- The function `to_table` from the `RiskMap` package can be used to obtain -->
-
-<!-- the Latex or HTML code directly from a fit of the model. Here is an -->
-
-<!-- example. -->
-
-<!-- ```{r,collapse=TRUE,message=FALSE} -->
-
-<!-- to_table(italy_fit, digits = 3) -->
-
-<!-- ``` -->
+#### Example: assessing spatial correlation for the Liberia data {#sec-empirical-variog-bin}
+
+We consider the Binomial mixed model that uses the log-transformed
+elevation as a covariate to model river blindness prevalence, hence 
+$$
+\log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_{0} + \beta_{1}\log\{d(x_i)\} + Z_i
+$$ {#eq-liberia-bin-mixed-elev} 
+where $d(x_i)$ is the elevation in
+meters at location $x_i$ and the $Z_i$ are i.i.d. Gaussian variables
+with mean 0 and variance $\tau^2$. We first fit the model above using
+the `glmer` function.
+
+```{r}
+#| label: glmer-liberia
+# Convert the data-set into an sf object
+liberia <- st_as_sf(liberia, coords = c("lat", "long"), crs = 4326)
+
+# Create the ID of the location
+liberia$ID_loc <- 1:nrow(liberia)
+
+# Binomial mixed model with log-elevation
+fit_glmer_lib <- glmer(cbind(npos, ntest - npos) ~ log(elevation) + (1|ID_loc), 
+                       family = binomial, data = liberia, nAGQ = 25)
+```
+
+```{r}
+#| label: tbl-glmer-liberia
+#| tbl-cap: "Estimated parameters for the Liberia binomial mixed model."
+#| echo: false
+
+coef_lib <- summary(fit_glmer_lib)$coefficients
+
+liberia_model_tab <- data.frame(
+  Parameter = c(
+    "$\\beta_0$",
+    "$\\beta_1$",
+    "$\\tau^2$"
+  ),
+  Term = c(
+    "Intercept",
+    "Log elevation",
+    "Location-level random-effect variance"
+  ),
+  Estimate = c(
+    coef_lib[, "Estimate"],
+    as.data.frame(VarCorr(fit_glmer_lib))$vcov[1]
+  ),
+  `Std. error` = c(
+    coef_lib[, "Std. Error"],
+    NA_real_
+  ),
+  `z value` = c(
+    coef_lib[, "z value"],
+    NA_real_
+  ),
+  `p-value` = c(
+    coef_lib[, "Pr(>|z|)"],
+    NA_real_
+  ),
+  check.names = FALSE
+)
+
+old_kable_na <- getOption("knitr.kable.NA")
+options(knitr.kable.NA = "")
+
+knitr::kable(
+  liberia_model_tab,
+  digits = 3,
+  escape = FALSE,
+  row.names = FALSE
+)
+
+options(knitr.kable.NA = old_kable_na)
+```
+
+The parameter estimates are reported in @tbl-glmer-liberia. The estimate
+of $\tau^2$ quantifies the residual variation between locations after
+accounting for elevation and represents a moderate level of overdispersion.
+
+```{r}
+#| label: extract-ranef-liberia
+liberia$Z_hat <- ranef(fit_glmer_lib)$ID_loc[,1]
+```
+
+Through the function `ranef` when extracting the estimates of the random
+effects $Z_i$ and save these in the data set. We then use the function
+`variogram` from the `RiskMap` package to compute the empirical
+variogram for the estimated $\hat{Z}_i$.
+
+```{r}
+#| label: liberia-variog
+liberia_variog <- variogram(data = liberia,
+                            variable = "Z_hat",
+                            breaks = c(15, 30, 40, 80, 120,
+                                       160, 200, 250, 300, 350),
+                            scale_to_km = TRUE,
+                            n_permutations = 1000)
+```
+
+Through the argument `breaks` we can specify the classes of distance,
+previously denoted by $\mathcal{U}$; check the help page of
+`variogram` to see how this is defined by default. The values passed
+to `breaks` in the code above correspond to define the following classes
+of distance $\mathcal{U}$: $[15, 30]$, $(30, 40]$ and so forth, with the
+last class being $[350, +\infty)$, i.e. all pairs of locations whose
+distances are above 350km. The argument `n_permutations` allows the user
+to specify the number of permutations that are performed to generate the
+envelope for absence of spatial correlation, previously described.
+```{r}
+#| label: dist-summaries-liberia
+dist_summaries(data = liberia, scale_to_km = TRUE)
+```
+
+The `dist_summaries` function within the `RiskMap` package can be used
+for gauging the extent of the area covered by your dataset, aiding in
+the selection of appropriate values to be passed to the `breaks` argument.
+
+In the provided output above, we observe that for the Liberia dataset,
+the minimum and maximum distances are approximately 3km and 533km,
+respectively. While there is not a one-size-fits-all recommendation for
+setting `breaks`, two fundamental principles should inform your choice.
+Firstly, it is advisable to avoid choosing overly large distance
+intervals, as the uncertainty associated with the empirical variogram
+tends to increase with distance due to fewer available pairs of
+observations for estimation. Secondly, especially when spatial
+correlation is not strong, it is crucial to carefully explore the
+behavior of the variogram at smaller distances. Consequently, it is
+generally advisable to experiment with different `breaks` configurations
+and observe how they impact the pattern of the empirical variogram.
+
+```{r}
+#| label: fig-liberia-variog
+#| fig-cap: "Plot of the empirical variogram (solid line) computed using the estimated random effects from the model in @eq-liberia-bin-mixed-elev. The blue shaded area is the 95% confidence level envelope generated using the permutation procedure described in @sec-expl-spatial."
+plot_variogram(liberia_variog, plot_envelope = TRUE)
+```
+
+Finally, the `plot_variogram` function enables us to visualize the
+empirical variogram and, through the `plot_envelope` argument, include
+the envelope generated by the permutation procedure. As illustrated in
+@fig-liberia-variog, we observe that the empirical variogram falls
+outside the envelope at relatively short distances, typically below
+30km. However, for distances exceeding 30km, the behavior of the
+empirical variogram does not significantly differ from variograms
+generated under the assumption of spatial independence. In summary, we
+interpret the evidence presented in @fig-liberia-variog as indicative of
+residual spatial correlation within the data. Nevertheless, it is
+essential to exercise caution when attempting to ascertain the scale of
+the spatial correlation using the empirical variogram. As we will
+emphasize throughout this book, the empirical variogram's sensitivity to
+the choice of breaks values renders it an unreliable tool for drawing
+statistical inferences. In other words, we recommend employing the
+empirical variogram primarily to assess the presence of residual
+correlation.
+
+#### Exploring residual spatial correlation with linear Gaussian models {#sec-empirical-variog-lm}
+
+When using a linear model to assess spatial correlation, it is important
+to distinguish two cases: 1) when the data contain only one observation per
+location; 2) when more than one observation per location is available.
+We now consider each of these two scenarios separately.
+
+##### One observation per location
+
+To illustrate the use of the variogram in this context, we consider the
+Galicia data on lead concentration in moss samples. Let $L_i$ denote the
+observed lead concentration at location $x_i$. Because lead
+concentrations are positive and their distribution is right-skewed, we
+analyse them on the logarithmic scale and define
+$Y_i = \log(L_i)$. The logarithmic transformation reduces the influence
+of unusually large observations, helps to stabilise the variance, and
+makes the Gaussian modelling assumption more plausible. The simplest
+possible model for $Y_i$ is a standard linear model without covariates,
+which assumes independence among observations:
+
+$$
+Y_i = \beta_0 + U_i,
+$$ {#eq-std-lm-galicia}
+
+where the $U_i$ are independent Gaussian random variables with mean zero
+and variance $\omega^2$. Our goal at this stage is to assess whether this
+assumption of independence is supported by the data, or whether there is
+evidence of spatial correlation.
+
+However, measurement error from the sampling device may contribute to
+the observed variability in $Y_i$. If such error is large relative to
+the underlying spatial variation, it can obscure the detection of
+spatial correlation in the residuals. One might therefore consider
+introducing an additional, location-specific random effect, say $Z_i$,
+with mean zero and variance $\tau^2$, leading to the model
+
+$$
+Y_i = \beta_0 + Z_i + U_i,
+$$ {#eq-std-lm2-galicia}
+
+where $Z_i$ represents spatially structured variation due to unmeasured
+covariates, and $U_i$ represents unstructured variation, such as
+measurement error. However, this model is not identifiable because the
+two random effects, $Z_i$ and $U_i$, both contribute additively to the
+total variance, making it impossible to separate their effects unless
+one of two conditions is met:
+
+(a) the measurement error variance $\omega^2$ is known from external
+information, or
+
+(b) multiple measurements are available at each location, allowing the
+two sources of variation to be estimated separately.
+
+We will explore the latter scenario in the next section.
+
+For the Galicia data, we do not know the measurement device precision
+and we only have one observation per location. However, this does not
+prevent us from using the variogram based on the residuals from
+@eq-std-lm-galicia, while keeping in mind the limitations and
+uncertainty that are inherent to this exploratory tool as remarked at
+the end of the last paragraph.
+
+```{r}
+#| label: fig-galicia-variog
+#| fig-cap: "Plot of the empirical variogram (solid line) computed using the estimated residuals from the model in @eq-std-lm-galicia. The blue shaded area is the 95% confidence level envelope generated using the permutation procedure described in @sec-expl-spatial."
+
+# Fitting of the linear model and extraction of the residuals
+lm_fit <- lm(log(lead) ~ 1, data = galicia)
+
+# Extract the raw residuals
+galicia$residuals <- lm_fit$residuals
+
+# Convert the galicia data frame into an "sf" object
+galicia_sf <- st_as_sf(galicia, coords = c("x", "y"), crs = 32629)
+
+# Compute the variogram, using the residuals from the linear model fit,
+# and the 95% confidence level envelope for spatial independence
+galicia_variog <- variogram(
+  galicia_sf,
+  variable = "residuals",
+  scale_to_km = TRUE,
+  breaks = seq(10, 140, length = 15),
+  n_permutations = 1000
+)
+
+# Plotting the results
+plot_variogram(galicia_variog, plot_envelope = TRUE)
+```
+
+In the code above, we first fit the linear model in
+@eq-std-lm-galicia and then extract the residuals from this. Note that
+for this simple model, the residuals of the model are obtained by simply
+centering the log-transformed outcome to zero by subtracting its mean.
+@fig-galicia-variog shows the empirical variogram and the 95% envelope
+for spatial independence. This clearly shows that the log-transformed
+lead concentrations are spatially correlated.
+
+##### More than one observation per location {#sec-explanal-lm}
+
+For the case of more than one observation per location, we shall
+consider the `italy_sim` data-set. This data-set contains 10 observations
+at each of 200 locations. The variable `ID_loc` is a numeric indicator
+that can be used to identify the location each observation belongs to.
+For this data-set, we use the population density, named `pop_dens`, as a
+log-transformed covariate; we leave you as an exercise to assess whether
+it is a reasonable modelling choice.
+
+To specify a non-spatial mixed model for the outcome, we then use two
+subscripts: $i$ to identify a given location; $j$ to identify the $j$-th
+observation for a given location $i$. We denote as $Z_i$ the
+location-specific random effect and as $U_{ij}$ the random variation due
+to the measurement error inherent to each observation. Hence, we write
+
+$$
+Y_{ij} = \beta_0 + \beta_1 \log\{d(x_i)\} + Z_i + U_{ij},
+$$ {#eq-italy-sim-lmm}
+
+where $d(x_i)$ is the population density at location $x_i$; as before,
+we use $\tau^2$ and $\omega^2$ to denote the variances of $Z_i$ and
+$U_{ij}$, respectively. To fit this model to the data we use the `lmer`
+function from the `lme4` package.
+
+```{r}
+#| label: lmer-italy-sim
+# Fitting a linear mixed model to the italy_sim data-set
+# See main text for model specification
+lmer_fit <- lmer(y ~ log(pop_dens) + (1 | ID_loc), data = italy_sim)
+```
+
+```{r}
+#| label: tbl-lmer-italy-sim
+#| tbl-cap: "Estimated parameters for the linear mixed model fitted to the Italy simulated data."
+#| echo: false
+
+coef_italy <- summary(lmer_fit)$coefficients
+var_italy <- as.data.frame(VarCorr(lmer_fit))
+
+italy_model_tab <- data.frame(
+  Parameter = c(
+    "$\\beta_0$",
+    "$\\beta_1$",
+    "$\\tau^2$",
+    "$\\omega^2$"
+  ),
+  Term = c(
+    "Intercept",
+    "Log population density",
+    "Location-level random-effect variance",
+    "Residual variance"
+  ),
+  Estimate = c(
+    coef_italy[, "Estimate"],
+    var_italy$vcov[var_italy$grp == "ID_loc"],
+    sigma(lmer_fit)^2
+  ),
+  `Std. error` = c(
+    coef_italy[, "Std. Error"],
+    NA_real_,
+    NA_real_
+  ),
+  `t value` = c(
+    coef_italy[, "t value"],
+    NA_real_,
+    NA_real_
+  ),
+  check.names = FALSE
+)
+
+old_kable_na <- getOption("knitr.kable.NA")
+options(knitr.kable.NA = "")
+
+knitr::kable(
+  italy_model_tab,
+  digits = 3,
+  escape = FALSE,
+  row.names = FALSE
+)
+
+options(knitr.kable.NA = old_kable_na)
+```
+
+In the model above, the introduction of the $Z_i$ random effect is
+specified in the `lmer()` function through `(1 | ID_loc)` in the
+formula; recall that `ID_loc` is the numerical indicator that identifies
+each location. The estimates of the regression coefficients $\beta_0$
+and $\beta_1$, together with the variance components $\tau^2$ and
+$\omega^2$, are reported in @tbl-lmer-italy-sim. The location-level
+random-effect variance $\tau^2$ is associated with `ID_loc`, while
+$\omega^2$ is the residual variance.
+
+We then extract the estimated location-specific random effects $Z_i$ and
+use them to compute the empirical variogram. The code for carrying out
+these steps is shown below. 
+
+```{r}
+#| label: compute-italy-sim-variog
+#| eval: false
+
+# Incorporating the estimated random effects into the data
+italy_sim$rand_eff <- ranef(lmer_fit)$ID_loc[italy_sim$ID_loc, 1]
+
+# Converting the italy_sim data frame into an "sf" object
+italy_sim_sf <- st_as_sf(italy_sim, coords = c("x1", "x2"), crs = 32634)
+
+# Compute the variogram, using the random effects from the linear mixed model
+# fit, and the 95% confidence level envelope for spatial independence
+italy_sim_variog <- variogram(italy_sim_sf,
+                              variable = "rand_eff",
+                              scale_to_km = TRUE,
+                              n_permutations = 1000)
+
+# Plot the variogram
+plot_variogram(italy_sim_variog, plot_envelope = TRUE)
+```
+
+```{r}
+#| label: fig-italy-sim-variog
+#| fig-cap: "Plot of the empirical variogram (solid line) computed using the estimated random effects from the model in @eq-italy-sim-lmm. The blue shaded area is the 95% confidence level envelope generated using the permutation procedure described in @sec-expl-spatial."
+#| echo: false
+
+italy_sim_variog <- readRDS("data/italy_sim_variog.rds")
+plot_variogram(italy_sim_variog, plot_envelope = TRUE)
+```
+
+The application of the empirical variogram, whose results are shown in
+@fig-italy-sim-variog, indicates the presence of residual correlation.
+This is because we observe that the solid line representing the
+empirical variogram falls outside of the 95% envelope for spatial
+independence.
+
+## The linear geostatistical model {#sec-linear-model}
+
+In this section, we focus on spatially referenced outcomes $Y_i$ that
+are continuous. We first consider the simpler case of a single
+measurement $Y_i$ per location $x_i$. Recalling the class of generalized
+linear models introduced in @sec-geostat-models, the linear predictor
+takes the form
+
+$$
+\mu_{i} = d(x_i)^\top \beta + S(x_i).
+$$ {#eq-linear-geostat-model-lp}
+
+Hence, in this case, we interpret
+$\beta$ as the effect on $\mu_i$ for a unit increase in $d(x_i)$. Let
+$U_i$ denote i.i.d. random variables representing the measurement error
+associated with $Y_i$, each having mean zero and variance $\omega^2$.
+Thanks to the linear properties of Gaussian random variables, we can
+also express the linear model in a compact expression, as
+
+$$
+Y_i = \mu_i + U_i = d(x_i)^\top \beta + S(x_i) + U_i.
+$$ {#eq-linear-geostat-model}
+
+To fully specify a geostatistical model
+for our dataset, we must address two critical aspects.
+
+1.  Defining the relationship between each covariate and the mean value
+    $\mu_i$.
+
+2.  Selecting an appropriate correlation function for $S(x)$.
+
+As illustrated in the previous sections, the initial step of exploratory
+analysis allows us to handle the first aspect, where we determine the
+regression relationship between covariates and the mean value $\mu_i$.
+
+However, based on existing methods of exploratory analysis, it is
+difficult to understand what is a suitable correlation function at this
+stage. A commonly recommended starting point is the Matern correlation
+function (see @eq-matern), which offers considerable flexibility in
+capturing a wide range of correlation structures, under the assumption
+of stationarity and isotropy. As we shall illustrate in the next
+example, even estimating a Matern correlation function is a task that
+poses many inferential challenges, especially due to the poor
+identifiability of its smoothness parameter $\kappa$.
+
+### Evaluating the inclusion of the measurement error term $U_i$ and the specification of the smoothness parameter $\kappa$ {#sec-glm-parest}
+
+In this section we analyse the Galicia data using a linear
+geostatistical model for the log-transformed lead concentration,
+recalling that $Y_i = \log(L_i)$. Since we do not use covariates, we
+then write the model as
+
+$$
+Y_i = \mu + S(x_i) + U_i
+$$ {#eq-galicia-lgm}
+
+where were $S(x)$ is a Matern process with variance
+$\sigma^2$, scale parameter $\phi$ and and smoothness parameter
+$\kappa$; the $U_i$ correspond to the measurement error term and denote
+with $\omega^2$ their variance.
+
+We carry out the parameter estimation of the model using the `glgpm`
+function from the `RiskMap` package. This function implements maximum
+likelihood estimation for generalized linear mixed models using a Matern
+correlation function, while fixing the smoothness parameter $\kappa$ at
+a prespecified value by the user. The object passed to the argument
+`data` in `glpm` can either be a `data.frame` object or an `sf` object.
+Below we illustrate the use of `glgpm` while distinguishing between
+these two cases.
+
+```{r}
+#| label: glgpm-galicia
+# Parameter estimation when the argument passed to `data` is a data-frame
+fit_galicia <- glgpm(log(lead) ~ gp(x, y, kappa = 1.5), 
+                     data = galicia, family = "gaussian", 
+                     crs = 32629, scale_to_km = TRUE, messages = FALSE)
+```
+
+The code above shows the use of `glgpm` by passing `galicia` as a
+`data.frame` object to `data`. The specification of the Gaussian process
+$S(x)$ is done through the addition of the term `gp()` in the formula.
+The function `gp` allows you to specify the columns of the coordinates
+in the data, in this case `x` and `y`, the smoothness parameter through
+the argument `kappa`, set to 1.5 in this example. In the help page of
+`gp`, you can see that by default the nugget term (denoted in this book
+by the random variable $Z_i$) is excluded from the model by default; to
+include and estimate the variance parameter of the nugget, you should
+set `nugget=NULL` in the `gp()` function. However, doing so for a linear
+model that only has one observation per location will generate an error
+message as this is a non-identifiable model for the same reasons given
+in @sec-explanal-lm. However, if the measurement error variance is known
+this can be fixed by the user using the argument `fix_var_me` and the
+inclusion of the nugget term is then possible (to better understand this
+point, try Exercise 7 at the end of this chapter).
+
+The argument `crs` is used to specify the coordinate reference system
+(CRS) of the data. For the Galicia data, as well as for every other
+data-set used in this book, the CRS is reported in the help page
+description of the data-set. If `crs` is not specified, the function
+will assume that the coordinates are in longitude/latitude format and
+will use these without applying any transformation. Finally, the
+argument `scale_to_km`, is used to specify whether the distances between
+locations should be scaled to kilometers or maintained in meters; this
+argument will not affect the scale, and thus the interpretation of the
+spatial correlation parameter $\phi$.
+
+```{r, collapse=TRUE}
+# Parameter estimation when the argument passed to `data` is an sf object
+galicia_sf <- st_as_sf(galicia, coords = c("x", "y"), crs = 32629)
+fit_galicia_sf <- 
+glgpm(log(lead) ~ gp(kappa = 1.5), data = galicia_sf, family = "gaussian",
+      scale_to_km = TRUE, messages = FALSE)
+```
+
+The code above shows the alternative approach to estimate the model,
+when the argument passed to `data` is an `sf` object. In this case, the
+data-set `galicia` is converted into an `sf` object before the use of
+the `glgpm` function using `st_as_sf`. When we then fit the linear
+geostatistical model by passing `galicia_sf` to the argument `data`, the
+only differences with the previous chunk of code that used `galicia`
+instead, is that the coordinates names in `gp()` and the `crs` argument
+in `glgpm` do not need to be specified as they are both directly
+obtained from `galicia_sf`.
+
+```{r, collapse=TRUE}
+summary(fit_galicia)
+```
+
+We can then inspect the point and interval estimates for the model
+through the `summary` function of the model as shown in the code chunk
+above. This output is presented in three sections: in the first section,
+we have the results for the regression coefficients; in the second
+section, we have the estimate for the variance of the measurement error
+component, $\omega^2$ whose point estimate is about 0.015; in the final
+section, we have the estimates for the parameters of the spatial
+covariance function, $\sigma^2$ and $\phi$ which are about 0.171 and
+9.021 (km), respectively. The message
+`Variance of the nugget effect fixed at 0` indicates that the nugget has
+not been included in the mode.
+
+At this point, you may be wondering, why we have used 1.5 for the value
+of $\kappa$ and whether there is a statistical approach to find the most
+suitable value for this. We show such an approach in the code below.
+
+However, before examining the code, we would like to point out an
+important aspect that relates to how the value of $\kappa$ can affect
+the estimate of the measurement error variance $\omega^2$. As we have
+shown, in @sec-matern-correlation, values of $\kappa$ that are closer to
+zero will give a rougher and less regular surface for $S(x)$. In the
+case of a single observation, when $\kappa$ is closer to zero, it will
+thus become increasingly difficult to estimate $\omega^2$ since the
+likelihood function may attribute most of the noisiness to $S(x)$ and
+rely less on $U_i$ to explain the unstructured random variation found in
+the data. As a consequence of this, we can expect that for value of
+$\kappa$ closer to zero, the estimates of $\omega^2$ will also be
+smaller and, on the contrary, when $\kappa$ is larger, the estimates of
+$\omega^2$ will also increase. The results generated in the code below
+clearly illustrate this point.
+
+```{r, collapse=TRUE}
+# Number of the values chosen for kappa
+n_kappa <- 10
+# Set of values for kappa
+kappa_values <- seq(0.5, 3.5, length = n_kappa)
+# Vector that will store the values of the likelihood function 
+# evaluated at the maximum likelihood estimate
+llik_values <- rep(NA, length = n_kappa)
+# Vector that will store the maximum likelihood estimates
+# of the variance of the measurement error
+sigma2_me_hat <- rep(NA, length = n_kappa)
+# List that will contain all the geostatistical models fitted for 
+# the different values of kappa specified in kappa_values
+fit_galicia_list <- list()
+for(i in 1:n_kappa) {
+  fit_galicia_list[[i]] <- glgpm(log(lead) ~ gp(x, y, kappa = kappa_values[i]), 
+                                 data=galicia, family = "gaussian",
+                                 crs = 32629, scale_to_km = TRUE, messages = FALSE)
+  llik_values[i] <-  fit_galicia_list[[i]]$log.lik
+  sigma2_me_hat[i] <-  coef(fit_galicia_list[[i]])["sigma2_me"]
+}
+```
+
+```{r, echo=FALSE, fig.align = "center", fig.height = 8, fig.width = 12,out.width = "8.5in"}
+#| label: fig-galicia-matern
+#| fig-cap: "(a) plot of the maximum likelihood estimate for the variance of the measurement error $U_i$, denoted in the text as $\\omega^2$, against the chosen fixed value for $\\kappa$; (b) profile likelihood for $\\kappa$ with the horizontal dashed line corresponding to the (approximate) threshold for constructing a 95% confidence interval based on a $\\chi^2$ with one degree of freedom. "
+par(mfrow=c(1,2))
+plot(kappa_values, sigma2_me_hat, type="b",
+     xlab = expression(kappa), ylab = expression(hat(omega)^2), main = "(a)")
+plot(kappa_values, llik_values, type="b",
+     xlab = expression(kappa), ylab = "Likelihood function at MLE", main = "(b)")
+abline(h = max(llik_values)-pchisq(0.95, df = 2)/2, lty="dashed")
+```
+
+By examining the results shown in panel (a) of @fig-galicia-matern, we
+observe that, as expected, smaller values for $\kappa$ lead to smaller
+point estimates for $\omega^2$ and viceversa. This begs the question,
+what should be our chosen value for $\kappa$?
+
+To answer this question, a natural approach is to estimate the model for
+different values of $\kappa$ and see which one gives the best fit to the
+data, according to the likelihood function. In panel (b) of
+@fig-galicia-matern, we show the results of this approach where we
+considered 10 values for $\kappa$ within the range 0.5 to 3.5 (see code
+above). In this plot, we have also added a horizontal line to help us to
+approximate a range of the most plausible value for $\kappa$. More
+precisely, the horizontal dashed line is computed by taking the maximum
+observed values of the likelihoods computed for the different values of
+$\kappa$, say $\hat{M}$ and we subtract the quantile 0.95 of a $\chi^2$
+distribution with 1 degree of freedom. In R this horizontal line is
+obtained as
+
+```{r, eval=FALSE}
+max(llik_values)-pchisq(0.95, df = 2)/2
+```
+
+where `llik_values` is as defined in the previous chunk of code. Note
+that this approach is essentially constructing the profile likelihood
+for $\kappa$ which one could use to derive a confidence interval for
+$\kappa$ with a finer segmentation for `kappa_values`. However, our
+current objective is not to derive the confidence interval for $\kappa$,
+but rather to gain a broad understanding of the $\kappa$ values
+supported by the dataset. The values of $\kappa$ that correspond to
+likelihood values above the horizontal line are approximately between
+0.75 and 2.75. Hence, selecting $\kappa=1.5$ seems to be a reasonable
+choice in this case. Now, you may be pondering: are there values other
+than $\kappa=1.5$ that could fit the data even better? Our answer is
+that it is not worth the effort to try estimate $\kappa$ more precisely
+because it is empirically very difficult and, under some scenarios, even
+impossible. Estimating $\kappa$ poses a well-documented challenge in
+geostatistics (@zhang2004), which justifies our adoption of a pragmatic
+approach that sets it at a predefined value. This issue is also further
+exacerbated when analyzing count data, which tend to be less informative
+about the correlation structure than continuously measured data.
+
+### Modelling hierarchical geostatistical data using the `re()` function {#sec-add-re-glgm}
+
+We now consider the analysis of geostatistical data with a hierarchical
+structure and show how to formulate and fit a geostatistical model that
+accounts for the effects of the different layers of the data. For this
+purpose, we use the `italy_sim` where each of the sampled locations can
+be grouped according to two administrative subdivisions of Italy,
+regions (Admin level 2) and provinces (Admin level 3), as shown in
+@fig-italy-maps.
+
+```{r, echo=FALSE}
+italy_regions <- readRDS("data/ita_adm2_geoboundaries.rds")
+italy_provinces <- readRDS("data/ita_adm3_geoboundaries.rds")
+italy_sim_sf <- st_as_sf(
+  italy_sim,
+  coords = c("x1", "x2"),
+  crs = 32634
+)
+```
+
+```{r, eval=FALSE}
+library(rgeoboundaries)
+library(mapview)
+italy_regions <- geoboundaries(country = "italy", adm_lvl = "adm2")
+italy_provinces <- geoboundaries(country = "italy", adm_lvl = "adm3")
+```
+
+```{r, collapse=TRUE, message=FALSE}
+#| label: fig-italy-maps
+#| fig-cap: "The plot shows the location of the data-set `italy_sim` (red crosses), with the boundaries of the regions (left) and provinces (right) of Italy."
+par(mfrow = c(1,2))
+# Map of the data with the region boundaries
+map_regions <- ggplot() + 
+geom_sf(data = italy_sim_sf, pch = 4, color = "red") + 
+geom_sf(data = italy_regions, fill = NA) + 
+theme_void() +
+labs(title = "Regions") +
+theme(plot.title = element_text(hjust = 1/2))
+# Map of the data with the province boundaries
+map_provinces <- ggplot() + 
+geom_sf(data = italy_sim_sf, pch = 4, color = "red") + 
+geom_sf(data = italy_provinces, fill = NA) + 
+theme_void() +
+labs(title = "Provinces") +
+theme(plot.title = element_text(hjust = 1/2))
+library(gridExtra)
+grid.arrange(map_regions, map_provinces, ncol = 2)
+```
+
+Let $V_h$, for $h=1,\ldots,n_V$ and $Z_k$, for $k=1,\ldots,n_{Z}$, be a
+set of mutually independent Gaussian variables with zero means and
+variances $\sigma^2_{V}$ and $\sigma^2_{Z}$, respectively. Finally let
+$\mathcal{A}_h$, for $h=1,\ldots,n_V$ and $\mathcal{B}_k$, for
+$k=1,\ldots,n_{Z}$, denote the areas encompassed by the boundaries of
+the region and provinces, respectively. Since we have 10 repeated
+observations at each locations, we shall use $Y_{ij}$ to denote the
+$j$-th outcome (found in the data under the column `y`) at the $i$-th
+location $x_i$. The model from which we generated data $y_{ij}$ is
+
+$$
+\begin{aligned}
+Y_{ij} = \beta_0 &+ \overbrace{\beta_1 d(x_i) + S(x_i)}^\text{Location-level effect} + \underbrace{\sum_{h=1}^{n_{V}} I(x_i \in \mathcal{A}_h) \times V_h}_\text{Region effect} \\
+&+ \overbrace{\sum_{k=1}^{n_{Z}} I(x_i \in \mathcal{B}_k) \times Z_k}^\text{Province effect} + \underbrace{U_{ij}}_\text{Measurement error}
+\end{aligned}
+$$ {#eq-italy-sim-model}
+
+for $j=1,\ldots 10$ and $i=1,\ldots,200$,
+where, $d(x_i)$ is the log-transformed population density,
+$I(x \in \mathcal{R})$ is an indicator function that takes value 1 if
+the location $x$ falls within the boundaries of the area denoted by
+$\mathcal{R}$ and 0 otherwise. The covariance function chosen in the
+generation of the data was an exponential correlation function hence
+${\rm cov}\{S(x), S(x') = \sigma^2 \exp\{-||x-x'||/\phi\}$.
+
+The inclusion of the random effects $V_h$, for the region, and $Z_k$,
+for the province, can be included by using the `re()` function into the
+`formula` passed to `glgpm` as shown below.
+
+```{r,collapse=TRUE,message=FALSE}
+                        # Location-level effect
+italy_fit <- glgpm( y ~ log(pop_dens) + gp(kappa = 0.5, nugget = 0) +
+                        # Region and province effects
+                        re(region, province),
+         data = italy_sim_sf, scale_to_km = TRUE,
+         family = "gaussian")
+summary(italy_fit)
+```
+
+In the code above, the `factor` variables `region` and `province` found
+in `italy_sim` are passed to `re()` and these are estimated as
+unstructured random effects as defined by @eq-italy-sim-model. From the
+summary of the model, we then obtain the parameter and interval
+estimates as reported in @tbl-italy-sim-mle.
+
+| Parameter      | Point estimate | Lower limit | Upper limit |
+|----------------|----------------|-------------|-------------|
+| $\beta_0$      | -1.074         | -2.032      | -0.117      |
+| $\beta_1$      | 1.373          | 1.352       | 1.394       |
+| $\sigma^2$     | 0.917          | 0.595       | 1.414       |
+| $\phi$         | 214.520        | 153.608     | 299.587     |
+| $\sigma^2_{V}$ | 0.241          | 0.146       | 0.398       |
+| $\sigma^2_{Z}$ | 1.457          | 1.379       | 1.540       |
+| $\omega^2$     | 0.196          | 0.194       | 0.199       |
+: Maximum likelihood estimates and, lower and upper limits of the 95%
+confidence interval for the parameters of the model in
+@eq-italy-sim-lmm. {#tbl-italy-sim-mle}
+
+The function `to_table` from the `RiskMap` package can be used to obtain
+the Latex or HTML code directly from a fit of the model. Here is an
+example.
+
+```{r,collapse=TRUE,message=FALSE}
+to_table(italy_fit, digits = 3)
+```
 
 <!-- ## Generalized linear geostatistical models -->
 
