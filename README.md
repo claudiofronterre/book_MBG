@@ -10,8 +10,8 @@ Read the current online version at [www.mbgr.org](https://www.mbgr.org/).
 The book introduces the practical use of model-based geostatistics for global
 public health. It covers spatial-data handling, exploratory analysis, model
 fitting, prediction, validation, and applied case studies using R. The
-companion RiskMap package provides the main modelling interface used in the
-examples.
+companion [RiskMap](https://github.com/claudiofronterre/RiskMap) package
+provides the main modelling interface used in the examples.
 
 The intended reader has a basic understanding of linear regression and wants
 to develop a reproducible workflow for analysing spatially referenced health
@@ -51,16 +51,18 @@ public chapters show the corresponding scientific code, while the maintenance
 scripts in `R/` regenerate the saved RDS objects when required. See
 [CONTRIBUTING.md](CONTRIBUTING.md) before updating these artifacts.
 
-## Contributing
+## For authors and collaborators
 
-Contributions are welcome through focused branches and pull requests. Before
-editing, please read:
+The book is maintained by its authors and invited collaborators. Before
+editing the manuscript, please read:
 
 - [the contribution guide](CONTRIBUTING.md); and
 - [the book style guide](STYLE_GUIDE.md).
 
-Please report errors or suggestions through the repository's
-[GitHub issues](https://github.com/claudiofronterre/book_MBG/issues).
+Readers are welcome to report errors or suggestions through the repository's
+[GitHub issues](https://github.com/claudiofronterre/book_MBG/issues). Opening an
+issue does not imply authorship; substantive contributions and authorship are
+discussed and agreed by the authors separately.
 
 ## Publication
 
