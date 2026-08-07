@@ -17,7 +17,7 @@ concurrency:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out repository
         uses: actions/checkout@v6
@@ -31,6 +31,26 @@ jobs:
           r-version: '4.6.1'
           use-public-rspm: true
 
+      - name: Install Linux system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes \
+            cmake \
+            gdal-bin \
+            libabsl-dev \
+            libcurl4-openssl-dev \
+            libfontconfig1-dev \
+            libfreetype6-dev \
+            libgdal-dev \
+            libgeos-dev \
+            libjpeg-dev \
+            libpng-dev \
+            libproj-dev \
+            libsecret-1-dev \
+            libudunits2-dev \
+            libx11-dev \
+            pandoc
+
       - name: Restore the renv library
         uses: r-lib/actions/setup-renv@v2
 
@@ -38,7 +58,7 @@ jobs:
         uses: actions/configure-pages@v5
 
       - name: Render HTML from committed frozen results
-        run: quarto render --to html
+        run: quarto render --to html --use-freezer
 
       - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v4
