@@ -447,10 +447,10 @@ in the inland areas of Liberia.
 We now consider an example on malaria mapping, where we use two
 different types of covariates: a spatially referenced covariate
 corresponding to elevation; the individual age. We use the
-`malkenya_comm` subset of the `malkenya` data-set (see
+`malkenya_comm` subset of the `malkenya` dataset (see
 @sec-indiv-expl-analysis) and, to alleviate the computational burden, we
-further reduce this data-set by taking the first 1000 rows. Hence, we
-create our new data-set, `malkenya_comm1000`, using the following code.
+further reduce this dataset by taking the first 1000 rows. Hence, we
+create our new dataset, `malkenya_comm1000`, using the following code.
 
 ```{r}
 #| label: prepare-malkenya-prediction-data
@@ -976,13 +976,13 @@ examining two key characteristics of the predictive distribution:
 To carry out the assessment and comparison of the predictive performance
 of geostatistical models using the methods illustrated in the following
 sections, the first crucial step is to decide which approach to use to
-split the data-set into a *training set* and *test set*. In the context
+split the dataset into a *training set* and *test set*. In the context
 of geostatistical analysis, the *training set* is the subset of the
-original data-set that is used to estimate the model parameters and then
+original dataset that is used to estimate the model parameters and then
 predict at the locations of the *test set*, which is used to assess how
 well the model can predict unseen data.
 
-When splitting geostatistical data-sets for model performance
+When splitting geostatistical datasets for model performance
 evaluation, it is essential to consider the objective of the spatial
 prediction. Here, we consider two main prediction objectives: 1)
 predicting in areas disjoint from the study area where there are no
@@ -1086,7 +1086,7 @@ spatialEco package [@evans2021].
 #| fig-width: 12
 #| fig-height: 6
 #| label: fig-reg-loc
-#| fig-cap: "Examples un the use of spatialky regularized thinning for the splitting of the Liberia data on riverblindness into training and test set. The plots show the resulting test sets by randomly selecting 20 locations from the original data-set and imposing a minimum distance of 30km (left panel) and 40km (right panel)."
+#| fig-cap: "Examples un the use of spatialky regularized thinning for the splitting of the Liberia data on riverblindness into training and test set. The plots show the resulting test sets by randomly selecting 20 locations from the original dataset and imposing a minimum distance of 30km (left panel) and 40km (right panel)."
 library(spatialEco)
 set.seed(123)
 
@@ -1108,7 +1108,7 @@ grid.arrange(dist30_plot, dist40_plot, ncol = 2)
 ```
 
 In the code above, we randomly selected 20 locations from the original
-data-set, enforcing minimum distances of 30 km and 40 km between points.
+dataset, enforcing minimum distances of 30 km and 40 km between points.
 The results are presented in @fig-reg-loc. The choice of the minimum
 distance for the test sample should ideally consider the spatial
 correlation scale (previously denoted by $\phi$) of the spatial Gaussian
@@ -1120,7 +1120,7 @@ test set is important for ensuring that the assessment of predictive
 performance is as robust as possible.
 
 A key challenge in both approaches is the potential lack of independence
-between the training and test data-sets due to spatial correlation. This
+between the training and test datasets due to spatial correlation. This
 can lead to an overly optimistic evaluation of model performance, as the
 training set may already contain information that is correlated with the
 test set. However, if we assume that all models benefit equally from
@@ -1391,9 +1391,9 @@ geostatistical model.
 
 To explain further, suppose we have fitted our model using data
 $Y^{(1)} = \left( y^{(1)}_{1}, \ldots, y^{(1)}_{n} \right)$ (the
-training data-set), and we want to use another set of data
+training dataset), and we want to use another set of data
 $Y^{(2)} = \left( y^{(2)}_{1}, \ldots, y^{(2)}_{m} \right)$ (the test
-data-set) to assess calibration; the selection of $Y^{(1)}$ and
+dataset) to assess calibration; the selection of $Y^{(1)}$ and
 $Y^{(2)}$ can be done using the methods described in @sec-split-data.
 Our model $M$ in the equations above corresponds to the distribution of
 $\left[ Y^{(2)} \mid Y^{(1)} \right]$ -- the distribution of $Y^{(2)}$
@@ -1481,7 +1481,7 @@ In the above function, we have used a spatially regularized sampling
 scheme (`method = "clusterized"`), where the locations are at least 20
 kilometers (`min_dist = 20`) apart from each other to create 10 test
 sets (`iter = 10`) each of size 9 (`n_size = 9`) which corresponds to
-10% of the original data-set. The results reported in @fig-anpit-reg,
+10% of the original dataset. The results reported in @fig-anpit-reg,
 show both the AnPIT for each of the 10 test sets and the averaged AnPIT
 across the 10 test sets, for both $M_0$ and $M_1$. The AnPIT plots show
 curves that are not too far from the identity line, which leads us to
@@ -1730,7 +1730,7 @@ grid.arrange(p1, p2, p3, p4, nrow = 2, ncol = 2)
 ```
 
 In the code above, we evaluated the cross-validation results generated
-using a clustering algorithm to split the original data-set. The map
+using a clustering algorithm to split the original dataset. The map
 reveals that the scores across most locations are generally similar,
 with only three locations near the coast of Liberia showing slightly
 lower CRPS and SCRPS values for $M_1$. This suggests a consistent
@@ -1991,10 +1991,10 @@ detailed in @sec-sim-assessment.
 
 The outputs generated in these steps include predictive samples of the
 target over the grid, represented by $T_{(j)}^{(h)}(\tilde{x})$, where:
-$j$ is the index of the $j$-th simulated data-set, for
+$j$ is the index of the $j$-th simulated dataset, for
 $j = 1, \ldots, B$; $h$ is the index of the Monte Carlo samples, for
 $h = 1, \ldots, N$, generated by the Monte Carlo Markov Chain (MCMC)
-algorithm for a given data-set $j$.
+algorithm for a given dataset $j$.
 
 An example in R for Step 3 will be provided in the next section, where
 we shall use the function `assess_sim()`, from the RiskMap package,
@@ -2629,7 +2629,7 @@ The answer to this question is given in @sec-non-spar-covariates.
     @sec-split-data, and assess if and how the adopted approach to split
     the data affects the results.
 
-4.  Consider the Liberia data-set on riverblindess. Carry out a
+4.  Consider the Liberia dataset on riverblindess. Carry out a
     simulation study where the objective is to assess the impact of
     mispecifying non-linear relationships between elevation and
     prevalence. Consider @eq-true-model-lib as the true model and a

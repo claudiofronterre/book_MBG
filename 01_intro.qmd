@@ -78,11 +78,11 @@ install.packages("remotes")
 remotes::install_github("giorgistat/RiskMap")
 ```
 
-## Data-sets used in the book {#sec-examples-ch1}
+## Datasets used in the book {#sec-examples-ch1}
 
-In this book, we use data available from the RiskMap package. These data-sets are grouped into two categories: *examples*, which are used to demonstrate the application of R functions and modelling steps, and *case studies*, which are analysed in greater depth to illustrate the use of complete geostatistical workflows. In this introductory chapter, we focus on presenting the *example* data-sets, while leaving the detailed presentation and analysis of the *case study* data-sets to @sec-case-studies.
+In this book, we use data available from the RiskMap package. These datasets are grouped into two categories: *examples*, which are used to demonstrate the application of R functions and modelling steps, and *case studies*, which are analysed in greater depth to illustrate the use of complete geostatistical workflows. In this introductory chapter, we focus on presenting the *example* datasets, while leaving the detailed presentation and analysis of the *case study* datasets to @sec-case-studies.
 
-Each of the data-sets, whether *example* or *case-study*, can be loaded directly from the RiskMap package using the command:
+Each of the datasets, whether *example* or *case-study*, can be loaded directly from the RiskMap package using the command:
 
 ```{r}
 #| label: load-example-dataset
@@ -90,9 +90,9 @@ Each of the data-sets, whether *example* or *case-study*, can be loaded directly
 data(NAME_OF_THE_DATASET)
 ```
 
-where `NAME_OF_THE_DATASET` should be replaced with the name of one of the data-sets listed in @tbl-data-sets.
+where `NAME_OF_THE_DATASET` should be replaced with the name of one of the datasets listed in @tbl-data-sets.
 
-| Names of the data-set | Short description | Used in this book as |
+| Names of the dataset | Short description | Used in this book as |
 |---------------------------|---------------------|------------------------|
 | `galicia` | Lead concentration measured from moss samples collected in Galicia, Northern Spain | Example |
 | `liberia` | Prevalence data on river blindness from Liberia | Example |
@@ -102,7 +102,7 @@ where `NAME_OF_THE_DATASET` should be replaced with the name of one of the data-
 | `infect_sma` | West Nile virus infection prevalence in *Culex pipiens* mosquitoes from the Sacramento Metropolitan Area, USA | Case study |
 | `abund_sma` | Abundance of *Culex pipiens* mosquitoes from the Sacramento Metropolitan Area, USA | Case study |
 
-: List of data-sets available from the RiskMap package. Data-sets listed as "Example" are used throughout the book to illustrate the use of R functions. Data-sets listed as "Case study" are analysed in @sec-case-studies. {#tbl-data-sets}
+: List of datasets available from the RiskMap package. Datasets listed as "Example" are used throughout the book to illustrate the use of R functions. Datasets listed as "Case study" are analysed in @sec-case-studies. {#tbl-data-sets}
 
 ### Lead concentration in Galicia
 
@@ -192,7 +192,7 @@ Map of the collected number of *Anopheles gambiae* mosquitoes in an area of Sout
 
 In studies of vector-borne and zoonotic diseases, understanding the vector distribution can help to better guide the decision-making process for the implementation, monitoring and evaluation of control programmes. *Anopheles gambiae* mosquitoes are one of the main vectors for malaria transmission in sub-Saharan Africa. Their distribution over space is affected by several environmental and climatic factors, including temperature, humidity and vegetation.
 
-The data-set on mosquitoes (@fig-anopheles-ch1) that we will use in the book consists of a sub-set taken from a larger database [@fossog2015]. This was assembled in order to understand how the environment affects the distribution of different species of *Anopheles* mosquitoes in sub-Saharan Africa. This example data-set will be used to illustrate the application of Poisson geostatistical models for mapping mosquitoes abundance.
+The dataset on mosquitoes (@fig-anopheles-ch1) that we will use in the book consists of a sub-set taken from a larger database [@fossog2015]. This was assembled in order to understand how the environment affects the distribution of different species of *Anopheles* mosquitoes in sub-Saharan Africa. This example dataset will be used to illustrate the application of Poisson geostatistical models for mapping mosquitoes abundance.
 
 ### Simulated-dataset {#sec-italy-sim-data-ch1}
 
@@ -208,10 +208,10 @@ if(knitr::is_html_output()){
 }
 ```
 
-Map of the locations of the simulated data-set generated over Italy for a continuous outcome.
+Map of the locations of the simulated dataset generated over Italy for a continuous outcome.
 :::
 
-The data-set reported in @fig-italy-sim-ch1 was generated using a geostatistical model, with the addition of unstructured random effects at provincial and regional level. More details on how this data-set was generated will be provided in @sec-linear-model. Whilst this data-set does not have any scientific relevance, it will serve us to illustrate some of the more advanced features of the RiskMap package that enable the inclusion of random effects, in addition to the latent Gaussian process that is common to all geostatistical models. The skills you will acquire through the analysis of this data-set will be useful for the analysis of data-sets presented as case studies in @sec-case-studies.
+The dataset reported in @fig-italy-sim-ch1 was generated using a geostatistical model, with the addition of unstructured random effects at provincial and regional level. More details on how this dataset was generated will be provided in @sec-linear-model. Whilst this dataset does not have any scientific relevance, it will serve us to illustrate some of the more advanced features of the RiskMap package that enable the inclusion of random effects, in addition to the latent Gaussian process that is common to all geostatistical models. The skills you will acquire through the analysis of this dataset will be useful for the analysis of datasets presented as case studies in @sec-case-studies.
 
 ## Geostatistical problems and geostatistical models {#sec-geostat-models}
 

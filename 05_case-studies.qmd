@@ -1392,7 +1392,7 @@ plot_anpit <- function(res) {
 #| eval: false
 wnv_anpit_res <- anpit_wnv(glmer_wvn, test_prop = 0.30, nsim = 10000)
 ```
-In the code above the AnPIT is computed using a test-set corresponding to $30\%$ of the original data-set. The number of simulation used to approximate the AnPIT is set to 1000. Finally, we plot the results.
+In the code above the AnPIT is computed using a test-set corresponding to $30\%$ of the original dataset. The number of simulation used to approximate the AnPIT is set to 1000. Finally, we plot the results.
 
 ```{r}
 #| label: fig-wnv-anpit
@@ -1526,7 +1526,7 @@ Finally, we predict the vector index as defined in @eq-vi. Because *Cx. pipiens*
 loc_pred <- st_as_sfc(st_transform(st_as_sf(abund_sma, coords = c("lon","lat"), crs = 4326), crs = wnv_crs))
 
 # Prediction of the sptial process S(x) over the locations of the 
-# abund_sma data-set
+# abund_sma dataset
 pred_S_loc <- pred_over_grid(inf_fit, grid_pred = loc_pred)
 
 # Computation of the samples for West Nile Virus prevalence
@@ -1976,7 +1976,7 @@ This helper function takes the output and produces a plot of the averaged nPIT c
 4.  The function `simulate_random_effects()` in @sec-sim-re samples random effects using a simple grid-based inverse CDF approach.\
     While easy to understand, this method can be slow when the number of groups or simulations is large. Rewrite the function using a more efficient sampling strategy such as slice sampling [@neal2003] or a simple Metropolis–Hastings sampler [@gelman2013bayesian]. After implementing your new function, compare the sampled random effect distributions to those obtained from `simulate_random_effects()` and discuss any differences in accuracy and computational speed.
     
-5.  The function `anpit_wnv()` computes the average non-randomized probability integral transform for the specific model in @eq-wnv-counts. Full details of the implementation are given in @sec-nonspat-anpit. You may wish to enhance this function in one of two ways: first, by generalising it so that it can be applied to any generalized linear mixed model with the same random effects structure; second, by replacing the Monte Carlo step that samples from a Gaussian distribution with a numerical integration approach. Once you have implemented this function, you can apply it to the analysed data-sets of the previous chapter and compare the generated AnPIT against those of the fitted geostatistical models. Does the AnPIT show an unsatisfactory diagnostic in some cases?
+5.  The function `anpit_wnv()` computes the average non-randomized probability integral transform for the specific model in @eq-wnv-counts. Full details of the implementation are given in @sec-nonspat-anpit. You may wish to enhance this function in one of two ways: first, by generalising it so that it can be applied to any generalized linear mixed model with the same random effects structure; second, by replacing the Monte Carlo step that samples from a Gaussian distribution with a numerical integration approach. Once you have implemented this function, you can apply it to the analysed datasets of the previous chapter and compare the generated AnPIT against those of the fitted geostatistical models. Does the AnPIT show an unsatisfactory diagnostic in some cases?
 
 6. Repeat the analysis in @sec-wnv from the beginning to predict the vector index, but this time assume alternative fixed values for the PCR pool size $k_i$ in @sec-wnv-model, setting all $k_i$ to 10, 25, and 50 in turn. Compare the resulting inferences on West Nile virus infection prevalence and the vector index across these three scenarios, and discuss how they differ from each other as well as from the results presented earlier in this chapter.
  

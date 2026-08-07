@@ -565,7 +565,7 @@ significance.
 The approach just illustrated, can also be applied to explore the
 association with other continuous variables that are a property of the
 household and not of the individual. Let us, for example, consider the
-variable `elevation` from the `malkenya` data-set.
+variable `elevation` from the `malkenya` dataset.
 
 ```{r}
 #| label: split-elevation
@@ -1084,11 +1084,11 @@ correlation. Following this principle, we then use a permutation test
 that allows us to generate empirical variograms under the assumption of
 absence of spatial correlation through the following iterative steps.
 
-1.  Permute the order of the locations in the data-set while keeping
+1.  Permute the order of the locations in the dataset while keeping
     everything else fixed.
 
 2.  Compute the empirical variogram $\hat{V}(\mathcal{U})$ for the
-    permuted data-set.
+    permuted dataset.
 
 3.  Repeat 1 and 2 a large number of times, say 10,000.
 
@@ -1131,7 +1131,7 @@ the `glmer()` function.
 
 ```{r}
 #| label: glmer-liberia
-# Convert the data-set into an sf object
+# Convert the dataset into an sf object
 liberia <- st_as_sf(liberia, coords = c("lat", "long"), crs = 4326)
 
 # Create the ID of the location
@@ -1371,10 +1371,10 @@ lead concentrations are spatially correlated.
 ##### More than one observation per location {#sec-explanal-lm}
 
 For the case of more than one observation per location, we shall
-consider the `italy_sim` data-set. This data-set contains 10 observations
+consider the `italy_sim` dataset. This dataset contains 10 observations
 at each of 200 locations. The variable `ID_loc` is a numeric indicator
 that can be used to identify the location each observation belongs to.
-For this data-set, we use the population density, named `pop_dens`, as a
+For this dataset, we use the population density, named `pop_dens`, as a
 log-transformed covariate; we leave you as an exercise to assess whether
 it is a reasonable modelling choice.
 
@@ -1395,7 +1395,7 @@ function from the lme4 package.
 
 ```{r}
 #| label: lmer-italy-sim
-# Fitting a linear mixed model to the italy_sim data-set
+# Fitting a linear mixed model to the italy_sim dataset
 # See main text for model specification
 lmer_fit <- lmer(y ~ log(pop_dens) + (1 | ID_loc), data = italy_sim)
 ```
@@ -1598,8 +1598,8 @@ point, try Exercise 7 at the end of this chapter).
 
 The argument `crs` is used to specify the coordinate reference system
 (CRS) of the data. For the Galicia data, as well as for every other
-data-set used in this book, the CRS is reported in the help page
-description of the data-set. If `crs` is not specified, the function
+dataset used in this book, the CRS is reported in the help page
+description of the dataset. If `crs` is not specified, the function
 will assume that the coordinates are in longitude/latitude format and
 will use these without applying any transformation. Finally, the
 argument `scale_to_km`, is used to specify whether the distances between
@@ -1618,7 +1618,7 @@ glgpm(log(lead) ~ gp(kappa = 1.5), data = galicia_sf, family = "gaussian",
 
 The code above shows the alternative approach to estimate the model,
 when the argument passed to `data` is an `sf` object. In this case, the
-data-set `galicia` is converted into an `sf` object before the use of
+dataset `galicia` is converted into an `sf` object before the use of
 the `glgpm()` function using `st_as_sf()`. When we then fit the linear
 geostatistical model by passing `galicia_sf` to the argument `data`, the
 only differences with the previous chunk of code that used `galicia`
@@ -1779,7 +1779,7 @@ italy_provinces <- geoboundaries(country = "italy", adm_lvl = "adm3")
 ```{r}
 #| message: false
 #| label: fig-italy-maps
-#| fig-cap: "The plot shows the location of the data-set `italy_sim` (red crosses), with the boundaries of the regions (left) and provinces (right) of Italy."
+#| fig-cap: "The plot shows the location of the dataset `italy_sim` (red crosses), with the boundaries of the regions (left) and provinces (right) of Italy."
 par(mfrow = c(1,2))
 # Map of the data with the region boundaries
 map_regions <- ggplot() + 
@@ -2209,7 +2209,7 @@ to_table(italy_fit, digits = 3)
 
 <!-- Using the `dist_summaries()` function, we can see that, among the -->
 
-<!-- locations of the data-set, the average distance is about 55km and the -->
+<!-- locations of the dataset, the average distance is about 55km and the -->
 
 <!-- minimum is about 387 meters. The estimate of phi of 4km is thus -->
 
@@ -2359,7 +2359,7 @@ to_table(italy_fit, digits = 3)
 
 <!-- The output `liberia_sim` is a list with as many components as indicated -->
 
-<!-- by `n_sim`. In this case, we can access the simulated data-set as -->
+<!-- by `n_sim`. In this case, we can access the simulated dataset as -->
 
 <!-- `liberia_sim[[1]]`. For example, we could refit the same model to the -->
 
@@ -2378,7 +2378,7 @@ to_table(italy_fit, digits = 3)
 
 <!-- ``` -->
 
-<!-- Note that if the data's CRS has been converted, the simulated data-set -->
+<!-- Note that if the data's CRS has been converted, the simulated dataset -->
 
 <!-- will inherit the new CRS rather than the original. This means that any -->
 
@@ -2390,7 +2390,7 @@ to_table(italy_fit, digits = 3)
 
 <!-- This idea can be extended naturally to perform parametric bootstrap. The -->
 
-<!-- procedure involves simulating multiple data-sets from the fitted model, -->
+<!-- procedure involves simulating multiple datasets from the fitted model, -->
 
 <!-- refitting the model to each of them, and extracting the estimates of -->
 
@@ -2409,7 +2409,7 @@ to_table(italy_fit, digits = 3)
 
 <!-- liberia_boot <- glgpm_sim(n_sim = n_sim, model_fit = fit_liberia_no_nugget) -->
 
-<!-- # List where we will store the estimates from each of the simulated data-sets -->
+<!-- # List where we will store the estimates from each of the simulated datasets -->
 
 <!-- par_hat <- list() -->
 
@@ -3668,7 +3668,7 @@ to_table(italy_fit, digits = 3)
 
 <!--     plotting $\hat{V}_{ij}$ (see @eq-hat-squared-diff) against the -->
 
-<!--     distances $u_{ij}$. The function should take as input a data-set -->
+<!--     distances $u_{ij}$. The function should take as input a dataset -->
 
 <!--     with three columns: the variable for which the cloud variogram is to -->
 
@@ -3682,7 +3682,7 @@ to_table(italy_fit, digits = 3)
 
 <!--     within predefined distance classes, as shown in @fig-liberia-variog? -->
 
-<!-- 4.  Fit a Binomial mixed model to the Liberia data-set on -->
+<!-- 4.  Fit a Binomial mixed model to the Liberia dataset on -->
 
 <!--     river-blindness without any covariates, i.e. $$ -->
 
@@ -3720,11 +3720,11 @@ to_table(italy_fit, digits = 3)
 
 <!-- 6.  *Parametric bootstrap.* Using the model fitted to the Anopheles -->
 
-<!--     gambiae mosquitoes in @sec-anopheles-fit, simulate 1000 data-sets -->
+<!--     gambiae mosquitoes in @sec-anopheles-fit, simulate 1000 datasets -->
 
 <!--     using the `glgpm_sim()` function and estimate the model to each of the -->
 
-<!--     simulated data-set. Use the resulting 1000 estimates to compute -->
+<!--     simulated dataset. Use the resulting 1000 estimates to compute -->
 
 <!--     95$\%$ confidence intervals for each of the model parameters and -->
 
