@@ -3,7 +3,6 @@ filters:
   - code-visibility
 execute: 
   freeze: auto
-  cache: true
 fig-width: 5
 fig-asp: 0.75
 editor_options: 
@@ -127,26 +126,23 @@ In this example, we retrieve elevation data for Liberia using the [SRTM 90m data
 This example assumes you have already completed rgee setup and authenticated using `ee_Initialize()`.
 :::
 
+
 ```{r}
-#| echo: false
+#| label: download-liberia-elevation
 #| eval: false
-#| label: rgee-setup
-#| include: false
-reticulate::use_condaenv("rgee-env", required = TRUE)
-```
-
-
-```{r}
-#| label: fig-rgee-elevation
 #| message: false
 #| warning: false
-#| fig-cap: Elevation (m) in Liberia retrieved via Google Earth Engine (SRTM).
 
 # Load required packages
-library(rgee)  
+library(rgee)
+library(terra)
 
 # Initialize Earth Engine (first time will prompt browser login)
-ee_Initialize(quiet = T)
+ee_Initialize(
+  project = "YOUR-GOOGLE-CLOUD-PROJECT-ID",
+  drive = TRUE,
+  quiet = TRUE
+)
 
 # Convert Liberia boundary to Earth Engine Geometry
 liberia_ee <- sf_as_ee(liberia_admin0)
@@ -166,7 +162,7 @@ elev_rast <- ee_as_rast(
   region = liberia_ee$geometry(),
   via = "drive",
   scale = 1000, # Aggregate to 1000 meters
-  quiet = T
+  quiet = TRUE
 )
 
 # Replace 0s with NAs as these are usually elevation values 
@@ -174,8 +170,22 @@ elev_rast <- ee_as_rast(
 elev_rast[elev_rast == 0] <- NA
 
 # Plot the result
-terra::plot(elev_rast, main = "Elevation in Liberia (m)")
-plot(liberia_admin0$geometry, add = T)
+plot(elev_rast, main = "Elevation in Liberia (m)")
+plot(liberia_admin0$geometry, add = TRUE)
+```
+
+```{r}
+#| label: fig-rgee-elevation
+#| echo: false
+#| message: false
+#| warning: false
+#| fig-cap: Elevation (m) in Liberia retrieved via Google Earth Engine (SRTM).
+
+elev_rast <- rast("data/lbr_elevation_srtm.tif")
+
+# Plot the result
+plot(elev_rast, main = "Elevation in Liberia (m)")
+plot(liberia_admin0$geometry, add = TRUE)
 ```
 
 ## Importing and standardizing spatial data
