@@ -57,7 +57,7 @@ A wide range of open-access spatial datasets provide covariates for disease mapp
 
 ### Example: Downloading administrative boundaries
 
-Administrative boundaries provide an essential spatial structure for many types of geostatistical analyses, particularly in disease mapping where data is often aggregated by administrative units such as regions, districsts or provinces. The [geoBoundaries](https://www.geoboundaries.org/) datasets, which are accessible via the rgeoboundaries package, provide openly available administrative boundary data for nearly every country, allowing researchers to integrate these boundaries into their analyses seamlessly.
+Administrative boundaries provide an essential spatial structure for many types of geostatistical analyses, particularly in disease mapping where data is often aggregated by administrative units such as regions, districts or provinces. The [geoBoundaries](https://www.geoboundaries.org/) datasets, which are accessible via the rgeoboundaries package, provide openly available administrative boundary data for nearly every country, allowing researchers to integrate these boundaries into their analyses seamlessly.
 
 ```{r}
 #| layout-ncol: 2
@@ -65,7 +65,7 @@ Administrative boundaries provide an essential spatial structure for many types 
 #| fig-cap: |
 #|   Administrative boundaries for Liberia retrieved using the rgeoboundaries package.
 #| fig-subcap:
-#|   - "Adimin level 0"
+#|   - "Admin level 0"
 #|   - "Admin level 1"
 
 par(mar = c(0, 0, 0, 0))  #| hide_line
@@ -190,7 +190,7 @@ plot(liberia_admin0$geometry, add = TRUE)
 
 ## Importing and standardizing spatial data
 
-In geostatistical analysis, importing and standardizing spatial data is a critical step to ensure that data from different sources align and can be used effectively. Spatial data, whether it's vector data (points, lines, polygons) or raster data (grids), can come in various formats and may use different **Coordinate Reference Systems (CRS)**. To perform accurate spatial analyses, it's essential to import data correctly and ensure consistency in terms of projection and format. This section will cover how to import vector and raster data into R, explain the concept of CRS and sensure that different datasets align properly for subsequent geostatistical analysis.
+In geostatistical analysis, importing and standardizing spatial data is a critical step to ensure that data from different sources align and can be used effectively. Spatial data, whether it's vector data (points, lines, polygons) or raster data (grids), can come in various formats and may use different **Coordinate Reference Systems (CRS)**. To perform accurate spatial analyses, it's essential to import data correctly and ensure consistency in terms of projection and format. This section will cover how to import vector and raster data into R, explain the concept of CRS and ensure that different datasets align properly for subsequent geostatistical analysis.
 
 ### Importing vector data
 
@@ -542,7 +542,7 @@ In this example `as.data.frame()` converts the raster into a data frame with x a
 
 ### Combining Multiple Spatial Data Types
 
-In many cases, it's useful to combine different spatial data types (points, polygons, and rasters) in a single visualization. ggplot2 allows you to overlay these layers, providing a more comprehensive view of your spatial data.
+In many cases, it is useful to combine different spatial data types (points, polygons, and rasters) in a single visualization. ggplot2 allows you to overlay these layers, providing a more comprehensive view of your spatial data.
 
 ```{r}
 #| label: fig-combined-map
