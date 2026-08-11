@@ -3,5 +3,6 @@
 In summary, this book has no content whatsoever.
 
 ```{r}
+#| label: summary-placeholder
 1 + 1
 ```

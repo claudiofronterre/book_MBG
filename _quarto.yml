@@ -1,6 +1,8 @@
 project:
   type: book
   output-dir: docs
+  resources:
+    - CNAME
   render:
     - "*.qmd"
     - "!drafts/"
@@ -32,7 +34,7 @@ book:
     - 02_handling-spatial-data.qmd
     - 03_model-fitting.qmd
     - 04_geostatistical-prediction.qmd
-    - 05_case-studies.qmd
+    # - 05_case-studies.qmd
     - references.qmd
 
 

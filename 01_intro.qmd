@@ -7,7 +7,7 @@ fig-asp: 0.75
 
 # Introduction
 
-The purpose of this book is to demonstrate how to conduct model-based geostatistical analysis of public health data using the `RiskMap` R package. In this introductory chapter, we outline the prerequisites for using the book, its learning objectives, and the required software. We then provide a brief overview of the class of models that will be covered and the real-world examples that will be used to illustrate the methods and software.
+The purpose of this book is to demonstrate how to conduct model-based geostatistical analysis of public health data using the RiskMap R package. In this introductory chapter, we outline the prerequisites for using the book, its learning objectives, and the required software. We then provide a brief overview of the class of models that will be covered and the real-world examples that will be used to illustrate the methods and software.
 
 ## Objectives of this book
 
@@ -41,19 +41,19 @@ The list of the R packages used in this book is provided in @tbl-packages.
 
 | R packages | Used for |
 |-----------------|-------------------------------------------------------|
-| `RiskMap` (E) | Estimation of geostatistical models and spatial prediction |
-| `lme4` | Estimation of generalized linear mixed models |
-| `sf` (E) | Handling of spatial data in R |
-| `terra` (E) | Handling of raster files in R |
-| `ggplot2` (E) | Creating maps and exploratory plots |
-| `dplyr` (E) | Data wrangling and manipulation |
-| `tidyr` (E) | Reshaping and tidying data |
-| `rgeoboundaries` (R) | Accessing global administrative boundary datasets from GeoBoundaries |
-| `gridExtra` (R) | Arranging multiple plots and tables in a grid layout |
-| `patchwork` (R) | Combining multiple ggplot2 plots into a single coherent display |
-| `factoextra` (R) | Extracting and visualizing multivariate analysis results |
-| `scales` (R) | Controlling axis transformations, breaks, and labels in ggplot2 graphics |
-| `crsuggest` (R) | Guessing coordinate reference systems when unknown |
+| *RiskMap* (E) | Estimation of geostatistical models and spatial prediction |
+| *lme4* | Estimation of generalized linear mixed models |
+| *sf* (E) | Handling of spatial data in R |
+| *terra* (E) | Handling of raster files in R |
+| *ggplot2* (E) | Creating maps and exploratory plots |
+| *dplyr* (E) | Data wrangling and manipulation |
+| *tidyr* (E) | Reshaping and tidying data |
+| *rgeoboundaries* (R) | Accessing global administrative boundary datasets from GeoBoundaries |
+| *gridExtra* (R) | Arranging multiple plots and tables in a grid layout |
+| *patchwork* (R) | Combining multiple ggplot2 plots into a single coherent display |
+| *factoextra* (R) | Extracting and visualizing multivariate analysis results |
+| *scales* (R) | Controlling axis transformations, breaks, and labels in ggplot2 graphics |
+| *crsuggest* (R) | Guessing coordinate reference systems when unknown |
 
 : List of the R packages that will be used in the book with a description of their use in the data analysis. The packages marked by (E) are essential for the geostatistical analysis. Those instead marked by (R) are recommended and are especially useful to be able to recreate the plots generated in the later chapters. {#tbl-packages}
 
@@ -61,32 +61,38 @@ The list of the R packages used in this book is provided in @tbl-packages.
 When running the code examples in this book, you may occasionally encounter error messages indicating that a function cannot be found. This usually happens when the corresponding R package has not been loaded. To avoid such issues, we recommend always loading all the packages listed in @tbl-packages before running the code.
 :::
 
-To install packages in R for the first time, you can use the command `install.packages` in the R console. For example, to install the stable CRAN release of the `RiskMap` package, run:
+To install packages in R for the first time, you can use the command `install.packages()` in the R console. For example, to install the stable CRAN release of the RiskMap package, run:
 
-```{r eval=FALSE}
+```{r}
+#| label: install-riskmap
+#| eval: false
 install.packages("RiskMap")
 ```
 
-Alternatively, you can install the development version of `RiskMap` from GitHub, which is updated more frequently but should be considered a testing version. This requires the `remotes` package:
+Alternatively, you can install the development version of RiskMap from GitHub, which is updated more frequently but should be considered a testing version. This requires the remotes package:
 
-```{r eval=FALSE}
+```{r}
+#| label: install-riskmap-development
+#| eval: false
 install.packages("remotes")
 remotes::install_github("giorgistat/RiskMap")
 ```
 
-## Data-sets used in the book {#sec-examples-ch1}
+## Datasets used in the book {#sec-examples-ch1}
 
-In this book, we use data available from the `RiskMap` package. These data-sets are grouped into two categories: *examples*, which are used to demonstrate the application of R functions and modelling steps, and *case studies*, which are analysed in greater depth to illustrate the use of complete geostatistical workflows. In this introductory chapter, we focus on presenting the *example* data-sets, while leaving the detailed presentation and analysis of the *case study* data-sets to @sec-case-studies.
+In this book, we use data available from the RiskMap package. These datasets are grouped into two categories: *examples*, which are used to demonstrate the application of R functions and modelling steps, and *case studies*, which are analysed in greater depth to illustrate the use of complete geostatistical workflows. In this introductory chapter, we focus on presenting the *example* datasets, while leaving the detailed presentation and analysis of the *case study* datasets to @sec-case-studies.
 
-Each of the data-sets, whether *example* or *case-study*, can be loaded directly from the `RiskMap` package using the command:
+Each of the datasets, whether *example* or *case-study*, can be loaded directly from the RiskMap package using the command:
 
-```{r eval=FALSE}
+```{r}
+#| label: load-example-dataset
+#| eval: false
 data(NAME_OF_THE_DATASET)
 ```
 
-where `NAME_OF_THE_DATASET` should be replaced with the name of one of the data-sets listed in @tbl-data-sets.
+where `NAME_OF_THE_DATASET` should be replaced with the name of one of the datasets listed in @tbl-data-sets.
 
-| Names of the data-set | Short description | Used in this book as |
+| Names of the dataset | Short description | Used in this book as |
 |---------------------------|---------------------|------------------------|
 | `galicia` | Lead concentration measured from moss samples collected in Galicia, Northern Spain | Example |
 | `liberia` | Prevalence data on river blindness from Liberia | Example |
@@ -96,12 +102,13 @@ where `NAME_OF_THE_DATASET` should be replaced with the name of one of the data-
 | `infect_sma` | West Nile virus infection prevalence in *Culex pipiens* mosquitoes from the Sacramento Metropolitan Area, USA | Case study |
 | `abund_sma` | Abundance of *Culex pipiens* mosquitoes from the Sacramento Metropolitan Area, USA | Case study |
 
-: List of data-sets available from the `RiskMap` package. Data-sets listed as "Example" are used throughout the book to illustrate the use of R functions. Data-sets listed as "Case study" are analysed in @sec-case-studies. {#tbl-data-sets}
+: List of datasets available from the RiskMap package. Datasets listed as "Example" are used throughout the book to illustrate the use of R functions. Datasets listed as "Case study" are analysed in @sec-case-studies. {#tbl-data-sets}
 
 ### Lead concentration in Galicia
 
 ::: {#fig-galicia-ch1}
 ```{r}
+#| label: display-galicia-map
 #| echo: false
 
 if(knitr::is_html_output()){
@@ -124,6 +131,7 @@ This dataset will be used throughout the book to illustrate the spatial analysis
 
 ::: {#fig-liberia-ch1}
 ```{r}
+#| label: display-liberia-map
 #| echo: false
 
 if(knitr::is_html_output()){
@@ -146,6 +154,7 @@ Through this dataset, we demonstrate how to formulate and fit Binomial geostatis
 
 ::: {#fig-malkenya-ch1}
 ```{r}
+#| label: display-malkenya-map
 #| echo: false
 
 if(knitr::is_html_output()){
@@ -168,6 +177,7 @@ In this book, we show how to incorporate the hierarchical structure of the data 
 
 ::: {#fig-anopheles-ch1}
 ```{r}
+#| label: display-anopheles-map
 #| echo: false
 
 if(knitr::is_html_output()){
@@ -182,12 +192,13 @@ Map of the collected number of *Anopheles gambiae* mosquitoes in an area of Sout
 
 In studies of vector-borne and zoonotic diseases, understanding the vector distribution can help to better guide the decision-making process for the implementation, monitoring and evaluation of control programmes. *Anopheles gambiae* mosquitoes are one of the main vectors for malaria transmission in sub-Saharan Africa. Their distribution over space is affected by several environmental and climatic factors, including temperature, humidity and vegetation.
 
-The data-set on mosquitoes (@fig-anopheles-ch1) that we will use in the book consists of a sub-set taken from a larger database [@fossog2015]. This was assembled in order to understand how the environment affects the distribution of different species of *Anopheles* mosquitoes in sub-Saharan Africa. This example data-set will be used to illustrate the application of Poisson geostatistical models for mapping mosquitoes abundance.
+The dataset on mosquitoes (@fig-anopheles-ch1) that we will use in the book consists of a sub-set taken from a larger database [@fossog2015]. This was assembled in order to understand how the environment affects the distribution of different species of *Anopheles* mosquitoes in sub-Saharan Africa. This example dataset will be used to illustrate the application of Poisson geostatistical models for mapping mosquitoes abundance.
 
 ### Simulated-dataset {#sec-italy-sim-data-ch1}
 
 ::: {#fig-italy-sim-ch1}
 ```{r}
+#| label: display-italy-sim-map
 #| echo: false
 
 if(knitr::is_html_output()){
@@ -197,10 +208,10 @@ if(knitr::is_html_output()){
 }
 ```
 
-Map of the locations of the simulated data-set generated over Italy for a continuous outcome.
+Map of the locations of the simulated dataset generated over Italy for a continuous outcome.
 :::
 
-The data-set reported in @fig-italy-sim-ch1 was generated using a geostatistical model, with the addition of unstructured random effects at provincial and regional level. More details on how this data-set was generated will be provided in @sec-linear-model. Whilst this data-set does not have any scientific relevance, it will serve us to illustrate some of the more advanced features of the `RiskMap` package that enable the inclusion of random effects, in addition to the latent Gaussian process that is common to all geostatistical models. The skills you will acquire through the analysis of this data-set will be useful for the analysis of data-sets presented as case studies in @sec-case-studies.
+The dataset reported in @fig-italy-sim-ch1 was generated using a geostatistical model, with the addition of unstructured random effects at provincial and regional level. More details on how this dataset was generated will be provided in @sec-linear-model. Whilst this dataset does not have any scientific relevance, it will serve us to illustrate some of the more advanced features of the RiskMap package that enable the inclusion of random effects, in addition to the latent Gaussian process that is common to all geostatistical models. The skills you will acquire through the analysis of this dataset will be useful for the analysis of datasets presented as case studies in @sec-case-studies.
 
 ## Geostatistical problems and geostatistical models {#sec-geostat-models}
 
@@ -371,7 +382,9 @@ In @fig-matern-sim, we show three realizations from these correlation functions.
 
 Readers interested in the theoretical foundations of these properties may refer to Chapter 2 of @stein1999.
 
-```{r, echo=FALSE, message=FALSE}
+```{r}
+#| echo: false
+#| message: false
 #| label: fig-matern-sim
 #| fig-cap: "Simulated spatial surface using the three correlation functions shown in @fig-matern-func. Panels (a), (b) and (c) correspond to the correlation functions from panel (a) in @fig-matern-func and in order these are: $\\phi = 0.05$ and $\\kappa=0.5$; (b) $\\phi=0.1$ and $\\kappa=0.5$; (c) $\\phi=0.2$ and $\\kappa=0.5$. Panels (c), (d) and (e) correspond to the correlation functions from panel (b) in @fig-matern-func and in order these are: $\\phi = 0.1$ and $\\kappa=0.5$; (b) $\\phi=0.063$ and $\\kappa=1.5$; (c) $\\phi=0.051$ and $\\kappa=2.5$."
 
@@ -405,4 +418,4 @@ Once estimation has been carried out, the next step is model validation, where d
 
 At this stage, defining appropriate predictive targets is crucial, as they ensure that the analysis answers the original research questions and supports decision making. An equally important component is evaluating how well the model predicts unobserved data, often referred to as predictive performance. In geostatistical applications, this evaluation is particularly challenging because spatial data are typically sparse and irregularly distributed. A widely used approach to quantify predictive performance is cross validation, which involves withholding a subset of observations, fitting the model to the remaining data, and then comparing the predictions to the held out observations. The design and interpretation of cross validation, however, depend on the ultimate goal of the analysis, for example whether the aim is to make predictions within the study region or to extrapolate beyond the sampled area. In addition to cross validation, simulation studies provide a valuable complementary tool, allowing us to better understand how a model should be expected to perform on average and to assess whether the results from a given analysis are consistent with this expected behaviour.
 
-In the remainder of this book, each chapter focuses on one or more of these stages as shown in @fig-stages. @sec-handling-data introduces methods for working with spatial data in R, with a focus on raster and vector formats, including points and polygons. The skills developed in this chapter are applied throughout the book and are especially important in @sec-geo-prediction and @sec-case-studies, where predictive maps of health outcomes are generated. @sec-estimation then describes the process of model formulation and estimation, showing how exploratory analyses inform the choice of model and how maximum likelihood methods can be used for parameter estimation. @sec-geo-prediction builds on this by demonstrating how fitted models can be used for spatial prediction on both continuous and aggregated scales, and how predictive performance can be assessed to identify the most suitable model. Finally, @sec-case-studies presents complete applications of all methods to three datasets, summarizing the full geostatistical workflow and illustrating additional features of the `RiskMap` R package not covered in earlier chapters.
+In the remainder of this book, each chapter focuses on one or more of these stages as shown in @fig-stages. @sec-handling-data introduces methods for working with spatial data in R, with a focus on raster and vector formats, including points and polygons. The skills developed in this chapter are applied throughout the book and are especially important in @sec-geo-prediction and @sec-case-studies, where predictive maps of health outcomes are generated. @sec-estimation then describes the process of model formulation and estimation, showing how exploratory analyses inform the choice of model and how maximum likelihood methods can be used for parameter estimation. @sec-geo-prediction builds on this by demonstrating how fitted models can be used for spatial prediction on both continuous and aggregated scales, and how predictive performance can be assessed to identify the most suitable model. Finally, @sec-case-studies presents complete applications of all methods to three datasets, summarizing the full geostatistical workflow and illustrating additional features of the RiskMap R package not covered in earlier chapters.

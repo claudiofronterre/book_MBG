@@ -534,7 +534,8 @@
       "NeedsCompilation": "yes",
       "Author": "Dirk Eddelbuettel [aut, cre] (<https://orcid.org/0000-0001-6419-907X>), Mark Gillard [aut] (Author of 'toml++' header library)",
       "Maintainer": "Dirk Eddelbuettel <edd@debian.org>",
-      "Repository": "CRAN"
+      "Repository": "RSPM",
+      "Encoding": "UTF-8"
     },
     "Rdpack": {
       "Package": "Rdpack",
@@ -617,7 +618,7 @@
       "RemoteUsername": "claudiofronterre",
       "RemoteRepo": "RiskMap",
       "RemoteRef": "dev",
-      "RemoteSha": "210c6f6070f1cb14d5a951e36a2e459e89408df0"
+      "RemoteSha": "01cd81db8856f813e6e84050bc4239d31535a31f"
     },
     "S7": {
       "Package": "S7",
@@ -2135,7 +2136,8 @@
       "URL": "https://github.com/dmurdoch/ellipse, https://dmurdoch.github.io/ellipse/",
       "BugReports": "https://github.com/dmurdoch/ellipse/issues",
       "NeedsCompilation": "no",
-      "Repository": "CRAN"
+      "Repository": "RSPM",
+      "Encoding": "UTF-8"
     },
     "emmeans": {
       "Package": "emmeans",
@@ -4290,7 +4292,8 @@
       "License": "GPL (>= 2)",
       "Maintainer": "Thomas Lumley <t.lumley@auckland.ac.nz>",
       "NeedsCompilation": "yes",
-      "Repository": "CRAN"
+      "Repository": "RSPM",
+      "Encoding": "UTF-8"
     },
     "lifecycle": {
       "Package": "lifecycle",
@@ -4747,7 +4750,8 @@
       "NeedsCompilation": "yes",
       "Author": "Olaf Mersmann [aut], Claudia Beleites [ctb], Rainer Hurling [ctb], Ari Friedman [ctb], Joshua M. Ulrich [cre]",
       "Maintainer": "Joshua M. Ulrich <josh.m.ulrich@gmail.com>",
-      "Repository": "CRAN"
+      "Repository": "RSPM",
+      "Encoding": "UTF-8"
     },
     "mime": {
       "Package": "mime",
@@ -5093,7 +5097,8 @@
       "VignetteBuilder": "knitr",
       "NeedsCompilation": "no",
       "Author": "Emmanuel Blondel [aut, cre] (ORCID: <https://orcid.org/0000-0002-5870-5762>), Alexandre Bennici [ctb] (ORCID: <https://orcid.org/0000-0003-2160-3487>), Norbert Billet [ctb]",
-      "Repository": "CRAN"
+      "Repository": "RSPM",
+      "Encoding": "UTF-8"
     },
     "parallelly": {
       "Package": "parallelly",
@@ -6171,14 +6176,15 @@
       "RoxygenNote": "7.3.2",
       "X-schema.org-applicationCategory": "Data Access",
       "X-schema.org-keywords": "geoboundaries, boundaries, gis, map, geographic, data, spatial, dataset",
-      "Author": "Ahmadou Dicko [aut], Andy South [ctb], Daniel Runfola [ctb, cre], Rohith Reddy Mandala [ctb]",
-      "Maintainer": "Daniel Runfola <team@geoboundaries.org>",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
       "RemoteRepo": "rgeoboundaries",
       "RemoteUsername": "wmgeolab",
       "RemoteRef": "HEAD",
-      "RemoteSha": "be0f3166c8af0dda1b57c3fd84bcc8744fd5d71e"
+      "RemoteSha": "be0f3166c8af0dda1b57c3fd84bcc8744fd5d71e",
+      "NeedsCompilation": "no",
+      "Author": "Ahmadou Dicko [aut], Andy South [ctb], Daniel Runfola [ctb, cre], Rohith Reddy Mandala [ctb]",
+      "Maintainer": "Daniel Runfola <team@geoboundaries.org>"
     },
     "rlang": {
       "Package": "rlang",
@@ -6857,7 +6863,8 @@
       "Copyright": "see file COPYRIGHTS",
       "RoxygenNote": "7.1.0",
       "NeedsCompilation": "no",
-      "Repository": "CRAN"
+      "Repository": "RSPM",
+      "Encoding": "UTF-8"
     },
     "slider": {
       "Package": "slider",

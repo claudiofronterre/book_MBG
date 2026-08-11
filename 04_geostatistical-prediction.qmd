@@ -194,19 +194,22 @@ former.
 We now show how the ideas and concepts discussed above are put into
 practice in an geostatistical analysis, using the Liberia data example.
 Using the fitted model in @sec-liberia-estim1, we use the
-`pred_over_grid` function in `RiskMap`, to sample from the predictive
+`pred_over_grid()` function in RiskMap, to sample from the predictive
 distribution of the spatial Gaussian process $S(x)$ based on a regular
 grid spanning the country of Liberia.
 
-The `pred_over_grid` function enables us to predict the separate effects
+The `pred_over_grid()` function enables us to predict the separate effects
 of the covariates, given by $d(x)^\top \beta$, and the spatial random
 effects, $S(x)$, at any desired location $x$. Hence, before we can use
-the `pred_over_grid` function, we need to do 1) obtain a shape file that
+the `pred_over_grid()` function, we need to do 1) obtain a shape file that
 defines the boundaries of our study area, 2) use that to create a
 regular grid and 3) extract the covariates values at those locations.
 The R script below performs all these steps.
 
-```{r, echo=FALSE, message=FALSE, collapse=TRUE}
+```{r}
+#| label: load-liberia-prediction-inputs
+#| echo: false
+#| message: false
 library(sf)
 library(RiskMap)
 library(ggplot2)
@@ -240,7 +243,9 @@ an_fit$sst <- FALSE
 true_model$sst <- FALSE
 ```
 
-```{r, collapse = TRUE, message=FALSE}
+```{r}
+#| label: prepare-liberia-prediction-grid
+#| message: false
 # 1) Obtaining Liberia boundaries 
 library(rgeoboundaries)
 liberia_adm0 <- geoboundaries("liberia", adm_lvl = "adm0")
@@ -269,10 +274,12 @@ the choice of a 5 km grid strikes a balance between sufficient
 visualization clarity and manageable computation time.
 
 At this point, we have all the necessary inputs to execute the
-`pred_over_grid` function for both marginal and joint predictions, as
+`pred_over_grid()` function for both marginal and joint predictions, as
 demonstrated below.
 
-```{r, eval = FALSE}
+```{r}
+#| label: predict-liberia-spatial-process
+#| eval: false
 # Predicting the spatial process S(x) over the grid, as well as
 # covariates effects
 
@@ -297,9 +304,9 @@ they come from the joint predictive distribution of $S(\tilde{X})$.
 
 An important note is that in the code above we have used the default
 settings for the Markov Chain Monte Carlo (MCMC). To change these
-setting use the function `set_control_sim` whose output should be passed
-to the argument `contol_sim` of `pred_over_grid`. The diagnostic on the
-convergence of the MCMC can also be applying the `check_mcmc` function
+setting use the function `set_control_sim()` whose output should be passed
+to the argument `contol_sim` of `pred_over_grid()`. The diagnostic on the
+convergence of the MCMC can also be applying the `check_mcmc()` function
 to either `lb_pred_S_m` or `lb_pred_S_j`; see @sec-summary for more
 details.
 
@@ -376,11 +383,12 @@ Liberia. The predictive target we consider is prevalence, hence
 $$T(x) = \frac{\exp\{ \beta_{0} + \beta_{1}\log\{e(x)\} + S(x)\}}{1+\exp\{\beta_{0} + \beta_{1}\log\{e(x)\} + S(x)\}},$$ {#eq-rb-prev-target}
 where $e(x)$ is the elevation in meters at location $x$.
 
-Through the `pred_target_grid` we can use the output in `lb_pred_S_m`
+Through the `pred_target_grid()` we can use the output in `lb_pred_S_m`
 (or `lb_pred_S_j` as well, in this case) to generate predictions of
 prevalence over the regular grid at 5 km we have created earlier.
 
-```{r, collapse=TRUE}
+```{r}
+#| label: predict-liberia-prevalence
 
 # Prediction of riverblindness prevalence
 lb_prev <- 
@@ -410,7 +418,9 @@ probability of exceeding a 20$\%$ prevalence threshold.
 
 We can then visualize the resulting maps as follows.
 
-```{r, collapse=TRUE, fig.width=18, fig.height=6}
+```{r}
+#| fig-width: 18
+#| fig-height: 6
 #| label: fig-lb-maps
 #| fig-cap: "Mapping riverblindness in Liberia. Plots of the mean (left panel), coefficient of variation (central panel) and exceedance probability (right panel) for a 20% prevalence threshold."
 
@@ -437,12 +447,13 @@ in the inland areas of Liberia.
 We now consider an example on malaria mapping, where we use two
 different types of covariates: a spatially referenced covariate
 corresponding to elevation; the individual age. We use the
-`malkenya_comm` subset of the `malkenya` data-set (see
+`malkenya_comm` subset of the `malkenya` dataset (see
 @sec-indiv-expl-analysis) and, to alleviate the computational burden, we
-further reduce this data-set by taking the first 1000 rows. Hence, we
-create our new data-set, `malkenya_comm1000`, using the following code.
+further reduce this dataset by taking the first 1000 rows. Hence, we
+create our new dataset, `malkenya_comm1000`, using the following code.
 
-```{r, collapse=TRUE}
+```{r}
+#| label: prepare-malkenya-prediction-data
 malkenya_comm1000 <- malkenya_comm[1:1000,]
 
 malkenya_comm1000 <- st_as_sf(malkenya_comm1000, coords = c("Long", "Lat"),
@@ -509,7 +520,9 @@ First, we fit the model. Note that the effect of age is not linear and
 we use linear splines to account for this, using the results of the
 exploratory analysis shown in @sec-indiv-expl-analysis.
 
-```{r, eval=FALSE}
+```{r}
+#| label: fit-malkenya-geostatistical-model
+#| eval: false
 fit_malkenya <- glgpm(RDT ~ Age +  pmax(Age-15, 0) + 
                         pmax(Age-40, 0) + elevation +
                         gp(),
@@ -533,7 +546,9 @@ can be thought of as stretching a rubber band around the outermost
 points in a set, and the shape the rubber band forms is the convex hull.
 :::
 
-```{r, eval=FALSE}
+```{r}
+#| label: create-kenya-prediction-grid
+#| eval: false
 
 # Create grid from convex hull
 shp_ch <- convex_hull_sf(malkenya_comm1000)
@@ -547,7 +562,9 @@ get_elev_raster(locations = shp_ch,
 
 We then create the data frame of predictors where age is set to 15.
 
-```{r,eval=FALSE}
+```{r}
+#| label: prepare-kenya-prediction-covariates
+#| eval: false
 # Create the data fr
 ken_predictors <- data.frame(elevation = 
                            extract(ken_elev, st_coordinates(ken_grid)),
@@ -556,7 +573,9 @@ ken_predictors <- data.frame(elevation =
 
 We now have all the ingredients to carry out prediction.
 
-```{r, eval=FALSE}
+```{r}
+#| label: predict-kenya-spatial-process
+#| eval: false
 pred_ken_S <- pred_over_grid(fit_malkenya, grid_pred = ken_grid,
                              predictors = ken_predictors)
 
@@ -568,11 +587,13 @@ pred_target_grid(pred_ken_S,
 
 The code below shows how to perform the 4 steps described above to
 generate a predictive map for the general population. Below we use the
-function `update_predictors` to update the covariates effects that are
+function `update_predictors()` to update the covariates effects that are
 stored in `mu_pred`, a list element generated as the output of
-`pred_over_grid`.
+`pred_over_grid()`.
 
-```{r, eval=FALSE}
+```{r}
+#| label: predict-kenya-prevalence
+#| eval: false
 # Number of Monte Carlo samples
 n_sim <- ncol(pred_age15$lp_samples)
 
@@ -587,7 +608,7 @@ pred_ken_S_i$mu_pred <- matrix(NA, nrow = n_pred, ncol = n_sim)
 for(i in 1:n_sim) {
   # Generate n_pred samples from the empirical distribution of age
   ken_predictors$Age <- sample(malkenya_comm1000$Age, n_pred, replace = TRUE)
-  # Generate the new covariates effects with `update_predictors` and store them in 
+  # Generate the new covariates effects with `update_predictors()` and store them in
   # `mu_pred`
   pred_ken_S_i$mu_pred[,i] <- update_predictors(pred_ken_S, ken_predictors)$mu_pred
 }
@@ -599,7 +620,9 @@ pred_aver_pop <- pred_target_grid(pred_ken_S_i,
 
 We can now plot the two maps and compare them.
 
-```{r, collapse=TRUE, fig.width=12, fig.height=6}
+```{r}
+#| fig-width: 12
+#| fig-height: 6
 #| label: fig-malaria-maps
 #| fig-cap: "Maps of the predictive mean of the rapid diagnostic test (RDT) prevalence for
 #| children of the age of 15 (left panel) and the general population (right panel)."
@@ -714,9 +737,12 @@ denoting with $T(x)$ riverblindness prevalence as defined in
 @eq-rb-prev-target, we define our predictive target as
 $$T_{i} = \frac{1}{|A_i|} \int_{A_i} T(x) \: dx.$$
 The R code below shows how predictions for $T_i$ can be performed using
-the `pred_target_shp` function.
+the `pred_target_shp()` function.
 
-```{r, collapse=TRUE, message=FALSE, eval=FALSE}
+```{r}
+#| label: prepare-liberia-admin-prediction
+#| message: false
+#| eval: false
 # Admin level 1 boundaries
 library(rgeoboundaries)
 lb_adm1 <- geoboundaries(country = "Liberia", adm_lvl = "adm1")
@@ -754,7 +780,10 @@ We first retrieve the population density data from the WorldPop
 database (see @sec-pop-data) and use these to derive the un-standardized
 weights $w(x)$.
 
-```{r, collapse=TRUE, message=FALSE, eval=FALSE}
+```{r}
+#| label: prepare-liberia-population-weights
+#| message: false
+#| eval: false
 
 # Obtaining population density
 library(wpgpDownloadR)
@@ -768,7 +797,7 @@ weights_pred <- extract(lbr_pop, st_coordinates(liberia_grid))$lbr_ppp_2014
 ```
 
 In the code above the population density weights are extracted at the
-locations of the prediction grid. In the `pred_target_shp` function, in
+locations of the prediction grid. In the `pred_target_shp()` function, in
 order to use the weights for our predictive target, we need to specify
 two additional arguments: `weights` to which we pass the population
 density values (in our case these are stored in `weights_pred`);
@@ -776,7 +805,9 @@ density values (in our case these are stored in `weights_pred`);
 if the weights to be standardized so that the sum over the grid covering
 a region $A_i$ adds up to one.
 
-```{r, collapse=TRUE, eval=FALSE}
+```{r}
+#| label: predict-population-weighted-prevalence
+#| eval: false
 pred_shp_w <- pred_target_shp(lb_pred_S_j, shp = lb_adm1,
                             shp_target = function(Tx) sum(Tx),
                             f_target = list(prev = 
@@ -791,7 +822,9 @@ We can then finally plot the results from the prediction at admin level
 1, without using any weights and by weighing according to population
 density.
 
-```{r, collapse=TRUE, fig.width=12, fig.height=6}
+```{r}
+#| fig-width: 12
+#| fig-height: 6
 #| label: fig-average-prev-Liberia
 #| fig-cap: "Maps of the predictive mean for the admin level 1 average prevalence in Liberia. The left panel uses a standard average of locations within an admin level 1 region, whilst in the right panel each location is weighted according to population density."
 plot_1 <- 
@@ -846,7 +879,9 @@ $$w(x) =
 The values of 390 and 837 meters correspond to the minimum and maximum
 values of elevation observed in the data.
 
-```{r, message=FALSE, collapse=TRUE}
+```{r}
+#| label: prepare-anopheles-prediction-grid
+#| message: false
 # Create grid from convex hull
 shp_ch <- convex_hull_sf(an_fit$data_sf)
 an_grid <- create_grid(shp_ch, spat_res = 2)
@@ -881,7 +916,7 @@ risk of predicting in ecological areas that may not be suitable for
 mosquito presence. It is also important to note that in @eq-tot-mosq, we
 do not standardize the weights in this case.
 
-```{r, collapse=TRUE}
+```{r}
 #| label: fig-mosq-map
 #| fig-cap: "Maps of the predicted averae number of mosqutoes (left panel). The right panel shows prediction locations in red if they have an elevation between 390 and 837 meters, or black otherwise.  "
 par(mfrow = c(1,2))
@@ -899,7 +934,8 @@ we have an image of the weights $w(x)$, with locations that will not
 contribute to the prediction of the total number of mosquitoes denoted
 in black.
 
-```{r, collapse=TRUE}
+```{r}
+#| label: predict-total-mosquito-abundance
 pred_n_mosq_shp <- 
 pred_target_shp(pred_an_S, shp = shp_ch, 
                  weights = an_weights,
@@ -940,13 +976,13 @@ examining two key characteristics of the predictive distribution:
 To carry out the assessment and comparison of the predictive performance
 of geostatistical models using the methods illustrated in the following
 sections, the first crucial step is to decide which approach to use to
-split the data-set into a *training set* and *test set*. In the context
+split the dataset into a *training set* and *test set*. In the context
 of geostatistical analysis, the *training set* is the subset of the
-original data-set that is used to estimate the model parameters and then
+original dataset that is used to estimate the model parameters and then
 predict at the locations of the *test set*, which is used to assess how
 well the model can predict unseen data.
 
-When splitting geostatistical data-sets for model performance
+When splitting geostatistical datasets for model performance
 evaluation, it is essential to consider the objective of the spatial
 prediction. Here, we consider two main prediction objectives: 1)
 predicting in areas disjoint from the study area where there are no
@@ -976,12 +1012,14 @@ data. For instance, k-means minimizes within-cluster variance to produce
 compact, non-overlapping groups, while hierarchical clustering organizes
 data into nested clusters based on a linkage criterion like geographic
 distance. In the code below we show an example of the use of these
-methods for data splitting, using the `spatial_clustering_cv` function
-from the `spatialsample` package [@mahoney2023].
+methods for data splitting, using the `spatial_clustering_cv()` function
+from the spatialsample package [@mahoney2023].
 
-```{r, collapse = TRUE, fig.width=12, fig.height=6}
+```{r}
+#| fig-width: 12
+#| fig-height: 6
 #| label: fig-clus-loc
-#| fig-cap: "Examples un the use of spatial clustering methods for the splitting of the Liberia data on riverblindness."
+#| fig-cap: "Examples of the use of spatial clustering methods for the splitting of the Liberia data on riverblindness."
 library(spatialsample)
 set.seed(123)
 liberia_sf <- liberia %>%
@@ -1041,12 +1079,14 @@ can be employed. However, to preserve a good spatial coverage of the
 study area, a minimum distance can be imposed between selected
 locations. For example, methods such as spatial thinning or stratified
 sampling can be adapted to enforce a minimum spatial separation. This
-can be done in R using the `subsample.distance` function from the
-`spatialEco` package [@evans2021].
+can be done in R using the `subsample.distance()` function from the
+spatialEco package [@evans2021].
 
-```{r, collapse = TRUE, fig.width=12, fig.height=6}
+```{r}
+#| fig-width: 12
+#| fig-height: 6
 #| label: fig-reg-loc
-#| fig-cap: "Examples un the use of spatialky regularized thinning for the splitting of the Liberia data on riverblindness into training and test set. The plots show the resulting test sets by randomly selecting 20 locations from the original data-set and imposing a minimum distance of 30km (left panel) and 40km (right panel)."
+#| fig-cap: "Examples un the use of spatialky regularized thinning for the splitting of the Liberia data on riverblindness into training and test set. The plots show the resulting test sets by randomly selecting 20 locations from the original dataset and imposing a minimum distance of 30km (left panel) and 40km (right panel)."
 library(spatialEco)
 set.seed(123)
 
@@ -1068,7 +1108,7 @@ grid.arrange(dist30_plot, dist40_plot, ncol = 2)
 ```
 
 In the code above, we randomly selected 20 locations from the original
-data-set, enforcing minimum distances of 30 km and 40 km between points.
+dataset, enforcing minimum distances of 30 km and 40 km between points.
 The results are presented in @fig-reg-loc. The choice of the minimum
 distance for the test sample should ideally consider the spatial
 correlation scale (previously denoted by $\phi$) of the spatial Gaussian
@@ -1080,7 +1120,7 @@ test set is important for ensuring that the assessment of predictive
 performance is as robust as possible.
 
 A key challenge in both approaches is the potential lack of independence
-between the training and test data-sets due to spatial correlation. This
+between the training and test datasets due to spatial correlation. This
 can lead to an overly optimistic evaluation of model performance, as the
 training set may already contain information that is correlated with the
 test set. However, if we assume that all models benefit equally from
@@ -1125,7 +1165,8 @@ illustrate this, let us a consider a simple simulated example.
 
 We first create a function that can compute the PIT.
 
-```{r, collapse=TRUE}
+```{r}
+#| label: define-nonrandomized-pit
 # Define a function for the PIT
 # F_M is the cumulative density function generated by the adopted model
 pit_transform <- function(data, F_M) {
@@ -1143,7 +1184,7 @@ scenarios, we show how the PIT behaves when our model coincides with
 thetrue model (i.e. $F_{M} = F_{Y}$) and when instead our model $M$ is a
 Gaussian distribution, with mean and variance estimated from the data.
 
-```{r, collapse=TRUE}
+```{r}
 #| label: fig-hist-pit
 #| fig-cap: "Histograms of the probability integral transform applied to simulated data. The top panels show the histograma of the PIT when the fitted model coincides with the true data generating model. The lower panels show how the PIT histrograms deviate from a uniform distribution. For more details, we refer to main text."
 
@@ -1204,7 +1245,7 @@ at the same height as indicated by the dashed line. Our preference to
 this diagnostic plot, is to use a qq-plot for a uniform distribution as
 shown below.
 
-```{r, collapse=TRUE}
+```{r}
 #| label: fig-qqplot-pit
 #| fig-cap: "QQ-plots of the probability integral transform applied to simulated data. The top panels show the histograma of the PIT when the fitted model coincides with the true data generating model. The lower panels show how the PIT qq-plots deviate from a uniform distribution. The red line is the identity line For more details, we refer to main text."
 #| 
@@ -1275,7 +1316,7 @@ $\lambda = 5$ and dispersion parameter $\alpha = 1/2$, hence
 $E[Y] = \lambda$ and
 $\text{Var}[Y] = \lambda \times (1 + \alpha \lambda)$.
 
-```{r, collapse=TRUE}
+```{r}
 #| label: fig-anpit
 #| fig-cap: "Average nonrandomized Probability Integral Transform (AnPIT) applied to simulated data from a Negative Binomial distribution. The left plot shows the AnPIT when the model is correctly specified. The right panel shows the AnPIT when a Poisson model is instead used. For more details  we refer to the main text."
 
@@ -1344,15 +1385,15 @@ Negative Binomial distribution.
 How can we adapt this approach to generalized linear geostatistical
 models (GLGMs)? The concept is straightforward, though the
 implementation is less so (but fortunately, we have already done this in
-`RiskMap`). Essentially, in all relevant equations above, we need to
+RiskMap). Essentially, in all relevant equations above, we need to
 replace $M$ with the predictive distribution of the fitted
 geostatistical model.
 
 To explain further, suppose we have fitted our model using data
 $Y^{(1)} = \left( y^{(1)}_{1}, \ldots, y^{(1)}_{n} \right)$ (the
-training data-set), and we want to use another set of data
+training dataset), and we want to use another set of data
 $Y^{(2)} = \left( y^{(2)}_{1}, \ldots, y^{(2)}_{m} \right)$ (the test
-data-set) to assess calibration; the selection of $Y^{(1)}$ and
+dataset) to assess calibration; the selection of $Y^{(1)}$ and
 $Y^{(2)}$ can be done using the methods described in @sec-split-data.
 Our model $M$ in the equations above corresponds to the distribution of
 $\left[ Y^{(2)} \mid Y^{(1)} \right]$ -- the distribution of $Y^{(2)}$
@@ -1378,7 +1419,9 @@ in @sec-expl-assoc.
 
 Hence, we first fit the two models.
 
-```{r, eval = FALSE}
+```{r}
+#| label: fit-liberia-validation-models
+#| eval: false
 # Fitting M0
 set.seed(123)
 M0_fit <- 
@@ -1401,10 +1444,12 @@ glgpm(npos ~  elevation + pmax(elevation - 150, 0) +
 Since the main goal of this analysis is to draw predictive inference on
 riverblindness prevalence within Liberia, it would be more appropriate
 to use a regulirized subsampling scheme to split the data. To generate
-the AnPIT diagnostic plot in R, we can use the `assess_pp` function in
-`RiskMap`
+the AnPIT diagnostic plot in R, we can use the `assess_pp()` function in
+RiskMap
 
-```{r, eval = FALSE}
+```{r}
+#| label: create-regularized-test-sets
+#| eval: false
 
 regularized <- 
 assess_pp(list(M0 = M0_fit, M1 = M1_fit),
@@ -1414,7 +1459,9 @@ assess_pp(list(M0 = M0_fit, M1 = M1_fit),
 
 ```
 
-```{r, collapse=TRUE, fig.height=10, fig.width=14}
+```{r}
+#| fig-height: 10
+#| fig-width: 14
 #| label: fig-anpit-reg
 #| fig-cap: "The average nonrandomized probability integral transform (AnPIT) averaged across 10 test sets of size 9 (upper panel) and for each of the 10 tests sets (lower panel). The test sets are generated using a spatially regularized sampling scheme."
 
@@ -1434,7 +1481,7 @@ In the above function, we have used a spatially regularized sampling
 scheme (`method = "clusterized"`), where the locations are at least 20
 kilometers (`min_dist = 20`) apart from each other to create 10 test
 sets (`iter = 10`) each of size 9 (`n_size = 9`) which corresponds to
-10% of the original data-set. The results reported in @fig-anpit-reg,
+10% of the original dataset. The results reported in @fig-anpit-reg,
 show both the AnPIT for each of the 10 test sets and the averaged AnPIT
 across the 10 test sets, for both $M_0$ and $M_1$. The AnPIT plots show
 curves that are not too far from the identity line, which leads us to
@@ -1442,10 +1489,12 @@ conclude that both $M_0$ and $M_1$ can be considered to be approximately
 well calibrated models.
 
 Let us how if these results would change if we were to split the data
-using a clustering algorithm approach. We then use the `assess_pp`, to
+using a clustering algorithm approach. We then use the `assess_pp()`, to
 create 10 folds and set `method = "cluster"`.
 
-```{r, eval = FALSE}
+```{r}
+#| label: create-clustered-test-sets
+#| eval: false
 
 cluster <- 
 assess_pp(list(M0 = M0_fit, M1 = M1_fit),
@@ -1454,7 +1503,9 @@ assess_pp(list(M0 = M0_fit, M1 = M1_fit),
 
 ```
 
-```{r, collapse=TRUE, fig.height=10, fig.width=14}
+```{r}
+#| fig-height: 10
+#| fig-width: 14
 #| label: fig-anpit-clus
 #| fig-cap: "The average nonrandomized probability integral transform (AnPIT) averaged across 10 test sets of size 9 (upper panel) and for each of the 10 test sets (lower panel). The test sets are generated using a clustering algorithm based on the locations of the data."
 
@@ -1598,10 +1649,12 @@ and $M_0$ and found these to be reasonably well calibrated models. We
 now compare the predictive performance of the two, using both the CRPS
 and SCRPS metrics introduced previously.
 
-The `assess_pp` function also allows the user to compute the CRPS and
+The `assess_pp()` function also allows the user to compute the CRPS and
 SCRPS through the argument `which_metric` as shown below.
 
-```{r, eval=FALSE}
+```{r}
+#| label: score-liberia-validation-models
+#| eval: false
 regularized_scores <- 
 assess_pp(list(M0 = M0_fit, M1 = M1_fit),
           which_metric = c("CRSP", "SCRPS"), 
@@ -1616,17 +1669,18 @@ assess_pp(list(M0 = M0_fit, M1 = M1_fit),
 
 ```
 
-Note that that `assess_pp` can be run once in order to obtain both the
+Note that that `assess_pp()` can be run once in order to obtain both the
 AnPIT diagnostic, introduced in @sec-anpit; by default
 `which_metric = c("AnPIT", "CRSP", "SCRPS")` which computes all three
 diagnostic using the same test sets. The reason we have separated the
 AnPIT and the scores computations is only for pedagogical purposes.
 
-By doing a `summary` of the output in `regularized_scores` and
+By doing a `summary()` of the output in `regularized_scores` and
 `cluster_scores`, we obtain the average score across all test sets as
 defined in @eq-average-score.
 
-```{r, collapse=TRUE}
+```{r}
+#| label: summarize-liberia-validation-scores
 summary(regularized_scores, view_all = FALSE)
 
 summary(cluster_scores, view_all = FALSE)
@@ -1636,12 +1690,14 @@ summary(cluster_scores, view_all = FALSE)
 In the code above, we have set `view_all = FALSE` to display only the
 overall average. If `view_all = TRUE`, the scores are instead reported
 for each test set, in addition to the overall average. The results from
-the `summary` suggest that the two models have a similar predictive
+the `summary()` suggest that the two models have a similar predictive
 performance in terms of both CRPS and SCRPS, regardless of the sampling
 scheme used to create the test sets. To examine this further we can plot
 a point map of the CRPS and SCRPS using the locations of the test sets.
 
-```{r, collapse=TRUE, fig.height=12, fig.width=12}
+```{r}
+#| fig-height: 12
+#| fig-width: 12
 #| label: fig-scores-map
 #| fig-cap: "Point maps of the scores for model $M_{0}$ and $M_{1}$ across the test sets generated using a clusering approach for splitting the data. The upper panels are the map for the continuous ranked probability score (CRPS) and the lower panels for the scale CRPS (SCRPS). "
 
@@ -1674,7 +1730,7 @@ grid.arrange(p1, p2, p3, p4, nrow = 2, ncol = 2)
 ```
 
 In the code above, we evaluated the cross-validation results generated
-using a clustering algorithm to split the original data-set. The map
+using a clustering algorithm to split the original dataset. The map
 reveals that the scores across most locations are generally similar,
 with only three locations near the coast of Liberia showing slightly
 lower CRPS and SCRPS values for $M_1$. This suggests a consistent
@@ -1768,7 +1824,9 @@ maximum likelihood estimates obtained by fitting the binomial
 geostatistical model specified in @eq-true-model-lib. These estimates
 can be derived as shown below.
 
-```{r, eval=FALSE}
+```{r}
+#| label: set-simulation-seed
+#| eval: false
 set.seed(123)
 true_model <- glgpm(npos ~ elevation + pmax(elevation - 150, 0) + 
                            gp(long, lat),
@@ -1780,6 +1838,7 @@ true_model <- glgpm(npos ~ elevation + pmax(elevation - 150, 0) +
 ```
 
 ```{r}
+#| label: define-simulation-model
 # The parameters of the true model
 coef(true_model)
 ```
@@ -1828,7 +1887,7 @@ $\tilde{X}$ and $X$.
 5.  Only for locations of the data $X$, perform the steps 5A to 7A as
     explained in @sec-bootstrap, to simulate the data $Y$.
 
-The function `surf_sim` in `RiskMap` can be used to carry out all these
+The function `surf_sim()` in RiskMap can be used to carry out all these
 steps automatically as shown next.
 
 #### Example
@@ -1837,7 +1896,9 @@ Following the steps previously outlined, we first create a grid within
 the boundaries of Liberia and extract the values of elevation on the
 grid from a raster.
 
-```{r, eval=FALSE}
+```{r}
+#| label: prepare-liberia-simulation-domain
+#| eval: false
 library(rgeoboundaries)
 shp <- geoboundaries(country = "liberia", adm_lvl = "adm0")
 shp <- st_transform(shp, crs= 32629)
@@ -1850,12 +1911,14 @@ liberia_elev <- get_elev_raster(locations = shp,
 pred_grid$elevation <- terra::extract(liberia_elev, st_coordinates(pred_grid))
 ```
 
-The function `surf_sim` also requires a sampling functions that
+The function `surf_sim()` also requires a sampling functions that
 generates the locations $X$ from which data $Y$ are simulated. In this
 example, we shall consider a sampling function that simply returns the
 locations of the original data.
 
-```{r, eval=FALSE}
+```{r}
+#| label: define-liberia-sampling-function
+#| eval: false
 sampling_f_lib <- function() {
   coords_sf <- st_as_sf(liberia[,c("ntest", "long", "lat")],
                         coords = c("long", "lat"), crs = 4326)
@@ -1870,9 +1933,11 @@ contain the number of tested people and its corresponding column must be
 named `units_m`. Also, the returned `sf` object must have a projection
 that correspond to the one used when fitting the model.
 
-We are now ready to run the `surf_sim` function.
+We are now ready to run the `surf_sim()` function.
 
-```{r, eval = FALSE}
+```{r}
+#| label: simulate-liberia-surfaces
+#| eval: false
 lib_surf_sim <- surf_sim(n_sim = 200,
                          pred_grid = pred_grid,
                          formula = ~ elevation + pmax(elevation - 150,0) +
@@ -1887,12 +1952,14 @@ true model as specified in `formula`. The argument `par0` is used to
 pass the values of the parameters of the true model.
 
 We can now inspect the individual simulated surfaces using the
-`plot_sim_surf` function, as demonstrated below, which produces
+`plot_sim_surf()` function, as demonstrated below, which produces
 @fig-surf-sim. This step is useful verifying that the simulations are
 consistent with expectations and free from any warning signs or
 anomalies.
 
-```{r, eval = FALSE}
+```{r}
+#| label: plot-simulated-liberia-surface
+#| eval: false
 plot_sim_surf(lib_surf_sim, sim = 1)
 ```
 
@@ -1924,13 +1991,13 @@ detailed in @sec-sim-assessment.
 
 The outputs generated in these steps include predictive samples of the
 target over the grid, represented by $T_{(j)}^{(h)}(\tilde{x})$, where:
-$j$ is the index of the $j$-th simulated data-set, for
+$j$ is the index of the $j$-th simulated dataset, for
 $j = 1, \ldots, B$; $h$ is the index of the Monte Carlo samples, for
 $h = 1, \ldots, N$, generated by the Monte Carlo Markov Chain (MCMC)
-algorithm for a given data-set $j$.
+algorithm for a given dataset $j$.
 
 An example in R for Step 3 will be provided in the next section, where
-we shall use the function `assess_sim`, from the `RiskMap` package,
+we shall use the function `assess_sim()`, from the RiskMap package,
 which combines Step 3 and Step 4 into a single step.
 
 ### Step 4: Summarize the results using a pre-defined objective function
@@ -1967,11 +2034,13 @@ Carlo samples $T_{(j)}^{(h)}(\tilde{x})$.
 
 #### Example
 
-Using the output from the `surf_sim` function, named `lib_surf_sim`, we
-can use as the input to the function `assess_sim` which performs Step 3
+Using the output from the `surf_sim()` function, named `lib_surf_sim`, we
+can use as the input to the function `assess_sim()` which performs Step 3
 and Step 4, previously outlined.
 
-```{r, eval=FALSE}
+```{r}
+#| label: assess-grid-predictions
+#| eval: false
 res_sim_grid <- assess_sim(lib_surf_sim,
                       models = list(M_T = ~  elevation +
                                              pmax(elevation - 150, 0) +
@@ -2001,6 +2070,7 @@ according to the grid stored in `lib_surf_sim`.
 We can now look at the summary of `res_sim_grid`.
 
 ```{r}
+#| label: summarize-grid-assessment
 summary(res_sim_grid)
 ```
 
@@ -2152,10 +2222,12 @@ informed by the model's classifications.
 Using the same models, $M_T$ and $M_C$, from the river blindness example
 in Liberia, we now compare their performance in classifying admin level
 1 regions into two prevalence categories, $(0, 0.2)$ and \$(0.2, 1) \$.
-The assessment is conducted using `assess_sim`, where the prevalence
+The assessment is conducted using `assess_sim()`, where the prevalence
 surface is first aggregated at the areal level before classification.
 
-```{r, eval=FALSE}
+```{r}
+#| label: prepare-area-assessment
+#| eval: false
 # Admin level 1 shape files
 shp_adm <- geoboundaries(country = "liberia", adm_lvl = "adm1")
 shp_adm <- st_transform(shp_adm, crs= 32629)
@@ -2192,6 +2264,7 @@ Finally, we can examine the results of the simulation through the
 summary function.
 
 ```{r}
+#| label: summarize-area-assessment
 summary(res_sim_area)
 ```
 
@@ -2534,7 +2607,7 @@ The answer to this question is given in @sec-non-spar-covariates.
     extends $M1$ by adding a nugget effect, hence
     $$M_{2} \: : \: \log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_0 + \beta_{1}e(x_i) + \beta_{2}\max\{e(x_i) - 150, 0\} + S(x_i) + Z_i.$$
     Generate the AnPIT plot for $M_2$ and compare it to those of $M_0$
-    and $M_1$. Make sure to apply the function `assess_pp` to all three
+    and $M_1$. Make sure to apply the function `assess_pp()` to all three
     models so that the same test sets are used. Is $M_2$ showing a
     better calibration? Why?
 
@@ -2556,7 +2629,7 @@ The answer to this question is given in @sec-non-spar-covariates.
     @sec-split-data, and assess if and how the adopted approach to split
     the data affects the results.
 
-4.  Consider the Liberia data-set on riverblindess. Carry out a
+4.  Consider the Liberia dataset on riverblindess. Carry out a
     simulation study where the objective is to assess the impact of
     mispecifying non-linear relationships between elevation and
     prevalence. Consider @eq-true-model-lib as the true model and a

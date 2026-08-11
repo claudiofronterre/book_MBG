@@ -5,7 +5,11 @@ fig-width: 5
 fig-asp: 0.75
 ---
 
-```{r, eval=TRUE, echo=FALSE,message=FALSE}
+```{r}
+#| label: setup-case-studies
+#| eval: true
+#| echo: false
+#| message: false
 library(malariaAtlas)
 library(dplyr)
 library(tidyr)
@@ -102,7 +106,7 @@ simulate_random_effects <- function(model, nsim = 1000, grid_range = c(-10, 10),
 ```
 
 # Case studies {#sec-case-studies}
-In this chapter, we bring together the concepts introduced in the previous chapters, ranging from exploratory analysis to spatial prediction, through a series of case studies. Each case study provides a complete workflow, showing how the different stages of a geostatistical analysis fit together in practice. Some of these case studies are designed primarily to consolidate earlier material, while others also introduce new concepts and additional functionalities of the `RiskMap` package that extend beyond the basics. 
+In this chapter, we bring together the concepts introduced in the previous chapters, ranging from exploratory analysis to spatial prediction, through a series of case studies. Each case study provides a complete workflow, showing how the different stages of a geostatistical analysis fit together in practice. Some of these case studies are designed primarily to consolidate earlier material, while others also introduce new concepts and additional functionalities of the RiskMap package that extend beyond the basics.
 
 
 ## Mapping stunting and underwieght risk in Ghana {#sec-ghana}
@@ -126,6 +130,7 @@ In this case study, we analyse HAZ and WAZ as continuous outcomes to assess the 
 We begin by loading the necessary R packages and the `malnutrition` dataset. This geostatistical dataset is derived from the 2014 Ghana Demographic and Health Survey (DHS) [@ghanaDHS2014], which provides nationally representative data on child health and nutrition. The dataset includes anthropometric measurements, household characteristics, and georeferenced sampling cluster coordinates, making it suitable for spatial analysis of child malnutrition.
 
 ```{r}
+#| label: prepare-malnutrition-data
 # Load packages
 library(RiskMap)
 library(ggplot2)
@@ -206,9 +211,10 @@ $$ {#eq-model-haz-waz}
 
 where $a_{ij}$ denotes the age in months of child $j$ in cluster $i$, and $w_i$ is the wealth score associated with cluster $i$; as previously stated, the change point $c$ of the linear spline is set to 2 months for HAZ and 1 month for WAZ. The term $Z_i$ is a Gaussian random effect with mean zero and variance $\tau^2$, capturing between-cluster variation not explained by the covariates. The error term $U_{ij}$ represents child-specific residual variation and is assumed to be Gaussian with mean zero and variance $\omega^2$.
 
-To fit this model, we create a cluster ID variable based on the sampling coordinates and include it as a random intercept in the `lmer` function to incorporate the term $Z_i$.
+To fit this model, we create a cluster ID variable based on the sampling coordinates and include it as a random intercept in the `lmer()` function to incorporate the term $Z_i$.
 
 ```{r}
+#| label: identify-malnutrition-locations
 # Create ID for the location
 malnutrition <- malnutrition %>%
   group_by(lng, lat) %>%
@@ -216,9 +222,10 @@ malnutrition <- malnutrition %>%
   ungroup()
 ```
 
-We then fit the models using the `lmer` function.
+We then fit the models using the `lmer()` function.
 
 ```{r}
+#| label: fit-malnutrition-mixed-models
 library(lme4)
 haz_lmer <- 
 lmer(HAZ ~ age + pmax(age - 2, 0) + wealth + (1 | loc_id), data = malnutrition)
@@ -234,7 +241,7 @@ Of particular interest in the summary of the fitted models above are the estimat
 
 ### Assessing residual spatial correlation and model fitting
 
-We next explore the residual spatial correlation through the empirical variogram. Hence, we extract the estimate of the random effects from @eq-model-haz-waz and input these into the `variogram` function that generates the empirical variogram.
+We next explore the residual spatial correlation through the empirical variogram. Hence, we extract the estimate of the random effects from @eq-model-haz-waz and input these into the `variogram()` function that generates the empirical variogram.
 
 ```{r}
 #| label: fig-maln-vari
@@ -287,7 +294,9 @@ $$
 
 where $S(x)$ is a zero-mean, stationary, and isotropic Gaussian process with variance $\sigma^2$ and an exponential correlation function with scale parameter $\phi$. In this geostatistical extension, we replace the cluster-level random effect $Z_i$ from @eq-model-haz-waz with the spatial process $S(x_i)$. The random effect $Z_i$ was previously used in the Binomial mixed model to account for unexplained variation between clusters. It is also possible to include both $S(x_i)$ and $Z_i$ in the model, so that the total unexplained variation between clusters is decomposed into a spatially structured component, $S(x_i)$, and an unstructured component, $Z_i$. However, this approach is not recommended in the initial model specification, as it may lead to identifiability issues. It can be considered later in the analysis if justified by model diagnostics.
 
-```{r, eval=FALSE}
+```{r}
+#| label: prepare-malnutrition-prediction-data
+#| eval: false
 
 # Remove missing data from the WAZ outcome
 malnutrition <- malnutrition[complete.cases(malnutrition[,"WAZ"]),]
@@ -309,6 +318,7 @@ waz_fit <-
 We then summarize the fit of models.
 
 ```{r}
+#| label: summarize-malnutrition-models
 summary(haz_fit)
 
 summary(waz_fit)
@@ -328,9 +338,11 @@ $$ {#eq-prev-maln}
 
 where $\Phi(\cdot)$ is the cumulative distribution function of the standard normal distribution, $\mu$ is the linear predictor including the effects of covariates at individual- and cluster-level (as defined by the coefficients $\beta_1$ to $\beta_3$ of @eq-model-haz-waz) as well as the intercept, and $\omega^2$ is the variance of the individual-level residual term. In @eq-prev-maln, we condition on $S(x)$ because this allows us to define both stunting an underweight prevalence as a spatially varying predictive target.
 
-To implement this in `RiskMap`, we begin by generating a predictive grid over the study region. In this case, we use a regular grid with 10 km by 10 km resolution. We then draw predictive samples of the spatial effect $S(x)$ at each grid location, conditional on the observed data. For the `age` variable, we fix it at 2 months for HAZ and 1 month for WAZ, respectively. The `wealth` variable is set to its lowest value of 1. These choices are made to visualize the predictive target for the subgroup of children most at risk of stunting and underweight, as identified through exploratory analysis and the estimated regression coefficients. The code below illustrates this procedure.
+To implement this in RiskMap, we begin by generating a predictive grid over the study region. In this case, we use a regular grid with 10 km by 10 km resolution. We then draw predictive samples of the spatial effect $S(x)$ at each grid location, conditional on the observed data. For the `age` variable, we fix it at 2 months for HAZ and 1 month for WAZ, respectively. The `wealth` variable is set to its lowest value of 1. These choices are made to visualize the predictive target for the subgroup of children most at risk of stunting and underweight, as identified through exploratory analysis and the estimated regression coefficients. The code below illustrates this procedure.
 
-```{r, eval=FALSE}
+```{r}
+#| label: create-ghana-prediction-grid
+#| eval: false
 # Boundaries of Ghana
 library(rgeoboundaries)
 ghana <- geoboundaries(country = "Ghana", adm_lvl = "adm0")
@@ -362,9 +374,11 @@ waz_pred_grid <- pred_over_grid(waz_fit,
                                 ))
 ```
 
-We then use the `pred_target_grid` function to generate predictive summaries of stunting and underweight prevalence, as defined in @eq-prev-maln. To quantify uncertainty in the predictions, we report the coefficient of variation, which provides a standardized measure of relative uncertainty across the prediction grid.
+We then use the `pred_target_grid()` function to generate predictive summaries of stunting and underweight prevalence, as defined in @eq-prev-maln. To quantify uncertainty in the predictions, we report the coefficient of variation, which provides a standardized measure of relative uncertainty across the prediction grid.
 
-```{r, eval=FALSE}
+```{r}
+#| label: predict-malnutrition-prevalence
+#| eval: false
 # Prediction of stunting prevalence
 sd_ind_haz <- sqrt(coef(haz_fit)$sigma2_me)
 stunting_prev <-
@@ -407,9 +421,11 @@ plot(underw_prev, which_target = "prev", which_summary = "cv",
      main = "Underweight: Coefficient of Variation")
 ```
 
-To assess the predictive performance and calibration of our geostatistical models for HAZ and WAZ, we perform a cross-validation exercise using the `assess_pp` function. Cross-validation is conducted by repeatedly splitting the data into training and testing sets, ensuring that prediction locations are at least 5 km away from the nearest training point. Specifically, we set `n_size = 100` prediction locations for the test set, impose a minimum distance constraint of 5 km (`min_dist = 5`), and repeat the process over 10 test sets randomly drawn under those conditions (`iter = 10`) using `method="regularized"` as the sampling method.
+To assess the predictive performance and calibration of our geostatistical models for HAZ and WAZ, we perform a cross-validation exercise using the `assess_pp()` function. Cross-validation is conducted by repeatedly splitting the data into training and testing sets, ensuring that prediction locations are at least 5 km away from the nearest training point. Specifically, we set `n_size = 100` prediction locations for the test set, impose a minimum distance constraint of 5 km (`min_dist = 5`), and repeat the process over 10 test sets randomly drawn under those conditions (`iter = 10`) using `method="regularized"` as the sampling method.
 
-```{r, eval=FALSE}
+```{r}
+#| label: assess-malnutrition-calibration
+#| eval: false
 # HAZ
 assess_haz <-
 assess_pp(list(HAZ = haz_fit),
@@ -428,7 +444,7 @@ assess_waz <-
 
 ```
 
-We note that for a Gaussian linear geostatistical model, the `assess_pp` function does not compute the average non-randomized probability integral transform (AnPIT, introduced in @sec-anpit), as this measure is specifically designed for count outcomes. Instead, it employs the standard probability integral transform (PIT), defined as $\text{PIT}(y) = F_{M}(y)$, where $F_{M}(y)$ is the cumulative distribution function of the predictive distribution evaluated at the observed value $y$. The PIT transforms the observed outcomes in the test set such that, if the model is well-calibrated, these transformed values should follow a uniform distribution. Deviations from uniformity indicate potential issues with calibration and predictive accuracy.
+We note that for a Gaussian linear geostatistical model, the `assess_pp()` function does not compute the average non-randomized probability integral transform (AnPIT, introduced in @sec-anpit), as this measure is specifically designed for count outcomes. Instead, it employs the standard probability integral transform (PIT), defined as $\text{PIT}(y) = F_{M}(y)$, where $F_{M}(y)$ is the cumulative distribution function of the predictive distribution evaluated at the observed value $y$. The PIT transforms the observed outcomes in the test set such that, if the model is well-calibrated, these transformed values should follow a uniform distribution. Deviations from uniformity indicate potential issues with calibration and predictive accuracy.
 
 @fig-maln-pit shows the results of the cross-validation exercise visualized through PIT curves for HAZ and WAZ. Similarly to the way we have interpreted the AnPIT curves, the PIT curves indicate good calibration when they lie close to the identity line, meaning the predictive distributions accurately reflect the observed variability in the test sets. The results shown in @fig-maln-pit demonstrate that, for all ten test sets and for both HAZ and WAZ, the PIT curves closely align with the identity line, confirming that the models are well-calibrated and provide reliable uncertainty quantification.
 
@@ -457,15 +473,17 @@ In conclusion, this analysis showed that neither dichotomization nor aggregation
 
 ## Mapping malaria in Malawi
 
-In this section, we demonstrate how to conduct a geostatistical analysis using Malaria Indicator Survey (MIS) data accessed through the `malariaAtlas` R package [@malariaAtlas]. This package provides streamlined access to a curated repository of georeferenced malaria data, including prevalence surveys and associated metadata, making it a valuable resource for spatial epidemiological studies. The primary aim here is to illustrate how relevant environmental covariates can be obtained via Google Earth Engine and incorporated into a geostatistical model for prevalence mapping. Although the analysis is not guided by a specific research question, its value lies in showcasing the full workflow and technical aspects introduced in previous chapters, including data preparation, covariate extraction, exploratory analysis, model fitting, and spatial prediction of disease prevalence.
+In this section, we demonstrate how to conduct a geostatistical analysis using Malaria Indicator Survey (MIS) data accessed through the malariaAtlas R package [@malariaAtlas]. This package provides streamlined access to a curated repository of georeferenced malaria data, including prevalence surveys and associated metadata, making it a valuable resource for spatial epidemiological studies. The primary aim here is to illustrate how relevant environmental covariates can be obtained via Google Earth Engine and incorporated into a geostatistical model for prevalence mapping. Although the analysis is not guided by a specific research question, its value lies in showcasing the full workflow and technical aspects introduced in previous chapters, including data preparation, covariate extraction, exploratory analysis, model fitting, and spatial prediction of disease prevalence.
 
 ### Downloading prevalence and raster data
 
-This section illustrates how to access and visualize Malaria Indicator Survey data using the `malariaAtlas` R package, focusing on *Plasmodium falciparum* prevalence in Malawi for the year 2006. We walk through the steps to extract survey data, obtain country boundaries, and produce a basic map of raw prevalence data.
+This section illustrates how to access and visualize Malaria Indicator Survey data using the malariaAtlas R package, focusing on *Plasmodium falciparum* prevalence in Malawi for the year 2006. We walk through the steps to extract survey data, obtain country boundaries, and produce a basic map of raw prevalence data.
 
-We begin by loading the necessary packages and initializing the Earth Engine API via the `rgee` package.
+We begin by loading the necessary packages and initializing the Earth Engine API via the rgee package.
 
-```{r, eval=FALSE}
+```{r}
+#| label: setup-malawi-case-study
+#| eval: false
 # Load libraries
 library(malariaAtlas)
 library(dplyr)
@@ -480,9 +498,11 @@ library(grid)
 ee_Initialize()
 ```
 
-We then use `rgeoboundaries` to obtain Malawi’s administrative boundary and extract P. falciparum prevalence survey data from the `malariaAtlas` package for surveys conducted in or overlapping the year 2006.
+We then use rgeoboundaries to obtain Malawi’s administrative boundary and extract P. falciparum prevalence survey data from the malariaAtlas package for surveys conducted in or overlapping the year 2006.
 
-```{r, eval=FALSE}
+```{r}
+#| label: download-malawi-data
+#| eval: false
 # Get Malawi boundary
 mlw_admin0_sf <- geoboundaries(country = "Malawi", adm_lvl = "adm0")
 mlw_admin0_ee <- sf_as_ee(mlw_admin0_sf)
@@ -505,7 +525,7 @@ mlw_sf <- mlw_sf[, colSums(!is.na(mlw_sf)) > 0]
 
 The following map displays the raw prevalence data at each survey location. The size and color of each point reflect the estimated malaria prevalence (pr) at that location.
 
-```{r,collapse=TRUE}
+```{r}
 #| label: fig-malawi-raw-map
 #| fig-cap: "Raw PfPR survey data for Malawi in 2006. Each point represents a georeferenced survey location, with color and size indicating estimated prevalence."
 #| fig-align: center
@@ -554,7 +574,9 @@ $$ where $T_d$ is the dew-point temperature and $T$ is the air temperature, both
 
 In the code below, all layers are clipped to the boundary of Malawi and combined into a single multi-band image, ready to be extracted at survey point locations for subsequent modeling.
 
-```{r, eval=FALSE}
+```{r}
+#| label: download-malawi-covariates
+#| eval: false
 # -------------------------------
 # STEP 2: Covariates from Earth Engine
 # -------------------------------
@@ -616,9 +638,11 @@ covariates <- precip$
   addBands(built_up)
 ```
 
-After defining the multi-band raster image `covariates` in Google Earth Engine, we download it as a GeoTIFF file using the `ee_as_rast()` function from the `rgee` package. The file is saved temporarily and clipped to the bounding box of Malawi. We then read the raster into R using the `terra`.
+After defining the multi-band raster image `covariates` in Google Earth Engine, we download it as a GeoTIFF file using the `ee_as_rast()` function from the rgee package. The file is saved temporarily and clipped to the bounding box of Malawi. We then read the raster into R using the terra.
 
-```{r, eval=FALSE}
+```{r}
+#| label: export-malawi-covariates
+#| eval: false
 # -------------------------------
 # STEP 3: Download Earth Engine raster
 # -------------------------------
@@ -718,7 +742,7 @@ print(p_urban,  vp = vplayout(2, 3))
 
 To investigate how *Plasmodium falciparum* prevalence varies with environmental conditions, we begin by computing the empirical logit transformation of the observed prevalence at each survey location. Each covariate is then explored in relation to the empirical logit using scatterplots. For continuous covariates, we produce scatter plots with two fitted curves: a LOESS smoother shown in red, and a linear spline model with a single change point shown in blue. The LOESS curve serves as a flexible, nonparametric reference for assessing the general trend in the data. The spline model provides a simple parametric approximation to this trend, with the change point selected based on visual inspection of where the LOESS curve departs from linearity.
 
-```{r,collapse=TRUE}
+```{r}
 #| label: fig-elogit-vs-covariates
 #| fig-cap: "Exploratory plots showing the relationship between the empirical logit of *P. falciparum* prevalence and the chosen environmental covariates. Scatter plots show continuous covariates with LOESS (red) and linear spline (blue) fits. A boxplot is used for the binary urbanicity variable. Change points for splines are based on graphical inspection of the LOESS fitted relationship."
 #| fig-align: center
@@ -961,7 +985,9 @@ $$
 
 This formulation allows us to assess whether the dimensionality reduction via PCA retains the essential variation in environmental risk while simplifying the model structure.
 
-```{r, eval=FALSE}
+```{r}
+#| label: fit-malawi-geostatistical-models
+#| eval: false
 # Model with all the covariates as separate predictors
 mod_all_cov <-
 glgpm(positive ~
@@ -989,15 +1015,18 @@ mod_pca <-
 After fitting the two models, when can then compare the summaries of the fits.
 
 ```{r}
+#| label: summarize-malawi-models
 summary(mod_all_cov)
 summary(mod_pca)
 ```
 
 In the output above, we see that, compared to the model using all covariates as separate predictors, the model including only PC1 exhibits both a larger estimated spatial correlation scale and higher spatial variance. This indicates that replacing the original covariates with PC1 captures a smaller proportion of the spatial variation in prevalence, leaving the spatial Gaussian process to account for more of the structured residual variability.
 
-We then compare the predicted prevalence from each model using a regular 5 by 5 km grid covering the whole of Malawi, and display the results in @fig-pred_models. The maps show broadly similar spatial patterns, with both models identifying areas of high and low predicted prevalence in the southern region of the country. However, these visual comparisons do not allow us to determine which model performs better. We address this question in the next stage of the analysis by formally assessing the calibration and sharpness of the predictions generated by each model.
+We then compare the predicted prevalence from each model using a regular 5 by 5 km grid covering the whole of Malawi, and display the results in @fig-pred-models. The maps show broadly similar spatial patterns, with both models identifying areas of high and low predicted prevalence in the southern region of the country. However, these visual comparisons do not allow us to determine which model performs better. We address this question in the next stage of the analysis by formally assessing the calibration and sharpness of the predictions generated by each model.
 
-```{r, eval=FALSE}
+```{r}
+#| label: predict-malawi-prevalence
+#| eval: false
 # Create a 5 by 5 regular grid 
 grid_mlw <- create_grid(mlw_admin0_sf, spat_res = 5)
 
@@ -1026,7 +1055,7 @@ pred_pca_prev <- pred_target_grid(pred_pca,
 ```
 
 ```{r}
-#| label: fig-pred_models
+#| label: fig-pred-models
 #| fig-cap: "Predictive mean of prevalence obtained from geostatistical models using all covariates ('all_cov') versus the first principal component ('pca') of the standardized continuous environmental variables."
 #| fig-align: center
 
@@ -1041,9 +1070,11 @@ plot(pred_pca_prev, which_target = "prev", which_summary = "mean",
 
 ### Comparison of the predictive performance between models
 
-To evaluate predictive performance, we use three spatially distinct hold-out test sets corresponding to the Northern, Central, and Southern regions of Malawi, as illustrated in @fig-mlw-tests. These were constructed using the `assess_pp` function with `method = "cluster"` and `fold = 3`, ensuring geographically stratified cross-validation.
+To evaluate predictive performance, we use three spatially distinct hold-out test sets corresponding to the Northern, Central, and Southern regions of Malawi, as illustrated in @fig-mlw-tests. These were constructed using the `assess_pp()` function with `method = "cluster"` and `fold = 3`, ensuring geographically stratified cross-validation.
 
-```{r, eval=FALSE}
+```{r}
+#| label: assess-malawi-models
+#| eval: false
 assess_pred_mlw <-
 assess_pp(list(all_cov = mod_all_cov,
                pca = mod_pca),
@@ -1053,7 +1084,9 @@ assess_pp(list(all_cov = mod_all_cov,
           fold = 3)
 ```
 
-```{r, echo=FALSE, out.width="80%"}
+```{r}
+#| echo: false
+#| out-width: "80%"
 #| label: fig-mlw-tests
 #| fig-cap: "Geographic distribution of sampled locations in Malawi, coloured by their assignment to one of three cross-validation test sets."
 knitr::include_graphics("figures/mlw_tests.png")
@@ -1061,7 +1094,9 @@ knitr::include_graphics("figures/mlw_tests.png")
 
 The CRPS score shows that the model including all environmental covariates achieves better predictive accuracy across all test sets. Specifically, it yields a lower average CRPS. This improvement is consistent across the three hold-out data, with particularly notable gains in Test Set 1. Additionally, the non-randomized probability integral transform (AnPIT) plot, shown in @fig-pit-mlw, demonstrates that the full covariate model is better calibrated: its cumulative distribution curves lie closer to the identity line, suggesting that the predicted probabilities align more closely with observed prevalence.
 
-```{r, fig.width=7, fig.height=5}
+```{r}
+#| fig-width: 7
+#| fig-height: 5
 #| label: fig-pit-mlw
 #| fig-cap: "Plot of the average non-randomized probability integral transform (AnPIT) function to assess the calibration of the two geostatistical models ('all_cov' and 'pca') for the malaria prevalence data from Malawi."
 plot_AnPIT(assess_pred_mlw, mode = "all")
@@ -1071,7 +1106,7 @@ summary(assess_pred_mlw)
 
 ### Summary and conclusions
 
-In this case study, we have walked through the full pipeline of conducting a geostatistical analysis of malaria prevalence using Malaria Indicator Survey data from Malawi. We began by downloading geo-referenced survey data from the `malariaAtlas` R package and retrieving relevant environmental covariates from Google Earth Engine. These covariates, selected for their mechanistic relevance to malaria transmission, were processed, clipped to the national boundary, and extracted at survey locations to be used as predictors in subsequent modelling.
+In this case study, we have walked through the full pipeline of conducting a geostatistical analysis of malaria prevalence using Malaria Indicator Survey data from Malawi. We began by downloading geo-referenced survey data from the malariaAtlas R package and retrieving relevant environmental covariates from Google Earth Engine. These covariates, selected for their mechanistic relevance to malaria transmission, were processed, clipped to the national boundary, and extracted at survey locations to be used as predictors in subsequent modelling.
 
 A critical step in the analysis involved the exploration of relationships between environmental conditions and malaria prevalence. Through scatterplots and spline fits, we identified key nonlinearities in variables such as temperature, elevation, and humidity, which informed the functional form of covariate effects in the regression model. This exploratory work is essential not only for model formulation but also for understanding the ecological underpinnings of disease risk.
 
@@ -1096,9 +1131,10 @@ In what follows, we model abundance and infection prevalence for *Cx. pipiens* a
 
 ### Modelling the abundance of *Culex pipiens* {#sec-abund-model}
 
-We begin by loading the necessary libraries and the data derived from the `vectorsurvR` package in R. The original datasets, `sample_pools` and `sample_collections`, contain mosquito surveillance data from California, including species identification, collection date, location, pathogen testing results, trap type, and trapping effort. For this case study, these have been processed to produce `abund_sma` in the `RiskMap` package, which summarises the abundance of female *Culex pipiens* within the Sacramento Metropolitan Area (SMA).
+We begin by loading the necessary libraries and the data derived from the vectorsurvR package in R. The original datasets, `sample_pools` and `sample_collections`, contain mosquito surveillance data from California, including species identification, collection date, location, pathogen testing results, trap type, and trapping effort. For this case study, these have been processed to produce `abund_sma` in the RiskMap package, which summarises the abundance of female *Culex pipiens* within the Sacramento Metropolitan Area (SMA).
 
-```{r, collapse=TRUE}
+```{r}
+#| label: reset-mosquito-analysis
 rm(list = ls())
 
 library(ggplot2)
@@ -1110,6 +1146,7 @@ str(abund_sma)
 The outcome variable for this analysis is `total_females`, which records the total number of *Cx. pipiens* captured in a single trap. The variable `trap_nights` indicates the number of nights the trap was deployed and is used to account for variation in sampling effort across traps. The dataset also records the type of trap used (`trap_type`), which can influence capture rates. Trap types include New Jersey Light Traps (`NJLT`), Gravid Traps (`GRVD`), Mosquito Magnet Traps (`MMT`), BG-Sentinel Traps (`BGSENT`), $\text{CO}_2$-baited traps (`CO2`), Backpack aspirators (`BACKPACK`), Lockyer traps (`LCKR`), and Ovitraps (`OVI`). These traps differ in their mode of attraction: for example, light traps attract host-seeking females using light, gravid traps target egg-laying females with an infusion lure, $\text{CO}_2$-baited and BG-Sentinel traps mimic host cues through carbon dioxide and human scent, and backpack or hand-collection methods are opportunistic. Based on average catch per trap-night, we group these into low-yield traps (Backpack, Lockyer, New Jersey Light Trap, Ovitrap), moderate-yield traps (Gravid Trap, Mosquito Magnet), and high-yield traps ($\text{CO}_2$-baited and BG-Sentinel), providing a more interpretable classification for analysing trap efficiency in subsequent modelling. We thus create the variable `trap_group` for later use in the model fitting as follows.
 
 ```{r}
+#| label: prepare-mosquito-abundance-data
 abund_sma <- abund_sma %>%
   mutate(trap_group = case_when(
     trap_type %in% c("BACKPACK", "LCKR", "NJLT", "OVI") ~ "low yeild",
@@ -1118,9 +1155,10 @@ abund_sma <- abund_sma %>%
   ))
 ```
 
-To provide spatial context, we use the `rgeoboundaries` package to download second-level administrative boundaries (ADM2) for the United States. We extract the boundaries for Placer, El Dorado and Sacrament counties which make up the SMA.
+To provide spatial context, we use the rgeoboundaries package to download second-level administrative boundaries (ADM2) for the United States. We extract the boundaries for Placer, El Dorado and Sacrament counties which make up the SMA.
 
-```{r, collapse=TRUE}
+```{r}
+#| label: prepare-sacramento-boundaries
 library(rgeoboundaries)
 
 # Get California ADM2 units and filter to relevant counties
@@ -1206,8 +1244,9 @@ Z_i \\\\
 \end{aligned}
 $$ {#eq-wnv-counts}
 where the $d_{j}(x_i, t_i)$ are binary indicators for the type of trap ($j=1$ corresponding to "high-yield", $j=2$ to "moderate-yield" and $j=3$ to "low-yield") and $\mu_i = \sum_{j=1}^3 d_{j}(x_i, t_i) \beta_j + \beta_4 t_i$. 
-We then fit this model using the `glmer` function from the `lme4` package as follows.
+We then fit this model using the `glmer()` function from the lme4 package as follows.
 ```{r}
+#| label: identify-mosquito-locations
 abund_sma$loc <- 1:nrow(abund_sma)
 
 # In the fit, we scale the variable year to help convergence
@@ -1220,7 +1259,9 @@ The model summary indicates that, as expected, average mosquito counts decline o
 
 We then use the empirical variogram computed on the estimated $Z_i$ to assess the presence of residual spatial correlation. 
 
-```{r, eval=FALSE}
+```{r}
+#| label: extract-mosquito-random-effects
+#| eval: false
 
 # Extracting the estimates of the random effects
 wnv_summary$Z_hat <- ranef(glmer_wvn)$loc[,1]
@@ -1235,11 +1276,13 @@ variogram_wnv <-  variogram(data = wnv_summary,
 ```
 
 We plot the empirical variogram and add the envelope generated under the assumption of absence of spatial correlation.
-```{r,echo=FALSE}
+```{r}
+#| label: load-mosquito-variogram
+#| echo: false
 variogram_wnv <- readRDS("data/variogram_wnv.rds")
 ```
 
-```{r,collapse=TRUE}
+```{r}
 #| label: fig-wnv-variogram
 #| fig-cap: "Empirical variogram (black line) for based on the random effects fitted from the model in @eq-wnv-counts. The shaded blue area correspond to the envelope of spatial independence at 95% confidence level generated using a permuation test. "
 #| fig-align: "center"
@@ -1258,17 +1301,21 @@ $$
 $$ {#eq-pred-distr}
 In this expression, $[Z_i]$ denotes the density of a Gaussian distribution with mean zero and variance $\sigma^2$, and $[Y_i \mid Z_i]$ is the likelihood from a Poisson model with mean $\lambda(x_i)$. The integral in @eq-pred-distr can be computed numerically in R with relative efficiency. This approach also allows for direct simulation from the predictive distribution, enabling us to compute any desired summary statistics.
 
-For this analysis, we use a custom function called `simulate_random_effects`, which can be copied from @sec-sim-re and pasted into an R script, as it is not included in the `RiskMap` package. Further details of its implementation are provided in @sec-sim-re; here, we focus solely on the analysis.
+For this analysis, we use a custom function called `simulate_random_effects()`, which can be copied from @sec-sim-re and pasted into an R script, as it is not included in the RiskMap package. Further details of its implementation are provided in @sec-sim-re; here, we focus solely on the analysis.
 
 Hence, we first simulate 1000 samples from the predictive distribution of $Z_i$ and denote those by $Z_i^{(j)}$, for $i=1,\ldots,598$, and $j=1\ldots,1000$.
-```{r,eval=FALSE}
+```{r}
+#| label: compute-mosquito-predictions
+#| eval: false
 n_samples <- 1000
 samples_z <- simulate_random_effects(glmer_wvn, n_sim = n_samples)
 ```
 
 We then obtain predictive samples for $\lambda(x_i)$ by applying the exponential transformation to the linear predictor $\hat{\mu}_i + Z_{i}^{(j)}$, where in $\hat{\mu}_i$ we have plugged in the maximum likelihood estimates of the regression coefficients. 
 
-```{r,echo=FALSE, collapse=TRUE}
+```{r}
+#| label: load-mosquito-predictions
+#| echo: false
 mosq_mean <- readRDS("data/mosq_mean.rds")
 mosq_lower <- readRDS("data/mosq_lower.rds")
 mosq_upper <- readRDS("data/mosq_upper.rds")
@@ -1276,7 +1323,7 @@ mosq_upper <- readRDS("data/mosq_upper.rds")
 
 The predictions shown in @fig-mosq-predictions indicate that the pattern of the mean number of mosquitoes across sampled locations is broadly comparable across time.
 
-```{r, collapse=TRUE}
+```{r}
 #| label: fig-mosq-predictions
 #| fig-cap: "Predictive mean number of mosquitoes per trap-night for each location with 95% prediction intervals, stratified by year and trap group. Within each panel, locations are ordered by increasing predicted mean abundance. Shaded areas represent 95% prediction intervals for the number of mosquitoes at sampled locations. The y-axis is on a log scale, with tick labels shown on the original scale."
 #| fig-align: "center"
@@ -1323,9 +1370,11 @@ ggplot(mosq_df, aes(x = x_order, y = mean,
 
 ```
 
-To understand whether we can trust the inferences shown in @fig-mosq-predictions, we use the AnPIT graphical check as used in the previous case studies. Since we are not using a geostatistical model in this case, we will use a simplified implementation of the AnPIT for the Poisson mixed model fitted in this section. The function that we use to compute the AnPIT is called `anpit_wnv` and has been implemented specifically for this case study. For more details on its implementation, read @sec-nonspat-anpit. 
+To understand whether we can trust the inferences shown in @fig-mosq-predictions, we use the AnPIT graphical check as used in the previous case studies. Since we are not using a geostatistical model in this case, we will use a simplified implementation of the AnPIT for the Poisson mixed model fitted in this section. The function that we use to compute the AnPIT is called `anpit_wnv()` and has been implemented specifically for this case study. For more details on its implementation, read @sec-nonspat-anpit.
 
-```{r,echo=FALSE}
+```{r}
+#| label: load-mosquito-anpit
+#| echo: false
 wnv_anpit_res <- readRDS("data/wnv_anpit_res.rds")
 plot_anpit <- function(res) {
   if (!requireNamespace("ggplot2", quietly = TRUE)) stop("Need ggplot2 for plotting.")
@@ -1338,10 +1387,12 @@ plot_anpit <- function(res) {
 }
 ```
 
-```{r, eval=FALSE}
+```{r}
+#| label: compute-mosquito-anpit
+#| eval: false
 wnv_anpit_res <- anpit_wnv(glmer_wvn, test_prop = 0.30, nsim = 10000)
 ```
-In the code above the AnPIT is computed using a test-set corresponding to $30\%$ of the original data-set. The number of simulation used to approximate the AnPIT is set to 1000. Finally, we plot the results.
+In the code above the AnPIT is computed using a test-set corresponding to $30\%$ of the original dataset. The number of simulation used to approximate the AnPIT is set to 1000. Finally, we plot the results.
 
 ```{r}
 #| label: fig-wnv-anpit
@@ -1358,7 +1409,7 @@ The results shown in @fig-wnv-anpit an AnPIT curve from the fitted Poisson mixed
 
 Pooled testing is widely used in mosquito surveillance. Rather than testing each mosquito individually for a pathogen, multiple mosquitoes collected from the same location and week are combined into a single pool and assayed by PCR. The test returns positive if at least one mosquito in the pool is infected and negative otherwise. This approach greatly reduces laboratory time and costs, but statistical analysis must account for variation in pool size, as larger pools have a higher probability of testing positive even if the underlying infection risk per mosquito is low.
 
-We illustrate this using West Nile virus (WNV) PCR results from pools of female *Culex pipiens* collected in the Sacramento Metropolitan Area, available in the `infect_sma` data set of the `RiskMap` package.
+We illustrate this using West Nile virus (WNV) PCR results from pools of female *Culex pipiens* collected in the Sacramento Metropolitan Area, available in the `infect_sma` data set of the RiskMap package.
 
 Let $k_i$ be the number of mosquitoes in pool $i$. Define the binary outcome $Y_i=1$ if the PCR test for pool $i$ is positive and $Y_i=0$ otherwise. Conditional on a stationary and isotropic spatial Gaussian process $S(x_i)$, the probability that pool $i$ is positive is  
 $$
@@ -1379,7 +1430,9 @@ and a default conservative value, such as 25, is used if no nearby collections a
 The data comprise 596 responses, of which only 18 pools test positive. This very low prevalence constrains our modelling choices, for example by limiting the feasibility of incorporating temporal dynamics. As a result, the model in @eq-wnv-pos-model represents the simplest specification that can still capture spatial correlation, under the simplifying assumption that WNV risk remains relatively stable over the study period. Furthermore, because there is only a single binary outcome per location, overdispersion cannot occur (see box “Why Bernoulli extra‐variation does not exist” in Section 5.1.1 of @diggleBook2019), and the empirical variogram provides limited value for assessing spatial correlation due to its high uncertainty in this context. We therefore proceed directly to fitting a geostatistical model and assess the estimate of the spatial correlation parameter, which quantifies the strength and range of spatial dependence in the data.
 
 We then proceed in R as follows. We first load the data and convert them into an `sf` object with the appropriate UTM projection. 
-```{r, eval=FALSE}
+```{r}
+#| label: prepare-wnv-infection-data
+#| eval: false
 data(infect_sma)
 
 infect_sma <- st_as_sf(infect_sma, coords = c("lon", "lat"), crs = 4326)
@@ -1388,15 +1441,21 @@ infect_sma <- st_transform(infect_sma, wnv_crs)
 ```
 
 We define the inverse link function based on @eq-wnv-pos-model and @eq-wnv-lp.
-```{r, eval=FALSE}
+```{r}
+#| label: define-wnv-inverse-link
+#| eval: false
 invlink_wnv <- function(x) 1-(1-exp(x)/(1+exp(x)))^infect_sma$est_pool_n
 ```
 
-We then fit the model by passing the inverse link function to the argument `invlink` within the `glgpm` function. 
-```{r,echo=FALSE}
-inf_fit <- readRDS("/data/inf_fit.rds")
+We then fit the model by passing the inverse link function to the argument `invlink` within the `glgpm()` function.
+```{r}
+#| label: load-wnv-infection-model
+#| echo: false
+inf_fit <- readRDS("data/inf_fit.rds")
 ```
-```{r, eval=FALSE}
+```{r}
+#| label: fit-wnv-infection-model
+#| eval: false
 inf_fit <-
   glgpm(wnv_pos ~ gp(lon,lat),
         crs = wnv_crs,
@@ -1406,6 +1465,7 @@ inf_fit <-
 ```
 Finally, we examine the the summary of the fitted model. 
 ```{r}
+#| label: summarize-wnv-infection-model
 summary(inf_fit)
 ```
 The fitted model indicates a substantial spatial residual component, with the estimated scale parameter corresponding to a practical range of approximately 70 km. This represents a long‐range correlation relative to the spatial extent of the study area.
@@ -1429,7 +1489,9 @@ ggplot() +
   theme_minimal()
 ```
 
-```{r, eval=FALSE}
+```{r}
+#| label: create-sacramento-prediction-grid
+#| eval: false
 grid_pred_sac <- create_grid(chull_sf, spat_res = 0.25)
 
 pred_S_inf <- pred_over_grid(inf_fit,
@@ -1439,13 +1501,15 @@ pred_inf_grid <- pred_target_grid(pred_S_inf,
                                   f_target = list(prev = function(x) exp(x)/(1+exp(x))))
 
 ```
-```{r, echo=FALSE}
-pred_inf_grid <- readRDS("/data/pred_inf_grid.rds")
+```{r}
+#| label: load-wnv-grid-predictions
+#| echo: false
+pred_inf_grid <- readRDS("data/pred_inf_grid.rds")
 ```
 
 @fig-wnv-pred-map displays the predictive mean of $p(x)$ over the regular grid. Overall, the predicted prevalence of WNV is very low across the study area, with a small zone in the south‐west showing a relatively higher value of approximately $0.40\%$.
 
-```{r, collapse=TRUE}
+```{r}
 #| label: fig-wnv-pred-map
 #| fig-cap: "Map of the predictive mean for the prevalence of West Nile Virus infection among female *Culex pipiens* mosquitoes in an area of the Sacramento Metropolitan Area."
 plot(pred_inf_grid,"prev")
@@ -1454,13 +1518,15 @@ plot(pred_inf_grid,"prev")
 Finally, we predict the vector index as defined in @eq-vi. Because *Cx. pipiens* abundance and WNV infection prevalence have been modelled as independent processes, the predictions from the two models can be combined directly. Specifically, for each location in the `abund_sma` data set, we take predictive samples of WNV prevalence and multiply them by the corresponding predictive samples of the mean number of female *Cx. pipiens* per trap‐night. This yields predictive samples of the vector index, which can then be summarised or mapped as required. In R, this is implemented as follows.
 
 
-```{r,eval=FALSE}
+```{r}
+#| label: predict-wnv-infection
+#| eval: false
 
 # Converting the abund_sma into an sf object
 loc_pred <- st_as_sfc(st_transform(st_as_sf(abund_sma, coords = c("lon","lat"), crs = 4326), crs = wnv_crs))
 
 # Prediction of the sptial process S(x) over the locations of the 
-# abund_sma data-set
+# abund_sma dataset
 pred_S_loc <- pred_over_grid(inf_fit, grid_pred = loc_pred)
 
 # Computation of the samples for West Nile Virus prevalence
@@ -1498,8 +1564,10 @@ vi_df <- vi_df %>%
 Several U.S. programs consider a vector index (VI) of 0.75 or higher as indicative of likely human transmission and use this threshold to trigger intensified control measures [@cityofboulder_wnv_vectorindex_2025; @fortcollins_localdata_vi_2025; @fortcollins_wnv_program_manual_2014]. In @fig-vi, the dashed red line marks this operational threshold for elevated WNV risk. We observe that only in few instances before the year 2020 the predicted VI exceeded this threshold. We thus conclude that between 2015 and 2021 the risk for WNV based as measured by the VI was relatively low in the SMA.
 
 
-```{r, collapse=TRUE, echo=FALSE}
-vi_df <- readRDS("/data/vi_df.rds")
+```{r}
+#| label: load-vector-index-predictions
+#| echo: false
+vi_df <- readRDS("data/vi_df.rds")
 ```
 ```{r}
 #| label: fig-vi
@@ -1533,7 +1601,7 @@ ggplot(vi_df,
 In this analysis, our predictive target was the vector index (VI) in @eq-vi. Our proposed modelling approach was based on the assumption that abundance and infection prevalence are two independent processes. Treating prevalence as independent of vector density is a practical simplification. It can be reasonable when the fraction of infected mosquitoes at a place and time is driven mainly by host infection dynamics, temperature dependent incubation, and mosquito age structure, whereas trap counts reflect local production, as well as catchability. 
 An interesting result of our analysis is that abundance showed no detectable residual spatial correlation, while infection prevalence did. The empirical variogram of random effects from the abundance model lay within the envelope in @fig-wnv-variogram, suggesting that remaining variation after accounting for year and trap group is dominated by micro scale heterogeneity and trap specific noise at distances smaller than those represented by the sampling design. In contrast, the infection model estimated a spatial scale of correlation that is large relative to the study area, and may be explained in terms of processes that operate over broader extents, such as movement and aggregation of avian reservoir hosts, shared urban landscape features, and temperature fields. However, as a result of the disparity in the scales of spatial dependence for the two processes and the inability of the model for abundance to interpolate at unobserved locations, we could only predict the VI at the observed locations of the abundance data.
 
-All West Nile virus data analysed in this section originate from the `vectorsurvR` workflow and are simulated rather than observed in the field. The `vectorsurvR` package provides a framework for generating realistic mosquito surveillance data by mimicking the structure, spatial layout, and sampling frequency of actual surveillance programmes. Hence, the results presented here should not be used to draw scientific conclusions about West Nile virus in the Sacramento Metropolitan Area. In addition to this, pool size is a key input when analysing pooled infection outcomes (see Exercise 6 below) and strongly affects the predictive inferences in prevalence (see Exercise 6 below). In this case study we used an estimated pool size (denoted in the text above by $k_i$) rather than laboratory recorded counts, which adds additional uncertainty that we did not propagate. The results illustrate modelling steps, diagnostics, and how to combine components to obtain the vector index, which remains useful for pedagogical purposes. 
+All West Nile virus data analysed in this section originate from the vectorsurvR workflow and are simulated rather than observed in the field. The vectorsurvR package provides a framework for generating realistic mosquito surveillance data by mimicking the structure, spatial layout, and sampling frequency of actual surveillance programmes. Hence, the results presented here should not be used to draw scientific conclusions about West Nile virus in the Sacramento Metropolitan Area. In addition to this, pool size is a key input when analysing pooled infection outcomes (see Exercise 6 below) and strongly affects the predictive inferences in prevalence (see Exercise 6 below). In this case study we used an estimated pool size (denoted in the text above by $k_i$) rather than laboratory recorded counts, which adds additional uncertainty that we did not propagate. The results illustrate modelling steps, diagnostics, and how to combine components to obtain the vector index, which remains useful for pedagogical purposes.
 
 ## Theory
 
@@ -1548,7 +1616,9 @@ Simulating from the conditional distribution of $Z_i$​ given the observed coun
 
 The function is reproduced below:
 
-```{r, eval=FALSE}
+```{r}
+#| label: define-random-effect-simulation
+#| eval: false
 simulate_random_effects <- function(model, nsim = 1000, grid_range = c(-10, 10), grid_length = 5000) {
   # Extract fixed effects and RE variance
   beta_hat <- fixef(model)
@@ -1683,7 +1753,9 @@ As a self-directed learning activity for readers interested in the computational
 ### The non-randomized probability integral transform for non-spatial models {#sec-nonspat-anpit}
 
 The function for generating and plotting the average non-randomized probability transform (AnPIT) used in @sec-abund-model are given below. 
-```{r, eval=FALSE}
+```{r}
+#| label: define-nonspatial-anpit
+#| eval: false
 anpit_wnv <- function(model, test_prop = 0.25, nsim = 2000,
                       u_grid = seq(0, 1, length.out = 101), seed = NULL) {
   stopifnot(inherits(model, "glmerMod"))
@@ -1754,7 +1826,9 @@ plot_anpit <- function(res) {
 
 ```
 We start by defining the function and adding input checks.
-```{r,eval=FALSE}
+```{r}
+#| label: derive-nonspatial-anpit
+#| eval: false
 anpit_wnv <- function(model, test_prop = 0.25, nsim = 2000,
                       u_grid = seq(0, 1, length.out = 101), seed = NULL) {
   stopifnot(inherits(model, "glmerMod"))
@@ -1763,7 +1837,9 @@ anpit_wnv <- function(model, test_prop = 0.25, nsim = 2000,
 ```
 The function accepts a fitted Poisson mixed model, a proportion for the test set, number of Monte Carlo draws, a grid of u values (used as input of the AnPIT), and an optional seed for reproducibility. It checks that the model is of class `glmerMod` and that the test proportion is valid.
 
-```{r,eval=FALSE}
+```{r}
+#| label: extract-anpit-model-matrix
+#| eval: false
   D    <- model.matrix(model)
   off  <- model@offset; if (is.null(off)) off <- rep(0, nrow(D))
   y    <- model@resp$y
@@ -1772,20 +1848,26 @@ The function accepts a fitted Poisson mixed model, a proportion for the test set
 ```
 This block extracts the design matrix, the offset (log of trap nights in our case), the response counts, the fixed effects, and the standard deviation of the random intercept.
 
-```{r,eval=FALSE}
+```{r}
+#| label: sample-anpit-test-set
+#| eval: false
   n <- nrow(D)
   test_idx  <- sort(sample(seq_len(n), size = ceiling(n * test_prop)))
   train_idx <- setdiff(seq_len(n), test_idx)
 ```
 Here we randomly split the data into a test and training set according to `test_prop`.
 
-```{r,eval=FALSE}
+```{r}
+#| label: simulate-anpit-random-effects
+#| eval: false
   eta0 <- as.numeric(D %*% beta) + off
   u_draws <- rnorm(nsim, mean = 0, sd = sigma)
 ```
 We compute the linear predictor without random effects and generate random intercept samples from the marginal distribution of the random effects $Z_i$, namely a Gaussian distribution with mean 0 and standard deviation `sigma`. Since each location is unique, we integrate over the prior for the test rows.
 
-```{r,eval=FALSE}
+```{r}
+#| label: extract-anpit-test-outcomes
+#| eval: false
   y_test    <- y[test_idx]
   eta0_test <- eta0[test_idx]
   n_test    <- length(test_idx)
@@ -1796,7 +1878,9 @@ We compute the linear predictor without random effects and generate random inter
 ```
 The response, linear predictor, and number of test observations are stored. We also prepare storage for the predictive CDFs.
 
-```{r,eval=FALSE}
+```{r}
+#| label: compute-anpit-probabilities
+#| eval: false
   for (i in seq_len(n_test)) {
     lam <- exp(eta0_test[i] + u_draws)
     Fi_y[i]      <- mean(ppois(y_test[i],    lambda = lam))
@@ -1806,7 +1890,9 @@ The response, linear predictor, and number of test observations are stored. We a
 ```
 For each test observation, we compute the predictive CDF at $y$ and $y−1$ via Monte Carlo integration over the u draws. These quantities are then used to compute the AnPIT below.
 
-```{r,eval=FALSE}
+```{r}
+#| label: average-nonrandomized-pit
+#| eval: false
   npit_avg <- function(u, Fy, Fym1) {
     denom <- pmax(Fy - Fym1, .Machine$double.eps)
     lt <- u <= Fym1; gt <- u >= Fy; mid <- !(lt | gt)
@@ -1818,7 +1904,9 @@ For each test observation, we compute the predictive CDF at $y$ and $y−1$ via 
 ```
 We define a helper to compute the AnPIT for a given u and average it over the test set (see @eq-anpit for the definition of the AnPIT). This is repeated for each u in the grid.
 
-```{r,eval=FALSE}
+```{r}
+#| label: return-anpit-results
+#| eval: false
   list(u = u_grid,
        anpit = as.numeric(anpit),
        Fi_y = Fi_y,
@@ -1829,7 +1917,9 @@ We define a helper to compute the AnPIT for a given u and average it over the te
 ```
 The function returns a list with the u grid, the averaged nPIT values, the predictive CDFs, and the indices of the test and training sets.
 
-```{r,eval=FALSE}
+```{r}
+#| label: plot-nonspatial-anpit
+#| eval: false
 plot_anpit <- function(res) {
   if (!requireNamespace("ggplot2", quietly = TRUE)) stop("Need ggplot2 for plotting.")
   df <- data.frame(u = res$u, anpit = res$anpit)
@@ -1870,7 +1960,7 @@ This helper function takes the output and produces a plot of the averaged nPIT c
 
 3.  In this exercise, you will repeat the full analysis pipeline developed for Malawi using data from a different country.
 
-    -   Choose a different country available in the `malariaAtlas` package (e.g., Zambia or Nigeria), and download parasite prevalence survey data for a specific year.
+    -   Choose a different country available in the malariaAtlas package (e.g., Zambia or Nigeria), and download parasite prevalence survey data for a specific year.
 
     -   Obtain the same set of environmental covariates used in the Malawi analysis, and prepare them for analysis (e.g., resample, standardize, and extract values at survey locations).
 
@@ -1884,9 +1974,9 @@ This helper function takes the output and produces a plot of the averaged nPIT c
     -   Reflect on which model performs better in this new setting. Do your conclusions align with what was observed in the Malawi case study? What might explain any differences in performance across countries?
 
 4.  The function `simulate_random_effects()` in @sec-sim-re samples random effects using a simple grid-based inverse CDF approach.\
-    While easy to understand, this method can be slow when the number of groups or simulations is large. Rewrite the function using a more efficient sampling strategy such as slice sampling [@neal2003] or a simple Metropolis–Hastings sampler [@gelman2013bayesian]. After implementing your new function, compare the sampled random effect distributions to those obtained from `simulate_random_effects` and discuss any differences in accuracy and computational speed.
+    While easy to understand, this method can be slow when the number of groups or simulations is large. Rewrite the function using a more efficient sampling strategy such as slice sampling [@neal2003] or a simple Metropolis–Hastings sampler [@gelman2013bayesian]. After implementing your new function, compare the sampled random effect distributions to those obtained from `simulate_random_effects()` and discuss any differences in accuracy and computational speed.
     
-5.  The function `anpit_wnv()` computes the average non-randomized probability integral transform for the specific model in @eq-wnv-counts. Full details of the implementation are given in @sec-nonspat-anpit. You may wish to enhance this function in one of two ways: first, by generalising it so that it can be applied to any generalized linear mixed model with the same random effects structure; second, by replacing the Monte Carlo step that samples from a Gaussian distribution with a numerical integration approach. Once you have implemented this function, you can apply it to the analysed data-sets of the previous chapter and compare the generated AnPIT against those of the fitted geostatistical models. Does the AnPIT show an unsatisfactory diagnostic in some cases?
+5.  The function `anpit_wnv()` computes the average non-randomized probability integral transform for the specific model in @eq-wnv-counts. Full details of the implementation are given in @sec-nonspat-anpit. You may wish to enhance this function in one of two ways: first, by generalising it so that it can be applied to any generalized linear mixed model with the same random effects structure; second, by replacing the Monte Carlo step that samples from a Gaussian distribution with a numerical integration approach. Once you have implemented this function, you can apply it to the analysed datasets of the previous chapter and compare the generated AnPIT against those of the fitted geostatistical models. Does the AnPIT show an unsatisfactory diagnostic in some cases?
 
 6. Repeat the analysis in @sec-wnv from the beginning to predict the vector index, but this time assume alternative fixed values for the PCR pool size $k_i$ in @sec-wnv-model, setting all $k_i$ to 10, 25, and 50 in turn. Compare the resulting inferences on West Nile virus infection prevalence and the vector index across these three scenarios, and discuss how they differ from each other as well as from the results presented earlier in this chapter.
  
