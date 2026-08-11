@@ -112,9 +112,9 @@ We can check the description column to see what datasets are available. Let's do
 lbr_pop_url <- wpgpGetCountryDataset(ISO3 = "LBR", covariate = "ppp_2014") 
 ```
 
-This will download a raster file locally in a temporary directory. The path to the downloaded file is contained in the `lbr_pop_url` variable and when we introduce the terra package in the next sections we will show how to upoload the population raster into R. It is also possible to specify the directory where we want the raster to be downloaded using the `destDir` argument.
+This will download a raster file locally in a temporary directory. The path to the downloaded file is contained in the `lbr_pop_url` variable and when we introduce the terra package in the next sections we will show how to upload the population raster into R. It is also possible to specify the directory where we want the raster to be downloaded using the `destDir` argument.
 
-### Example: Dowloading data using Google Earth Engine
+### Example: Downloading data using Google Earth Engine
 
 Google Earth Engine (GEE) is a powerful platform that hosts petabytes of environmental and geospatial data, including climate, topography, and land cover datasets. The rgee R package provides a convenient interface to GEE from within R.
 
