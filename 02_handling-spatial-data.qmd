@@ -301,9 +301,9 @@ The `st_as_sf()` function converts the data frame into an `sf` object. The `coor
 
 When working with data from multiple sources, such as environmental layers, population data, or administrative boundaries, ensuring that all datasets share the same CRS is essential for accurate spatial analysis. This section covers the core tasks involved in managing CRSs in R: checking the CRS of spatial data to ensure datasets are compatible and reprojecting spatial data into a common CRS when necessary.
 
-#### Checking the CRS of Spatial Data
+#### Checking the CRS of spatial data
 
-Before performing any spatial operation, it's crucial to check the CRS of your spatial datasets. Knowing whether your data uses geographic coordinates (e.g., WGS84) or a projected coordinate system (e.g., UTM) helps ensure that they are aligned and ready for analysis. Both sf and terra provide functions to retrieve and inspect the CRS, ensuring datasets are spatially aligned before analysis. The `st_crs()` function retrieves the CRS information for vector data.
+Before performing any spatial operation, it is crucial to check the CRS of your spatial datasets. Knowing whether your data uses geographic coordinates (e.g., WGS84) or a projected coordinate system (e.g., UTM) helps ensure that they are aligned and ready for analysis. Both sf and terra provide functions to retrieve and inspect the CRS, ensuring datasets are spatially aligned before analysis. The `st_crs()` function retrieves the CRS information for vector data.
 
 ```{r}
 #| label: crs-check1
@@ -321,7 +321,7 @@ crs(lbr_pop_100, proj = TRUE, describe = TRUE)
 
 #### Reprojecting spatial data to a common CRS
 
-If your datasets have different CRSs or if you want to change CRS (e.g. from geographical to projected) you will need to reproject one or more datasets so they can be spatially aligned. This ensures that they can be overlaid and analyzed together. For vector data, `st_transform()` reprojects the data into a specified CRS. This example transforms the liberia point data from WGS84 into UTM. To know what's the correct UTM zone and hence EPSG code for Liberia we can use the `propose_utm()` function from the RiskMap package.
+If your datasets have different CRSs or if you want to change CRS (e.g. from geographical to projected) you will need to reproject one or more datasets so they can be spatially aligned. This ensures that they can be overlaid and analyzed together. For vector data, `st_transform()` reprojects the data into a specified CRS. This example transforms the liberia point data from WGS84 into UTM. To know the correct UTM zone and hence EPSG code for Liberia we can use the `propose_utm()` function from the RiskMap package.
 
 ```{r}
 #| label: st-transform
@@ -540,7 +540,7 @@ ggplot(data = raster_df) +
 
 In this example `as.data.frame()` converts the raster into a data frame with x and y coordinates and their corresponding raster values and `geom_raster()` is used to plot the raster cells, coloring them based on the population density.
 
-### Combining Multiple Spatial Data Types
+### Combining multiple spatial data types
 
 In many cases, it is useful to combine different spatial data types (points, polygons, and rasters) in a single visualization. ggplot2 allows you to overlay these layers, providing a more comprehensive view of your spatial data.
 
@@ -576,7 +576,7 @@ combined_map +
                          height = unit(.5, "cm"), width = unit(.5, "cm")) 
 ```
 
-## Review Questions
+## Review questions
 
 - What are the main differences between raster and vector data, and in which scenarios is each type commonly used in geostatistical analysis?
 
