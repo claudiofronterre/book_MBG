@@ -1403,7 +1403,7 @@ to approximate $\left[ Y^{(1)} \mid Y^{(2)} \right]$. We discuss this in
 more detail in @sec-theory-prediction. However, the key point here is to
 understand why we perform this assessment and how to interpret the
 results. We next show the application of the AnPIT diagnostic to the
-example on riverblindess mapping in Liberia.
+example on riverblindness mapping in Liberia.
 
 #### Example: assessing the calibration of two geostatistical models for riverblindness mapping {#sec-liberia-anpit}
 
@@ -2629,7 +2629,7 @@ The answer to this question is given in @sec-non-spar-covariates.
     @sec-split-data, and assess if and how the adopted approach to split
     the data affects the results.
 
-4.  Consider the Liberia dataset on riverblindess. Carry out a
+4.  Consider the Liberia dataset on riverblindness. Carry out a
     simulation study where the objective is to assess the impact of
     mispecifying non-linear relationships between elevation and
     prevalence. Consider @eq-true-model-lib as the true model and a

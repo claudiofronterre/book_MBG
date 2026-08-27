@@ -21,7 +21,7 @@ library(terra)
 library(grid)
 library(RiskMap)
 
-waz_fit <- readRDS("data/waz_fit.rds")
+waz_fit <- readRDS("data/waz_fit.rds")f
 haz_fit <- readRDS("data/haz_fit.rds")
 stunting_prev <- readRDS("data/stuntin_prev.rds")
 underw_prev <- readRDS("data/underw_prev.rds")
@@ -1525,7 +1525,7 @@ Finally, we predict the vector index as defined in @eq-vi. Because *Cx. pipiens*
 # Converting the abund_sma into an sf object
 loc_pred <- st_as_sfc(st_transform(st_as_sf(abund_sma, coords = c("lon","lat"), crs = 4326), crs = wnv_crs))
 
-# Prediction of the sptial process S(x) over the locations of the 
+# Prediction of the spatial process S(x) over the locations of the 
 # abund_sma dataset
 pred_S_loc <- pred_over_grid(inf_fit, grid_pred = loc_pred)
 
