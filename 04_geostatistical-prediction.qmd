@@ -1086,7 +1086,7 @@ spatialEco package [@evans2021].
 #| fig-width: 12
 #| fig-height: 6
 #| label: fig-reg-loc
-#| fig-cap: "Examples un the use of spatialky regularized thinning for the splitting of the Liberia data on river blindness into training and test set. The plots show the resulting test sets by randomly selecting 20 locations from the original dataset and imposing a minimum distance of 30km (left panel) and 40km (right panel)."
+#| fig-cap: "Examples on the use of spatially regularized thinning for the splitting of the Liberia data on river blindness into training and test set. The plots show the resulting test sets by randomly selecting 20 locations from the original dataset and imposing a minimum distance of 30km (left panel) and 40km (right panel)."
 library(spatialEco)
 set.seed(123)
 
