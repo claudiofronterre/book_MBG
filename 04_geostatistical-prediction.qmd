@@ -65,7 +65,7 @@ Let us consider the class of generalized linear geostatistical models
 problems, the first step consists of defining our predictive target,
 which we denote as $T(x)$ where $x$ denotes any locations within the
 study, which is usually not part of the sampled data. For example in the
-analysis of the riverblindness in Liberia, our interest lies in
+analysis of the river blindness in Liberia, our interest lies in
 identifying areas where disease prevalence exceeds 20$\%$, a threshold
 that use been used in the past to identify areas in need of mass drug
 administration due to the potential for significant disease burden and
@@ -101,7 +101,7 @@ provide what is our "best guess" for $T(x)$ and a summary of uncertainty
 which quantifies how concentrated is the predictive distribution around
 that guess. However, providing a single "best guess" for $T(x)$ is not
 always the answer to our research question. In the example on
-riverblindness mentioned at the start of the this section, a more
+river blindness mentioned at the start of the this section, a more
 natural way to use the predictive distribution would be to compute the
 likelihood that $T(x)$ exceeds 0.2 at any given location $x$.
 
@@ -152,7 +152,7 @@ used for computing our target.
 
 ::: callout-note
 Here, we are overlooking the fact that when $T(x)$ is a linear
-transformation of $S(x)$ and themodel fitted to the data is a linear
+transformation of $S(x)$ and the model fitted to the data is a linear
 geostatistical model, then we can derive any summary of the predictive
 distribution analytically, without the need of carrying out any
 simulation. Although this may displease some of our fellow statisticians
@@ -194,7 +194,7 @@ former.
 We now show how the ideas and concepts discussed above are put into
 practice in an geostatistical analysis, using the Liberia data example.
 Using the fitted model in @sec-liberia-estim1, we use the
-`predict_over_grid()` function in RiskMap, to sample from the predictive
+`pred_over_grid()` function in RiskMap, to sample from the predictive
 distribution of the spatial Gaussian process $S(x)$ based on a regular
 grid spanning the country of Liberia.
 
@@ -318,7 +318,7 @@ distribution of the first component of $S(\tilde{X})$
 
 ```{r}
 #| label: fig-hist-first-comp-pd
-#| fig-cap: "Histrogram of the predictive distribution of the first component, $S(\\tilde{x}_1)$ of $S(\\tilde{X})$ for the Liberia data analysis."
+#| fig-cap: "Histogram of the predictive distribution of the first component, $S(\\tilde{x}_1)$ of $S(\\tilde{X})$ for the Liberia data analysis."
 
 hist(lb_pred_S_m$S_samples[,1], main = "Predictive distribution",
      xlab = expression(S(tilde(x)[1])))
@@ -378,7 +378,7 @@ the overall predictive inferences from the measured covariates.
 
 ### Example: mapping riverblidness prevalence in Liberia (continuing from @sec-pred-samples) {#sec-liberia-prediction-1}
 
-Let us continue the geostatistical of the riverblindness data in
+Let us continue the geostatistical of the river blindness data in
 Liberia. The predictive target we consider is prevalence, hence
 $$T(x) = \frac{\exp\{ \beta_{0} + \beta_{1}\log\{e(x)\} + S(x)\}}{1+\exp\{\beta_{0} + \beta_{1}\log\{e(x)\} + S(x)\}},$$ {#eq-rb-prev-target}
 where $e(x)$ is the elevation in meters at location $x$.
@@ -390,7 +390,7 @@ prevalence over the regular grid at 5 km we have created earlier.
 ```{r}
 #| label: predict-liberia-prevalence
 
-# Prediction of riverblindness prevalence
+# Prediction of river blindness prevalence
 lb_prev <- 
 pred_target_grid(
   lb_pred_S_m, 
@@ -422,7 +422,7 @@ We can then visualize the resulting maps as follows.
 #| fig-width: 18
 #| fig-height: 6
 #| label: fig-lb-maps
-#| fig-cap: "Mapping riverblindness in Liberia. Plots of the mean (left panel), coefficient of variation (central panel) and exceedance probability (right panel) for a 20% prevalence threshold."
+#| fig-cap: "Mapping river blindness in Liberia. Plots of the mean (left panel), coefficient of variation (central panel) and exceedance probability (right panel) for a 20% prevalence threshold."
 
 # Displying the results
 par(mfrow = c(1,3))
@@ -727,13 +727,13 @@ disease but also the underlying population, risk, or spatial
 characteristics relevant to the public health problem under
 investigation.
 
-### Example: predicting the average riverblindness prevalence at admin level 1 in Liberia (continuing from @sec-liberia-prediction-1) {#sec-liberia-prediction-2}
+### Example: predicting the average river blindness prevalence at admin level 1 in Liberia (continuing from @sec-liberia-prediction-1) {#sec-liberia-prediction-2}
 
 We continue our analysis of the Liberia data and consider areal-level
 targets. More specifically, we aim to predict the average prevalence
 over the regions which give the administrative level 1 of Liberia. By
 denoting with $A_i$ the i-th out of the 15 regions in Liberia. By
-denoting with $T(x)$ reiverblindness prevalence as defined in
+denoting with $T(x)$ river blindness prevalence as defined in
 @eq-rb-prev-target, we define our predictive target as
 $$T_{i} = \frac{1}{|A_i|} \int_{A_i} T(x) \: dx.$$
 The R code below shows how predictions for $T_i$ can be performed using
@@ -776,7 +776,7 @@ $$T_{i}^* = \int_{A_i} \tilde{w_i}(x) T(x) \: dx.$$
 where $\tilde{w}_{i}(x)$ are the standardized weights that integrate to
 1 in $A_i$ (i.e. $\int_{A_i} \tilde{w}_i(x) \: dx = 1$).
 
-We first retrieve the population density data from the World Pop
+We first retrieve the population density data from the WorldPop
 database (see @sec-pop-data) and use these to derive the un-standardized
 weights $w(x)$.
 
@@ -859,7 +859,7 @@ for the more noticeable differences in this area.
 
 ### Example: predicting the total number of Anopheles gambiae mosquitoes (continuing from @sec-anopheles-fit) {#sec-anopheles-pred}
 
-For the analysis on Anopheles gambiae mosquitoes, we consider the
+For the analysis on *Anopheles gambiae* mosquitoes, we consider the
 prediction of the total number of mosquitoes within the study area. In
 this case, because there is not a natural definition of the study area
 borders as in the previous analysis, we consider the convex hull as
@@ -953,7 +953,7 @@ Since we are not standardizing the weights, there is no need to specify
 above, we printed the mean of the predictive distribution of $T$ along
 with the 95% prediction interval. The point estimate of approximately
 17,719 mosquitoes is likely an underestimate of the total number of
-Anopheles gambiae in the area, as the trap used to count the mosquitoes
+*Anopheles gambiae* in the area, as the trap used to count the mosquitoes
 may not capture all of them, particularly those outside the immediate
 trapping zone or those active at different times.
 
@@ -1012,14 +1012,14 @@ data. For instance, k-means minimizes within-cluster variance to produce
 compact, non-overlapping groups, while hierarchical clustering organizes
 data into nested clusters based on a linkage criterion like geographic
 distance. In the code below we show an example of the use of these
-methods for data splitting, using the `spatial_clusterin_cv()` function
+methods for data splitting, using the `spatial_clustering_cv()` function
 from the spatialsample package [@mahoney2023].
 
 ```{r}
 #| fig-width: 12
 #| fig-height: 6
 #| label: fig-clus-loc
-#| fig-cap: "Examples un the use of spatial clustering methods for the splitting of the Liberia data on riverblindness."
+#| fig-cap: "Examples of the use of spatial clustering methods for the splitting of the Liberia data on river blindness."
 library(spatialsample)
 set.seed(123)
 liberia_sf <- liberia %>%
@@ -1086,7 +1086,7 @@ spatialEco package [@evans2021].
 #| fig-width: 12
 #| fig-height: 6
 #| label: fig-reg-loc
-#| fig-cap: "Examples un the use of spatialky regularized thinning for the splitting of the Liberia data on riverblindness into training and test set. The plots show the resulting test sets by randomly selecting 20 locations from the original dataset and imposing a minimum distance of 30km (left panel) and 40km (right panel)."
+#| fig-cap: "Examples on the use of spatially regularized thinning for the splitting of the Liberia data on river blindness into training and test set. The plots show the resulting test sets by randomly selecting 20 locations from the original dataset and imposing a minimum distance of 30km (left panel) and 40km (right panel)."
 library(spatialEco)
 set.seed(123)
 
@@ -1403,11 +1403,11 @@ to approximate $\left[ Y^{(1)} \mid Y^{(2)} \right]$. We discuss this in
 more detail in @sec-theory-prediction. However, the key point here is to
 understand why we perform this assessment and how to interpret the
 results. We next show the application of the AnPIT diagnostic to the
-example on riverblindess mapping in Liberia.
+example on river blindness mapping in Liberia.
 
-#### Example: assessing the calibration of two geostatistical models for riverblindness mapping {#sec-liberia-anpit}
+#### Example: assessing the calibration of two geostatistical models for river blindness mapping {#sec-liberia-anpit}
 
-In our example on riverblindness mapping, we now consider two models. A
+In our example on river blindness mapping, we now consider two models. A
 mode, which we call $M_{0}$, which is an intercept only geostatistical
 model, with linear predictor
 $$M_{0} \: : \: \log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_0 + S(x_i) ,$$
@@ -1442,7 +1442,7 @@ glgpm(npos ~  elevation + pmax(elevation - 150, 0) +
 ```
 
 Since the main goal of this analysis is to draw predictive inference on
-riverblindness prevalence within Liberia, it would be more appropriate
+river blindness prevalence within Liberia, it would be more appropriate
 to use a regulirized subsampling scheme to split the data. To generate
 the AnPIT diagnostic plot in R, we can use the `assess_pp()` function in
 RiskMap
@@ -1642,7 +1642,7 @@ Models assumed to be well-calibrated and achieving a lower score based
 on the above expression are considered to provide sharper predictions
 and, consequently, better predictive performance.
 
-#### Example: mapping riverblindness in Liberia (continuing from @sec-liberia-anpit)
+#### Example: mapping river blindness in Liberia (continuing from @sec-liberia-anpit)
 
 In @sec-liberia-anpit, we have assessed the calibration of models $M_0$
 and $M_0$ and found these to be reasonably well calibrated models. We
@@ -2611,8 +2611,8 @@ The answer to this question is given in @sec-non-spar-covariates.
     models so that the same test sets are used. Is $M_2$ showing a
     better calibration? Why?
 
-3.  In the analysis of the *Anopheles gambiae* moqsuitoes data, consider
-    two models. One that uses elavation, with linear predictor
+3.  In the analysis of the *Anopheles gambiae* mosquitoes data, consider
+    two models. One that uses elevation, with linear predictor
     $$M_1\: : \: \log\{\lambda(x_i)\} = \beta_0 + \beta_1 e(x_i) + S(x_i)$$
     where $e(x)$ is the elevation in meters at location $x$ and $S(x_i)$
     is a stationary and isotropic Gaussian process with variance
@@ -2629,7 +2629,7 @@ The answer to this question is given in @sec-non-spar-covariates.
     @sec-split-data, and assess if and how the adopted approach to split
     the data affects the results.
 
-4.  Consider the Liberia dataset on riverblindess. Carry out a
+4.  Consider the Liberia dataset on river blindness. Carry out a
     simulation study where the objective is to assess the impact of
     mispecifying non-linear relationships between elevation and
     prevalence. Consider @eq-true-model-lib as the true model and a

@@ -2325,7 +2325,7 @@ to_table(italy_fit, digits = 3)
 
 <!-- function. To show how to perform parametric bootstrap in RiskMap, let -->
 
-<!-- us consider the Liberia data on riverblindness and fit the following -->
+<!-- us consider the Liberia data on river blindness and fit the following -->
 
 <!-- geostatistical model. -->
 
