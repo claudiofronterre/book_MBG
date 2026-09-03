@@ -18,7 +18,7 @@ editor:
 |-------------------------|------------------|-----------------------------|
 | `setup_prediction()` | *RiskMap* | Predicting the different component of the linear predictor over a grid: the covariates effects and the random effects |
 | `predict_grid_target()` | *RiskMap* | Predictions of target defined at pixel-level |
-| `pred_target_shp()` | *RiskMap* | Predictions of targets defined at areal level |
+| `predict_areal_target()` | *RiskMap* | Predictions of targets defined at areal level |
 | `assess_prediction()` | *RiskMap* | Assessing the predictive performance of geostatistical models using cross-validation |
 | `surf_sim()` | *RiskMap* | Simulating surfaces and data from geostatistical models |
 | `assess_simulation()` | *RiskMap* | Assessing the predictive performance of geostatistical models using simulations |
@@ -737,7 +737,7 @@ denoting with $T(x)$ river blindness prevalence as defined in
 @eq-rb-prev-target, we define our predictive target as
 $$T_{i} = \frac{1}{|A_i|} \int_{A_i} T(x) \: dx.$$
 The R code below shows how predictions for $T_i$ can be performed using
-the `pred_target_shp()` function.
+the `predict_areal_target()` function.
 
 ```{r}
 #| label: prepare-liberia-admin-prediction
@@ -748,7 +748,7 @@ library(rgeoboundaries)
 lb_adm1 <- geoboundaries(country = "Liberia", adm_lvl = "adm1")
 
 # Prediction of prevalence 
-pred_shp <- pred_target_shp(lb_pred_S_j, shp = lb_adm1,
+pred_shp <- predict_areal_target(lb_pred_S_j, shp = lb_adm1,
                             shp_target = function(Tx) mean(Tx),
                             f_target = list(prev = 
                                        function(lp) exp(lp)/(1+exp(lp))),
@@ -797,7 +797,7 @@ weights_pred <- extract(lbr_pop, st_coordinates(liberia_grid))$lbr_ppp_2014
 ```
 
 In the code above the population density weights are extracted at the
-locations of the prediction grid. In the `pred_target_shp()` function, in
+locations of the prediction grid. In the `predict_areal_target()` function, in
 order to use the weights for our predictive target, we need to specify
 two additional arguments: `weights` to which we pass the population
 density values (in our case these are stored in `weights_pred`);
@@ -808,7 +808,7 @@ a region $A_i$ adds up to one.
 ```{r}
 #| label: predict-population-weighted-prevalence
 #| eval: false
-pred_shp_w <- pred_target_shp(lb_pred_S_j, shp = lb_adm1,
+pred_shp_w <- predict_areal_target(lb_pred_S_j, shp = lb_adm1,
                             shp_target = function(Tx) sum(Tx),
                             f_target = list(prev = 
                                        function(lp) exp(lp)/(1+exp(lp))),
@@ -937,7 +937,7 @@ in black.
 ```{r}
 #| label: predict-total-mosquito-abundance
 pred_n_mosq_shp <- 
-pred_target_shp(pred_an_S, shp = shp_ch, 
+predict_areal_target(pred_an_S, shp = shp_ch, 
                  weights = an_weights,
                  shp_target = sum,
                  f_target = list(n_mosq = function(lp) exp(lp)),
