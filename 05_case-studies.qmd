@@ -374,7 +374,7 @@ waz_pred_grid <- setup_prediction(waz_fit,
                                 ))
 ```
 
-We then use the `pred_target_grid()` function to generate predictive summaries of stunting and underweight prevalence, as defined in @eq-prev-maln. To quantify uncertainty in the predictions, we report the coefficient of variation, which provides a standardized measure of relative uncertainty across the prediction grid.
+We then use the `predict_grid_target()` function to generate predictive summaries of stunting and underweight prevalence, as defined in @eq-prev-maln. To quantify uncertainty in the predictions, we report the coefficient of variation, which provides a standardized measure of relative uncertainty across the prediction grid.
 
 ```{r}
 #| label: predict-malnutrition-prevalence
@@ -382,7 +382,7 @@ We then use the `pred_target_grid()` function to generate predictive summaries o
 # Prediction of stunting prevalence
 sd_ind_haz <- sqrt(coef(haz_fit)$sigma2_me)
 stunting_prev <-
-pred_target_grid(haz_pred_grid,
+predict_grid_target(haz_pred_grid,
                  f_target = list(prev = function(x) pnorm((-2-x)/sd_ind_haz)),
                  pd_summary = list(mean = mean,
                                        cv = function(x) sd(x)/mean(x)))
@@ -390,7 +390,7 @@ pred_target_grid(haz_pred_grid,
 # Prediction of underweight prevalence
 sd_ind_waz <- sqrt(coef(waz_fit)$sigma2_me)
 underw_prev <-
-  pred_target_grid(waz_pred_grid,
+  predict_grid_target(waz_pred_grid,
                    f_target = list(prev = function(x) pnorm((-2-x)/sd_ind_waz)),
                    pd_summary = list(mean = mean,
                                      cv = function(x) sd(x)/mean(x)))
@@ -1046,10 +1046,10 @@ pred_pca <- setup_prediction(mod_pca,
                            grid_pred = grid_mlw,
                            predictors = predictors)
 
-pred_all_cov_prev <- pred_target_grid(pred_all_cov,
+pred_all_cov_prev <- predict_grid_target(pred_all_cov,
                                       f_target = list(prev = function(x) exp(x)/(1+exp(x))))
 
-pred_pca_prev <- pred_target_grid(pred_pca,
+pred_pca_prev <- predict_grid_target(pred_pca,
                              f_target = list(prev = function(x) exp(x)/(1+exp(x))))
 
 ```
@@ -1497,7 +1497,7 @@ grid_pred_sac <- create_grid(chull_sf, spat_res = 0.25)
 pred_S_inf <- setup_prediction(inf_fit,
                              grid_pred = grid_pred_sac)
 
-pred_inf_grid <- pred_target_grid(pred_S_inf,
+pred_inf_grid <- predict_grid_target(pred_S_inf,
                                   f_target = list(prev = function(x) exp(x)/(1+exp(x))))
 
 ```

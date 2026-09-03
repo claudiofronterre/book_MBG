@@ -17,7 +17,7 @@ editor:
 | Function | R Package | Used for |
 |-------------------------|------------------|-----------------------------|
 | `setup_prediction()` | *RiskMap* | Predicting the different component of the linear predictor over a grid: the covariates effects and the random effects |
-| `pred_target_grid()` | *RiskMap* | Predictions of target defined at pixel-level |
+| `predict_grid_target()` | *RiskMap* | Predictions of target defined at pixel-level |
 | `pred_target_shp()` | *RiskMap* | Predictions of targets defined at areal level |
 | `assess_prediction()` | *RiskMap* | Assessing the predictive performance of geostatistical models using cross-validation |
 | `surf_sim()` | *RiskMap* | Simulating surfaces and data from geostatistical models |
@@ -383,7 +383,7 @@ Liberia. The predictive target we consider is prevalence, hence
 $$T(x) = \frac{\exp\{ \beta_{0} + \beta_{1}\log\{e(x)\} + S(x)\}}{1+\exp\{\beta_{0} + \beta_{1}\log\{e(x)\} + S(x)\}},$$ {#eq-rb-prev-target}
 where $e(x)$ is the elevation in meters at location $x$.
 
-Through the `pred_target_grid()` we can use the output in `lb_pred_S_m`
+Through the `predict_grid_target()` we can use the output in `lb_pred_S_m`
 (or `lb_pred_S_j` as well, in this case) to generate predictions of
 prevalence over the regular grid at 5 km we have created earlier.
 
@@ -392,7 +392,7 @@ prevalence over the regular grid at 5 km we have created earlier.
 
 # Prediction of river blindness prevalence
 lb_prev <- 
-pred_target_grid(
+predict_grid_target(
   lb_pred_S_m, 
   f_target = list(prev = function(lp) exp(lp)/(1+exp(lp))),
   pd_summary = list(mean = function(Tx) mean(Tx), 
@@ -580,7 +580,7 @@ pred_ken_S <- setup_prediction(fit_malkenya, grid_pred = ken_grid,
                              predictors = ken_predictors)
 
 pred_age15 <- 
-pred_target_grid(pred_ken_S, 
+predict_grid_target(pred_ken_S, 
                  f_target = list(prev = function(lp) exp(lp)/(1+exp(lp))),
                  pd_summary = list(mean = function(Tx) mean(Tx)))
 ```
@@ -614,7 +614,7 @@ for(i in 1:n_sim) {
 }
 
 # Prediction of prevalence
-pred_aver_pop <- pred_target_grid(pred_ken_S_i, 
+pred_aver_pop <- predict_grid_target(pred_ken_S_i, 
                f_target = list(prev = function(lp) exp(lp)/(1+exp(lp))))
 ```
 
@@ -898,7 +898,7 @@ pred_an_S <- setup_prediction(an_fit, grid = an_grid,
                type = "joint")
 
 pred_n_mosq_grid <- 
-pred_target_grid(pred_an_S, 
+predict_grid_target(pred_an_S, 
                  f_target = list(n_mosq = function(lp) exp(lp)),
                  pd_summary = list(mean = function(Tx) mean(Tx)))
 
