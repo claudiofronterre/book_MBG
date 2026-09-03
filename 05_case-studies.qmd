@@ -355,7 +355,7 @@ n_pred <- nrow(st_coordinates(ghana_grid))
 # Prediction of S(x) and covariates effects over the grid for
 
 # HAZ
-haz_pred_grid <- pred_over_grid(haz_fit,
+haz_pred_grid <- setup_prediction(haz_fit,
                                 grid_pred = ghana_grid,
                                 predictors = data.frame(
                                   # Setting age to 2 months
@@ -364,7 +364,7 @@ haz_pred_grid <- pred_over_grid(haz_fit,
                                   wealth = rep(1, n_pred)
                                 ))
 # WAZ
-waz_pred_grid <- pred_over_grid(waz_fit,
+waz_pred_grid <- setup_prediction(waz_fit,
                                 grid_pred = ghana_grid,
                                 predictors = data.frame(
                                   # Setting age to 1 month
@@ -1038,11 +1038,11 @@ predictors <- cbind(terra::extract(r_covs,  st_coordinates(grid_mlw)),
                     terra::extract(pc1_rast,  st_coordinates(grid_mlw)))
 
 # Prevalence prediction over the grid for the two fitted models 
-pred_all_cov <- pred_over_grid(mod_all_cov,
+pred_all_cov <- setup_prediction(mod_all_cov,
                                grid_pred = grid_mlw,
                                predictors = predictors)
 
-pred_pca <- pred_over_grid(mod_pca,
+pred_pca <- setup_prediction(mod_pca,
                            grid_pred = grid_mlw,
                            predictors = predictors)
 
@@ -1494,7 +1494,7 @@ ggplot() +
 #| eval: false
 grid_pred_sac <- create_grid(chull_sf, spat_res = 0.25)
 
-pred_S_inf <- pred_over_grid(inf_fit,
+pred_S_inf <- setup_prediction(inf_fit,
                              grid_pred = grid_pred_sac)
 
 pred_inf_grid <- pred_target_grid(pred_S_inf,
@@ -1527,7 +1527,7 @@ loc_pred <- st_as_sfc(st_transform(st_as_sf(abund_sma, coords = c("lon","lat"), 
 
 # Prediction of the spatial process S(x) over the locations of the 
 # abund_sma dataset
-pred_S_loc <- pred_over_grid(inf_fit, grid_pred = loc_pred)
+pred_S_loc <- setup_prediction(inf_fit, grid_pred = loc_pred)
 
 # Computation of the samples for West Nile Virus prevalence
 beta_hat <- coef(inf_fit)$beta

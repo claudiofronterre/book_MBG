@@ -16,7 +16,7 @@ editor:
 
 | Function | R Package | Used for |
 |-------------------------|------------------|-----------------------------|
-| `pred_over_grid()` | *RiskMap* | Predicting the different component of the linear predictor over a grid: the covariates effects and the random effects |
+| `setup_prediction()` | *RiskMap* | Predicting the different component of the linear predictor over a grid: the covariates effects and the random effects |
 | `pred_target_grid()` | *RiskMap* | Predictions of target defined at pixel-level |
 | `pred_target_shp()` | *RiskMap* | Predictions of targets defined at areal level |
 | `assess_prediction()` | *RiskMap* | Assessing the predictive performance of geostatistical models using cross-validation |
@@ -194,14 +194,14 @@ former.
 We now show how the ideas and concepts discussed above are put into
 practice in an geostatistical analysis, using the Liberia data example.
 Using the fitted model in @sec-liberia-estim1, we use the
-`pred_over_grid()` function in RiskMap, to sample from the predictive
+`setup_prediction()` function in RiskMap, to sample from the predictive
 distribution of the spatial Gaussian process $S(x)$ based on a regular
 grid spanning the country of Liberia.
 
-The `pred_over_grid()` function enables us to predict the separate effects
+The `setup_prediction()` function enables us to predict the separate effects
 of the covariates, given by $d(x)^\top \beta$, and the spatial random
 effects, $S(x)$, at any desired location $x$. Hence, before we can use
-the `pred_over_grid()` function, we need to do 1) obtain a shape file that
+the `setup_prediction()` function, we need to do 1) obtain a shape file that
 defines the boundaries of our study area, 2) use that to create a
 regular grid and 3) extract the covariates values at those locations.
 The R script below performs all these steps.
@@ -274,7 +274,7 @@ the choice of a 5 km grid strikes a balance between sufficient
 visualization clarity and manageable computation time.
 
 At this point, we have all the necessary inputs to execute the
-`pred_over_grid()` function for both marginal and joint predictions, as
+`setup_prediction()` function for both marginal and joint predictions, as
 demonstrated below.
 
 ```{r}
@@ -284,13 +284,13 @@ demonstrated below.
 # covariates effects
 
 # Marginal predictions
-lb_pred_S_m <- pred_over_grid(fit_liberia, 
+lb_pred_S_m <- setup_prediction(fit_liberia, 
                             grid_pred = liberia_grid, 
                predictors = lb_predictors, messages = FALSE,
                type = "marginal")
 
 # Joint predictions
-lb_pred_S_j <- pred_over_grid(fit_liberia, 
+lb_pred_S_j <- setup_prediction(fit_liberia, 
                             grid_pred = liberia_grid, 
                predictors = lb_predictors, messages = FALSE,
                type = "joint")
@@ -305,7 +305,7 @@ they come from the joint predictive distribution of $S(\tilde{X})$.
 An important note is that in the code above we have used the default
 settings for the Markov Chain Monte Carlo (MCMC). To change these
 setting use the function `set_control_sim()` whose output should be passed
-to the argument `contol_sim` of `pred_over_grid()`. The diagnostic on the
+to the argument `contol_sim` of `setup_prediction()`. The diagnostic on the
 convergence of the MCMC can also be applying the `plot_mcmc()` function
 to either `lb_pred_S_m` or `lb_pred_S_j`; see @sec-summary for more
 details.
@@ -576,7 +576,7 @@ We now have all the ingredients to carry out prediction.
 ```{r}
 #| label: predict-kenya-spatial-process
 #| eval: false
-pred_ken_S <- pred_over_grid(fit_malkenya, grid_pred = ken_grid,
+pred_ken_S <- setup_prediction(fit_malkenya, grid_pred = ken_grid,
                              predictors = ken_predictors)
 
 pred_age15 <- 
@@ -589,7 +589,7 @@ The code below shows how to perform the 4 steps described above to
 generate a predictive map for the general population. Below we use the
 function `update_predictors()` to update the covariates effects that are
 stored in `mu_pred`, a list element generated as the output of
-`pred_over_grid()`.
+`setup_prediction()`.
 
 ```{r}
 #| label: predict-kenya-prevalence
@@ -893,7 +893,7 @@ an_elev <- get_elev_raster(locations = shp_ch,
 predictors <- data.frame(elevation= terra::extract(an_elev,
                                                    st_coordinates(an_grid)))
 
-pred_an_S <- pred_over_grid(an_fit, grid = an_grid, 
+pred_an_S <- setup_prediction(an_fit, grid = an_grid, 
                predictors = predictors,
                type = "joint")
 
