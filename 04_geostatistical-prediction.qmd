@@ -551,7 +551,7 @@ points in a set, and the shape the rubber band forms is the convex hull.
 #| eval: false
 
 # Create grid from convex hull
-shp_ch <- convex_hull_sf(malkenya_comm1000)
+shp_ch <- create_convex_hull(malkenya_comm1000)
 ken_grid <- create_grid(shp_ch, spat_res = 0.5)
 
 # Get elevation raster
@@ -883,7 +883,7 @@ values of elevation observed in the data.
 #| label: prepare-anopheles-prediction-grid
 #| message: false
 # Create grid from convex hull
-shp_ch <- convex_hull_sf(an_fit$data_sf)
+shp_ch <- create_convex_hull(an_fit$data_sf)
 an_grid <- create_grid(shp_ch, spat_res = 2)
 
 
