@@ -2321,7 +2321,7 @@ to_table(italy_fit, digits = 3)
 
 <!-- according to the chosen model, for $j = 1, \ldots, B$. -->
 
-<!-- These steps, from 1 to 7A, have been implemented in the `glgpm_sim()` -->
+<!-- These steps, from 1 to 7A, have been implemented in the `simulate_glgpm()` -->
 
 <!-- function. To show how to perform parametric bootstrap in RiskMap, let -->
 
@@ -2353,7 +2353,7 @@ to_table(italy_fit, digits = 3)
 <!-- ```{r} -->
 <!-- #| eval: false -->
 
-<!-- liberia_sim <- glgpm_sim(n_sim = 1, model_fit = fit_liberia_no_nugget) -->
+<!-- liberia_sim <- simulate_glgpm(n_sim = 1, model_fit = fit_liberia_no_nugget) -->
 
 <!-- ``` -->
 
@@ -2407,7 +2407,7 @@ to_table(italy_fit, digits = 3)
 
 <!-- n_sim <- 100 -->
 
-<!-- liberia_boot <- glgpm_sim(n_sim = n_sim, model_fit = fit_liberia_no_nugget) -->
+<!-- liberia_boot <- simulate_glgpm(n_sim = n_sim, model_fit = fit_liberia_no_nugget) -->
 
 <!-- # List where we will store the estimates from each of the simulated datasets -->
 
@@ -3722,7 +3722,7 @@ to_table(italy_fit, digits = 3)
 
 <!--     gambiae mosquitoes in @sec-anopheles-fit, simulate 1000 datasets -->
 
-<!--     using the `glgpm_sim()` function and estimate the model to each of the -->
+<!--     using the `simulate_glgpm()` function and estimate the model to each of the -->
 
 <!--     simulated dataset. Use the resulting 1000 estimates to compute -->
 
