@@ -306,7 +306,7 @@ An important note is that in the code above we have used the default
 settings for the Markov Chain Monte Carlo (MCMC). To change these
 setting use the function `set_control_sim()` whose output should be passed
 to the argument `contol_sim` of `pred_over_grid()`. The diagnostic on the
-convergence of the MCMC can also be applying the `check_mcmc()` function
+convergence of the MCMC can also be applying the `plot_mcmc()` function
 to either `lb_pred_S_m` or `lb_pred_S_j`; see @sec-summary for more
 details.
 

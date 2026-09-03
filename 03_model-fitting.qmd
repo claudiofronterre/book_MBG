@@ -3325,7 +3325,7 @@ to_table(italy_fit, digits = 3)
 
 <!-- the convergence of the MCMC algorithm can be obtained with the -->
 
-<!-- `check_mcmc()` function by passing the fitting model `fit_liberia` to the -->
+<!-- `plot_mcmc()` function by passing the fitting model `fit_liberia` to the -->
 
 <!-- function. -->
 
@@ -3335,7 +3335,7 @@ to_table(italy_fit, digits = 3)
 
 <!-- #| fig-cap: "Trace plot (left panel) and autocorrelation function plot (right panel) for the averaged spatial random effects from the river-blindness data analysis. The title of the right panel also shows the effective sample size of the 1000 Markov chain Monte Carlo (MCMC) samples. The MCMC samples are obtained by running the MCMC algorithm for 12000 iterations, with a burn-in of 2000 and thinning of 10."   -->
 
-<!-- check_mcmc(fit_liberia) -->
+<!-- plot_mcmc(fit_liberia) -->
 
 <!-- ``` -->
 
@@ -3367,7 +3367,7 @@ to_table(italy_fit, digits = 3)
 
 <!-- #| fig-cap: "Trace plot (left panel) and autocorrelation function plot (right panel) for the tenth component of the spatial random effects from the river-blindness data analysis. "   -->
 
-<!-- check_mcmc(fit_liberia, check_mean = FALSE, component = 10) -->
+<!-- plot_mcmc(fit_liberia, check_mean = FALSE, component = 10) -->
 
 <!-- ``` -->
 
@@ -3426,7 +3426,7 @@ to_table(italy_fit, digits = 3)
 
 <!-- #| fig-cap: "Trace plot (left panel) and autocorrelation function plot (right panel) for the tenth component of the spatial random effects from the river-blindness data analysis. The Markov chain Monte Carlo (MCMC) samples are obtained by running the MCMC algorithm for 110000 iterations, with a burn-in of 10000 and thinning of 10. "   -->
 
-<!-- check_mcmc(fit_liberia2) -->
+<!-- plot_mcmc(fit_liberia2) -->
 
 <!-- ``` -->
 
