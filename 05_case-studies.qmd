@@ -355,7 +355,7 @@ n_pred <- nrow(st_coordinates(ghana_grid))
 # Prediction of S(x) and covariates effects over the grid for
 
 # HAZ
-haz_pred_grid <- pred_over_grid(haz_fit,
+haz_pred_grid <- setup_prediction(haz_fit,
                                 grid_pred = ghana_grid,
                                 predictors = data.frame(
                                   # Setting age to 2 months
@@ -364,7 +364,7 @@ haz_pred_grid <- pred_over_grid(haz_fit,
                                   wealth = rep(1, n_pred)
                                 ))
 # WAZ
-waz_pred_grid <- pred_over_grid(waz_fit,
+waz_pred_grid <- setup_prediction(waz_fit,
                                 grid_pred = ghana_grid,
                                 predictors = data.frame(
                                   # Setting age to 1 month
@@ -374,7 +374,7 @@ waz_pred_grid <- pred_over_grid(waz_fit,
                                 ))
 ```
 
-We then use the `pred_target_grid()` function to generate predictive summaries of stunting and underweight prevalence, as defined in @eq-prev-maln. To quantify uncertainty in the predictions, we report the coefficient of variation, which provides a standardized measure of relative uncertainty across the prediction grid.
+We then use the `predict_grid_target()` function to generate predictive summaries of stunting and underweight prevalence, as defined in @eq-prev-maln. To quantify uncertainty in the predictions, we report the coefficient of variation, which provides a standardized measure of relative uncertainty across the prediction grid.
 
 ```{r}
 #| label: predict-malnutrition-prevalence
@@ -382,7 +382,7 @@ We then use the `pred_target_grid()` function to generate predictive summaries o
 # Prediction of stunting prevalence
 sd_ind_haz <- sqrt(coef(haz_fit)$sigma2_me)
 stunting_prev <-
-pred_target_grid(haz_pred_grid,
+predict_grid_target(haz_pred_grid,
                  f_target = list(prev = function(x) pnorm((-2-x)/sd_ind_haz)),
                  pd_summary = list(mean = mean,
                                        cv = function(x) sd(x)/mean(x)))
@@ -390,7 +390,7 @@ pred_target_grid(haz_pred_grid,
 # Prediction of underweight prevalence
 sd_ind_waz <- sqrt(coef(waz_fit)$sigma2_me)
 underw_prev <-
-  pred_target_grid(waz_pred_grid,
+  predict_grid_target(waz_pred_grid,
                    f_target = list(prev = function(x) pnorm((-2-x)/sd_ind_waz)),
                    pd_summary = list(mean = mean,
                                      cv = function(x) sd(x)/mean(x)))
@@ -421,14 +421,14 @@ plot(underw_prev, which_target = "prev", which_summary = "cv",
      main = "Underweight: Coefficient of Variation")
 ```
 
-To assess the predictive performance and calibration of our geostatistical models for HAZ and WAZ, we perform a cross-validation exercise using the `assess_pp()` function. Cross-validation is conducted by repeatedly splitting the data into training and testing sets, ensuring that prediction locations are at least 5 km away from the nearest training point. Specifically, we set `n_size = 100` prediction locations for the test set, impose a minimum distance constraint of 5 km (`min_dist = 5`), and repeat the process over 10 test sets randomly drawn under those conditions (`iter = 10`) using `method="regularized"` as the sampling method.
+To assess the predictive performance and calibration of our geostatistical models for HAZ and WAZ, we perform a cross-validation exercise using the `assess_prediction()` function. Cross-validation is conducted by repeatedly splitting the data into training and testing sets, ensuring that prediction locations are at least 5 km away from the nearest training point. Specifically, we set `n_size = 100` prediction locations for the test set, impose a minimum distance constraint of 5 km (`min_dist = 5`), and repeat the process over 10 test sets randomly drawn under those conditions (`iter = 10`) using `method="regularized"` as the sampling method.
 
 ```{r}
 #| label: assess-malnutrition-calibration
 #| eval: false
 # HAZ
 assess_haz <-
-assess_pp(list(HAZ = haz_fit),
+assess_prediction(list(HAZ = haz_fit),
           n_size = 100,
           min_dist = 5,
           iter = 10,
@@ -436,7 +436,7 @@ assess_pp(list(HAZ = haz_fit),
 
 # WAZ
 assess_waz <-
-  assess_pp(list(WAZ = waz_fit),
+  assess_prediction(list(WAZ = waz_fit),
             n_size = 100,
             min_dist = 5,
             iter = 10,
@@ -444,7 +444,7 @@ assess_waz <-
 
 ```
 
-We note that for a Gaussian linear geostatistical model, the `assess_pp()` function does not compute the average non-randomized probability integral transform (AnPIT, introduced in @sec-anpit), as this measure is specifically designed for count outcomes. Instead, it employs the standard probability integral transform (PIT), defined as $\text{PIT}(y) = F_{M}(y)$, where $F_{M}(y)$ is the cumulative distribution function of the predictive distribution evaluated at the observed value $y$. The PIT transforms the observed outcomes in the test set such that, if the model is well-calibrated, these transformed values should follow a uniform distribution. Deviations from uniformity indicate potential issues with calibration and predictive accuracy.
+We note that for a Gaussian linear geostatistical model, the `assess_prediction()` function does not compute the average non-randomized probability integral transform (AnPIT, introduced in @sec-anpit), as this measure is specifically designed for count outcomes. Instead, it employs the standard probability integral transform (PIT), defined as $\text{PIT}(y) = F_{M}(y)$, where $F_{M}(y)$ is the cumulative distribution function of the predictive distribution evaluated at the observed value $y$. The PIT transforms the observed outcomes in the test set such that, if the model is well-calibrated, these transformed values should follow a uniform distribution. Deviations from uniformity indicate potential issues with calibration and predictive accuracy.
 
 @fig-maln-pit shows the results of the cross-validation exercise visualized through PIT curves for HAZ and WAZ. Similarly to the way we have interpreted the AnPIT curves, the PIT curves indicate good calibration when they lie close to the identity line, meaning the predictive distributions accurately reflect the observed variability in the test sets. The results shown in @fig-maln-pit demonstrate that, for all ten test sets and for both HAZ and WAZ, the PIT curves closely align with the identity line, confirming that the models are well-calibrated and provide reliable uncertainty quantification.
 
@@ -1038,18 +1038,18 @@ predictors <- cbind(terra::extract(r_covs,  st_coordinates(grid_mlw)),
                     terra::extract(pc1_rast,  st_coordinates(grid_mlw)))
 
 # Prevalence prediction over the grid for the two fitted models 
-pred_all_cov <- pred_over_grid(mod_all_cov,
+pred_all_cov <- setup_prediction(mod_all_cov,
                                grid_pred = grid_mlw,
                                predictors = predictors)
 
-pred_pca <- pred_over_grid(mod_pca,
+pred_pca <- setup_prediction(mod_pca,
                            grid_pred = grid_mlw,
                            predictors = predictors)
 
-pred_all_cov_prev <- pred_target_grid(pred_all_cov,
+pred_all_cov_prev <- predict_grid_target(pred_all_cov,
                                       f_target = list(prev = function(x) exp(x)/(1+exp(x))))
 
-pred_pca_prev <- pred_target_grid(pred_pca,
+pred_pca_prev <- predict_grid_target(pred_pca,
                              f_target = list(prev = function(x) exp(x)/(1+exp(x))))
 
 ```
@@ -1070,13 +1070,13 @@ plot(pred_pca_prev, which_target = "prev", which_summary = "mean",
 
 ### Comparison of the predictive performance between models
 
-To evaluate predictive performance, we use three spatially distinct hold-out test sets corresponding to the Northern, Central, and Southern regions of Malawi, as illustrated in @fig-mlw-tests. These were constructed using the `assess_pp()` function with `method = "cluster"` and `fold = 3`, ensuring geographically stratified cross-validation.
+To evaluate predictive performance, we use three spatially distinct hold-out test sets corresponding to the Northern, Central, and Southern regions of Malawi, as illustrated in @fig-mlw-tests. These were constructed using the `assess_prediction()` function with `method = "cluster"` and `fold = 3`, ensuring geographically stratified cross-validation.
 
 ```{r}
 #| label: assess-malawi-models
 #| eval: false
 assess_pred_mlw <-
-assess_pp(list(all_cov = mod_all_cov,
+assess_prediction(list(all_cov = mod_all_cov,
                pca = mod_pca),
           method = "cluster",
           which_metric = c("AnPIT", "CRPS"),
@@ -1494,10 +1494,10 @@ ggplot() +
 #| eval: false
 grid_pred_sac <- create_grid(chull_sf, spat_res = 0.25)
 
-pred_S_inf <- pred_over_grid(inf_fit,
+pred_S_inf <- setup_prediction(inf_fit,
                              grid_pred = grid_pred_sac)
 
-pred_inf_grid <- pred_target_grid(pred_S_inf,
+pred_inf_grid <- predict_grid_target(pred_S_inf,
                                   f_target = list(prev = function(x) exp(x)/(1+exp(x))))
 
 ```
@@ -1527,7 +1527,7 @@ loc_pred <- st_as_sfc(st_transform(st_as_sf(abund_sma, coords = c("lon","lat"), 
 
 # Prediction of the spatial process S(x) over the locations of the 
 # abund_sma dataset
-pred_S_loc <- pred_over_grid(inf_fit, grid_pred = loc_pred)
+pred_S_loc <- setup_prediction(inf_fit, grid_pred = loc_pred)
 
 # Computation of the samples for West Nile Virus prevalence
 beta_hat <- coef(inf_fit)$beta

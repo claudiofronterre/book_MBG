@@ -2321,7 +2321,7 @@ to_table(italy_fit, digits = 3)
 
 <!-- according to the chosen model, for $j = 1, \ldots, B$. -->
 
-<!-- These steps, from 1 to 7A, have been implemented in the `glgpm_sim()` -->
+<!-- These steps, from 1 to 7A, have been implemented in the `simulate_glgpm()` -->
 
 <!-- function. To show how to perform parametric bootstrap in RiskMap, let -->
 
@@ -2353,7 +2353,7 @@ to_table(italy_fit, digits = 3)
 <!-- ```{r} -->
 <!-- #| eval: false -->
 
-<!-- liberia_sim <- glgpm_sim(n_sim = 1, model_fit = fit_liberia_no_nugget) -->
+<!-- liberia_sim <- simulate_glgpm(n_sim = 1, model_fit = fit_liberia_no_nugget) -->
 
 <!-- ``` -->
 
@@ -2407,7 +2407,7 @@ to_table(italy_fit, digits = 3)
 
 <!-- n_sim <- 100 -->
 
-<!-- liberia_boot <- glgpm_sim(n_sim = n_sim, model_fit = fit_liberia_no_nugget) -->
+<!-- liberia_boot <- simulate_glgpm(n_sim = n_sim, model_fit = fit_liberia_no_nugget) -->
 
 <!-- # List where we will store the estimates from each of the simulated datasets -->
 
@@ -3073,7 +3073,7 @@ to_table(italy_fit, digits = 3)
 
 <!-- $W$, making the MCMC updates more efficient [@geyer1994]. The function -->
 
-<!-- `Laplace_sampling_MCMC()` in RiskMap uses this approach where by at each -->
+<!-- `laplace_sampling_mcmc()` in RiskMap uses this approach where by at each -->
 
 <!-- iteration the variable $\tilde{W}$ using the MALA algorithm, and samples -->
 
@@ -3325,7 +3325,7 @@ to_table(italy_fit, digits = 3)
 
 <!-- the convergence of the MCMC algorithm can be obtained with the -->
 
-<!-- `check_mcmc()` function by passing the fitting model `fit_liberia` to the -->
+<!-- `plot_mcmc()` function by passing the fitting model `fit_liberia` to the -->
 
 <!-- function. -->
 
@@ -3335,7 +3335,7 @@ to_table(italy_fit, digits = 3)
 
 <!-- #| fig-cap: "Trace plot (left panel) and autocorrelation function plot (right panel) for the averaged spatial random effects from the river-blindness data analysis. The title of the right panel also shows the effective sample size of the 1000 Markov chain Monte Carlo (MCMC) samples. The MCMC samples are obtained by running the MCMC algorithm for 12000 iterations, with a burn-in of 2000 and thinning of 10."   -->
 
-<!-- check_mcmc(fit_liberia) -->
+<!-- plot_mcmc(fit_liberia) -->
 
 <!-- ``` -->
 
@@ -3367,7 +3367,7 @@ to_table(italy_fit, digits = 3)
 
 <!-- #| fig-cap: "Trace plot (left panel) and autocorrelation function plot (right panel) for the tenth component of the spatial random effects from the river-blindness data analysis. "   -->
 
-<!-- check_mcmc(fit_liberia, check_mean = FALSE, component = 10) -->
+<!-- plot_mcmc(fit_liberia, check_mean = FALSE, component = 10) -->
 
 <!-- ``` -->
 
@@ -3377,9 +3377,9 @@ to_table(italy_fit, digits = 3)
 
 <!-- that the number of MCMC samples in `glgpm()` are set through the function -->
 
-<!-- `set_control_sim()` passed to the argument `control_mcmc()`. By default -->
+<!-- `set_control_mcmc()` passed to the argument `control_mcmc()`. By default -->
 
-<!-- `set_control_sim()` uses 12000 iterations, a burn-in of 2000 and thinning -->
+<!-- `set_control_mcmc()` uses 12000 iterations, a burn-in of 2000 and thinning -->
 
 <!-- of 10, thus giving 1000 MCMC samples. This configuration can be enough -->
 
@@ -3410,7 +3410,7 @@ to_table(italy_fit, digits = 3)
 
 <!--       par0 = par0_liberia,  -->
 
-<!--       control_mcmc = set_control_sim(n_sim = 110000,  -->
+<!--       control_mcmc = set_control_mcmc(n_sim = 110000,  -->
 
 <!--                                      burnin = 10000,  -->
 
@@ -3426,7 +3426,7 @@ to_table(italy_fit, digits = 3)
 
 <!-- #| fig-cap: "Trace plot (left panel) and autocorrelation function plot (right panel) for the tenth component of the spatial random effects from the river-blindness data analysis. The Markov chain Monte Carlo (MCMC) samples are obtained by running the MCMC algorithm for 110000 iterations, with a burn-in of 10000 and thinning of 10. "   -->
 
-<!-- check_mcmc(fit_liberia2) -->
+<!-- plot_mcmc(fit_liberia2) -->
 
 <!-- ``` -->
 
@@ -3722,7 +3722,7 @@ to_table(italy_fit, digits = 3)
 
 <!--     gambiae mosquitoes in @sec-anopheles-fit, simulate 1000 datasets -->
 
-<!--     using the `glgpm_sim()` function and estimate the model to each of the -->
+<!--     using the `simulate_glgpm()` function and estimate the model to each of the -->
 
 <!--     simulated dataset. Use the resulting 1000 estimates to compute -->
 

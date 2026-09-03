@@ -304,9 +304,9 @@ phi_2 <- 0.1
 phi_3 <- 0.2
 
 u <- seq(0,0.5,length=1000)
-m1 <- sapply(u, function(x) matern_cor(x, phi_1, kappa = 0.5))
-m2 <- sapply(u, function(x) matern_cor(x, phi_2, kappa = 0.5))
-m3 <- sapply(u, function(x) matern_cor(x, phi_3, kappa = 0.5))
+m1 <- sapply(u, function(x) matern_correlation(x, phi_1, kappa = 0.5))
+m2 <- sapply(u, function(x) matern_correlation(x, phi_2, kappa = 0.5))
+m3 <- sapply(u, function(x) matern_correlation(x, phi_3, kappa = 0.5))
 
 # Create a data frame for ggplot2
 df1 <- data.frame(
@@ -331,18 +331,18 @@ a <- ggplot(df1, aes(x = u, y = correlation, color = label, linetype = label)) +
   scale_linetype_discrete(labels = scales::parse_format()) +
   coord_equal()
 
-phi_0.5 <- uniroot(function(x) matern_cor(0.3, x, 0.5) - 0.05,
+phi_0.5 <- uniroot(function(x) matern_correlation(0.3, x, 0.5) - 0.05,
                    lower=0.01, upper = 1)$root
 
-phi_1.5 <- uniroot(function(x) matern_cor(0.3, x, 1.5) - 0.05,
+phi_1.5 <- uniroot(function(x) matern_correlation(0.3, x, 1.5) - 0.05,
                    lower=0.01, upper = 1)$root
 
-phi_2.5 <- uniroot(function(x) matern_cor(0.3, x, 2.5) - 0.05,
+phi_2.5 <- uniroot(function(x) matern_correlation(0.3, x, 2.5) - 0.05,
                    lower=0.01, upper = 1)$root
 
-m0.5 <- sapply(u, function(x) matern_cor(x, phi_0.5, kappa = 0.5))
-m1.5 <- sapply(u, function(x) matern_cor(x, phi_1.5, kappa = 1.5))
-m2.5 <- sapply(u, function(x) matern_cor(x, phi_2.5, kappa = 2.5))
+m0.5 <- sapply(u, function(x) matern_correlation(x, phi_0.5, kappa = 0.5))
+m1.5 <- sapply(u, function(x) matern_correlation(x, phi_1.5, kappa = 1.5))
+m2.5 <- sapply(u, function(x) matern_correlation(x, phi_2.5, kappa = 2.5))
 
 # Create a data frame for ggplot2
 df2 <- data.frame(

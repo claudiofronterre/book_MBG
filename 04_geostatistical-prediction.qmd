@@ -16,12 +16,12 @@ editor:
 
 | Function | R Package | Used for |
 |-------------------------|------------------|-----------------------------|
-| `pred_over_grid()` | *RiskMap* | Predicting the different component of the linear predictor over a grid: the covariates effects and the random effects |
-| `pred_target_grid()` | *RiskMap* | Predictions of target defined at pixel-level |
-| `pred_target_shp()` | *RiskMap* | Predictions of targets defined at areal level |
-| `assess_pp()` | *RiskMap* | Assessing the predictive performance of geostatistical models using cross-validation |
-| `surf_sim()` | *RiskMap* | Simulating surfaces and data from geostatistical models |
-| `assess_sim()` | *RiskMap* | Assessing the predictive performance of geostatistical models using simulations |
+| `setup_prediction()` | *RiskMap* | Predicting the different component of the linear predictor over a grid: the covariates effects and the random effects |
+| `predict_grid_target()` | *RiskMap* | Predictions of target defined at pixel-level |
+| `predict_areal_target()` | *RiskMap* | Predictions of targets defined at areal level |
+| `assess_prediction()` | *RiskMap* | Assessing the predictive performance of geostatistical models using cross-validation |
+| `simulate_surface()` | *RiskMap* | Simulating surfaces and data from geostatistical models |
+| `assess_simulation()` | *RiskMap* | Assessing the predictive performance of geostatistical models using simulations |
 
 Geostatistics was originally developed and applied as a predictive tool
 for improving mining operations and planning. In the seminal paper on
@@ -194,14 +194,14 @@ former.
 We now show how the ideas and concepts discussed above are put into
 practice in an geostatistical analysis, using the Liberia data example.
 Using the fitted model in @sec-liberia-estim1, we use the
-`pred_over_grid()` function in RiskMap, to sample from the predictive
+`setup_prediction()` function in RiskMap, to sample from the predictive
 distribution of the spatial Gaussian process $S(x)$ based on a regular
 grid spanning the country of Liberia.
 
-The `pred_over_grid()` function enables us to predict the separate effects
+The `setup_prediction()` function enables us to predict the separate effects
 of the covariates, given by $d(x)^\top \beta$, and the spatial random
 effects, $S(x)$, at any desired location $x$. Hence, before we can use
-the `pred_over_grid()` function, we need to do 1) obtain a shape file that
+the `setup_prediction()` function, we need to do 1) obtain a shape file that
 defines the boundaries of our study area, 2) use that to create a
 regular grid and 3) extract the covariates values at those locations.
 The R script below performs all these steps.
@@ -274,7 +274,7 @@ the choice of a 5 km grid strikes a balance between sufficient
 visualization clarity and manageable computation time.
 
 At this point, we have all the necessary inputs to execute the
-`pred_over_grid()` function for both marginal and joint predictions, as
+`setup_prediction()` function for both marginal and joint predictions, as
 demonstrated below.
 
 ```{r}
@@ -284,13 +284,13 @@ demonstrated below.
 # covariates effects
 
 # Marginal predictions
-lb_pred_S_m <- pred_over_grid(fit_liberia, 
+lb_pred_S_m <- setup_prediction(fit_liberia, 
                             grid_pred = liberia_grid, 
                predictors = lb_predictors, messages = FALSE,
                type = "marginal")
 
 # Joint predictions
-lb_pred_S_j <- pred_over_grid(fit_liberia, 
+lb_pred_S_j <- setup_prediction(fit_liberia, 
                             grid_pred = liberia_grid, 
                predictors = lb_predictors, messages = FALSE,
                type = "joint")
@@ -304,9 +304,9 @@ they come from the joint predictive distribution of $S(\tilde{X})$.
 
 An important note is that in the code above we have used the default
 settings for the Markov Chain Monte Carlo (MCMC). To change these
-setting use the function `set_control_sim()` whose output should be passed
-to the argument `contol_sim` of `pred_over_grid()`. The diagnostic on the
-convergence of the MCMC can also be applying the `check_mcmc()` function
+setting use the function `set_control_mcmc()` whose output should be passed
+to the argument `contol_sim` of `setup_prediction()`. The diagnostic on the
+convergence of the MCMC can also be applying the `plot_mcmc()` function
 to either `lb_pred_S_m` or `lb_pred_S_j`; see @sec-summary for more
 details.
 
@@ -383,7 +383,7 @@ Liberia. The predictive target we consider is prevalence, hence
 $$T(x) = \frac{\exp\{ \beta_{0} + \beta_{1}\log\{e(x)\} + S(x)\}}{1+\exp\{\beta_{0} + \beta_{1}\log\{e(x)\} + S(x)\}},$$ {#eq-rb-prev-target}
 where $e(x)$ is the elevation in meters at location $x$.
 
-Through the `pred_target_grid()` we can use the output in `lb_pred_S_m`
+Through the `predict_grid_target()` we can use the output in `lb_pred_S_m`
 (or `lb_pred_S_j` as well, in this case) to generate predictions of
 prevalence over the regular grid at 5 km we have created earlier.
 
@@ -392,7 +392,7 @@ prevalence over the regular grid at 5 km we have created earlier.
 
 # Prediction of river blindness prevalence
 lb_prev <- 
-pred_target_grid(
+predict_grid_target(
   lb_pred_S_m, 
   f_target = list(prev = function(lp) exp(lp)/(1+exp(lp))),
   pd_summary = list(mean = function(Tx) mean(Tx), 
@@ -551,7 +551,7 @@ points in a set, and the shape the rubber band forms is the convex hull.
 #| eval: false
 
 # Create grid from convex hull
-shp_ch <- convex_hull_sf(malkenya_comm1000)
+shp_ch <- create_convex_hull(malkenya_comm1000)
 ken_grid <- create_grid(shp_ch, spat_res = 0.5)
 
 # Get elevation raster
@@ -576,11 +576,11 @@ We now have all the ingredients to carry out prediction.
 ```{r}
 #| label: predict-kenya-spatial-process
 #| eval: false
-pred_ken_S <- pred_over_grid(fit_malkenya, grid_pred = ken_grid,
+pred_ken_S <- setup_prediction(fit_malkenya, grid_pred = ken_grid,
                              predictors = ken_predictors)
 
 pred_age15 <- 
-pred_target_grid(pred_ken_S, 
+predict_grid_target(pred_ken_S, 
                  f_target = list(prev = function(lp) exp(lp)/(1+exp(lp))),
                  pd_summary = list(mean = function(Tx) mean(Tx)))
 ```
@@ -589,7 +589,7 @@ The code below shows how to perform the 4 steps described above to
 generate a predictive map for the general population. Below we use the
 function `update_predictors()` to update the covariates effects that are
 stored in `mu_pred`, a list element generated as the output of
-`pred_over_grid()`.
+`setup_prediction()`.
 
 ```{r}
 #| label: predict-kenya-prevalence
@@ -614,7 +614,7 @@ for(i in 1:n_sim) {
 }
 
 # Prediction of prevalence
-pred_aver_pop <- pred_target_grid(pred_ken_S_i, 
+pred_aver_pop <- predict_grid_target(pred_ken_S_i, 
                f_target = list(prev = function(lp) exp(lp)/(1+exp(lp))))
 ```
 
@@ -737,7 +737,7 @@ denoting with $T(x)$ river blindness prevalence as defined in
 @eq-rb-prev-target, we define our predictive target as
 $$T_{i} = \frac{1}{|A_i|} \int_{A_i} T(x) \: dx.$$
 The R code below shows how predictions for $T_i$ can be performed using
-the `pred_target_shp()` function.
+the `predict_areal_target()` function.
 
 ```{r}
 #| label: prepare-liberia-admin-prediction
@@ -748,7 +748,7 @@ library(rgeoboundaries)
 lb_adm1 <- geoboundaries(country = "Liberia", adm_lvl = "adm1")
 
 # Prediction of prevalence 
-pred_shp <- pred_target_shp(lb_pred_S_j, shp = lb_adm1,
+pred_shp <- predict_areal_target(lb_pred_S_j, shp = lb_adm1,
                             shp_target = function(Tx) mean(Tx),
                             f_target = list(prev = 
                                        function(lp) exp(lp)/(1+exp(lp))),
@@ -797,7 +797,7 @@ weights_pred <- extract(lbr_pop, st_coordinates(liberia_grid))$lbr_ppp_2014
 ```
 
 In the code above the population density weights are extracted at the
-locations of the prediction grid. In the `pred_target_shp()` function, in
+locations of the prediction grid. In the `predict_areal_target()` function, in
 order to use the weights for our predictive target, we need to specify
 two additional arguments: `weights` to which we pass the population
 density values (in our case these are stored in `weights_pred`);
@@ -808,7 +808,7 @@ a region $A_i$ adds up to one.
 ```{r}
 #| label: predict-population-weighted-prevalence
 #| eval: false
-pred_shp_w <- pred_target_shp(lb_pred_S_j, shp = lb_adm1,
+pred_shp_w <- predict_areal_target(lb_pred_S_j, shp = lb_adm1,
                             shp_target = function(Tx) sum(Tx),
                             f_target = list(prev = 
                                        function(lp) exp(lp)/(1+exp(lp))),
@@ -883,7 +883,7 @@ values of elevation observed in the data.
 #| label: prepare-anopheles-prediction-grid
 #| message: false
 # Create grid from convex hull
-shp_ch <- convex_hull_sf(an_fit$data_sf)
+shp_ch <- create_convex_hull(an_fit$data_sf)
 an_grid <- create_grid(shp_ch, spat_res = 2)
 
 
@@ -893,12 +893,12 @@ an_elev <- get_elev_raster(locations = shp_ch,
 predictors <- data.frame(elevation= terra::extract(an_elev,
                                                    st_coordinates(an_grid)))
 
-pred_an_S <- pred_over_grid(an_fit, grid = an_grid, 
+pred_an_S <- setup_prediction(an_fit, grid = an_grid, 
                predictors = predictors,
                type = "joint")
 
 pred_n_mosq_grid <- 
-pred_target_grid(pred_an_S, 
+predict_grid_target(pred_an_S, 
                  f_target = list(n_mosq = function(lp) exp(lp)),
                  pd_summary = list(mean = function(Tx) mean(Tx)))
 
@@ -937,7 +937,7 @@ in black.
 ```{r}
 #| label: predict-total-mosquito-abundance
 pred_n_mosq_shp <- 
-pred_target_shp(pred_an_S, shp = shp_ch, 
+predict_areal_target(pred_an_S, shp = shp_ch, 
                  weights = an_weights,
                  shp_target = sum,
                  f_target = list(n_mosq = function(lp) exp(lp)),
@@ -1444,7 +1444,7 @@ glgpm(npos ~  elevation + pmax(elevation - 150, 0) +
 Since the main goal of this analysis is to draw predictive inference on
 river blindness prevalence within Liberia, it would be more appropriate
 to use a regulirized subsampling scheme to split the data. To generate
-the AnPIT diagnostic plot in R, we can use the `assess_pp()` function in
+the AnPIT diagnostic plot in R, we can use the `assess_prediction()` function in
 RiskMap
 
 ```{r}
@@ -1452,7 +1452,7 @@ RiskMap
 #| eval: false
 
 regularized <- 
-assess_pp(list(M0 = M0_fit, M1 = M1_fit),
+assess_prediction(list(M0 = M0_fit, M1 = M1_fit),
           which_metric = "AnPIT", 
           method = "regularized", min_dist = 20,
           n_size = 9, iter = 10)
@@ -1489,7 +1489,7 @@ conclude that both $M_0$ and $M_1$ can be considered to be approximately
 well calibrated models.
 
 Let us how if these results would change if we were to split the data
-using a clustering algorithm approach. We then use the `assess_pp()`, to
+using a clustering algorithm approach. We then use the `assess_prediction()`, to
 create 10 folds and set `method = "cluster"`.
 
 ```{r}
@@ -1497,7 +1497,7 @@ create 10 folds and set `method = "cluster"`.
 #| eval: false
 
 cluster <- 
-assess_pp(list(M0 = M0_fit, M1 = M1_fit),
+assess_prediction(list(M0 = M0_fit, M1 = M1_fit),
           which_metric = "AnPIT", 
           method = "cluster", fold = 10)
 
@@ -1649,27 +1649,27 @@ and $M_0$ and found these to be reasonably well calibrated models. We
 now compare the predictive performance of the two, using both the CRPS
 and SCRPS metrics introduced previously.
 
-The `assess_pp()` function also allows the user to compute the CRPS and
+The `assess_prediction()` function also allows the user to compute the CRPS and
 SCRPS through the argument `which_metric` as shown below.
 
 ```{r}
 #| label: score-liberia-validation-models
 #| eval: false
 regularized_scores <- 
-assess_pp(list(M0 = M0_fit, M1 = M1_fit),
+assess_prediction(list(M0 = M0_fit, M1 = M1_fit),
           which_metric = c("CRSP", "SCRPS"), 
           method = "regularized", min_dist = 20,
           n_size = 9, iter = 10)
 
 cluster_scores <- 
-assess_pp(list(M0 = M0_fit, M1 = M1_fit),
+assess_prediction(list(M0 = M0_fit, M1 = M1_fit),
           which_metric = c("CRSP", "SCRPS"), 
           method = "cluster", fold = 10)
 
 
 ```
 
-Note that that `assess_pp()` can be run once in order to obtain both the
+Note that that `assess_prediction()` can be run once in order to obtain both the
 AnPIT diagnostic, introduced in @sec-anpit; by default
 `which_metric = c("AnPIT", "CRSP", "SCRPS")` which computes all three
 diagnostic using the same test sets. The reason we have separated the
@@ -1887,7 +1887,7 @@ $\tilde{X}$ and $X$.
 5.  Only for locations of the data $X$, perform the steps 5A to 7A as
     explained in @sec-bootstrap, to simulate the data $Y$.
 
-The function `surf_sim()` in RiskMap can be used to carry out all these
+The function `simulate_surface()` in RiskMap can be used to carry out all these
 steps automatically as shown next.
 
 #### Example
@@ -1911,7 +1911,7 @@ liberia_elev <- get_elev_raster(locations = shp,
 pred_grid$elevation <- terra::extract(liberia_elev, st_coordinates(pred_grid))
 ```
 
-The function `surf_sim()` also requires a sampling functions that
+The function `simulate_surface()` also requires a sampling functions that
 generates the locations $X$ from which data $Y$ are simulated. In this
 example, we shall consider a sampling function that simply returns the
 locations of the original data.
@@ -1933,12 +1933,12 @@ contain the number of tested people and its corresponding column must be
 named `units_m`. Also, the returned `sf` object must have a projection
 that correspond to the one used when fitting the model.
 
-We are now ready to run the `surf_sim()` function.
+We are now ready to run the `simulate_surface()` function.
 
 ```{r}
 #| label: simulate-liberia-surfaces
 #| eval: false
-lib_surf_sim <- surf_sim(n_sim = 200,
+lib_surf_sim <- simulate_surface(n_sim = 200,
                          pred_grid = pred_grid,
                          formula = ~ elevation + pmax(elevation - 150,0) +
                                      gp(kappa=0.5),
@@ -1997,7 +1997,7 @@ $h = 1, \ldots, N$, generated by the Monte Carlo Markov Chain (MCMC)
 algorithm for a given dataset $j$.
 
 An example in R for Step 3 will be provided in the next section, where
-we shall use the function `assess_sim()`, from the RiskMap package,
+we shall use the function `assess_simulation()`, from the RiskMap package,
 which combines Step 3 and Step 4 into a single step.
 
 ### Step 4: Summarize the results using a pre-defined objective function
@@ -2034,14 +2034,14 @@ Carlo samples $T_{(j)}^{(h)}(\tilde{x})$.
 
 #### Example
 
-Using the output from the `surf_sim()` function, named `lib_surf_sim`, we
-can use as the input to the function `assess_sim()` which performs Step 3
+Using the output from the `simulate_surface()` function, named `lib_surf_sim`, we
+can use as the input to the function `assess_simulation()` which performs Step 3
 and Step 4, previously outlined.
 
 ```{r}
 #| label: assess-grid-predictions
 #| eval: false
-res_sim_grid <- assess_sim(lib_surf_sim,
+res_sim_grid <- assess_simulation(lib_surf_sim,
                       models = list(M_T = ~  elevation +
                                              pmax(elevation - 150, 0) +
                                              gp(long, lat),
@@ -2222,7 +2222,7 @@ informed by the model's classifications.
 Using the same models, $M_T$ and $M_C$, from the river blindness example
 in Liberia, we now compare their performance in classifying admin level
 1 regions into two prevalence categories, $(0, 0.2)$ and \$(0.2, 1) \$.
-The assessment is conducted using `assess_sim()`, where the prevalence
+The assessment is conducted using `assess_simulation()`, where the prevalence
 surface is first aggregated at the areal level before classification.
 
 ```{r}
@@ -2232,7 +2232,7 @@ surface is first aggregated at the areal level before classification.
 shp_adm <- geoboundaries(country = "liberia", adm_lvl = "adm1")
 shp_adm <- st_transform(shp_adm, crs= 32629)
 
-res_sim_area <- assess_sim(lib_surf_sim,
+res_sim_area <- assess_simulation(lib_surf_sim,
                       models = list(M_T = ~  elevation +
                                       pmax(elevation - 150, 0) +
                                       gp(long, lat),
@@ -2607,7 +2607,7 @@ The answer to this question is given in @sec-non-spar-covariates.
     extends $M1$ by adding a nugget effect, hence
     $$M_{2} \: : \: \log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_0 + \beta_{1}e(x_i) + \beta_{2}\max\{e(x_i) - 150, 0\} + S(x_i) + Z_i.$$
     Generate the AnPIT plot for $M_2$ and compare it to those of $M_0$
-    and $M_1$. Make sure to apply the function `assess_pp()` to all three
+    and $M_1$. Make sure to apply the function `assess_prediction()` to all three
     models so that the same test sets are used. Is $M_2$ showing a
     better calibration? Why?
 
