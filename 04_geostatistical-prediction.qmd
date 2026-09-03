@@ -19,7 +19,7 @@ editor:
 | `pred_over_grid()` | *RiskMap* | Predicting the different component of the linear predictor over a grid: the covariates effects and the random effects |
 | `pred_target_grid()` | *RiskMap* | Predictions of target defined at pixel-level |
 | `pred_target_shp()` | *RiskMap* | Predictions of targets defined at areal level |
-| `assess_pp()` | *RiskMap* | Assessing the predictive performance of geostatistical models using cross-validation |
+| `assess_prediction()` | *RiskMap* | Assessing the predictive performance of geostatistical models using cross-validation |
 | `surf_sim()` | *RiskMap* | Simulating surfaces and data from geostatistical models |
 | `assess_sim()` | *RiskMap* | Assessing the predictive performance of geostatistical models using simulations |
 
@@ -1444,7 +1444,7 @@ glgpm(npos ~  elevation + pmax(elevation - 150, 0) +
 Since the main goal of this analysis is to draw predictive inference on
 river blindness prevalence within Liberia, it would be more appropriate
 to use a regulirized subsampling scheme to split the data. To generate
-the AnPIT diagnostic plot in R, we can use the `assess_pp()` function in
+the AnPIT diagnostic plot in R, we can use the `assess_prediction()` function in
 RiskMap
 
 ```{r}
@@ -1452,7 +1452,7 @@ RiskMap
 #| eval: false
 
 regularized <- 
-assess_pp(list(M0 = M0_fit, M1 = M1_fit),
+assess_prediction(list(M0 = M0_fit, M1 = M1_fit),
           which_metric = "AnPIT", 
           method = "regularized", min_dist = 20,
           n_size = 9, iter = 10)
@@ -1489,7 +1489,7 @@ conclude that both $M_0$ and $M_1$ can be considered to be approximately
 well calibrated models.
 
 Let us how if these results would change if we were to split the data
-using a clustering algorithm approach. We then use the `assess_pp()`, to
+using a clustering algorithm approach. We then use the `assess_prediction()`, to
 create 10 folds and set `method = "cluster"`.
 
 ```{r}
@@ -1497,7 +1497,7 @@ create 10 folds and set `method = "cluster"`.
 #| eval: false
 
 cluster <- 
-assess_pp(list(M0 = M0_fit, M1 = M1_fit),
+assess_prediction(list(M0 = M0_fit, M1 = M1_fit),
           which_metric = "AnPIT", 
           method = "cluster", fold = 10)
 
@@ -1649,27 +1649,27 @@ and $M_0$ and found these to be reasonably well calibrated models. We
 now compare the predictive performance of the two, using both the CRPS
 and SCRPS metrics introduced previously.
 
-The `assess_pp()` function also allows the user to compute the CRPS and
+The `assess_prediction()` function also allows the user to compute the CRPS and
 SCRPS through the argument `which_metric` as shown below.
 
 ```{r}
 #| label: score-liberia-validation-models
 #| eval: false
 regularized_scores <- 
-assess_pp(list(M0 = M0_fit, M1 = M1_fit),
+assess_prediction(list(M0 = M0_fit, M1 = M1_fit),
           which_metric = c("CRSP", "SCRPS"), 
           method = "regularized", min_dist = 20,
           n_size = 9, iter = 10)
 
 cluster_scores <- 
-assess_pp(list(M0 = M0_fit, M1 = M1_fit),
+assess_prediction(list(M0 = M0_fit, M1 = M1_fit),
           which_metric = c("CRSP", "SCRPS"), 
           method = "cluster", fold = 10)
 
 
 ```
 
-Note that that `assess_pp()` can be run once in order to obtain both the
+Note that that `assess_prediction()` can be run once in order to obtain both the
 AnPIT diagnostic, introduced in @sec-anpit; by default
 `which_metric = c("AnPIT", "CRSP", "SCRPS")` which computes all three
 diagnostic using the same test sets. The reason we have separated the
@@ -2607,7 +2607,7 @@ The answer to this question is given in @sec-non-spar-covariates.
     extends $M1$ by adding a nugget effect, hence
     $$M_{2} \: : \: \log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_0 + \beta_{1}e(x_i) + \beta_{2}\max\{e(x_i) - 150, 0\} + S(x_i) + Z_i.$$
     Generate the AnPIT plot for $M_2$ and compare it to those of $M_0$
-    and $M_1$. Make sure to apply the function `assess_pp()` to all three
+    and $M_1$. Make sure to apply the function `assess_prediction()` to all three
     models so that the same test sets are used. Is $M_2$ showing a
     better calibration? Why?
 

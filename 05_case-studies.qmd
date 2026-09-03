@@ -421,14 +421,14 @@ plot(underw_prev, which_target = "prev", which_summary = "cv",
      main = "Underweight: Coefficient of Variation")
 ```
 
-To assess the predictive performance and calibration of our geostatistical models for HAZ and WAZ, we perform a cross-validation exercise using the `assess_pp()` function. Cross-validation is conducted by repeatedly splitting the data into training and testing sets, ensuring that prediction locations are at least 5 km away from the nearest training point. Specifically, we set `n_size = 100` prediction locations for the test set, impose a minimum distance constraint of 5 km (`min_dist = 5`), and repeat the process over 10 test sets randomly drawn under those conditions (`iter = 10`) using `method="regularized"` as the sampling method.
+To assess the predictive performance and calibration of our geostatistical models for HAZ and WAZ, we perform a cross-validation exercise using the `assess_prediction()` function. Cross-validation is conducted by repeatedly splitting the data into training and testing sets, ensuring that prediction locations are at least 5 km away from the nearest training point. Specifically, we set `n_size = 100` prediction locations for the test set, impose a minimum distance constraint of 5 km (`min_dist = 5`), and repeat the process over 10 test sets randomly drawn under those conditions (`iter = 10`) using `method="regularized"` as the sampling method.
 
 ```{r}
 #| label: assess-malnutrition-calibration
 #| eval: false
 # HAZ
 assess_haz <-
-assess_pp(list(HAZ = haz_fit),
+assess_prediction(list(HAZ = haz_fit),
           n_size = 100,
           min_dist = 5,
           iter = 10,
@@ -436,7 +436,7 @@ assess_pp(list(HAZ = haz_fit),
 
 # WAZ
 assess_waz <-
-  assess_pp(list(WAZ = waz_fit),
+  assess_prediction(list(WAZ = waz_fit),
             n_size = 100,
             min_dist = 5,
             iter = 10,
@@ -444,7 +444,7 @@ assess_waz <-
 
 ```
 
-We note that for a Gaussian linear geostatistical model, the `assess_pp()` function does not compute the average non-randomized probability integral transform (AnPIT, introduced in @sec-anpit), as this measure is specifically designed for count outcomes. Instead, it employs the standard probability integral transform (PIT), defined as $\text{PIT}(y) = F_{M}(y)$, where $F_{M}(y)$ is the cumulative distribution function of the predictive distribution evaluated at the observed value $y$. The PIT transforms the observed outcomes in the test set such that, if the model is well-calibrated, these transformed values should follow a uniform distribution. Deviations from uniformity indicate potential issues with calibration and predictive accuracy.
+We note that for a Gaussian linear geostatistical model, the `assess_prediction()` function does not compute the average non-randomized probability integral transform (AnPIT, introduced in @sec-anpit), as this measure is specifically designed for count outcomes. Instead, it employs the standard probability integral transform (PIT), defined as $\text{PIT}(y) = F_{M}(y)$, where $F_{M}(y)$ is the cumulative distribution function of the predictive distribution evaluated at the observed value $y$. The PIT transforms the observed outcomes in the test set such that, if the model is well-calibrated, these transformed values should follow a uniform distribution. Deviations from uniformity indicate potential issues with calibration and predictive accuracy.
 
 @fig-maln-pit shows the results of the cross-validation exercise visualized through PIT curves for HAZ and WAZ. Similarly to the way we have interpreted the AnPIT curves, the PIT curves indicate good calibration when they lie close to the identity line, meaning the predictive distributions accurately reflect the observed variability in the test sets. The results shown in @fig-maln-pit demonstrate that, for all ten test sets and for both HAZ and WAZ, the PIT curves closely align with the identity line, confirming that the models are well-calibrated and provide reliable uncertainty quantification.
 
@@ -1070,13 +1070,13 @@ plot(pred_pca_prev, which_target = "prev", which_summary = "mean",
 
 ### Comparison of the predictive performance between models
 
-To evaluate predictive performance, we use three spatially distinct hold-out test sets corresponding to the Northern, Central, and Southern regions of Malawi, as illustrated in @fig-mlw-tests. These were constructed using the `assess_pp()` function with `method = "cluster"` and `fold = 3`, ensuring geographically stratified cross-validation.
+To evaluate predictive performance, we use three spatially distinct hold-out test sets corresponding to the Northern, Central, and Southern regions of Malawi, as illustrated in @fig-mlw-tests. These were constructed using the `assess_prediction()` function with `method = "cluster"` and `fold = 3`, ensuring geographically stratified cross-validation.
 
 ```{r}
 #| label: assess-malawi-models
 #| eval: false
 assess_pred_mlw <-
-assess_pp(list(all_cov = mod_all_cov,
+assess_prediction(list(all_cov = mod_all_cov,
                pca = mod_pca),
           method = "cluster",
           which_metric = c("AnPIT", "CRPS"),
