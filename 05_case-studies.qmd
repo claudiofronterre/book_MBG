@@ -217,7 +217,7 @@ To fit this model, we create a cluster ID variable based on the sampling coordin
 #| label: identify-malnutrition-locations
 # Create ID for the location
 malnutrition <- malnutrition %>%
-  group_by(lng, lat) %>%
+  group_by(geometry) %>%
   mutate(loc_id = cur_group_id()) %>%
   ungroup()
 ```
@@ -254,17 +254,16 @@ re <- data.frame(
   Z_hat_waz = ranef(waz_lmer)$loc_id[,1]
 )
 
-# Extract one row per location with coordinates
+# Extract one row per location 
 loc_coords <- malnutrition %>%
-  select(loc_id, lng, lat) %>%
+  select(loc_id) %>%
   distinct()
 
 # Merge coordinates into random effects
-re <- left_join(re, loc_coords, by = "loc_id")
+re <- left_join(loc_coords, re, by = "loc_id")
 
-# Convert to sf and transform into UTM
+# Transform into UTM
 library(sf)
-re <- st_as_sf(re, coords = c("lng","lat"), crs = 4326)
 re <- st_transform(re, crs = propose_utm(re))
 
 # Variogram for HAZ
