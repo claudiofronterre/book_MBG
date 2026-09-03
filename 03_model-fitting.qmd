@@ -3073,7 +3073,7 @@ to_table(italy_fit, digits = 3)
 
 <!-- $W$, making the MCMC updates more efficient [@geyer1994]. The function -->
 
-<!-- `Laplace_sampling_MCMC()` in RiskMap uses this approach where by at each -->
+<!-- `laplace_sampling_mcmc()` in RiskMap uses this approach where by at each -->
 
 <!-- iteration the variable $\tilde{W}$ using the MALA algorithm, and samples -->
 
