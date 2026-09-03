@@ -20,7 +20,7 @@ editor:
 | `predict_grid_target()` | *RiskMap* | Predictions of target defined at pixel-level |
 | `predict_areal_target()` | *RiskMap* | Predictions of targets defined at areal level |
 | `assess_prediction()` | *RiskMap* | Assessing the predictive performance of geostatistical models using cross-validation |
-| `surf_sim()` | *RiskMap* | Simulating surfaces and data from geostatistical models |
+| `simulate_surface()` | *RiskMap* | Simulating surfaces and data from geostatistical models |
 | `assess_simulation()` | *RiskMap* | Assessing the predictive performance of geostatistical models using simulations |
 
 Geostatistics was originally developed and applied as a predictive tool
@@ -1887,7 +1887,7 @@ $\tilde{X}$ and $X$.
 5.  Only for locations of the data $X$, perform the steps 5A to 7A as
     explained in @sec-bootstrap, to simulate the data $Y$.
 
-The function `surf_sim()` in RiskMap can be used to carry out all these
+The function `simulate_surface()` in RiskMap can be used to carry out all these
 steps automatically as shown next.
 
 #### Example
@@ -1911,7 +1911,7 @@ liberia_elev <- get_elev_raster(locations = shp,
 pred_grid$elevation <- terra::extract(liberia_elev, st_coordinates(pred_grid))
 ```
 
-The function `surf_sim()` also requires a sampling functions that
+The function `simulate_surface()` also requires a sampling functions that
 generates the locations $X$ from which data $Y$ are simulated. In this
 example, we shall consider a sampling function that simply returns the
 locations of the original data.
@@ -1933,12 +1933,12 @@ contain the number of tested people and its corresponding column must be
 named `units_m`. Also, the returned `sf` object must have a projection
 that correspond to the one used when fitting the model.
 
-We are now ready to run the `surf_sim()` function.
+We are now ready to run the `simulate_surface()` function.
 
 ```{r}
 #| label: simulate-liberia-surfaces
 #| eval: false
-lib_surf_sim <- surf_sim(n_sim = 200,
+lib_surf_sim <- simulate_surface(n_sim = 200,
                          pred_grid = pred_grid,
                          formula = ~ elevation + pmax(elevation - 150,0) +
                                      gp(kappa=0.5),
@@ -2034,7 +2034,7 @@ Carlo samples $T_{(j)}^{(h)}(\tilde{x})$.
 
 #### Example
 
-Using the output from the `surf_sim()` function, named `lib_surf_sim`, we
+Using the output from the `simulate_surface()` function, named `lib_surf_sim`, we
 can use as the input to the function `assess_simulation()` which performs Step 3
 and Step 4, previously outlined.
 
