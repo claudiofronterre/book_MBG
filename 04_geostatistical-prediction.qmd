@@ -237,10 +237,6 @@ res_sim_grid <- readRDS("data/sim_grid_mse.rds")
 
 res_sim_area <- readRDS("data/sim_area_cl.rds")
 
-fit_liberia$sst <- FALSE
-fit_malkenya$sst <- FALSE
-an_fit$sst <- FALSE
-true_model$sst <- FALSE
 ```
 
 ```{r}
@@ -456,8 +452,6 @@ create our new dataset, `malkenya_comm1000`, using the following code.
 #| label: prepare-malkenya-prediction-data
 malkenya_comm1000 <- malkenya_comm[1:1000,]
 
-malkenya_comm1000 <- st_as_sf(malkenya_comm1000, coords = c("Long", "Lat"),
-                              crs = 4326)
 malkenya_comm1000 <- st_transform(malkenya_comm1000, crs = 32736)
 ```
 
