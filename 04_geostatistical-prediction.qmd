@@ -304,7 +304,7 @@ they come from the joint predictive distribution of $S(\tilde{X})$.
 
 An important note is that in the code above we have used the default
 settings for the Markov Chain Monte Carlo (MCMC). To change these
-setting use the function `set_control_sim()` whose output should be passed
+setting use the function `set_control_mcmc()` whose output should be passed
 to the argument `contol_sim` of `setup_prediction()`. The diagnostic on the
 convergence of the MCMC can also be applying the `plot_mcmc()` function
 to either `lb_pred_S_m` or `lb_pred_S_j`; see @sec-summary for more

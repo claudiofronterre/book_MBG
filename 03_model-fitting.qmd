@@ -3377,9 +3377,9 @@ to_table(italy_fit, digits = 3)
 
 <!-- that the number of MCMC samples in `glgpm()` are set through the function -->
 
-<!-- `set_control_sim()` passed to the argument `control_mcmc()`. By default -->
+<!-- `set_control_mcmc()` passed to the argument `control_mcmc()`. By default -->
 
-<!-- `set_control_sim()` uses 12000 iterations, a burn-in of 2000 and thinning -->
+<!-- `set_control_mcmc()` uses 12000 iterations, a burn-in of 2000 and thinning -->
 
 <!-- of 10, thus giving 1000 MCMC samples. This configuration can be enough -->
 
@@ -3410,7 +3410,7 @@ to_table(italy_fit, digits = 3)
 
 <!--       par0 = par0_liberia,  -->
 
-<!--       control_mcmc = set_control_sim(n_sim = 110000,  -->
+<!--       control_mcmc = set_control_mcmc(n_sim = 110000,  -->
 
 <!--                                      burnin = 10000,  -->
 
