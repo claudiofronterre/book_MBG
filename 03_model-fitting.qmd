@@ -1227,10 +1227,10 @@ to specify the number of permutations that are performed to generate the
 envelope for absence of spatial correlation, previously described.
 ```{r}
 #| label: dist-summaries-liberia
-summarise_distance(data = liberia, scale_to_km = TRUE)
+dist_summaries(data = liberia, scale_to_km = TRUE)
 ```
 
-The `summarise_distance()` function within the RiskMap package can be used
+The `dist_summaries()` function within the RiskMap package can be used
 for gauging the extent of the area covered by your dataset, aiding in
 the selection of appropriate values to be passed to the `breaks` argument.
 
@@ -1343,10 +1343,13 @@ lm_fit <- lm(log(lead) ~ 1, data = galicia)
 # Extract the raw residuals
 galicia$residuals <- lm_fit$residuals
 
+# Convert the galicia data frame into an "sf" object
+galicia_sf <- st_as_sf(galicia, coords = c("x", "y"), crs = 32629)
+
 # Compute the variogram, using the residuals from the linear model fit,
 # and the 95% confidence level envelope for spatial independence
 galicia_variog <- variogram(
-  galicia,
+  galicia_sf,
   variable = "residuals",
   scale_to_km = TRUE,
   breaks = seq(10, 140, length = 15),
@@ -1469,9 +1472,12 @@ these steps is shown below.
 # Incorporating the estimated random effects into the data
 italy_sim$rand_eff <- ranef(lmer_fit)$ID_loc[italy_sim$ID_loc, 1]
 
+# Converting the italy_sim data frame into an "sf" object
+italy_sim_sf <- st_as_sf(italy_sim, coords = c("x1", "x2"), crs = 32634)
+
 # Compute the variogram, using the random effects from the linear mixed model
 # fit, and the 95% confidence level envelope for spatial independence
-italy_sim_variog <- variogram(italy_sim,
+italy_sim_variog <- variogram(italy_sim_sf,
                               variable = "rand_eff",
                               scale_to_km = TRUE,
                               n_permutations = 1000)
@@ -1561,18 +1567,28 @@ function from the RiskMap package. This function implements maximum
 likelihood estimation for generalized linear mixed models using a Matern
 correlation function, while fixing the smoothness parameter $\kappa$ at
 a prespecified value by the user. The object passed to the argument
-`data` in `glgpm()` must be an `sf` object.
+`data` in `glpm()` can either be a `data.frame` object or an `sf` object.
+Below we illustrate the use of `glgpm()` while distinguishing between
+these two cases.
 
-The specification of the Gaussian process
+```{r}
+#| label: glgpm-galicia
+# Parameter estimation when the argument passed to `data` is a data-frame
+fit_galicia <- glgpm(log(lead) ~ gp(x, y, kappa = 1.5), 
+                     data = galicia, family = "gaussian", 
+                     crs = 32629, scale_to_km = TRUE, messages = FALSE)
+```
+
+The code above shows the use of `glgpm()` by passing `galicia` as a
+`data.frame` object to `data`. The specification of the Gaussian process
 $S(x)$ is done through the addition of the term `gp()` in the formula.
-The coordinates names in `gp()` in `glgpm()` do not need to be specified 
-as they are both directly obtained from `galicia`. The function `gp()`
-allows you to specify the smoothness parameter through
+The function `gp()` allows you to specify the columns of the coordinates
+in the data, in this case `x` and `y`, the smoothness parameter through
 the argument `kappa`, set to 1.5 in this example. In the help page of
 `gp()`, you can see that by default the nugget term (denoted in this book
 by the random variable $Z_i$) is excluded from the model by default; to
 include and estimate the variance parameter of the nugget, you should
-set `nugget = TRUE` in the `gp()` function. However, doing so for a linear
+set `nugget=NULL` in the `gp()` function. However, doing so for a linear
 model that only has one observation per location will generate an error
 message as this is a non-identifiable model for the same reasons given
 in @sec-explanal-lm. However, if the measurement error variance is known
@@ -1580,17 +1596,35 @@ this can be fixed by the user using the argument `fix_var_me` and the
 inclusion of the nugget term is then possible (to better understand this
 point, try Exercise 7 at the end of this chapter).
 
-The argument `scale_to_km`, is used to specify whether the distances between
+The argument `crs` is used to specify the coordinate reference system
+(CRS) of the data. For the Galicia data, as well as for every other
+dataset used in this book, the CRS is reported in the help page
+description of the dataset. If `crs` is not specified, the function
+will assume that the coordinates are in longitude/latitude format and
+will use these without applying any transformation. Finally, the
+argument `scale_to_km`, is used to specify whether the distances between
 locations should be scaled to kilometers or maintained in meters; this
 argument will not affect the scale, and thus the interpretation of the
 spatial correlation parameter $\phi$.
 
 ```{r}
 #| label: fit-galicia-sf
-fit_galicia <- 
-glgpm(log(lead) ~ gp(kappa = 1.5), data = galicia, family = "gaussian",
+# Parameter estimation when the argument passed to `data` is an sf object
+galicia_sf <- st_as_sf(galicia, coords = c("x", "y"), crs = 32629)
+fit_galicia_sf <- 
+glgpm(log(lead) ~ gp(kappa = 1.5), data = galicia_sf, family = "gaussian",
       scale_to_km = TRUE, messages = FALSE)
 ```
+
+The code above shows the alternative approach to estimate the model,
+when the argument passed to `data` is an `sf` object. In this case, the
+dataset `galicia` is converted into an `sf` object before the use of
+the `glgpm()` function using `st_as_sf()`. When we then fit the linear
+geostatistical model by passing `galicia_sf` to the argument `data`, the
+only differences with the previous chunk of code that used `galicia`
+instead, is that the coordinates names in `gp()` and the `crs` argument
+in `glgpm()` do not need to be specified as they are both directly
+obtained from `galicia_sf`.
 
 ```{r}
 #| label: summarize-fit-galicia
@@ -1726,6 +1760,11 @@ regions (Admin level 2) and provinces (Admin level 3), as shown in
 #| echo: false
 italy_regions <- readRDS("data/ita_adm2_geoboundaries.rds")
 italy_provinces <- readRDS("data/ita_adm3_geoboundaries.rds")
+italy_sim_sf <- st_as_sf(
+  italy_sim,
+  coords = c("x1", "x2"),
+  crs = 32634
+)
 ```
 
 ```{r}
@@ -1744,14 +1783,14 @@ italy_provinces <- geoboundaries(country = "italy", adm_lvl = "adm3")
 par(mfrow = c(1,2))
 # Map of the data with the region boundaries
 map_regions <- ggplot() + 
-geom_sf(data = italy_sim, pch = 4, color = "red") + 
+geom_sf(data = italy_sim_sf, pch = 4, color = "red") + 
 geom_sf(data = italy_regions, fill = NA) + 
 theme_void() +
 labs(title = "Regions") +
 theme(plot.title = element_text(hjust = 1/2))
 # Map of the data with the province boundaries
 map_provinces <- ggplot() + 
-geom_sf(data = italy_sim, pch = 4, color = "red") + 
+geom_sf(data = italy_sim_sf, pch = 4, color = "red") + 
 geom_sf(data = italy_provinces, fill = NA) + 
 theme_void() +
 labs(title = "Provinces") +
@@ -1796,7 +1835,7 @@ for the province, can be included by using the `re()` function into the
 italy_fit <- glgpm( y ~ log(pop_dens) + gp(kappa = 0.5, nugget = 0) +
                         # Region and province effects
                         re(region, province),
-         data = italy_sim, scale_to_km = TRUE,
+         data = italy_sim_sf, scale_to_km = TRUE,
          family = "gaussian")
 summary(italy_fit)
 ```
@@ -2118,7 +2157,19 @@ to_table(italy_fit, digits = 3)
 
 <!-- $$ {#eq-anopheles} where $d(x_i)$ corresponds to the elevation in meters -->
 
-<!-- at location $x_i$. -->
+<!-- at location $x_i$. This time, we first convert the data frame -->
+
+<!-- `anopheles` into an `sf` object. This step is optional but recommended -->
+
+<!-- as it allows us to simplify the code syntax. -->
+
+<!-- ```{r} -->
+
+<!-- anopheles <- st_as_sf(anopheles, coords = c("web_x", "web_y"), -->
+
+<!--                       crs = 3857) -->
+
+<!-- ``` -->
 
 <!-- We can then use the following script to fit the model in RiskMap. -->
 
@@ -2152,11 +2203,11 @@ to_table(italy_fit, digits = 3)
 
 <!-- ```{r} -->
 
-<!-- summarise_distance(anopheles, scale_to_km = TRUE) -->
+<!-- dist_summaries(anopheles, scale_to_km = TRUE) -->
 
 <!-- ``` -->
 
-<!-- Using the `summarise_distance()` function, we can see that, among the -->
+<!-- Using the `dist_summaries()` function, we can see that, among the -->
 
 <!-- locations of the dataset, the average distance is about 55km and the -->
 
