@@ -10,6 +10,7 @@ execute:
   eval: true
   echo: true
   warning: false
+  freeze: auto
 fig-align: center
 fig-height: 4
 fig-width: 6

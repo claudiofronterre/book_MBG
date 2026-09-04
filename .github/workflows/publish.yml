@@ -55,10 +55,10 @@ jobs:
         uses: r-lib/actions/setup-renv@v2
 
       - name: Configure GitHub Pages
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@v6
 
       - name: Render HTML from committed frozen results
-        run: quarto render --to html --use-freezer
+        run: quarto render --to html --profile ci
 
       - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v4
