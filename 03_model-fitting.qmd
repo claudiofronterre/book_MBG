@@ -1613,7 +1613,25 @@ an `sf` object with a coordinate reference system. The `galicia` dataset
 supplied by RiskMap already satisfies these requirements.
 
 ```{r}
+#| label: load-chapter-3-model-results
+#| include: false
+fit_galicia <- readRDS("data/fit_galicia.rds")
+galicia_kappa_profile <- readRDS("data/galicia_kappa_profile.rds")
+italy_fit <- readRDS("data/italy_fit.rds")
+an_fit <- readRDS("data/an_fit.rds")
+fit_liberia_no_nugget <- readRDS("data/fit_liberia_no_nugget.rds")
+fit_liberia <- readRDS("data/fit_Liberia.rds")
+fit_liberia2 <- readRDS("data/fit_liberia2.rds")
+par_hat <- readRDS("data/par_boot.rds")
+
+kappa_values <- galicia_kappa_profile$kappa_values
+llik_values <- galicia_kappa_profile$llik_values
+sigma2_me_hat <- galicia_kappa_profile$sigma2_me_hat
+```
+
+```{r}
 #| label: glgpm-galicia
+#| eval: false
 
 # Parameter estimation using the geometry and CRS stored in `galicia`
 fit_galicia <- glgpm(log(lead) ~ gp(kappa = 1.5),
@@ -1671,6 +1689,7 @@ clearly illustrate this point.
 
 ```{r}
 #| label: profile-galicia-kappa
+#| eval: false
 
 # Number of the values chosen for kappa
 n_kappa <- 10
@@ -1848,12 +1867,17 @@ for the province, can be included by using the `re()` function into the
 ```{r}
 #| label: fit-italy-spatial-mixed-model
 #| message: false
+#| eval: false
 
 # Location-level, region, and province effects
 italy_fit <- glgpm(y ~ log(pop_dens) + gp(kappa = 0.5, nugget = FALSE) +
                      re(region, province),
                    data = italy_sim, scale_to_km = TRUE,
                    family = "gaussian")
+```
+
+```{r}
+#| label: summarize-italy-spatial-mixed-model
 summary(italy_fit)
 ```
 
@@ -2004,21 +2028,16 @@ explanation of the MCML theory can be found in @sec-glgm-lik, with a
 concise summary of the practical aspects provided in @sec-summary.
 
 ```{r}
-#| label: load-liberia-geostatistical-results
-#| echo: false
-#| message: false
-fit_liberia_no_nugget <- readRDS("data/fit_liberia_no_nugget.rds")
-fit_liberia <- readRDS("data/fit_Liberia.rds")
-fit_liberia2 <- readRDS("data/fit_liberia2.rds")
-par_hat <- readRDS("data/par_boot.rds")
-```
-
-```{r}
 #| label: fit-liberia-geostatistical-model
+#| eval: false
 fit_liberia <- glgpm(npos ~ log(elevation) + gp(),
                      den = ntest, data = liberia,
                      convert_to_crs = 32629,
                      family = "binomial")
+```
+
+```{r}
+#| label: summarize-liberia-geostatistical-model
 summary(fit_liberia)
 ```
 
@@ -2068,10 +2087,15 @@ We can then use the following script to fit the model in RiskMap.
 
 ```{r}
 #| label: fit-anopheles-geostatistical-model
+#| eval: false
 set.seed(1)
 an_fit <- glgpm(An.gambiae ~ elevation + gp(),
                 data = anopheles,
                 family = "poisson", messages = FALSE)
+```
+
+```{r}
+#| label: summarize-anopheles-geostatistical-model
 summary(an_fit)
 ```
 
