@@ -127,7 +127,7 @@ Geostatistical modelling provides a framework for predicting lead concentrations
 
 This dataset will be used throughout the book to illustrate the spatial analysis of continuously measured variables using linear geostatistical models.
 
-### River-blindness in Liberia {#sec-rb-ch1}
+### River blindness in Liberia {#sec-rb-ch1}
 
 ::: {#fig-liberia-ch1}
 ```{r}
@@ -141,7 +141,7 @@ if(knitr::is_html_output()){
 }
 ```
 
-River-blindness data from a cross-sectional survey carried out in Liberia.
+River blindness data from a cross-sectional survey carried out in Liberia.
 :::
 
 In low-resource settings, where disease registries are often absent, cross-sectional surveys provide a critical tool for estimating disease burden in the population of interest. The data considered in this example (@fig-liberia-ch1) were collected as part of the Rapid Epidemiological Mapping of Onchocerciasis (REMO), an Africa-wide initiative conducted in 2011 across 20 countries [@zoure2014]. The purpose of REMO was to identify areas where river blindness (onchocerciasis)—a parasitic disease transmitted by black flies that breed along fast-flowing rivers—remains a public health problem. Of particular concern are communities with prevalence above 20%, which are prioritised for treatment
@@ -215,7 +215,7 @@ The dataset reported in @fig-italy-sim-ch1 was generated using a geostatistical 
 
 ## Geostatistical problems and geostatistical models {#sec-geostat-models}
 
-What the examples of the previous section have in common is that, in each case, the goal of the statistical analysis is to draw inferences on an unobserved spatially continuous surface using data collected from a finite set of locations. The lead concentration in Galicia, the prevalence for river-blindness in Liberia and the abundance of *A. gambiae* mosquitoes in Cameroon can all be represented as spatially continuous processes that originate from the combined effects of environmental factors. We denote this class of inferential problems as *geostatistical problems* for which a solution can be found through the development and application of suitable *geostatistical models*, which are the subject of this book.
+What the examples of the previous section have in common is that, in each case, the goal of the statistical analysis is to draw inferences on an unobserved spatially continuous surface using data collected from a finite set of locations. The lead concentration in Galicia, the prevalence for river blindness in Liberia and the abundance of *A. gambiae* mosquitoes in Cameroon can all be represented as spatially continuous processes that originate from the combined effects of environmental factors. We denote this class of inferential problems as *geostatistical problems* for which a solution can be found through the development and application of suitable *geostatistical models*, which are the subject of this book.
 
 As one can soon realize, geostatistical problems are not unique to global health but arise in many other fields of science, including economics, physics, biology and geology. It thus comes to no surprise that geostatistics was initially developed in the South African mining industry in the 1950s [@krige1951]. This was then further developed as a self-contained discipline by Georges Matheron and other researchers at Fontainebleau, in France [@matheron1963; @chilesdelfiner2016]. In @watson1971 and @watson1972 a first connection is drawn between geostatistics and the prediction of stochastic processes. However, it is only with @ripley1981 and then @cressie1991 that geostatistics is explicitly brought into a classical statistical framework for the analysis of spatially referenced data. @diggle1998 coined the term *model-based geostatistics* and introduced this as belonging to the general class of generalized linear mixed models [@breslow1993], while emphasizing the use of likelihood-based methods of inference. As in @diggle1998, also in this book, we advocate the application of model-based geostatistical models as a class of parametric statistical models on which inference can be carried out using either maximum likelihood estimation or Bayesian methods.
 
