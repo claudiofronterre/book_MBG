@@ -36,7 +36,69 @@ italy_sim_variog <- variogram(
 saveRDS(italy_sim_variog, file = "data/italy_sim_variog.rds")
 
 ## ------------------------------------------------------------
-## 3. Liberia river-blindness models
+## 3. Galicia geostatistical model and kappa profile
+##    -> data/fit_galicia.rds
+##    -> data/galicia_kappa_profile.rds
+## ------------------------------------------------------------
+data(galicia)  # from RiskMap
+
+fit_galicia <- glgpm(log(lead) ~ gp(kappa = 1.5),
+                     data = galicia, family = "gaussian",
+                     scale_to_km = TRUE, messages = FALSE)
+
+saveRDS(fit_galicia, file = "data/fit_galicia.rds")
+
+n_kappa <- 10
+kappa_values <- seq(0.5, 3.5, length = n_kappa)
+llik_values <- rep(NA_real_, n_kappa)
+sigma2_me_hat <- rep(NA_real_, n_kappa)
+fit_galicia_list <- vector("list", n_kappa)
+
+for (i in seq_len(n_kappa)) {
+  formula_i <- as.formula(
+    sprintf("log(lead) ~ gp(kappa = %s)", kappa_values[i])
+  )
+  fit_galicia_list[[i]] <- glgpm(formula_i,
+                                 data = galicia, family = "gaussian",
+                                 scale_to_km = TRUE, messages = FALSE)
+  llik_values[i] <- fit_galicia_list[[i]]$log.lik
+  sigma2_me_hat[i] <- coef(fit_galicia_list[[i]])["sigma2_me"]
+}
+
+galicia_kappa_profile <- list(
+  kappa_values = kappa_values,
+  llik_values = llik_values,
+  sigma2_me_hat = sigma2_me_hat
+)
+
+saveRDS(galicia_kappa_profile, file = "data/galicia_kappa_profile.rds")
+
+## ------------------------------------------------------------
+## 4. Italy spatial mixed model
+##    -> data/italy_fit.rds
+## ------------------------------------------------------------
+italy_fit <- glgpm(y ~ log(pop_dens) + gp(kappa = 0.5, nugget = FALSE) +
+                     re(region, province),
+                   data = italy_sim, scale_to_km = TRUE,
+                   family = "gaussian")
+
+saveRDS(italy_fit, file = "data/italy_fit.rds")
+
+## ------------------------------------------------------------
+## 5. Anopheles geostatistical model
+##    -> data/an_fit.rds
+## ------------------------------------------------------------
+data(anopheles)  # from RiskMap
+
+set.seed(1)
+an_fit <- glgpm(An.gambiae ~ elevation + gp(),
+                data = anopheles,
+                family = "poisson", messages = FALSE)
+
+saveRDS(an_fit, file = "data/an_fit.rds")
+
+## ------------------------------------------------------------
+## 6. Liberia river-blindness models
 ##    -> data/fit_Liberia.rds             (fit_liberia)
 ##    -> data/fit_liberia_no_nugget.rds    (fit_liberia_no_nugget)
 ##    -> data/fit_liberia2.rds             (fit_liberia2)
@@ -44,7 +106,7 @@ saveRDS(italy_sim_variog, file = "data/italy_sim_variog.rds")
 data(liberia)  # from RiskMap
 liberia <- st_as_sf(liberia, coords = c("long", "lat"), crs = 4326)
 
-## --- 2a. Main Binomial geostatistical model (no nugget), used
+## --- 6a. Main Binomial geostatistical model (no nugget), used
 ##         throughout Sec. "Example: river-blindness in Liberia"
 fit_liberia <-
   glgpm(npos ~ log(elevation) + gp(),
@@ -54,7 +116,7 @@ fit_liberia <-
 
 saveRDS(fit_liberia, file = "data/fit_Liberia.rds")
 
-## --- 2b. Same model, saved under the name used later for the
+## --- 6b. Same model, saved under the name used later for the
 ##         parametric-bootstrap section (identical specification
 ##         to fit_liberia; kept as a separate object/name because
 ##         that's the name glgpm_sim()/bootstrap code expects)
@@ -62,7 +124,7 @@ fit_liberia_no_nugget <- fit_liberia
 
 saveRDS(fit_liberia_no_nugget, file = "data/fit_liberia_no_nugget.rds")
 
-## --- 2c. Refit with the nugget estimated and a much larger
+## --- 6c. Refit with the nugget estimated and a much larger
 ##         MCMC sample (110000 iterations, burn-in 10000, thin 10)
 par0_liberia <- coef(fit_liberia)
 par0_liberia$tau2 <- 0.1 
@@ -80,7 +142,7 @@ fit_liberia2 <-
 saveRDS(fit_liberia2, file = "data/fit_liberia2.rds")
 
 ## ------------------------------------------------------------
-## 4. Parametric bootstrap for fit_liberia_no_nugget
+## 7. Parametric bootstrap for fit_liberia_no_nugget
 ##    -> data/par_boot.rds (object: par_hat)
 ## ------------------------------------------------------------
 n_sim <- 100  # increase to >= 1000 for production-quality CIs
