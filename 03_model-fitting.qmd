@@ -1132,7 +1132,7 @@ the `glmer()` function.
 ```{r}
 #| label: glmer-liberia
 # Convert the dataset into an sf object
-liberia <- st_as_sf(liberia, coords = c("lat", "long"), crs = 4326)
+liberia <- st_as_sf(liberia, coords = c("long", "lat"), crs = 4326)
 
 # Create the ID of the location
 liberia$ID_loc <- 1:nrow(liberia)
@@ -1560,37 +1560,29 @@ We carry out the parameter estimation of the model using the `glgpm()`
 function from the RiskMap package. This function implements maximum
 likelihood estimation for generalized linear mixed models using a Matern
 correlation function, while fixing the smoothness parameter $\kappa$ at
-a prespecified value by the user. The object passed to the argument
-`data` in `glgpm()` must be an `sf` object.
-
-The specification of the Gaussian process
-$S(x)$ is done through the addition of the term `gp()` in the formula.
-The coordinates names in `gp()` in `glgpm()` do not need to be specified 
-as they are both directly obtained from `galicia`. The function `gp()`
-allows you to specify the smoothness parameter through
-the argument `kappa`, set to 1.5 in this example. In the help page of
-`gp()`, you can see that by default the nugget term (denoted in this book
-by the random variable $Z_i$) is excluded from the model by default; to
-include and estimate the variance parameter of the nugget, you should
-set `nugget = TRUE` in the `gp()` function. However, doing so for a linear
-model that only has one observation per location will generate an error
-message as this is a non-identifiable model for the same reasons given
-in @sec-explanal-lm. However, if the measurement error variance is known
-this can be fixed by the user using the argument `fix_var_me` and the
-inclusion of the nugget term is then possible (to better understand this
-point, try Exercise 7 at the end of this chapter).
-
-The argument `scale_to_km`, is used to specify whether the distances between
-locations should be scaled to kilometers or maintained in meters; this
-argument will not affect the scale, and thus the interpretation of the
-spatial correlation parameter $\phi$.
+a prespecified value. The object passed to the `data` argument must be
+an `sf` object with a coordinate reference system. The `galicia` dataset
+supplied by RiskMap already satisfies these requirements.
 
 ```{r}
-#| label: fit-galicia-sf
-fit_galicia <- 
-glgpm(log(lead) ~ gp(kappa = 1.5), data = galicia, family = "gaussian",
-      scale_to_km = TRUE, messages = FALSE)
+#| label: glgpm-galicia
+# Parameter estimation using the geometry and CRS stored in `galicia`
+fit_galicia <- glgpm(log(lead) ~ gp(kappa = 1.5),
+                     data = galicia, family = "gaussian",
+                     scale_to_km = TRUE, messages = FALSE)
 ```
+
+The Gaussian process $S(x)$ is specified through `gp()` in the formula.
+The spatial coordinates and CRS are read directly from the `sf` geometry,
+while `kappa` fixes the smoothness parameter at 1.5. By default,
+`nugget = FALSE` and the nugget term (denoted in this book by $Z_i$) is
+excluded. Set `nugget = TRUE` to estimate its variance, or pass a positive
+numeric value to fix it. Estimating the nugget for a Gaussian model with
+only one observation per location is not identifiable unless the
+measurement-error variance is fixed through `fix_var_me`; Exercise 7
+returns to this point. The `scale_to_km` argument controls whether spatial
+distances, and therefore the scale of $\phi$, are expressed in kilometres
+or metres.
 
 ```{r}
 #| label: summarize-fit-galicia
@@ -1644,9 +1636,9 @@ sigma2_me_hat <- rep(NA, length = n_kappa)
 # the different values of kappa specified in kappa_values
 fit_galicia_list <- list()
 for(i in 1:n_kappa) {
-  fit_galicia_list[[i]] <- glgpm(log(lead) ~ gp(x, y, kappa = kappa_values[i]), 
-                                 data=galicia, family = "gaussian",
-                                 crs = 32629, scale_to_km = TRUE, messages = FALSE)
+  fit_galicia_list[[i]] <- glgpm(log(lead) ~ gp(kappa = kappa_values[i]),
+                                 data = galicia, family = "gaussian",
+                                 scale_to_km = TRUE, messages = FALSE)
   llik_values[i] <-  fit_galicia_list[[i]]$log.lik
   sigma2_me_hat[i] <-  coef(fit_galicia_list[[i]])["sigma2_me"]
 }
@@ -1744,14 +1736,14 @@ italy_provinces <- geoboundaries(country = "italy", adm_lvl = "adm3")
 par(mfrow = c(1,2))
 # Map of the data with the region boundaries
 map_regions <- ggplot() + 
-geom_sf(data = italy_sim, pch = 4, color = "red") + 
+geom_sf(data = italy_sim, pch = 4, color = "red") +
 geom_sf(data = italy_regions, fill = NA) + 
 theme_void() +
 labs(title = "Regions") +
 theme(plot.title = element_text(hjust = 1/2))
 # Map of the data with the province boundaries
 map_provinces <- ggplot() + 
-geom_sf(data = italy_sim, pch = 4, color = "red") + 
+geom_sf(data = italy_sim, pch = 4, color = "red") +
 geom_sf(data = italy_provinces, fill = NA) + 
 theme_void() +
 labs(title = "Provinces") +
@@ -1793,7 +1785,7 @@ for the province, can be included by using the `re()` function into the
 #| label: fit-italy-spatial-mixed-model
 #| message: false
                         # Location-level effect
-italy_fit <- glgpm( y ~ log(pop_dens) + gp(kappa = 0.5, nugget = 0) +
+italy_fit <- glgpm( y ~ log(pop_dens) + gp(kappa = 0.5, nugget = FALSE) +
                         # Region and province effects
                         re(region, province),
          data = italy_sim, scale_to_km = TRUE,
@@ -2036,11 +2028,9 @@ to_table(italy_fit, digits = 3)
 
 <!-- fit_liberia <-  -->
 
-<!--   glgpm(npos ~ log(elevation) + gp(long, lat), -->
+<!--   glgpm(npos ~ log(elevation) + gp(), -->
 
 <!--         den = ntest, data = liberia, -->
-
-<!--         crs = 4326, -->
 
 <!--         convert_to_crs = 32629, -->
 
@@ -2072,7 +2062,7 @@ to_table(italy_fit, digits = 3)
 
 <!-- read @sec-mcml. Also, remember that to enable the estimation of the -->
 
-<!-- nugget effect, $Z_i$, you should set `nugget=NULL` in the `gp()` function, -->
+<!-- nugget effect, $Z_i$, you should set `nugget=TRUE` in the `gp()` function, -->
 
 <!-- since by default the `glgpm()` function excludes $Z_i$. -->
 
@@ -2118,7 +2108,7 @@ to_table(italy_fit, digits = 3)
 
 <!-- $$ {#eq-anopheles} where $d(x_i)$ corresponds to the elevation in meters -->
 
-<!-- at location $x_i$. -->
+<!-- at location $x_i$. The `anopheles` dataset is provided as an `sf` object. -->
 
 <!-- We can then use the following script to fit the model in RiskMap. -->
 
@@ -2283,11 +2273,9 @@ to_table(italy_fit, digits = 3)
 
 <!-- fit_liberia_no_nugget <-  -->
 
-<!--   glgpm(npos ~ log(elevation) + gp(long, lat), -->
+<!--   glgpm(npos ~ log(elevation) + gp(), -->
 
 <!--         den = ntest, data = liberia, -->
-
-<!--         crs = 4326, -->
 
 <!--         convert_to_crs = 32629, -->
 
@@ -2319,11 +2307,9 @@ to_table(italy_fit, digits = 3)
 
 <!-- fit_liberia_no_nugget_sim <-  -->
 
-<!-- glgpm(formula = npos ~ log(elevation) + gp(long, lat),  -->
+<!-- glgpm(formula = npos ~ log(elevation) + gp(),  -->
 
-<!--     data = liberia_sim[[1]], family = "binomial", den = ntest,  -->
-
-<!--     crs = 32629) -->
+<!--     data = liberia_sim[[1]], family = "binomial", den = ntest) -->
 
 <!-- ``` -->
 
@@ -2374,7 +2360,7 @@ to_table(italy_fit, digits = 3)
 
 <!--   fit_sim <- glgpm( -->
 
-<!--     formula = npos_sim ~ log(elevation) + gp(long, lat),  -->
+<!--     formula = npos_sim ~ log(elevation) + gp(),  -->
 
 <!--     data = liberia_boot$data_sim,  -->
 
@@ -2382,9 +2368,7 @@ to_table(italy_fit, digits = 3)
 
 <!--     par0 = coef(fit_liberia_no_nugget), -->
 
-<!--     den = ntest,  -->
-
-<!--     crs = 32629 -->
+<!--     den = ntest -->
 
 <!--   )  -->
 
@@ -3349,11 +3333,9 @@ to_table(italy_fit, digits = 3)
 
 <!-- fit_liberia2 <-  -->
 
-<!-- glgpm(npos ~ log(elevation) + gp(long, lat, nugget = NULL), -->
+<!-- glgpm(npos ~ log(elevation) + gp(nugget = TRUE), -->
 
 <!--       den = ntest, data = liberia, -->
-
-<!--       crs = 4326, -->
 
 <!--       convert_to_crs = 32629, -->
 
@@ -3697,7 +3679,7 @@ to_table(italy_fit, digits = 3)
 
 <!--     the model $$Y_i = \mu + S(x_i) + Z_i + U_i$$ using `glgpm()` by -->
 
-<!--     setting `nugget=NULL` and `fix_var_me = 0.0225` in the `gp()` -->
+<!--     setting `nugget=TRUE` and `fix_var_me = 0.0225` in the `gp()` -->
 
 <!--     function, with $\kappa = 1.5$. Compare the estimates of $\sigma^2$ -->
 

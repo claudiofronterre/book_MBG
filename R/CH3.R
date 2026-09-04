@@ -25,15 +25,9 @@ lmer_fit <- lmer(y ~ log(pop_dens) + (1 | ID_loc), data = italy_sim)
 
 italy_sim$rand_eff <- ranef(lmer_fit)$ID_loc[italy_sim$ID_loc, 1]
 
-italy_sim_sf <- st_as_sf(
-  italy_sim,
-  coords = c("x1", "x2"),
-  crs = 32634
-)
-
 set.seed(1)
 italy_sim_variog <- variogram(
-  italy_sim_sf,
+  italy_sim,
   variable = "rand_eff",
   scale_to_km = TRUE,
   n_permutations = 1000
@@ -48,13 +42,13 @@ saveRDS(italy_sim_variog, file = "data/italy_sim_variog.rds")
 ##    -> data/fit_liberia2.rds             (fit_liberia2)
 ## ------------------------------------------------------------
 data(liberia)  # from RiskMap
+liberia <- st_as_sf(liberia, coords = c("long", "lat"), crs = 4326)
 
 ## --- 2a. Main Binomial geostatistical model (no nugget), used
 ##         throughout Sec. "Example: river-blindness in Liberia"
 fit_liberia <-
-  glgpm(npos ~ log(elevation) + gp(long, lat),
+  glgpm(npos ~ log(elevation) + gp(),
         den = ntest, data = liberia,
-        crs = 4326,
         convert_to_crs = 32629,
         family = "binomial")
 
@@ -74,9 +68,8 @@ par0_liberia <- coef(fit_liberia)
 par0_liberia$tau2 <- 0.1 
 
 fit_liberia2 <-
-  glgpm(npos ~ log(elevation) + gp(long, lat, nugget = NULL),
+  glgpm(npos ~ log(elevation) + gp(nugget = TRUE),
         den = ntest, data = liberia,
-        crs = 4326,
         convert_to_crs = 32629,
         par0 = par0_liberia,
         control_mcmc = set_control_sim(n_sim = 110000,
@@ -101,12 +94,11 @@ for (i in 1:n_sim) {
     liberia_boot$data_sim[[paste("npos_sim", i, sep = "")]]
   
   fit_sim <- glgpm(
-    formula = npos_sim ~ log(elevation) + gp(long, lat),
+    formula = npos_sim ~ log(elevation) + gp(),
     data = liberia_boot$data_sim,
     family = "binomial",
     par0 = coef(fit_liberia_no_nugget),
-    den = ntest,
-    crs = 32629
+    den = ntest
   )
   
   par_hat[[i]] <- coef(fit_sim)
