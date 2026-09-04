@@ -217,7 +217,7 @@ To fit this model, we create a cluster ID variable based on the sampling coordin
 #| label: identify-malnutrition-locations
 # Create ID for the location
 malnutrition <- malnutrition %>%
-  group_by(lng, lat) %>%
+  group_by(geometry) %>%
   mutate(loc_id = cur_group_id()) %>%
   ungroup()
 ```
@@ -254,17 +254,16 @@ re <- data.frame(
   Z_hat_waz = ranef(waz_lmer)$loc_id[,1]
 )
 
-# Extract one row per location with coordinates
+# Extract one row per location 
 loc_coords <- malnutrition %>%
-  select(loc_id, lng, lat) %>%
+  select(loc_id) %>%
   distinct()
 
 # Merge coordinates into random effects
-re <- left_join(re, loc_coords, by = "loc_id")
+re <- left_join(loc_coords, re, by = "loc_id")
 
-# Convert to sf and transform into UTM
+# Transform into UTM
 library(sf)
-re <- st_as_sf(re, coords = c("lng","lat"), crs = 4326)
 re <- st_transform(re, crs = propose_utm(re))
 
 # Variogram for HAZ
@@ -301,18 +300,17 @@ where $S(x)$ is a zero-mean, stationary, and isotropic Gaussian process with var
 # Remove missing data from the WAZ outcome
 malnutrition <- malnutrition[complete.cases(malnutrition[,"WAZ"]),]
 
-# Converting the data-frame into an sf object
-malnutrition_sf <- st_as_sf(malnutrition, coords = c("lng", "lat"), crs = 4326)
-malnutrition_sf <- st_transform(malnutrition_sf, crs = propose_utm(malnutrition_sf))
+# Reproject the data
+malnutrition <- st_transform(malnutrition, crs = propose_utm(malnutrition))
 
 # Maximum likelihood estimation for the HAZ and WAZ outcomes
 haz_fit <- 
 glgpm(HAZ ~ age + pmax(age - 1, 0) + wealth + gp(),
-      data=malnutrition_sf, family = "gaussian")
+      data = malnutrition, family = "gaussian")
 
 waz_fit <- 
-  glgpm(HAZ ~ age + pmax(age - 1, 0) + wealth + gp(),
-        data=malnutrition_sf, family = "gaussian") 
+  glgpm(WAZ ~ age + pmax(age - 1, 0) + wealth + gp(),
+        data = malnutrition, family = "gaussian") 
 ```
 
 We then summarize the fit of models.
@@ -346,7 +344,7 @@ To implement this in RiskMap, we begin by generating a predictive grid over the 
 # Boundaries of Ghana
 library(rgeoboundaries)
 ghana <- geoboundaries(country = "Ghana", adm_lvl = "adm0")
-ghana <- st_transform(ghana, st_crs(malnutrition_sf))
+ghana <- st_transform(ghana, st_crs(malnutrition))
 
 ghana_grid <- create_grid(ghana, spat_res = 10)
 
@@ -1185,8 +1183,6 @@ abund_sma$year <- as.numeric(substr(abund_sma$date, 1, 4))
 
 # bbox for coord_sf limits
 bb <- st_bbox(sma_boundaries)
-abund_sma <- st_as_sf(abund_sma, coords = c("lon","lat"), crs = 4326, remove = FALSE)
-
 
 # Panel 1: faceted map, colored by trap_group (scales fixed!)
 p_locs <- ggplot() +
@@ -1429,13 +1425,12 @@ and a default conservative value, such as 25, is used if no nearby collections a
 
 The data comprise 596 responses, of which only 18 pools test positive. This very low prevalence constrains our modelling choices, for example by limiting the feasibility of incorporating temporal dynamics. As a result, the model in @eq-wnv-pos-model represents the simplest specification that can still capture spatial correlation, under the simplifying assumption that WNV risk remains relatively stable over the study period. Furthermore, because there is only a single binary outcome per location, overdispersion cannot occur (see box “Why Bernoulli extra‐variation does not exist” in Section 5.1.1 of @diggleBook2019), and the empirical variogram provides limited value for assessing spatial correlation due to its high uncertainty in this context. We therefore proceed directly to fitting a geostatistical model and assess the estimate of the spatial correlation parameter, which quantifies the strength and range of spatial dependence in the data.
 
-We then proceed in R as follows. We first load the data and convert them into an `sf` object with the appropriate UTM projection. 
+We then proceed in R as follows. We first load the data and convert them to an appropriate UTM projection. 
 ```{r}
 #| label: prepare-wnv-infection-data
 #| eval: false
 data(infect_sma)
 
-infect_sma <- st_as_sf(infect_sma, coords = c("lon", "lat"), crs = 4326)
 wnv_crs <- propose_utm(infect_sma)
 infect_sma <- st_transform(infect_sma, wnv_crs)
 ```
@@ -1457,11 +1452,10 @@ inf_fit <- readRDS("data/inf_fit.rds")
 #| label: fit-wnv-infection-model
 #| eval: false
 inf_fit <-
-  glgpm(wnv_pos ~ gp(lon,lat),
-        crs = wnv_crs,
+  glgpm(wnv_pos ~ gp(),
         family = "binomial",
         invlink = invlink_wnv,
-        data=infect_sma)
+        data = infect_sma)
 ```
 Finally, we examine the the summary of the fitted model. 
 ```{r}
@@ -1522,8 +1516,8 @@ Finally, we predict the vector index as defined in @eq-vi. Because *Cx. pipiens*
 #| label: predict-wnv-infection
 #| eval: false
 
-# Converting the abund_sma into an sf object
-loc_pred <- st_as_sfc(st_transform(st_as_sf(abund_sma, coords = c("lon","lat"), crs = 4326), crs = wnv_crs))
+# Transform abund_sma into the same projection as infect_sma
+loc_pred <- st_transform(abund_sma, crs = wnv_crs)
 
 # Prediction of the spatial process S(x) over the locations of the 
 # abund_sma dataset
