@@ -1,6 +1,4 @@
 ---
-execute: 
-  freeze: auto
 fig-width: 5
 fig-asp: 0.75
 ---
