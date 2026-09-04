@@ -1636,7 +1636,10 @@ sigma2_me_hat <- rep(NA, length = n_kappa)
 # the different values of kappa specified in kappa_values
 fit_galicia_list <- list()
 for(i in 1:n_kappa) {
-  fit_galicia_list[[i]] <- glgpm(log(lead) ~ gp(kappa = kappa_values[i]),
+  formula_i <- as.formula(
+    sprintf("log(lead) ~ gp(kappa = %s)", kappa_values[i])
+  )
+  fit_galicia_list[[i]] <- glgpm(formula_i,
                                  data = galicia, family = "gaussian",
                                  scale_to_km = TRUE, messages = FALSE)
   llik_values[i] <-  fit_galicia_list[[i]]$log.lik
