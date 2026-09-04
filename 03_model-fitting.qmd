@@ -1594,7 +1594,7 @@ through the `summary()` function of the model as shown in the code chunk
 above. This output is presented in three sections: in the first section,
 we have the results for the regression coefficients; in the second
 section, we have the estimate for the variance of the measurement error
-component, $\omega^2$ whose point estimate is about 0.015; in the final
+component, $\omega^2$ whose point estimate is about 1.016; in the final
 section, we have the estimates for the parameters of the spatial
 covariance function, $\sigma^2$ and $\phi$ which are about 0.171 and
 9.021 (km), respectively. The message
@@ -1805,12 +1805,12 @@ estimates as reported in @tbl-italy-sim-mle.
 | Parameter      | Point estimate | Lower limit | Upper limit |
 |----------------|----------------|-------------|-------------|
 | $\beta_0$      | -1.074         | -2.032      | -0.117      |
-| $\beta_1$      | 1.373          | 1.352       | 1.394       |
-| $\sigma^2$     | 0.917          | 0.595       | 1.414       |
-| $\phi$         | 214.520        | 153.608     | 299.587     |
-| $\sigma^2_{V}$ | 0.241          | 0.146       | 0.398       |
-| $\sigma^2_{Z}$ | 1.457          | 1.379       | 1.540       |
-| $\omega^2$     | 0.196          | 0.194       | 0.199       |
+| $\beta_1$      | 1.373          | 1.331       | 1.415       |
+| $\sigma^2$     | 0.917          | 0.250       | 3.362       |
+| $\phi$         | 214.520        | 56.396      | 815.994     |
+| $\sigma^2_{V}$ | 0.241          | 0.012       | 4.904       |
+| $\sigma^2_{Z}$ | 1.457          | 0.989       | 2.146       |
+| $\omega^2$     | 1.217          | 1.140       | 1.299       |
 : Maximum likelihood estimates and, lower and upper limits of the 95%
 confidence interval for the parameters of the model in
 @eq-italy-sim-lmm. {#tbl-italy-sim-mle}
