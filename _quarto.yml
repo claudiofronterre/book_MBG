@@ -23,7 +23,7 @@ nocite: |
 book:
   title: "Model-based geostatistics for global public health using R"
   author: "Emanuele Giorgi \\\nClaudio Fronterre"
-  date: "20/09/2024"
+  date: today
   search: true
   output-file: "Manuscript"
   downloads: []
@@ -35,7 +35,7 @@ book:
     - 02_handling-spatial-data.qmd
     - 03_model-fitting.qmd
     - 04_geostatistical-prediction.qmd
-    # - 05_case-studies.qmd
+    - 05_case-studies.qmd
     - references.qmd
 
 
