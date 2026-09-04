@@ -376,7 +376,7 @@ $d(x)^\top \beta$ or the spatial random effects $S(x)$ might be
 considered when the goal is to highlight the different contribution to
 the overall predictive inferences from the measured covariates.
 
-### Example: mapping riverblidness prevalence in Liberia (continuing from @sec-pred-samples) {#sec-liberia-prediction-1}
+### Example: mapping river blindness prevalence in Liberia (continuing from @sec-pred-samples) {#sec-liberia-prediction-1}
 
 Let us continue the geostatistical of the river blindness data in
 Liberia. The predictive target we consider is prevalence, hence
@@ -424,7 +424,7 @@ We can then visualize the resulting maps as follows.
 #| label: fig-lb-maps
 #| fig-cap: "Mapping river blindness in Liberia. Plots of the mean (left panel), coefficient of variation (central panel) and exceedance probability (right panel) for a 20% prevalence threshold."
 
-# Displying the results
+# Displaying the results
 par(mfrow = c(1,3))
 plot(lb_prev, which_target = "prev", 
      which_summary = "mean", main = "Mean")
