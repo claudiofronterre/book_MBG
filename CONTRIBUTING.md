@@ -73,10 +73,75 @@ The displayed code and the maintenance script must remain equivalent. Record
 the random seed for stochastic computations. Use descriptive, stable object
 and file names.
 
+Use the following pattern for slow computations. First, generate and save the
+object in the appropriate maintenance script, such as `R/CH3.R`:
+
+```r
+fit_example <- expensive_model_fit(...)
+saveRDS(fit_example, "data/fit_example.rds")
+```
+
+Load the saved object in a chapter chunk that is hidden from the reader:
+
+````markdown
+```{r}
+#| label: load-fit-example
+#| include: false
+fit_example <- readRDS("data/fit_example.rds")
+```
+````
+
+Show the complete code that produced the object, but do not execute the slow
+computation during the book render:
+
+````markdown
+```{r}
+#| label: fit-example
+#| eval: false
+fit_example <- expensive_model_fit(...)
+```
+````
+
+Finally, display the relevant result from the saved object. Hide this short
+presentation code when it is not itself important to the explanation:
+
+````markdown
+```{r}
+#| label: tbl-fit-example
+#| echo: false
+to_table(fit_example)
+```
+````
+
+This pattern keeps the chapter reproducible and shows readers how the result
+was produced, while allowing routine renders to load the precomputed object
+quietly. The visible code, hidden loading chunk, saved object, and maintenance
+script must use the same model specification.
+
 Do not add `.RData` files. They can contain multiple objects and load names
 implicitly into the current environment. Existing `.RData` files may be
 removed only after checking that the replacement `.rds` file preserves every
 required object.
+
+## Model output and figures
+
+Present model results as a well-formatted, labelled table by default. Derive
+the table from the fitted object rather than manually transcribing estimates.
+Use consistent parameter names, numerical precision, interval labels,
+alignment, and captions within and across chapters.
+
+A complete printed `summary()` may be shown when a model-summary format is
+introduced for the first time and seeing its structure is pedagogically
+useful. In that first example, showing both the full summary and a formatted
+table is acceptable when the text explains how to read or translate between
+them. After the output structure has been introduced, use tables for model
+results and discuss only the entries relevant to the argument.
+
+Use ggplot2 for all reader-facing figures, including maps and figures based on
+sf objects. Apply the established book theme, labels, scales, legends, and
+caption conventions. Do not mix base R graphics with ggplot2 in the rendered
+book. Base graphics may be used for private maintenance diagnostics that are
+not included in a chapter.
 
 ## Rendering and publication
 
@@ -107,6 +172,10 @@ artifact, but GitHub's custom-domain setting remains authoritative.
 - Equations, equation identifiers, citations, and cross-references render.
 - Displayed code agrees with the code that generated saved results.
 - New stochastic results have a recorded seed.
+- Slow computations use the visible-code, hidden-load, saved-object pattern.
+- Model output uses a table unless a full first summary has a clear
+  pedagogical purpose.
+- Reader-facing figures use ggplot2 and follow the book's visual conventions.
 - No local paths, credentials, caches, rendered website files, or `.RData`
   workspaces are included.
 - Relevant HTML and PDF output has been inspected.
