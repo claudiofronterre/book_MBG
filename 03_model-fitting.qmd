@@ -1227,10 +1227,10 @@ to specify the number of permutations that are performed to generate the
 envelope for absence of spatial correlation, previously described.
 ```{r}
 #| label: dist-summaries-liberia
-dist_summaries(data = liberia, scale_to_km = TRUE)
+summarise_distance(data = liberia, scale_to_km = TRUE)
 ```
 
-The `dist_summaries()` function within the RiskMap package can be used
+The `summarise_distance()` function within the RiskMap package can be used
 for gauging the extent of the area covered by your dataset, aiding in
 the selection of appropriate values to be passed to the `breaks` argument.
 
@@ -2203,11 +2203,11 @@ to_table(italy_fit, digits = 3)
 
 <!-- ```{r} -->
 
-<!-- dist_summaries(anopheles, scale_to_km = TRUE) -->
+<!-- summarise_distance(anopheles, scale_to_km = TRUE) -->
 
 <!-- ``` -->
 
-<!-- Using the `dist_summaries()` function, we can see that, among the -->
+<!-- Using the `summarise_distance()` function, we can see that, among the -->
 
 <!-- locations of the dataset, the average distance is about 55km and the -->
 
