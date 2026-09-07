@@ -119,7 +119,7 @@ saveRDS(fit_liberia, file = "data/fit_Liberia.rds")
 ## --- 6b. Same model, saved under the name used later for the
 ##         parametric-bootstrap section (identical specification
 ##         to fit_liberia; kept as a separate object/name because
-##         that's the name glgpm_sim()/bootstrap code expects)
+##         that's the name simulate_glgpm()/bootstrap code expects)
 fit_liberia_no_nugget <- fit_liberia
 
 saveRDS(fit_liberia_no_nugget, file = "data/fit_liberia_no_nugget.rds")
@@ -134,7 +134,7 @@ fit_liberia2 <-
         den = ntest, data = liberia,
         convert_to_crs = 32629,
         par0 = par0_liberia,
-        control_mcmc = set_control_sim(n_sim = 110000,
+        control_mcmc = set_control_mcmc(n_sim = 110000,
                                        burnin = 10000,
                                        thin = 10),
         family = "binomial", messages = FALSE)
@@ -147,7 +147,7 @@ saveRDS(fit_liberia2, file = "data/fit_liberia2.rds")
 ## ------------------------------------------------------------
 n_sim <- 100  # increase to >= 1000 for production-quality CIs
 
-liberia_boot <- glgpm_sim(n_sim = n_sim, model_fit = fit_liberia_no_nugget)
+liberia_boot <- simulate_glgpm(n_sim = n_sim, model_fit = fit_liberia_no_nugget)
 
 par_hat <- list()
 
