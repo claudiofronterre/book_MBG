@@ -52,6 +52,22 @@ When changing a chapter:
 3. Commit the updated `.qmd` file and the corresponding `_freeze/` results.
 4. Do not commit `docs/`, `*_files/`, `site_libs/`, or `*_cache/`.
 
+This requirement also applies when reader-visible code changes inside an
+`eval: false` chunk: the displayed source is stored in the freeze record even
+though R does not execute it. Pull requests are checked automatically and an
+executable chapter without a matching change under
+`_freeze/<chapter>/execute-results/` will fail the freeze check.
+
+For a genuinely prose-only change that cannot affect computational or
+reader-visible frozen output, explain the exception in the pull request. A
+maintainer may then apply the `freeze-not-required` label after reviewing the
+rendered chapter. Do not use the label for code, dependency, input-data, or
+saved-object changes.
+
+The automated check deliberately does not run scientific computations. It is
+a lightweight safeguard against mismatched source and freeze records, not a
+replacement for rendering and inspecting the chapter locally.
+
 Use cache only for a specific deterministic chunk that benefits materially
 from it. Do not enable cache for an entire chapter by default. Cache is a local
 performance aid; it is not a reproducibility mechanism and is not committed.
@@ -159,6 +175,11 @@ being recomputed.
 
 If a `.qmd` file changes without matching frozen results, update `_freeze/`
 locally before merging.
+
+A full local refresh may also be required when a dependency, input dataset, or
+precomputed object changes without a corresponding `.qmd` edit. The automated
+freeze check cannot infer those relationships, so contributors must describe
+and verify them explicitly in the pull request.
 
 The repository's GitHub Pages source must be set to **GitHub Actions**, and the
 custom domain must be configured as `www.mbgr.org` in the repository Pages
