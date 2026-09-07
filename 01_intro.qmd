@@ -67,15 +67,6 @@ To install packages in R for the first time, you can use the command `install.pa
 install.packages("RiskMap")
 ```
 
-Alternatively, you can install the development version of RiskMap from GitHub, which is updated more frequently but should be considered a testing version. This requires the remotes package:
-
-```{r}
-#| label: install-riskmap-development
-#| eval: false
-install.packages("remotes")
-remotes::install_github("giorgistat/RiskMap")
-```
-
 ## Datasets used in the book {#sec-examples-ch1}
 
 In this book, we use data available from the RiskMap package. These datasets are grouped into two categories: *examples*, which are used to demonstrate the application of R functions and modelling steps, and *case studies*, which are analysed in greater depth to illustrate the use of complete geostatistical workflows. In this introductory chapter, we focus on presenting the *example* datasets, while leaving the detailed presentation and analysis of the *case study* datasets to @sec-case-studies.
