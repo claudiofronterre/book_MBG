@@ -574,10 +574,10 @@
     },
     "RiskMap": {
       "Package": "RiskMap",
-      "Version": "1.1.0",
+      "Version": "2.0.0",
       "Source": "GitHub",
       "Title": "Geostatistical Modeling of Spatially Referenced Data",
-      "Description": "Geostatistical analysis of continuous and count data. Implements stationary Gaussian processes with Matérn correlation for spatial prediction, as described in Diggle and Giorgi (2019, ISBN: 978-1-138-06102-7).",
+      "Description": "Geostatistical analysis of continuous and count data. Implements stationary Gaussian processes with Matérn correlation for spatial prediction, as described in Diggle and Giorgi (2019, ISBN: 978-1-138-06102-7). An accompanying book by Giorgi and Fronterre describes how the package can be used for model-based geostatistics in public health: <https://www.mbgr.org/>.",
       "Authors@R": "c(person(given = \"Emanuele\", family = \"Giorgi\", role = c(\"aut\", \"cre\"), email = \"e.giorgi@bham.ac.uk\", comment = c(ORCID = \"0000-0003-0640-181X\")), person(given = \"Claudio\", family = \"Fronterre\", role = \"ctb\", email = \"c.fronterre@bham.ac.uk\", comment = c(ORCID = \"0000-0001-6723-9727\")), person(given = \"Simon\", family = \"Smart\", role = \"ctb\", comment = c(ORCID = \"0000-0002-3624-8951\")))",
       "Depends": [
         "R (>= 3.5.0)"
@@ -600,7 +600,6 @@
         "xtable"
       ],
       "Suggests": [
-        "bayesplot",
         "testthat (>= 3.0.0)"
       ],
       "License": "MIT + file LICENSE",
@@ -609,16 +608,14 @@
       "URL": "https://claudiofronterre.github.io/RiskMap/",
       "BugReports": "https://github.com/claudiofronterre/RiskMap/issues",
       "Config/testthat/edition": "3",
-      "Config/roxygen2/version": "8.0.0",
+      "Config/roxygen2/version": "8.1.0",
       "Config/roxygen2/markdown": "TRUE",
-      "Author": "Emanuele Giorgi [aut, cre] (ORCID: <https://orcid.org/0000-0003-0640-181X>), Claudio Fronterre [ctb] (ORCID: <https://orcid.org/0000-0001-6723-9727>), Simon Smart [ctb] (ORCID: <https://orcid.org/0000-0002-3624-8951>)",
-      "Maintainer": "Emanuele Giorgi <e.giorgi@bham.ac.uk>",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
       "RemoteUsername": "claudiofronterre",
       "RemoteRepo": "RiskMap",
       "RemoteRef": "dev",
-      "RemoteSha": "cddb0bba7a84ac68a6ebe2d248fd66865b24c8fb"
+      "RemoteSha": "40d669137a5bac1e409f23ffa55f91b491ddc86a"
     },
     "S7": {
       "Package": "S7",
