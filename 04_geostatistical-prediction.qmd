@@ -223,6 +223,11 @@ lb_pred_S_j <- readRDS("data/lb_pred_S_j.rds")
 lb_pred_S_j$obs_loc <- FALSE
 liberia_grid <- lb_pred_S_j$grid_pred
 an_fit <- readRDS("data/an_fit.rds")
+an_grid <- readRDS("data/an_grid.rds")
+an_weights <- readRDS("data/an_weights.rds")
+pred_an_S <- readRDS("data/pred_an_S.rds")
+pred_n_mosq_grid <- readRDS("data/pred_n_mosq_grid.rds")
+pred_n_mosq_shp <- readRDS("data/pred_n_mosq_shp.rds")
 regularized <- readRDS("data/regularized.rds")
 regularized_scores <- regularized
 cluster <- readRDS("data/cluster.rds")
@@ -240,6 +245,7 @@ res_sim_area <- readRDS("data/sim_area_cl.rds")
 ```{r}
 #| label: prepare-liberia-prediction-grid
 #| message: false
+#| eval: false
 # 1) Obtaining Liberia boundaries 
 library(rgeoboundaries)
 liberia_adm0 <- geoboundaries("liberia", adm_lvl = "adm0")
@@ -299,7 +305,7 @@ they come from the joint predictive distribution of $S(\tilde{X})$.
 An important note is that in the code above we have used the default
 settings for the Markov Chain Monte Carlo (MCMC). To change these
 setting use the function `set_control_mcmc()` whose output should be passed
-to the argument `contol_sim` of `setup_prediction()`. The diagnostic on the
+to the argument `control_sim` of `setup_prediction()`. The diagnostic on the
 convergence of the MCMC can also be applying the `plot_mcmc()` function
 to either `lb_pred_S_m` or `lb_pred_S_j`; see @sec-summary for more
 details.
@@ -874,6 +880,7 @@ values of elevation observed in the data.
 ```{r}
 #| label: prepare-anopheles-prediction-grid
 #| message: false
+#| eval: false
 # Create grid from convex hull
 shp_ch <- create_convex_hull(an_fit$data_sf)
 an_grid <- create_grid(shp_ch, spat_res = 2)
@@ -885,7 +892,7 @@ an_elev <- get_elev_raster(locations = shp_ch,
 predictors <- data.frame(elevation= terra::extract(an_elev,
                                                    st_coordinates(an_grid)))
 
-pred_an_S <- setup_prediction(an_fit, grid = an_grid, 
+pred_an_S <- setup_prediction(an_fit, grid_pred = an_grid,
                predictors = predictors,
                type = "joint")
 
@@ -928,6 +935,7 @@ in black.
 
 ```{r}
 #| label: predict-total-mosquito-abundance
+#| eval: false
 pred_n_mosq_shp <- 
 predict_areal_target(pred_an_S, shp = shp_ch, 
                  weights = an_weights,
@@ -937,6 +945,11 @@ predict_areal_target(pred_an_S, shp = shp_ch,
                                    q025 = function(Tx) quantile(Tx, 0.025),
                                    q075 = function(Tx) quantile(Tx, 0.975)))
 
+```
+
+```{r}
+#| label: summarize-total-mosquito-abundance
+#| echo: false
 pred_n_mosq_shp$target$reg1$n_mosq
 ```
 
@@ -1414,23 +1427,19 @@ Hence, we first fit the two models.
 ```{r}
 #| label: fit-liberia-validation-models
 #| eval: false
+liberia <- st_as_sf(liberia, coords = c("long", "lat"), crs = 4326)
+
 # Fitting M0
 set.seed(123)
-M0_fit <- 
-glgpm(npos ~  gp(long, lat, nugget = NULL),
-      den = ntest, data = liberia,
-      crs = 4326,
-      convert_to_crs = 32629,
-      family = "binomial", messages = FALSE)
+M0_fit <- glgpm(npos ~ gp(), den = ntest, data = liberia,
+                convert_to_crs = 32629,
+                family = "binomial", messages = FALSE)
 
 # Fitting M1
-M1_fit <- 
-glgpm(npos ~  elevation + pmax(elevation - 150, 0) +
-      gp(long, lat, nugget = NULL),
-      den = ntest, data = liberia,
-      crs = 4326,
-      convert_to_crs = 32629,
-      family = "binomial", messages = FALSE)
+M1_fit <- glgpm(npos ~ elevation + pmax(elevation - 150, 0) + gp(),
+                den = ntest, data = liberia,
+                convert_to_crs = 32629,
+                family = "binomial", messages = FALSE)
 ```
 
 Since the main goal of this analysis is to draw predictive inference on
@@ -1447,7 +1456,7 @@ regularized <-
 assess_prediction(list(M0 = M0_fit, M1 = M1_fit),
           which_metric = "AnPIT", 
           method = "regularized", min_dist = 20,
-          n_size = 9, iter = 10)
+          n_size = 9, iter = 10, messages = FALSE)
 
 ```
 
@@ -1491,7 +1500,7 @@ create 10 folds and set `method = "cluster"`.
 cluster <- 
 assess_prediction(list(M0 = M0_fit, M1 = M1_fit),
           which_metric = "AnPIT", 
-          method = "cluster", fold = 10)
+          method = "cluster", fold = 10, messages = FALSE)
 
 ```
 
@@ -1651,12 +1660,12 @@ regularized_scores <-
 assess_prediction(list(M0 = M0_fit, M1 = M1_fit),
           which_metric = c("CRSP", "SCRPS"), 
           method = "regularized", min_dist = 20,
-          n_size = 9, iter = 10)
+          n_size = 9, iter = 10, messages = FALSE)
 
 cluster_scores <- 
 assess_prediction(list(M0 = M0_fit, M1 = M1_fit),
           which_metric = c("CRSP", "SCRPS"), 
-          method = "cluster", fold = 10)
+          method = "cluster", fold = 10, messages = FALSE)
 
 
 ```
@@ -1821,9 +1830,8 @@ can be derived as shown below.
 #| eval: false
 set.seed(123)
 true_model <- glgpm(npos ~ elevation + pmax(elevation - 150, 0) + 
-                           gp(long, lat),
+                           gp(),
                     den = ntest,
-                    crs = 4326, 
                     convert_to_crs = 32629,
                     family = "binomial",
                     data = liberia)
@@ -1897,8 +1905,6 @@ shp <- st_transform(shp, crs= 32629)
 
 pred_grid <- create_grid(shp, spat_res = 5)
 pred_grid <- st_as_sf(pred_grid)
-liberia_elev <- get_elev_raster(locations = shp,
-                                z = 5, clip = "locations")
 
 pred_grid$elevation <- terra::extract(liberia_elev, st_coordinates(pred_grid))
 ```
@@ -1912,8 +1918,7 @@ locations of the original data.
 #| label: define-liberia-sampling-function
 #| eval: false
 sampling_f_lib <- function() {
-  coords_sf <- st_as_sf(liberia[,c("ntest", "long", "lat")],
-                        coords = c("long", "lat"), crs = 4326)
+  coords_sf <- liberia[, "ntest"]
   coords_sf <- st_transform(coords_sf, 32629)
   coords_sf$units_m <- coords_sf$ntest
   return(coords_sf)
@@ -1932,8 +1937,8 @@ We are now ready to run the `simulate_surface()` function.
 #| eval: false
 lib_surf_sim <- simulate_surface(n_sim = 200,
                          pred_grid = pred_grid,
-                         formula = ~ elevation + pmax(elevation - 150,0) +
-                                     gp(kappa=0.5),
+                         formula = ~ elevation + pmax(elevation - 150, 0) +
+                                     gp(kappa = 0.5),
                          sampling_f = sampling_f_lib,
                          family = "binomial",
                          par0 = coef(true_model))
@@ -2036,8 +2041,8 @@ and Step 4, previously outlined.
 res_sim_grid <- assess_simulation(lib_surf_sim,
                       models = list(M_T = ~  elevation +
                                              pmax(elevation - 150, 0) +
-                                             gp(long, lat),
-                                    M_C = ~ gp(long, lat)),
+                                             gp(),
+                                    M_C = ~ gp()),
                       f_grid_target = function(x) exp(x)/(1+exp(x)),
                       pred_objective = "mse",
                       spatial_scale = "grid")
@@ -2227,8 +2232,8 @@ shp_adm <- st_transform(shp_adm, crs= 32629)
 res_sim_area <- assess_simulation(lib_surf_sim,
                       models = list(M_T = ~  elevation +
                                       pmax(elevation - 150, 0) +
-                                      gp(long, lat),
-                                    M_C = ~ gp(long, lat)),
+                                      gp(),
+                                    M_C = ~ gp()),
                       f_grid_target = function(x) exp(x)/(1+exp(x)),
                       f_area_target = mean,
                       pred_objective = "classify", shp = shp_adm,
