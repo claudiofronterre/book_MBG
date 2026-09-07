@@ -345,7 +345,7 @@ geostatistical analysis is provided in @tbl-spat-cont-pred-target.
 : List of some of the most common spatially continuous predictive
 targets in a geostatistical analysis. For each target, we also indicate
 the generalized linear model (GLM) family for which these can be
-defined. Note that this list not exhaustive and different predictive
+defined. Note that this list not exhaustive and different predictive targets
 other than those listed in the table could also be considered.
 
 An important feature of the predictive targets listed in
