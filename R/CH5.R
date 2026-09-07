@@ -11,28 +11,24 @@ library(lme4)
 data(malnutrition)
 
 malnutrition <- malnutrition %>%
-  group_by(lng, lat) %>%
+  group_by(geometry) %>%
   mutate(loc_id = cur_group_id()) %>%
   ungroup()
 
 # Remove missing WAZ (per the chapter's own eval=FALSE chunk)
-malnutrition <- malnutrition[complete.cases(malnutrition[, "WAZ"]), ]
+malnutrition <- malnutrition[complete.cases(malnutrition$WAZ), ]
 
-malnutrition_sf <- st_as_sf(malnutrition, coords = c("lng", "lat"), crs = 4326)
-malnutrition_sf <- st_transform(malnutrition_sf, crs = propose_utm(malnutrition_sf))
+malnutrition_sf <- st_transform(malnutrition, crs = propose_utm(malnutrition))
 
 ## --- A1. Maximum likelihood fits for HAZ and WAZ ---
-## (the chapter's HAZ formula chunk uses `pmax(age - 1, 0)` for
-## both haz_fit and waz_fit, which looks like a copy-paste typo
-## against the stated change points of 2 months / 1 month
-## discussed in the text; reproduced faithfully as written)
-haz_fit <-
-  glgpm(HAZ ~ age + pmax(age - 1, 0) + wealth + gp(),
-        data = malnutrition_sf, family = "gaussian")
+## HAZ and WAZ use the 2-month and 1-month change points,
+## respectively, as specified in the chapter.
+set.seed(123)
+haz_fit <- glgpm(HAZ ~ age + pmax(age - 2, 0) + wealth + gp(),
+                 data = malnutrition_sf, family = "gaussian")
 
-waz_fit <-
-  glgpm(HAZ ~ age + pmax(age - 1, 0) + wealth + gp(),
-        data = malnutrition_sf, family = "gaussian")
+waz_fit <- glgpm(WAZ ~ age + pmax(age - 1, 0) + wealth + gp(),
+                 data = malnutrition_sf, family = "gaussian")
 
 saveRDS(haz_fit, file = "data/haz_fit.rds")
 saveRDS(waz_fit, file = "data/waz_fit.rds")
@@ -46,14 +42,15 @@ ghana <- st_transform(ghana, st_crs(malnutrition_sf))
 ghana_grid <- create_grid(ghana, spat_res = 10)
 n_pred <- nrow(st_coordinates(ghana_grid))
 
-haz_pred_grid <- pred_over_grid(haz_fit,
+set.seed(123)
+haz_pred_grid <- setup_prediction(haz_fit,
                                 grid_pred = ghana_grid,
                                 predictors = data.frame(
                                   age = rep(2, n_pred),      # 2 months for HAZ
                                   wealth = rep(1, n_pred)
                                 ))
 
-waz_pred_grid <- pred_over_grid(waz_fit,
+waz_pred_grid <- setup_prediction(waz_fit,
                                 grid_pred = ghana_grid,
                                 predictors = data.frame(
                                   age = rep(1, n_pred),      # 1 month for WAZ
@@ -61,18 +58,16 @@ waz_pred_grid <- pred_over_grid(waz_fit,
                                 ))
 
 sd_ind_haz <- sqrt(coef(haz_fit)$sigma2_me)
-stunting_prev <-
-  pred_target_grid(haz_pred_grid,
-                   f_target = list(prev = function(x) pnorm((-2 - x) / sd_ind_haz)),
-                   pd_summary = list(mean = mean,
-                                     cv = function(x) sd(x) / mean(x)))
+stunting_prev <- predict_grid_target(
+  haz_pred_grid,
+  f_target = list(prev = function(x) pnorm((-2 - x) / sd_ind_haz)),
+  pd_summary = list(mean = mean, cv = function(x) sd(x) / mean(x)))
 
 sd_ind_waz <- sqrt(coef(waz_fit)$sigma2_me)
-underw_prev <-
-  pred_target_grid(waz_pred_grid,
-                   f_target = list(prev = function(x) pnorm((-2 - x) / sd_ind_waz)),
-                   pd_summary = list(mean = mean,
-                                     cv = function(x) sd(x) / mean(x)))
+underw_prev <- predict_grid_target(
+  waz_pred_grid,
+  f_target = list(prev = function(x) pnorm((-2 - x) / sd_ind_waz)),
+  pd_summary = list(mean = mean, cv = function(x) sd(x) / mean(x)))
 
 # NB: the chapter's own setup chunk reads this object back from
 # "data/stuntin_prev.rds" (missing a "g"); saved under that exact
@@ -82,19 +77,18 @@ saveRDS(stunting_prev, file = "data/stuntin_prev.rds")
 saveRDS(underw_prev, file = "data/underw_prev.rds")
 
 ## --- A3. Cross-validation (PIT) for HAZ and WAZ ---
-assess_haz <-
-  assess_pp(list(HAZ = haz_fit),
-            n_size = 100,
-            min_dist = 5,
-            iter = 10,
-            method = "regularized")
+set.seed(123)
+assess_haz <- assess_prediction(list(HAZ = haz_fit),
+                                n_size = 100,
+                                min_dist = 5,
+                                iter = 10,
+                                method = "regularized")
 
-assess_waz <-
-  assess_pp(list(WAZ = waz_fit),
-            n_size = 100,
-            min_dist = 5,
-            iter = 10,
-            method = "regularized")
+assess_waz <- assess_prediction(list(WAZ = waz_fit),
+                                n_size = 100,
+                                min_dist = 5,
+                                iter = 10,
+                                method = "regularized")
 
 saveRDS(assess_haz, file = "data/assess_haz.rds")
 saveRDS(assess_waz, file = "data/assess_waz.rds")
@@ -205,27 +199,24 @@ names(pc1_rast) <- "PC1"
 pc1_vals <- terra::extract(pc1_rast, vect(mlw_sf_model))
 mlw_sf_model$PC1 <- pc1_vals[, 2]
 
-mod_all_cov <-
-  glgpm(positive ~
-          precip +
-          ndvi +
-          lst_c + pmax(lst_c - 33, 0) +
-          elev + pmax(elev - 400, 0) +
-          humidity + pmax(humidity - 65, 0) +
-          built_up + gp(),
-        den = examined,
-        data = mlw_sf_model,
-        crs = 32736,
-        family = "binomial")
+set.seed(123)
+mod_all_cov <- glgpm(positive ~
+                       precip +
+                       ndvi +
+                       lst_c + pmax(lst_c - 33, 0) +
+                       elev + pmax(elev - 400, 0) +
+                       humidity + pmax(humidity - 65, 0) +
+                       built_up + gp(),
+                     den = examined,
+                     data = mlw_sf_model,
+                     family = "binomial")
 
-mod_pca <-
-  glgpm(positive ~
-          PC1 + pmax(PC1 - 0.75, 0) +
-          built_up + gp(),
-        den = examined,
-        data = mlw_sf_model,
-        crs = 32736,
-        family = "binomial")
+mod_pca <- glgpm(positive ~
+                   PC1 + pmax(PC1 - 0.75, 0) +
+                   built_up + gp(),
+                 den = examined,
+                 data = mlw_sf_model,
+                 family = "binomial")
 
 saveRDS(mod_all_cov, file = "data/mod_all_cov.rds")
 saveRDS(mod_pca, file = "data/mod_pca.rds")
@@ -244,31 +235,32 @@ complete_idx <- complete.cases(predictors)
 # subset both the grid and the predictors consistently
 grid_mlw   <- grid_mlw[complete_idx, ]
 predictors <- predictors[complete_idx, ]
-pred_all_cov <- pred_over_grid(mod_all_cov,
+set.seed(123)
+pred_all_cov <- setup_prediction(mod_all_cov,
                                grid_pred = grid_mlw,
                                predictors = predictors)
 
-pred_pca <- pred_over_grid(mod_pca,
+pred_pca <- setup_prediction(mod_pca,
                            grid_pred = grid_mlw,
                            predictors = predictors)
 
-pred_all_cov_prev <- pred_target_grid(pred_all_cov,
+pred_all_cov_prev <- predict_grid_target(pred_all_cov,
                                       f_target = list(prev = function(x) exp(x) / (1 + exp(x))))
 
-pred_pca_prev <- pred_target_grid(pred_pca,
+pred_pca_prev <- predict_grid_target(pred_pca,
                                   f_target = list(prev = function(x) exp(x) / (1 + exp(x))))
 
 saveRDS(pred_all_cov_prev, file = "data/pred_all_cov_prev.rds")
 saveRDS(pred_pca_prev, file = "data/pred_pca_prev.rds")
 
 ## --- B5. Geographically stratified cross-validation ---
-assess_pred_mlw <-
-  assess_pp(list(all_cov = mod_all_cov,
-                 pca = mod_pca),
-            method = "cluster",
-            which_metric = c("AnPIT", "CRPS"),
-            iter = 1,
-            fold = 3)
+set.seed(123)
+assess_pred_mlw <- assess_prediction(list(all_cov = mod_all_cov,
+                                          pca = mod_pca),
+                                     method = "cluster",
+                                     which_metric = c("AnPIT", "CRPS"),
+                                     iter = 1,
+                                     fold = 3)
 
 saveRDS(assess_pred_mlw, file = "data/assess_pred_mlw.rds")
 
@@ -286,7 +278,6 @@ abund_sma <- abund_sma %>%
   ))
 
 abund_sma$year <- as.numeric(substr(abund_sma$date, 1, 4))
-abund_sma <- st_as_sf(abund_sma, coords = c("lon", "lat"), crs = 4326, remove = FALSE)
 abund_sma$loc <- 1:nrow(abund_sma)
 
 ## --- C1. Poisson mixed model for abundance ---
@@ -295,10 +286,13 @@ glmer_wvn <- glmer(total_females ~ -1 + trap_group + scale(year) +
                    data = abund_sma, family = poisson,
                    nAGQ = 100)
 
+saveRDS(glmer_wvn, file = "data/glmer_wvn.rds")
+
 ## --- C2. Empirical variogram of the random effects ---
 wnv_summary <- abund_sma
 wnv_summary$Z_hat <- ranef(glmer_wvn)$loc[, 1]
 
+set.seed(123)
 variogram_wnv <- variogram(data = wnv_summary,
                            variable = "Z_hat",
                            n_permutations = 1000,
@@ -355,14 +349,14 @@ simulate_random_effects <- function(model, nsim = 1000, grid_range = c(-10, 10),
 }
 
 n_samples <- 1000
+set.seed(123)
 samples_z <- simulate_random_effects(glmer_wvn, nsim = n_samples)
 
-# Fixed part of the linear predictor (no random effects), matching
-# the model.matrix/offset used in glmer_wvn; row order of
-# samples_z matches abund_sma row order because `loc` is 1:n
-D_ab   <- model.matrix(glmer_wvn)
+# Fixed part of the linear predictor for one trap-night. The row order of
+# samples_z matches abund_sma because loc is 1:n.
+D_ab <- model.matrix(glmer_wvn)
 beta_ab <- fixef(glmer_wvn)
-eta0_ab <- as.numeric(D_ab %*% beta_ab) + log(abund_sma$trap_nights)
+eta0_ab <- as.numeric(D_ab %*% beta_ab)
 
 lambda_samples <- exp(matrix(eta0_ab, nrow = length(eta0_ab), ncol = n_samples) + samples_z)
 
@@ -427,6 +421,7 @@ anpit_wnv <- function(model, test_prop = 0.25, nsim = 2000,
        train_index = train_idx)
 }
 
+set.seed(123)
 wnv_anpit_res <- anpit_wnv(glmer_wvn, test_prop = 0.30, nsim = 10000)
 
 saveRDS(wnv_anpit_res, file = "data/wnv_anpit_res.rds")
@@ -434,18 +429,16 @@ saveRDS(wnv_anpit_res, file = "data/wnv_anpit_res.rds")
 ## --- C5. WNV infection prevalence model (pooled testing) ---
 data(infect_sma)
 
-infect_sma <- st_as_sf(infect_sma, coords = c("lon", "lat"), crs = 4326)
 wnv_crs <- propose_utm(infect_sma)
 infect_sma <- st_transform(infect_sma, wnv_crs)
 
 invlink_wnv <- function(x) 1 - (1 - exp(x) / (1 + exp(x)))^infect_sma$est_pool_n
 
-inf_fit <-
-  glgpm(wnv_pos ~ gp(lon, lat),
-        crs = wnv_crs,
-        family = "binomial",
-        invlink = invlink_wnv,
-        data = infect_sma)
+set.seed(123)
+inf_fit <- glgpm(wnv_pos ~ gp(),
+                 family = "binomial",
+                 invlink = invlink_wnv,
+                 data = infect_sma)
 
 saveRDS(inf_fit, file = "data/inf_fit.rds")
 
@@ -457,28 +450,32 @@ chull_sf <- st_as_sf(data.frame(geometry = st_sfc(chull_sf)),
 
 grid_pred_sac <- create_grid(chull_sf, spat_res = 0.25)
 
-pred_S_inf <- pred_over_grid(inf_fit,
-                             grid_pred = grid_pred_sac)
+set.seed(123)
+pred_S_inf <- setup_prediction(
+  inf_fit,
+  grid_pred = grid_pred_sac,
+  predictors = data.frame(row.names = seq_along(grid_pred_sac)))
 
-pred_inf_grid <- pred_target_grid(pred_S_inf,
-                                  f_target = list(prev = function(x) exp(x) / (1 + exp(x))))
+pred_inf_grid <- predict_grid_target(
+  pred_S_inf,
+  f_target = list(prev = plogis))
 
 saveRDS(pred_inf_grid, file = "data/pred_inf_grid.rds")
 
 ## --- C7. Vector index (VI) at abund_sma locations ---
-loc_pred <- st_as_sfc(st_transform(
-  st_as_sf(abund_sma, coords = c("lon", "lat"), crs = 4326),
-  crs = wnv_crs
-))
+loc_pred <- st_transform(abund_sma, crs = wnv_crs)
 
-pred_S_loc <- pred_over_grid(inf_fit, grid_pred = loc_pred)
+set.seed(123)
+pred_S_loc <- setup_prediction(
+  inf_fit,
+  grid_pred = loc_pred,
+  predictors = data.frame(row.names = seq_len(nrow(loc_pred)))
+)
 
 beta_hat_inf <- coef(inf_fit)$beta
 prev_inf_samples <- 1 / (1 + exp(-(beta_hat_inf + pred_S_loc$S_samples)))
 
-# See assumption 2 above: mean_nmosq is taken to be mosq_mean
-mean_nmosq <- mosq_mean
-vi_samples <- mean_nmosq * prev_inf_samples
+vi_samples <- lambda_samples * prev_inf_samples
 
 vi_mean  <- apply(vi_samples, 1, mean, na.rm = TRUE)
 vi_lower <- apply(vi_samples, 1, quantile, probs = 0.025, na.rm = TRUE)
@@ -500,9 +497,6 @@ vi_df <- vi_df %>%
   ungroup()
 
 saveRDS(vi_df, file = "data/vi_df.rds")
-
-## --- C8. Mean mosquito abundance used in the vector index ---
-saveRDS(mean_nmosq, file = "data/mean_nmosq.rds")
 
 ## ------------------------------------------------------------
 message("Done. All files written to ./data:")
