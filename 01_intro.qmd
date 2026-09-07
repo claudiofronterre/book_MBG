@@ -57,6 +57,11 @@ The list of the R packages used in this book is provided in @tbl-packages.
 | *spatialEco* (R) | Spatial analysis and modelling utilities used for auxiliary spatial diagnostics |
 | *elevatr* (R) | Downloading elevation raster data for a study region |
 | *malariaAtlas* (R) | Accessing malaria risk and intervention data from the Malaria Atlas Project (used in Chapter @sec-case-studies) |
+| *rgee* (R) | Accessing and processing Earth observation data through Google Earth Engine |
+| *ggspatial* (R) | Adding spatial annotations and map elements to ggplot2 figures |
+| *ggcorrplot* (R) | Visualising correlation matrices with ggplot2 |
+| *wpgpDownloadR* (R) | Downloading WorldPop gridded population datasets |
+| *mapview* (R) | Creating interactive maps for exploratory spatial analysis |
 
 : List of the R packages that will be used in the book with a description of their use in the data analysis. The packages marked by (E) are essential for the geostatistical analysis. Those instead marked by (R) are recommended and are especially useful to be able to recreate the plots generated in the later chapters. {#tbl-packages}
 
@@ -239,7 +244,7 @@ $$ {#eq-glgm-joint-ch1}
 On the right-hand side of the equation above, we have factorized the joint distribution of $Y$ and $S$, as the product between the marginal distribution of $S$ and the conditional distribution of $Y$ given $S$. Hence, the formulation of a GLGM can be broken down into the tasks of formulating $[S]$ and $[Y | S]$.
 
 In defining $[S]$, throughout the book, we shall assume that this is a zero-mean stationary and isotropic Gaussian process. In other words, these assumptions impose that the joint distribution of $S(X) = (S(x_1),\ldots,S(x_n))$, i.e. the process $S$ at the sampled locations $x_1, \ldots, x_n$, is invariant with respect to rotations and translations of the locations $X$. In practical terms, the main implication of this is that, for any pair of locations $x_i$ and $x_j$ the correlation function $\rho(\cdot)$ between $S(x_i)$ and $S(x_j)$ is purely a function of the Euclidean distance, $u_{ij}$, between $x_i$ and $x_j$, i.e. $$
-{\rm cov}\{S(x_i), S(x_j)\} = \sigma^2\rho(u_{ij}),
+\operatorname{cov}\{S(x_i), S(x_j)\} = \sigma^2\rho(u_{ij}),
 $$ {#eq-correlation-ch1}
 
 where $\sigma^2$ is the variance of $S(x)$ for all $x$. Below we provide more details on the type of covariance functions that we consider in this book. Furthermore, the fact that we assume the process $S$ to have mean zero is because this process acts as a residual term in our modelling of $Y$. This aspect will be reiterated several times in the following chapters, as it has important implications for the interpretation of the other components of a geostatistical model, and for understanding the results of the analysis.
@@ -308,10 +313,10 @@ phi_2 <- 0.1
 
 phi_3 <- 0.2
 
-u <- seq(0, 0.5, length=1000)
-m1 <- sapply(u, function(x) matern_cor(x, phi_1, kappa = 0.5))
-m2 <- sapply(u, function(x) matern_cor(x, phi_2, kappa = 0.5))
-m3 <- sapply(u, function(x) matern_cor(x, phi_3, kappa = 0.5))
+u <- seq(0, 0.5, length = 1000)
+m1 <- sapply(u, function(x) matern_correlation(x, phi_1, kappa = 0.5))
+m2 <- sapply(u, function(x) matern_correlation(x, phi_2, kappa = 0.5))
+m3 <- sapply(u, function(x) matern_correlation(x, phi_3, kappa = 0.5))
 
 # Create a data frame for ggplot2
 df1 <- data.frame(
@@ -336,18 +341,18 @@ a <- ggplot(df1, aes(x = u, y = correlation, color = label, linetype = label)) +
   scale_linetype_discrete(labels = scales::parse_format()) +
   coord_equal()
 
-phi_0.5 <- uniroot(function(x) matern_cor(0.3, x, 0.5) - 0.05,
-                   lower=0.01, upper = 1)$root
+phi_0.5 <- uniroot(function(x) matern_correlation(0.3, x, 0.5) - 0.05,
+                   lower = 0.01, upper = 1)$root
 
-phi_1.5 <- uniroot(function(x) matern_cor(0.3, x, 1.5) - 0.05,
-                   lower=0.01, upper = 1)$root
+phi_1.5 <- uniroot(function(x) matern_correlation(0.3, x, 1.5) - 0.05,
+                   lower = 0.01, upper = 1)$root
 
-phi_2.5 <- uniroot(function(x) matern_cor(0.3, x, 2.5) - 0.05,
-                   lower=0.01, upper = 1)$root
+phi_2.5 <- uniroot(function(x) matern_correlation(0.3, x, 2.5) - 0.05,
+                   lower = 0.01, upper = 1)$root
 
-m0.5 <- sapply(u, function(x) matern_cor(x, phi_0.5, kappa = 0.5))
-m1.5 <- sapply(u, function(x) matern_cor(x, phi_1.5, kappa = 1.5))
-m2.5 <- sapply(u, function(x) matern_cor(x, phi_2.5, kappa = 2.5))
+m0.5 <- sapply(u, function(x) matern_correlation(x, phi_0.5, kappa = 0.5))
+m1.5 <- sapply(u, function(x) matern_correlation(x, phi_1.5, kappa = 1.5))
+m2.5 <- sapply(u, function(x) matern_correlation(x, phi_2.5, kappa = 2.5))
 
 # Create a data frame for ggplot2
 df2 <- data.frame(
@@ -402,13 +407,13 @@ r_05 <- rast("data/sim_matern_05.tif")
 r_15 <- rast("data/sim_matern_15.tif")
 r_25 <- rast("data/sim_matern_25.tif")
 
-par(mfrow=c(2,3))
-plot(r_1, main="(a)")
-plot(r_2, main="(b)")
-plot(r_3, main="(c)")
-plot(r_05, main="(d)")
-plot(r_15, main="(e)")
-plot(r_25, main="(f)")
+par(mfrow = c(2, 3))
+plot(r_1, main = "(a)")
+plot(r_2, main = "(b)")
+plot(r_3, main = "(c)")
+plot(r_05, main = "(d)")
+plot(r_15, main = "(e)")
+plot(r_25, main = "(f)")
 ```
 
 The flexibility provided by the Matérn correlation function in capturing different forms of spatial correlations has made it the most widely used correlation function in model-based geostatistics [@stein1999]. For this reason, in this book we will consider the Matérn correlation function. We will consider estimation issues related to the Matérn correlation in @sec-estimation.
