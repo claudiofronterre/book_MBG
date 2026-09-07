@@ -1514,8 +1514,7 @@ grid_pred_sac <- create_grid(chull_sf, spat_res = 0.25)
 set.seed(123)
 pred_S_inf <- setup_prediction(
   inf_fit,
-  grid_pred = grid_pred_sac,
-  predictors = data.frame(row.names = seq_along(grid_pred_sac)))
+  grid_pred = grid_pred_sac)
 
 pred_inf_grid <- predict_grid_target(
   pred_S_inf,
@@ -1551,9 +1550,7 @@ loc_pred <- st_transform(abund_sma, crs = wnv_crs)
 set.seed(123)
 pred_S_loc <- setup_prediction(
   inf_fit,
-  grid_pred = loc_pred,
-  predictors = data.frame(row.names = seq_len(nrow(loc_pred)))
-)
+  grid_pred = loc_pred)
 
 # Computation of the samples for West Nile Virus prevalence
 beta_hat <- coef(inf_fit)$beta

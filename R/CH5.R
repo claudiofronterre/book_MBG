@@ -453,8 +453,7 @@ grid_pred_sac <- create_grid(chull_sf, spat_res = 0.25)
 set.seed(123)
 pred_S_inf <- setup_prediction(
   inf_fit,
-  grid_pred = grid_pred_sac,
-  predictors = data.frame(row.names = seq_along(grid_pred_sac)))
+  grid_pred = grid_pred_sac)
 
 pred_inf_grid <- predict_grid_target(
   pred_S_inf,
@@ -468,9 +467,7 @@ loc_pred <- st_transform(abund_sma, crs = wnv_crs)
 set.seed(123)
 pred_S_loc <- setup_prediction(
   inf_fit,
-  grid_pred = loc_pred,
-  predictors = data.frame(row.names = seq_len(nrow(loc_pred)))
-)
+  grid_pred = loc_pred)
 
 beta_hat_inf <- coef(inf_fit)$beta
 prev_inf_samples <- 1 / (1 + exp(-(beta_hat_inf + pred_S_loc$S_samples)))
