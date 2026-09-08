@@ -1935,6 +1935,7 @@ We are now ready to run the `simulate_surface()` function.
 ```{r}
 #| label: simulate-liberia-surfaces
 #| eval: false
+set.seed(123)
 lib_surf_sim <- simulate_surface(n_sim = 200,
                          pred_grid = pred_grid,
                          formula = ~ elevation + pmax(elevation - 150, 0) +
