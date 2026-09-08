@@ -269,6 +269,7 @@ saveRDS(true_model, file = "data/fit_sp_lib.rds")
 ## 7. Simulation study: simulate_surface() + assess_simulation() for both a
 ##    pixel-level MSE assessment and an areal-level classification
 ##    assessment
+##    -> data/lib_surf_sim.rds (lib_surf_sim)
 ##    -> data/sim_grid_mse.rds (res_sim_grid)
 ##    -> data/sim_area_cl.rds  (res_sim_area)
 ## ------------------------------------------------------------
@@ -287,6 +288,7 @@ sampling_f_lib <- function() {
   return(coords_sf)
 }
 
+set.seed(123)
 lib_surf_sim <- simulate_surface(n_sim = 200,
                                  pred_grid = sim_pred_grid,
                                  formula = ~ elevation +
@@ -294,6 +296,8 @@ lib_surf_sim <- simulate_surface(n_sim = 200,
                                  sampling_f = sampling_f_lib,
                                  family = "binomial",
                                  par0 = coef(true_model))
+
+saveRDS(lib_surf_sim, file = "data/lib_surf_sim.rds")
 
 # 7a. Pixel-level MSE assessment (M_T vs M_C)
 res_sim_grid <- assess_simulation(lib_surf_sim,
