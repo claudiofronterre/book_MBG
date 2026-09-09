@@ -12,6 +12,7 @@ editor_options:
 #| echo: false
 library(wpgpDownloadR)
 library(terra)
+library(sf)
 lbr_pop_100 <- rast("data/lbr_pop_100.tif")
 liberia_admin0 <- readRDS("data/lbr_adm0_geoboundaries.rds")
 liberia_admin1 <- readRDS("data/lbr_adm1_geoboundaries.rds")
@@ -70,9 +71,6 @@ library(geobounds)
 liberia_admin0 <- gb_get_adm0("Liberia")
 liberia_admin1 <- gb_get_adm1("Liberia")
 
-# Inspect source, licence and attribution metadata
-gb_get_metadata("Liberia", adm_lvl = "adm0")
-gb_get_metadata("Liberia", adm_lvl = "adm1")
 ```
 
 ```{r}
@@ -86,8 +84,8 @@ gb_get_metadata("Liberia", adm_lvl = "adm1")
 
 # Plot the administrative boundaries
 par(mar = c(0, 0, 0, 0))  #| hide_line
-plot(sf::st_geometry(liberia_admin0))
-plot(sf::st_geometry(liberia_admin1))
+plot(liberia_admin0$geometry)
+plot(liberia_admin1$geometry)
 ```
 
 ### Example: Downloading population data {#sec-pop-data}
@@ -178,7 +176,7 @@ elev_rast[elev_rast == 0] <- NA
 
 # Plot the result
 plot(elev_rast, main = "Elevation in Liberia (m)")
-plot(sf::st_geometry(liberia_admin0), add = TRUE)
+plot(liberia_admin0$geometry, add = TRUE)
 ```
 
 ```{r}
@@ -192,7 +190,7 @@ elev_rast <- rast("data/lbr_elevation_srtm.tif")
 
 # Plot the result
 plot(elev_rast, main = "Elevation in Liberia (m)")
-plot(sf::st_geometry(liberia_admin0), add = TRUE)
+plot(liberia_admin0$geometry, add = TRUE)
 ```
 
 ## Importing and standardizing spatial data
@@ -247,7 +245,7 @@ print(lbr_pop_100)
 
 # Basic plot of the raster (log-scale)
 plot(log(lbr_pop_100), main = "Population per 100m (log-scale)")
-plot(sf::st_geometry(liberia_admin0), add = TRUE)
+plot(liberia_admin0$geometry, add = TRUE)
 ```
 
 The output of `print()` provides a detailed summary of the raster's properties. The `rast()` function reads raster files in formats like GeoTIFF, ASCII grid, or other common raster formats and then we used `plot()` as a quick way to visualize raster data.
@@ -448,7 +446,7 @@ pred_locations <- st_intersection(pred_locations, liberia_admin0_utm)
 
 # Visualize the result
 par(mar = c(0, 0, 0, 0))  #| hide_line
-plot(sf::st_geometry(liberia_admin0_utm), col = "white")
+plot(liberia_admin0_utm$geometry, col = "white")
 plot(pred_locations, cex = .01, col = "red", pch = 19, add = TRUE)
 ```
 
