@@ -86,8 +86,8 @@ gb_get_metadata("Liberia", adm_lvl = "adm1")
 
 # Plot the administrative boundaries
 par(mar = c(0, 0, 0, 0))  #| hide_line
-plot(liberia_admin0$geometry)
-plot(liberia_admin1$geometry)
+plot(sf::st_geometry(liberia_admin0))
+plot(sf::st_geometry(liberia_admin1))
 ```
 
 ### Example: Downloading population data {#sec-pop-data}
@@ -178,7 +178,7 @@ elev_rast[elev_rast == 0] <- NA
 
 # Plot the result
 plot(elev_rast, main = "Elevation in Liberia (m)")
-plot(liberia_admin0$geometry, add = TRUE)
+plot(sf::st_geometry(liberia_admin0), add = TRUE)
 ```
 
 ```{r}
@@ -192,7 +192,7 @@ elev_rast <- rast("data/lbr_elevation_srtm.tif")
 
 # Plot the result
 plot(elev_rast, main = "Elevation in Liberia (m)")
-plot(liberia_admin0$geometry, add = TRUE)
+plot(sf::st_geometry(liberia_admin0), add = TRUE)
 ```
 
 ## Importing and standardizing spatial data
@@ -247,7 +247,7 @@ print(lbr_pop_100)
 
 # Basic plot of the raster (log-scale)
 plot(log(lbr_pop_100), main = "Population per 100m (log-scale)")
-plot(liberia_admin0$geometry, add = T)
+plot(sf::st_geometry(liberia_admin0), add = TRUE)
 ```
 
 The output of `print()` provides a detailed summary of the raster's properties. The `rast()` function reads raster files in formats like GeoTIFF, ASCII grid, or other common raster formats and then we used `plot()` as a quick way to visualize raster data.
@@ -448,8 +448,8 @@ pred_locations <- st_intersection(pred_locations, liberia_admin0_utm)
 
 # Visualize the result
 par(mar = c(0, 0, 0, 0))  #| hide_line
-plot(liberia_admin0_utm$geometry, col = "white")
-plot(pred_locations, cex = .01, col = "red", pch = 19, add = T)
+plot(sf::st_geometry(liberia_admin0_utm), col = "white")
+plot(pred_locations, cex = .01, col = "red", pch = 19, add = TRUE)
 ```
 
 ## Visualizing spatial data
