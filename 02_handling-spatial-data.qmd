@@ -170,9 +170,10 @@ elev_rast <- ee_as_rast(
   quiet = TRUE
 )
 
-# Replace 0s with NAs as these are usually elevation values 
-# where no data exists due to clipping or ocean masking.
-elev_rast[elev_rast == 0] <- NA
+# Mask cells whose centres fall outside Liberia while preserving
+# valid zero-metre elevations
+liberia_mask <- rasterize(vect(liberia_admin0), elev_rast, field = 1)
+elev_rast <- mask(elev_rast, liberia_mask)
 
 # Plot the result
 plot(elev_rast, main = "Elevation in Liberia (m)")
@@ -389,6 +390,33 @@ head(liberia_sf)
 ```
 
 In this example, the `extract()` function assigns the raster value from the population density layer to each point in the dataset. This allows the point data to include population density as a covariate in the analysis.
+
+#### Missing raster values
+
+Raster extraction can return `NA` for several reasons. A sampling location may fall outside the raster extent, the source product may contain a missing cell, or preprocessing may have masked the location. Before replacing a missing value, check the raster extent and CRS, inspect the source product and plot the location with the raster. A missing value outside the product's coverage or across a coastline should generally remain missing; depending on the analysis, the corresponding observation may need to be excluded or a different covariate source used.
+
+For an isolated gap in a smoothly varying continuous field, such as elevation, a nearby valid cell may sometimes be a reasonable substitute. The `search_radius` argument of `extract()` searches for the nearest non-missing raster cell within a specified distance. For longitude-latitude rasters the radius is given in metres. The following controlled example makes the elevation cell under the first of two survey locations missing and then searches within 2 km:
+
+```{r}
+#| label: extract-nearest-valid-cell
+elevation_with_gap <- elev_rast
+survey_cell <- cellFromXY(
+  elevation_with_gap,
+  st_coordinates(liberia_sf[1, ])
+)
+elevation_with_gap[survey_cell] <- NA
+
+nearest_elevation <- extract(
+  elevation_with_gap,
+  liberia_sf[1:2, ],
+  search_radius = 2000
+)
+nearest_elevation
+```
+
+When a replacement is found, the result also reports its distance and cell number. Set the radius in advance from subject-matter knowledge rather than increasing it until a value is found. This approach is unsuitable for broad areas of missing data, locations outside source coverage or situations where a barrier makes the nearest cell scientifically unrelated. For categorical rasters, do not average category codes; retain the missing value unless a defensible rule supports using a nearby category or a neighbourhood mode.
+
+Finding a nearby cell is an imputation: it attempts to recover the value of the covariate at the point. A buffer summary answers a different question by defining the covariate as exposure over a neighbourhood. A mean within a radius can be appropriate for a continuous or intensive quantity when surrounding conditions are scientifically relevant, whereas a sum may be appropriate for an extensive quantity such as population count. The next example illustrates the mechanics of a buffer summary.
 
 Instead of extracting values for exact point locations, it can sometimes be useful to aggregate covariate values within a defined area around each point. This is often done by creating a buffer around each point and calculating summary statistics (e.g., mean, sum) of the raster values within that buffer. For instance, you might want to calculate the average population density or temperature within a 5 km radius around each point to smooth out fine-scale variation.
 
