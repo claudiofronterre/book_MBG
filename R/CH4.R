@@ -87,10 +87,9 @@ saveRDS(pred_n_mosq_shp, file = "data/pred_n_mosq_shp.rds")
 ##    -> data/lb_pred_S_m.rds (lb_pred_S_m)
 ##    -> data/lb_pred_S_j.rds (lb_pred_S_j)
 ## ------------------------------------------------------------
-library(rgeoboundaries)
 library(elevatr)
 
-liberia_adm0 <- geoboundaries("liberia", adm_lvl = "adm0")
+liberia_adm0 <- readRDS("data/lbr_adm0_geoboundaries.rds")
 liberia_adm0 <- st_transform(liberia_adm0, crs = 32629)
 
 liberia_grid <- create_grid(liberia_adm0, spat_res = 5)
@@ -188,7 +187,7 @@ saveRDS(pred_aver_pop, file = "data/pred_aver_pop.rds")
 ##    -> data/pred_shp.rds   (pred_shp,   unweighted)
 ##    -> data/pred_shp_w.rds (pred_shp_w, population weighted)
 ## ------------------------------------------------------------
-lb_adm1 <- geoboundaries(country = "Liberia", adm_lvl = "adm1")
+lb_adm1 <- readRDS("data/lbr_adm1_geoboundaries.rds")
 
 pred_shp <- predict_areal_target(lb_pred_S_j, shp = lb_adm1,
                                  shp_target = function(Tx) mean(Tx),
@@ -273,7 +272,7 @@ saveRDS(true_model, file = "data/fit_sp_lib.rds")
 ##    -> data/sim_grid_mse.rds (res_sim_grid)
 ##    -> data/sim_area_cl.rds  (res_sim_area)
 ## ------------------------------------------------------------
-shp <- geoboundaries(country = "liberia", adm_lvl = "adm0")
+shp <- readRDS("data/lbr_adm0_geoboundaries.rds")
 shp <- st_transform(shp, crs = 32629)
 
 sim_pred_grid <- create_grid(shp, spat_res = 5)
@@ -311,7 +310,7 @@ res_sim_grid <- assess_simulation(lib_surf_sim,
 saveRDS(res_sim_grid, file = "data/sim_grid_mse.rds")
 
 # 7b. Areal-level classification assessment (admin level 1)
-shp_adm <- geoboundaries(country = "liberia", adm_lvl = "adm1")
+shp_adm <- readRDS("data/lbr_adm1_geoboundaries.rds")
 shp_adm <- st_transform(shp_adm, crs = 32629)
 
 res_sim_area <- assess_simulation(lib_surf_sim,

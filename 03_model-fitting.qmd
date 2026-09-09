@@ -1801,10 +1801,10 @@ italy_provinces <- readRDS("data/ita_adm3_geoboundaries.rds")
 ```{r}
 #| label: download-italy-boundaries
 #| eval: false
-library(rgeoboundaries)
+library(geobounds)
 library(mapview)
-italy_regions <- geoboundaries(country = "italy", adm_lvl = "adm2")
-italy_provinces <- geoboundaries(country = "italy", adm_lvl = "adm3")
+italy_regions <- gb_get_adm2("Italy")
+italy_provinces <- gb_get_adm3("Italy")
 ```
 
 ```{r}

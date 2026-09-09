@@ -235,6 +235,8 @@ cluster_scores <- cluster
 pred_shp <- readRDS("data/pred_shp.rds")
 pred_shp_w <- readRDS("data/pred_shp_w.rds")
 true_model <- readRDS("data/fit_sp_lib.rds")
+liberia_adm0 <- readRDS("data/lbr_adm0_geoboundaries.rds")
+lb_adm1 <- readRDS("data/lbr_adm1_geoboundaries.rds")
 library(dplyr)
 res_sim_grid <- readRDS("data/sim_grid_mse.rds")
 
@@ -246,9 +248,9 @@ res_sim_area <- readRDS("data/sim_area_cl.rds")
 #| label: prepare-liberia-prediction-grid
 #| message: false
 #| eval: false
-# 1) Obtaining Liberia boundaries 
-library(rgeoboundaries)
-liberia_adm0 <- geoboundaries("liberia", adm_lvl = "adm0")
+# 1) Obtain the Liberia boundary
+library(geobounds)
+liberia_adm0 <- gb_get_adm0("Liberia")
 liberia_adm0 <- st_transform(liberia_adm0, crs = 32629)
 
 # 2) Create the grid at 5 km resolution
@@ -741,9 +743,8 @@ the `predict_areal_target()` function.
 #| label: prepare-liberia-admin-prediction
 #| message: false
 #| eval: false
-# Admin level 1 boundaries
-library(rgeoboundaries)
-lb_adm1 <- geoboundaries(country = "Liberia", adm_lvl = "adm1")
+# Obtain the admin level 1 boundaries
+lb_adm1 <- gb_get_adm1("Liberia")
 
 # Prediction of prevalence 
 pred_shp <- predict_areal_target(lb_pred_S_j, shp = lb_adm1,
@@ -1899,8 +1900,7 @@ grid from a raster.
 ```{r}
 #| label: prepare-liberia-simulation-domain
 #| eval: false
-library(rgeoboundaries)
-shp <- geoboundaries(country = "liberia", adm_lvl = "adm0")
+shp <- gb_get_adm0("Liberia")
 shp <- st_transform(shp, crs= 32629)
 
 pred_grid <- create_grid(shp, spat_res = 5)
@@ -2226,8 +2226,8 @@ surface is first aggregated at the areal level before classification.
 ```{r}
 #| label: prepare-area-assessment
 #| eval: false
-# Admin level 1 shape files
-shp_adm <- geoboundaries(country = "liberia", adm_lvl = "adm1")
+# Admin level 1 boundaries
+shp_adm <- gb_get_adm1("Liberia")
 shp_adm <- st_transform(shp_adm, crs= 32629)
 
 res_sim_area <- assess_simulation(lib_surf_sim,

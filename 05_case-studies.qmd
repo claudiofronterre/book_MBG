@@ -14,7 +14,6 @@ library(tidyr)
 library(sf)
 library(rgee)
 library(terra)
-library(rgeoboundaries)
 library(terra)
 library(grid)
 library(RiskMap)
@@ -26,6 +25,7 @@ underw_prev <- readRDS("data/underw_prev.rds")
 assess_haz <- readRDS("data/assess_haz.rds")
 assess_waz <- readRDS("data/assess_waz.rds")
 mlw_admin0_sf <- readRDS("data/mlw_admin0_sf.rds")
+ghana <- readRDS("data/gha_adm0_geoboundaries.rds")
 mlw_sf <- readRDS("data/mlw_sf.rds")
 mlw_pfpr <- readRDS("data/mlw_pfpr.rds")
 out_file <- "data/malawi_covariates_2006.tif"
@@ -338,8 +338,8 @@ To implement this in RiskMap, we begin by generating a predictive grid over the 
 #| label: create-ghana-prediction-grid
 #| eval: false
 # Boundaries of Ghana
-library(rgeoboundaries)
-ghana <- geoboundaries(country = "Ghana", adm_lvl = "adm0")
+library(geobounds)
+ghana <- gb_get_adm0("Ghana")
 ghana <- st_transform(ghana, st_crs(malnutrition))
 
 ghana_grid <- create_grid(ghana, spat_res = 10)
@@ -483,20 +483,20 @@ library(tidyr)
 library(sf)
 library(rgee)
 library(terra)
-library(rgeoboundaries)
+library(geobounds)
 library(grid)
 
 # Initialize Earth Engine
 ee_Initialize()
 ```
 
-We then use rgeoboundaries to obtain Malawi’s administrative boundary and extract *P. falciparum* prevalence survey data from the malariaAtlas package for surveys conducted in or overlapping the year 2006.
+We then use geobounds to obtain Malawi’s administrative boundary and extract *P. falciparum* prevalence survey data from the malariaAtlas package for surveys conducted in or overlapping the year 2006.
 
 ```{r}
 #| label: download-malawi-data
 #| eval: false
 # Get Malawi boundary
-mlw_admin0_sf <- geoboundaries(country = "Malawi", adm_lvl = "adm0")
+mlw_admin0_sf <- gb_get_adm0("Malawi")
 mlw_admin0_ee <- sf_as_ee(mlw_admin0_sf)
 
 # Download PfPR survey data
@@ -1147,14 +1147,21 @@ abund_sma <- abund_sma %>%
   ))
 ```
 
-To provide spatial context, we use the rgeoboundaries package to download second-level administrative boundaries (ADM2) for the United States. We extract the boundaries for Placer, El Dorado and Sacrament counties which make up the SMA.
+To provide spatial context, we use the geobounds package to download second-level administrative boundaries (ADM2) for the United States. We extract the boundaries for Placer, El Dorado and Sacramento counties which make up the SMA.
+
+```{r}
+#| label: load-sacramento-boundaries
+#| include: false
+sma_boundaries <- readRDS("data/sma_adm2_geoboundaries.rds")
+```
 
 ```{r}
 #| label: prepare-sacramento-boundaries
-library(rgeoboundaries)
+#| eval: false
+library(geobounds)
 
 # Get California ADM2 units and filter to relevant counties
-ca_counties <- geoboundaries("United States of America", adm_lvl = "ADM2")
+ca_counties <- gb_get_adm2("United States of America")
 sma_names <- c("Sacramento", "Placer", "El Dorado")
 sma_boundaries <- ca_counties[ca_counties$shapeName %in% sma_names, ]
 
