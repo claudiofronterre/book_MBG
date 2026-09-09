@@ -1719,49 +1719,6 @@
       "Maintainer": "Carson Sievert <carson@posit.co>",
       "Repository": "CRAN"
     },
-    "crul": {
-      "Package": "crul",
-      "Version": "1.6.0",
-      "Source": "Repository",
-      "Title": "HTTP Client",
-      "Description": "A simple HTTP client, with tools for making HTTP requests, and mocking HTTP requests. The package is built on R6, and takes inspiration from Ruby's 'faraday' gem (<https://rubygems.org/gems/faraday>). The package name is a play on curl, the widely used command line tool for HTTP, and this package is built on top of the R package 'curl', an interface to 'libcurl' (<https://curl.se/libcurl/>).",
-      "License": "MIT + file LICENSE",
-      "Authors@R": "c( person(\"Scott\", \"Chamberlain\", role = c(\"aut\", \"cre\"), email = \"myrmecocystus@gmail.com\", comment = c(ORCID = \"0000-0003-1444-9135\")) )",
-      "URL": "https://docs.ropensci.org/crul/, https://github.com/ropensci/crul, https://books.ropensci.org/http-testing/",
-      "BugReports": "https://github.com/ropensci/crul/issues",
-      "Encoding": "UTF-8",
-      "Language": "en-US",
-      "Imports": [
-        "curl (>= 3.3)",
-        "R6 (>= 2.2.0)",
-        "urltools (>= 1.6.0)",
-        "httpcode (>= 0.2.0)",
-        "jsonlite",
-        "mime",
-        "rlang",
-        "lifecycle"
-      ],
-      "Suggests": [
-        "testthat (>= 3.0.0)",
-        "roxygen2 (>= 7.1.1)",
-        "fauxpas (>= 0.1.0)",
-        "webmockr (>= 2.2.0)",
-        "withr",
-        "knitr",
-        "rmarkdown"
-      ],
-      "VignetteBuilder": "knitr",
-      "RoxygenNote": "7.3.2",
-      "Config/testthat/edition": "3",
-      "Config/testthat/parallel": "true",
-      "X-schema.org-applicationCategory": "Web",
-      "X-schema.org-keywords": "http, https, API, web-services, curl, download, libcurl, async, mocking, caching",
-      "X-schema.org-isPartOf": "https://ropensci.org",
-      "NeedsCompilation": "no",
-      "Author": "Scott Chamberlain [aut, cre] (ORCID: <https://orcid.org/0000-0003-1444-9135>)",
-      "Maintainer": "Scott Chamberlain <myrmecocystus@gmail.com>",
-      "Repository": "RSPM"
-    },
     "curl": {
       "Package": "curl",
       "Version": "7.1.0",
@@ -2725,6 +2682,46 @@
       "Maintainer": "Hadley Wickham <hadley@posit.co>",
       "Repository": "CRAN"
     },
+    "geobounds": {
+      "Package": "geobounds",
+      "Version": "1.0.1",
+      "Source": "Repository",
+      "Priority": null,
+      "Depends": [
+        "R (>= 4.1.0)"
+      ],
+      "Imports": [
+        "cli",
+        "countrycode",
+        "dplyr",
+        "httr2 (>= 1.0.0)",
+        "sf",
+        "tools",
+        "utils"
+      ],
+      "LinkingTo": [
+        null
+      ],
+      "Suggests": [
+        "ggplot2",
+        "jsonlite",
+        "knitr",
+        "quarto",
+        "testthat (>= 3.0.0)",
+        "tibble",
+        "withr"
+      ],
+      "Enhances": [
+        null
+      ],
+      "License": "MIT + file LICENSE",
+      "License_is_FOSS": null,
+      "License_restricts_use": null,
+      "OS_type": null,
+      "NeedsCompilation": "no",
+      "Repository": "CRAN",
+      "Type": "source"
+    },
     "geojsonsf": {
       "Package": "geojsonsf",
       "Version": "2.0.5",
@@ -3566,39 +3563,6 @@
       "Maintainer": "Kirill Müller <kirill@cynkra.com>",
       "Repository": "CRAN"
     },
-    "hoardr": {
-      "Package": "hoardr",
-      "Version": "0.5.5",
-      "Source": "Repository",
-      "Type": "Package",
-      "Title": "Manage Cached Files",
-      "Description": "Suite of tools for managing cached files, targeting use in other R packages. Uses 'rappdirs' for cross-platform paths. Provides utilities to manage cache directories, including targeting files by path or by key; cached directories can be compressed and uncompressed easily to save disk space.",
-      "Authors@R": "c(person(\"Scott\", \"Chamberlain\", role = \"aut\",  comment = c(ORCID=\"0000-0003-2542-2202\")), person(\"Tamás\", \"Stirling\", role = c(\"ctb\", \"cre\"), email = \"stirling.tamas@gmail.com\"))",
-      "License": "MIT + file LICENSE",
-      "URL": "https://docs.ropensci.org/hoardr/, https://github.com/ropensci/hoardr",
-      "BugReports": "https://github.com/ropensci/hoardr/issues",
-      "VignetteBuilder": "knitr",
-      "Encoding": "UTF-8",
-      "Imports": [
-        "R6",
-        "rappdirs",
-        "digest"
-      ],
-      "Suggests": [
-        "testthat",
-        "knitr",
-        "rmarkdown"
-      ],
-      "RoxygenNote": "7.3.2",
-      "X-schema.org-applicationCategory": "Data",
-      "X-schema.org-keywords": "caching, data, files, xml, pdf",
-      "X-schema.org-isPartOf": "https://ropensci.org",
-      "Config/testthat/edition": "3",
-      "NeedsCompilation": "no",
-      "Author": "Scott Chamberlain [aut] (<https://orcid.org/0000-0003-2542-2202>), Tamás Stirling [ctb, cre]",
-      "Maintainer": "Tamás Stirling <stirling.tamas@gmail.com>",
-      "Repository": "RSPM"
-    },
     "htmltools": {
       "Package": "htmltools",
       "Version": "0.5.9",
@@ -3675,27 +3639,6 @@
       "Maintainer": "Carson Sievert <carson@posit.co>",
       "Repository": "CRAN"
     },
-    "httpcode": {
-      "Package": "httpcode",
-      "Version": "0.3.0",
-      "Source": "Repository",
-      "Title": "'HTTP' Status Code Helper",
-      "Description": "Find and explain the meaning of 'HTTP' status codes. Functions included for searching for codes by full or partial number, by message, and get appropriate dog and cat images for many status codes.",
-      "Authors@R": "person(\"Scott\", \"Chamberlain\", role = c(\"aut\",\"cre\"), email = \"myrmecocystus@gmail.com\",  comment = c(ORCID = \"0000-0003-1444-9135\"))",
-      "License": "MIT + file LICENSE",
-      "URL": "https://github.com/sckott/httpcode",
-      "BugReports": "https://github.com/sckott/httpcode/issues",
-      "Encoding": "UTF-8",
-      "Language": "en-US",
-      "Suggests": [
-        "testthat"
-      ],
-      "RoxygenNote": "7.1.0",
-      "NeedsCompilation": "no",
-      "Author": "Scott Chamberlain [aut, cre] (<https://orcid.org/0000-0003-1444-9135>)",
-      "Maintainer": "Scott Chamberlain <myrmecocystus@gmail.com>",
-      "Repository": "RSPM"
-    },
     "httr": {
       "Package": "httr",
       "Version": "1.4.8",
@@ -3735,6 +3678,64 @@
       "Author": "Hadley Wickham [aut, cre], Posit Software, PBC [cph, fnd]",
       "Maintainer": "Hadley Wickham <hadley@posit.co>",
       "Repository": "CRAN"
+    },
+    "httr2": {
+      "Package": "httr2",
+      "Version": "1.3.0",
+      "Source": "Repository",
+      "Priority": null,
+      "Depends": [
+        "R (>= 4.1)"
+      ],
+      "Imports": [
+        "cli (>= 3.0.0)",
+        "curl (>= 6.4.0)",
+        "glue",
+        "lifecycle",
+        "magrittr",
+        "openssl",
+        "R6",
+        "rlang (>= 1.3.0)",
+        "vctrs (>= 0.6.3)",
+        "withr"
+      ],
+      "LinkingTo": [
+        null
+      ],
+      "Suggests": [
+        "askpass",
+        "bench",
+        "clipr",
+        "covr",
+        "digest",
+        "docopt",
+        "httpuv",
+        "jose",
+        "jsonlite",
+        "knitr",
+        "later (>= 1.4.0)",
+        "nanonext",
+        "otel (>= 0.2.0)",
+        "otelsdk (>= 0.2.0)",
+        "paws.common (>= 0.8.0)",
+        "promises",
+        "rappdirs",
+        "rmarkdown",
+        "testthat (>= 3.1.8)",
+        "tibble",
+        "webfakes (>= 1.4.0)",
+        "xml2"
+      ],
+      "Enhances": [
+        null
+      ],
+      "License": "MIT + file LICENSE",
+      "License_is_FOSS": null,
+      "License_restricts_use": null,
+      "OS_type": null,
+      "NeedsCompilation": "no",
+      "Repository": "CRAN",
+      "Type": "source"
     },
     "irlba": {
       "Package": "irlba",
@@ -6138,66 +6139,19 @@
       "Maintainer": "Matthieu Stigler <Matthieu.Stigler@gmail.com>",
       "Repository": "RSPM"
     },
-    "rgeoboundaries": {
-      "Package": "rgeoboundaries",
-      "Version": "1.3.1",
-      "Source": "GitHub",
-      "Title": "A Client to geoBoundaries, a Political Administrative Boundaries Dataset",
-      "Authors@R": "c(person(given = \"Ahmadou\", family = \"Dicko\", role = c(\"aut\"), email = \"mail@ahmadoudicko.com\"), person(given = \"Andy\", family = \"South\", role = \"ctb\", email = \"southandy@gmail.com\"), person(given = \"Daniel\", family = \"Runfola\", role = c(\"ctb\", \"cre\"), email = \"team@geoboundaries.org\"), person(given = \"Rohith Reddy\", family = \"Mandala\", role = \"ctb\", email = \"rohithreddy.m4@gmail.com\"))",
-      "Description": "Client the access data from the geoBoundaries API who provides country political administrative boundaries dataset.",
-      "License": "MIT + file LICENSE",
-      "Encoding": "UTF-8",
-      "URL": "https://github.com/wmgeolab/rgeoboundaries",
-      "BugReports": "https://github.com/wmgeolab/rgeoboundaries/issues",
-      "Depends": [
-        "R (>= 4.1)"
-      ],
-      "Imports": [
-        "crul (>= 1.4.0)",
-        "jsonlite",
-        "sf (>= 1.0.0)",
-        "glue",
-        "memoise",
-        "countrycode (>= 1.2.0)",
-        "lifecycle",
-        "hoardr"
-      ],
-      "Suggests": [
-        "roxygen2",
-        "knitr",
-        "rmarkdown",
-        "testthat",
-        "covr"
-      ],
-      "Roxygen": "list(markdown = TRUE)",
-      "RoxygenNote": "7.3.2",
-      "X-schema.org-applicationCategory": "Data Access",
-      "X-schema.org-keywords": "geoboundaries, boundaries, gis, map, geographic, data, spatial, dataset",
-      "RemoteType": "github",
-      "RemoteHost": "api.github.com",
-      "RemoteRepo": "rgeoboundaries",
-      "RemoteUsername": "wmgeolab",
-      "RemoteRef": "HEAD",
-      "RemoteSha": "be0f3166c8af0dda1b57c3fd84bcc8744fd5d71e",
-      "NeedsCompilation": "no",
-      "Author": "Ahmadou Dicko [aut], Andy South [ctb], Daniel Runfola [ctb, cre], Rohith Reddy Mandala [ctb]",
-      "Maintainer": "Daniel Runfola <team@geoboundaries.org>"
-    },
     "rlang": {
       "Package": "rlang",
-      "Version": "1.2.0",
+      "Version": "1.3.0",
       "Source": "Repository",
-      "Title": "Functions for Base Types and Core R and 'Tidyverse' Features",
-      "Description": "A toolbox for working with base types, core R features like the condition system, and core 'Tidyverse' features like tidy evaluation.",
-      "Authors@R": "c( person(\"Lionel\", \"Henry\", ,\"lionel@posit.co\", c(\"aut\", \"cre\")), person(\"Hadley\", \"Wickham\", ,\"hadley@posit.co\", \"aut\"), person(given = \"mikefc\", email = \"mikefc@coolbutuseless.com\", role = \"cph\", comment = \"Hash implementation based on Mike's xxhashlite\"), person(given = \"Yann\", family = \"Collet\", role = \"cph\", comment = \"Author of the embedded xxHash library\"), person(given = \"Posit, PBC\", role = c(\"cph\", \"fnd\")) )",
-      "License": "MIT + file LICENSE",
-      "ByteCompile": "true",
-      "Biarch": "true",
+      "Priority": null,
       "Depends": [
         "R (>= 4.0.0)"
       ],
       "Imports": [
         "utils"
+      ],
+      "LinkingTo": [
+        null
       ],
       "Suggests": [
         "cli (>= 3.1.0)",
@@ -6213,7 +6167,7 @@
         "pkgload",
         "rmarkdown",
         "stats",
-        "testthat (>= 3.3.2)",
+        "testthat\n(>= 3.3.2)",
         "tibble",
         "usethis",
         "vctrs (>= 0.2.3)",
@@ -6222,17 +6176,13 @@
       "Enhances": [
         "winch"
       ],
-      "Encoding": "UTF-8",
-      "RoxygenNote": "7.3.3",
-      "URL": "https://rlang.r-lib.org, https://github.com/r-lib/rlang",
-      "BugReports": "https://github.com/r-lib/rlang/issues",
-      "Config/build/compilation-database": "true",
-      "Config/testthat/edition": "3",
-      "Config/Needs/website": "dplyr, tidyverse/tidytemplate",
+      "License": "MIT + file LICENSE",
+      "License_is_FOSS": null,
+      "License_restricts_use": null,
+      "OS_type": null,
       "NeedsCompilation": "yes",
-      "Author": "Lionel Henry [aut, cre], Hadley Wickham [aut], mikefc [cph] (Hash implementation based on Mike's xxhashlite), Yann Collet [cph] (Author of the embedded xxHash library), Posit, PBC [cph, fnd]",
-      "Maintainer": "Lionel Henry <lionel@posit.co>",
-      "Repository": "CRAN"
+      "Repository": "CRAN",
+      "Type": "source"
     },
     "rmarkdown": {
       "Package": "rmarkdown",
@@ -7735,36 +7685,6 @@
       "Maintainer": "Yihui Xie <xie@yihui.name>",
       "Repository": "CRAN"
     },
-    "triebeard": {
-      "Package": "triebeard",
-      "Version": "0.4.1",
-      "Source": "Repository",
-      "Type": "Package",
-      "Title": "'Radix' Trees in 'Rcpp'",
-      "Author": "Os Keyes [aut, cre], Drew Schmidt [aut], Yuuki Takano [cph]",
-      "Maintainer": "Os Keyes <ironholds@gmail.com>",
-      "Description": "'Radix trees', or 'tries', are key-value data structures optimised for efficient lookups, similar in purpose to hash tables. 'triebeard' provides an implementation of 'radix trees' for use in R programming and in developing packages with 'Rcpp'.",
-      "License": "MIT + file LICENSE",
-      "LinkingTo": [
-        "Rcpp"
-      ],
-      "Encoding": "UTF-8",
-      "Imports": [
-        "Rcpp"
-      ],
-      "RoxygenNote": "7.1.2",
-      "Suggests": [
-        "knitr",
-        "rmarkdown",
-        "testthat"
-      ],
-      "VignetteBuilder": "knitr",
-      "URL": "https://github.com/Ironholds/triebeard/",
-      "BugReports": "https://github.com/Ironholds/triebeard/issues",
-      "Date": "2023-03-04",
-      "NeedsCompilation": "yes",
-      "Repository": "RSPM"
-    },
     "tweenr": {
       "Package": "tweenr",
       "Version": "2.0.3",
@@ -7896,42 +7816,6 @@
       "Author": "Bernhard Pfaff [aut, cre], Eric Zivot [ctb], Matthieu Stigler [ctb]",
       "Maintainer": "Bernhard Pfaff <bernhard@pfaffikus.de>",
       "Repository": "CRAN"
-    },
-    "urltools": {
-      "Package": "urltools",
-      "Version": "1.7.3.1",
-      "Source": "Repository",
-      "Type": "Package",
-      "Title": "Vectorised Tools for URL Handling and Parsing",
-      "Date": "2019-04-14",
-      "Authors@R": "c(person(given = \"Os\", family = \"Keyes\", role = c(\"aut\", \"cre\"), email = \"ironholds@gmail.com\"), person(given = \"Jay\", family = \"Jacobs\", role = \"aut\"), person(given = \"Drew\", family = \"Schmidt\", role = \"aut\"), person(given = \"Mark\", family = \"Greenaway\", role = \"ctb\"), person(given = \"Bob\", family = \"Rudis\", role = \"ctb\"), person(given = \"Alex\", family = \"Pinto\", role = \"ctb\"), person(given = \"Maryam\", family = \"Khezrzadeh\", role = \"ctb\"), person(given = \"Peter\", family = \"Meilstrup\", role = \"ctb\"), person(given = c(\"Adam\", \"M.\"), family = \"Costello\", role = \"cph\"), person(given = \"Jeff\", family = \"Bezanson\", role = \"cph\"), person(given = \"Peter\", family = \"Meilstrup\", role = \"ctb\"), person(given = \"Xueyuan\", family = \"Jiang\", role = \"ctb\"))",
-      "Description": "A toolkit for all URL-handling needs, including encoding and decoding, parsing, parameter extraction and modification. All functions are designed to be both fast and entirely vectorised. It is intended to be useful for people dealing with web-related datasets, such as server-side logs, although may be useful for other situations involving large sets of URLs.",
-      "License": "MIT + file LICENSE",
-      "LazyData": "TRUE",
-      "LinkingTo": [
-        "Rcpp"
-      ],
-      "Imports": [
-        "Rcpp",
-        "methods",
-        "triebeard"
-      ],
-      "Suggests": [
-        "testthat",
-        "knitr"
-      ],
-      "URL": "https://github.com/Ironholds/urltools/",
-      "BugReports": "https://github.com/Ironholds/urltools/issues",
-      "VignetteBuilder": "knitr",
-      "RoxygenNote": "6.1.1",
-      "Encoding": "UTF-8",
-      "Depends": [
-        "R (>= 2.10)"
-      ],
-      "NeedsCompilation": "yes",
-      "Repository": "RSPM",
-      "Author": "Os Keyes [aut, cre], Jay Jacobs [aut], Drew Schmidt [aut], Mark Greenaway [ctb], Bob Rudis [ctb], Alex Pinto [ctb], Maryam Khezrzadeh [ctb], Peter Meilstrup [ctb], Adam M. Costello [cph], Jeff Bezanson [cph], Peter Meilstrup [ctb], Xueyuan Jiang [ctb]",
-      "Maintainer": "Os Keyes <ironholds@gmail.com>"
     },
     "utf8": {
       "Package": "utf8",

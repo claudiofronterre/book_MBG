@@ -3,6 +3,7 @@ library(RiskMap)
 library(dplyr)
 library(ggplot2)
 library(lme4)
+library(geobounds)
 
 ## ============================================================
 ## PART A: Ghana malnutrition (stunting / underweight) case study
@@ -34,9 +35,12 @@ saveRDS(haz_fit, file = "data/haz_fit.rds")
 saveRDS(waz_fit, file = "data/waz_fit.rds")
 
 ## --- A2. Predictive grids for stunting / underweight prevalence ---
-library(rgeoboundaries)
-
-ghana <- geoboundaries(country = "Ghana", adm_lvl = "adm0")
+ghana <- gb_get_adm0("Ghana")
+attr(ghana, "geobounds_metadata") <- gb_get_metadata(
+  "Ghana", adm_lvl = "adm0"
+)
+attr(ghana, "retrieved_on") <- Sys.Date()
+saveRDS(ghana, file = "data/gha_adm0_geoboundaries.rds")
 ghana <- st_transform(ghana, st_crs(malnutrition_sf))
 
 ghana_grid <- create_grid(ghana, spat_res = 10)
@@ -105,7 +109,11 @@ library(terra)
 ee_Initialize()
 
 ## --- B1. Boundary + PfPR survey data ---
-mlw_admin0_sf <- geoboundaries(country = "Malawi", adm_lvl = "adm0")
+mlw_admin0_sf <- gb_get_adm0("Malawi")
+attr(mlw_admin0_sf, "geobounds_metadata") <- gb_get_metadata(
+  "Malawi", adm_lvl = "adm0"
+)
+attr(mlw_admin0_sf, "retrieved_on") <- Sys.Date()
 mlw_admin0_ee <- sf_as_ee(mlw_admin0_sf)
 
 saveRDS(mlw_admin0_sf, file = "data/mlw_admin0_sf.rds")
@@ -269,6 +277,15 @@ saveRDS(assess_pred_mlw, file = "data/assess_pred_mlw.rds")
 ## ============================================================
 
 data(abund_sma)
+
+ca_counties <- gb_get_adm2("United States of America")
+sma_names <- c("Sacramento", "Placer", "El Dorado")
+sma_boundaries <- ca_counties[ca_counties$shapeName %in% sma_names, ]
+attr(sma_boundaries, "geobounds_metadata") <- gb_get_metadata(
+  "United States of America", adm_lvl = "adm2"
+)
+attr(sma_boundaries, "retrieved_on") <- Sys.Date()
+saveRDS(sma_boundaries, file = "data/sma_adm2_geoboundaries.rds")
 
 abund_sma <- abund_sma %>%
   mutate(trap_group = case_when(

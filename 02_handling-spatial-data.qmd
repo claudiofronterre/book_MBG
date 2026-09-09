@@ -13,6 +13,8 @@ editor_options:
 library(wpgpDownloadR)
 library(terra)
 lbr_pop_100 <- rast("data/lbr_pop_100.tif")
+liberia_admin0 <- readRDS("data/lbr_adm0_geoboundaries.rds")
+liberia_admin1 <- readRDS("data/lbr_adm1_geoboundaries.rds")
 ```
 
 # Handling of spatial data in R {#sec-handling-data}
@@ -55,28 +57,35 @@ A wide range of open-access spatial datasets provide covariates for disease mapp
 
 ### Example: Downloading administrative boundaries
 
-Administrative boundaries provide an essential spatial structure for many types of geostatistical analyses, particularly in disease mapping where data is often aggregated by administrative units such as regions, districts or provinces. The [geoBoundaries](https://www.geoboundaries.org/) datasets, which are accessible via the rgeoboundaries package, provide openly available administrative boundary data for nearly every country, allowing researchers to integrate these boundaries into their analyses seamlessly.
+Administrative boundaries provide an essential spatial structure for many types of geostatistical analyses, particularly in disease mapping where data is often aggregated by administrative units such as regions, districts or provinces. The [geoBoundaries](https://www.geoboundaries.org/) datasets, which are accessible via the geobounds package, provide openly available administrative boundary data for nearly every country, allowing researchers to integrate these boundaries into their analyses seamlessly.
+
+Boundary datasets are distributed under different licences, which specify how they may be reused, and attribution identifies the organization or individuals who produced them. These conditions are especially important when publishing maps: depending on the licence, the source and licence may need to be acknowledged in the figure caption, acknowledgements or data-availability statement. The `gb_get_metadata()` function can be used to inspect this information before a map is shared or published. By default, geobounds downloads boundaries from the open `gbOpen` release.
+
+```{r}
+#| label: download-liberia-boundaries
+#| eval: false
+library(geobounds)
+
+# Download the country and first-level administrative boundaries
+liberia_admin0 <- gb_get_adm0("Liberia")
+liberia_admin1 <- gb_get_adm1("Liberia")
+
+# Inspect source, licence and attribution metadata
+gb_get_metadata("Liberia", adm_lvl = "adm0")
+gb_get_metadata("Liberia", adm_lvl = "adm1")
+```
 
 ```{r}
 #| layout-ncol: 2
 #| label: fig-liberia-admin 
 #| fig-cap: |
-#|   Administrative boundaries for Liberia retrieved using the rgeoboundaries package.
+#|   Administrative boundaries for Liberia retrieved using the geobounds package.
 #| fig-subcap:
 #|   - "Admin level 0"
 #|   - "Admin level 1"
 
-par(mar = c(0, 0, 0, 0))  #| hide_line
-# Load the rgeoboundaries package
-library(rgeoboundaries)
-
-# Download administrative boundaries for Liberia (level 0: country)
-liberia_admin0 <- gb_adm0("Liberia")
-
-# Do the same for level 1: regions
-liberia_admin1 <- gb_adm1("Liberia")
-
 # Plot the administrative boundaries
+par(mar = c(0, 0, 0, 0))  #| hide_line
 plot(liberia_admin0$geometry)
 plot(liberia_admin1$geometry)
 ```
@@ -589,7 +598,7 @@ combined_map +
 
 ## Exercises
 
-1.  Download a shapefile of administrative boundaries for a country of your choice using the rgeoboundaries package. Once the shapefile has been imported into R, visualize it in two different ways: first using base R plotting functions and then using ggplot2. Compare the two visualizations and discuss what advantages or disadvantages each approach offers.
+1.  Download a shapefile of administrative boundaries for a country of your choice using the geobounds package. Once the shapefile has been imported into R, visualize it in two different ways: first using base R plotting functions and then using ggplot2. Compare the two visualizations and discuss what advantages or disadvantages each approach offers.
 
 2.  Obtain raster data for the same country, such as elevation or population density. You may use either the wpgpDownloadR package or access Google Earth Engine through the rgee package. Plot the raster with `terra::plot()` and again with ggplot2. Comment on how the raster is displayed under each method and the flexibility provided by each plotting tool.
 

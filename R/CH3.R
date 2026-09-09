@@ -7,10 +7,19 @@ library(lme4)
 ##    -> data/ita_adm2_geoboundaries.rds
 ##    -> data/ita_adm3_geoboundaries.rds
 ## ------------------------------------------------------------
-library(rgeoboundaries)
+library(geobounds)
 
-italy_regions   <- geoboundaries(country = "italy", adm_lvl = "adm2")
-italy_provinces <- geoboundaries(country = "italy", adm_lvl = "adm3")
+italy_regions <- gb_get_adm2("Italy")
+italy_provinces <- gb_get_adm3("Italy")
+
+attr(italy_regions, "geobounds_metadata") <- gb_get_metadata(
+  "Italy", adm_lvl = "adm2"
+)
+attr(italy_provinces, "geobounds_metadata") <- gb_get_metadata(
+  "Italy", adm_lvl = "adm3"
+)
+attr(italy_regions, "retrieved_on") <- Sys.Date()
+attr(italy_provinces, "retrieved_on") <- Sys.Date()
 
 saveRDS(italy_regions,   file = "data/ita_adm2_geoboundaries.rds")
 saveRDS(italy_provinces, file = "data/ita_adm3_geoboundaries.rds")

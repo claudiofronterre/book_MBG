@@ -1,8 +1,27 @@
 # PRECOMPUTED DATA FOR CHAPTER 2 ---------------------------------------------
 
 library(rgee)
-library(rgeoboundaries)
+library(geobounds)
 library(terra)
+
+# Liberia administrative boundaries ----------------------------------------
+# -> data/lbr_adm0_geoboundaries.rds
+# -> data/lbr_adm1_geoboundaries.rds
+
+liberia_admin0 <- gb_get_adm0("Liberia")
+liberia_admin1 <- gb_get_adm1("Liberia")
+
+attr(liberia_admin0, "geobounds_metadata") <- gb_get_metadata(
+  "Liberia", adm_lvl = "adm0"
+)
+attr(liberia_admin1, "geobounds_metadata") <- gb_get_metadata(
+  "Liberia", adm_lvl = "adm1"
+)
+attr(liberia_admin0, "retrieved_on") <- Sys.Date()
+attr(liberia_admin1, "retrieved_on") <- Sys.Date()
+
+saveRDS(liberia_admin0, "data/lbr_adm0_geoboundaries.rds")
+saveRDS(liberia_admin1, "data/lbr_adm1_geoboundaries.rds")
 
 # Liberia elevation from Google Earth Engine --------------------------------
 # -> data/lbr_elevation_srtm.tif
@@ -22,7 +41,6 @@ ee_Initialize(
   quiet = TRUE
 )
 
-liberia_admin0 <- gb_adm0("Liberia")
 liberia_ee <- sf_as_ee(liberia_admin0)
 elev <- ee$Image("CGIAR/SRTM90_V4")
 elev_liberia <- elev$clip(liberia_ee)

@@ -46,7 +46,7 @@ The list of the R packages used in this book is provided in @tbl-packages.
 | *ggplot2* (E) | Creating maps and exploratory plots |
 | *dplyr* (E) | Data wrangling and manipulation |
 | *tidyr* (E) | Reshaping and tidying data |
-| *rgeoboundaries* (R) | Accessing global administrative boundary datasets from GeoBoundaries |
+| *geobounds* (R) | Accessing global administrative boundary datasets from geoBoundaries |
 | *gridExtra* (R) | Arranging multiple plots and tables in a grid layout |
 | *patchwork* (R) | Combining multiple ggplot2 plots into a single coherent display |
 | *factoextra* (R) | Extracting and visualizing multivariate analysis results |
