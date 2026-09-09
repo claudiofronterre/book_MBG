@@ -2679,9 +2679,11 @@ obtained MCMC samples.
     independent samples that an MCMC chain is equivalent to, accounting
     for the autocorrelation in the chain. It is calculated as:
 
-$$
+    $$
     \text{ESS} = \frac{N}{1 + 2 \sum_{k=1}^{\infty} \rho_k},
-    $$ where $N$ is the total number of MCMC samples and $\rho_k$ is the
+    $$
+
+    where $N$ is the total number of MCMC samples and $\rho_k$ is the
     autocorrelation at lag $k$. A high ESS indicates that the chain has
     good mixing properties and the samples are nearly independent. The
     summation of autocorrelations up to a sufficiently large lag is used
@@ -2941,6 +2943,7 @@ $$
 $$
 
 The hat matrix, which projects observations onto the fitted space, is
+
 $$
 H = [D - \Sigma V^{-1} D] (D^T V^{-1} D)^{-1} D^T V^{-1} + \Sigma V^{-1}.
 $$
@@ -2994,15 +2997,18 @@ correlation structure in $\Sigma$.
     in @eq-linear-predictor-glmms-ch2. By editing the code for the
     simulation shown in @sec-overdispersion, generate a graph as in
     @fig-var-bin-glmm under the two following scenarios: $i$)
-    $\tau^2 = 0.2$ and $n_i=100$; $ii$) $\tau^2 = 0.1$ and $n_i = 1$.
+    $\tau^2 = 0.2$ and $n_i = 100$; $ii$) $\tau^2 = 0.1$ and $n_i = 1$.
     How does the variance of $Y_i$ change under $i$) and $ii$) in
     comparison to @fig-var-bin-glmm? How do you explain the differences?
+
 2.  Similarly to the previous exercise, consider a Poisson mixed model
     with linear predictor
 
-$$
-        \log\left\{\mu_i\right\} = \beta_0 + Z_i,
-        $$ where $Z_i$ are a set of mutually independent Gaussian
+    $$
+    \log\left\{\mu_i\right\} = \beta_0 + Z_i,
+    $$
+
+    where $Z_i$ are a set of mutually independent Gaussian
     variables with mean 0 and variance $\tau^2$. Using the code shown in
     @sec-overdispersion, carry out a simulation study to compute the
     variance of $Y_i$ and generate a graph similar to @fig-var-bin-glmm
@@ -3010,6 +3016,7 @@ $$
     standard Poisson model. Generate the graph for different values of
     $\tau^2$ and summarize your findings. NOTE: In this simulation the
     offset $n_i$ can be set to 1.
+
 3.  Create an R function that computes the *cloud variogram*. As
     explained in @sec-expl-spatial, the cloud variogram is obtained by
     plotting $\hat{V}_{ij}$ (see @eq-hat-squared-diff) against the
@@ -3020,28 +3027,35 @@ $$
     model for river blindness in @eq-liberia-bin-mixed-elev. How does
     this compare to the empirical variogram that takes the averages
     within predefined distance classes, as shown in @fig-liberia-variog?
+
 4.  Fit a Binomial mixed model to the Liberia dataset on
     river blindness without any covariates, i.e.
 
-$$
-        \log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_0 + Z_i.
-        $$ Making use of the R code presented in
+    $$
+    \log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_0 + Z_i.
+    $$
+
+    Making use of the R code presented in
     @sec-empirical-variog-bin, use the function `variogram()` to
     generate the empirical variogram for this model and compare this to
     the empirical variogram of @fig-liberia-variog. What differences do
     you observe?
+
 5.  Fit a Poisson mixed model to the anopheles mosquito data using
     elevation as a covariate, i.e.
 
-$$
-        \log\{\mu(x_i)\} = \beta_{0} + \beta_{1} d(x_i) + Z_i
-        $$ where $d(x_i)$ is the measured elevation at location $x_i$.
+    $$
+    \log\{\mu(x_i)\} = \beta_{0} + \beta_{1} d(x_i) + Z_i
+    $$
+
+    where $d(x_i)$ is the measured elevation at location $x_i$.
     How strong is the overdispersion in the data? After fitting the
     model, extract the estimates of the random effects $Z_i$ and compute
     the empirical variogram with the 95% envelope for spatial
     independence. Repeat this for different classes of distances by
     changing the input passed to `breaks` in the `variogram()` function.
     How do the different specifications of `breaks` affect the results?
+
 6.  *Parametric bootstrap.* Using the model fitted to the Anopheles
     gambiae mosquitoes in @sec-anopheles-fit, simulate 1000 datasets
     using the `simulate_glgpm()` function and estimate the model to each of the
@@ -3049,6 +3063,7 @@ $$
     95$\%$ confidence intervals for each of the model parameters and
     compare this with the confidence intervals obtained from the model
     summary.
+
 7.  In Section @sec-glm-parest, we explained that for a linear model
     with one observation per location, we cannot simultaneously estimate
     both the measurement error variance $\omega^2$ and the nugget effect
@@ -3056,8 +3071,14 @@ $$
     value and estimate the nugget effect. Suppose that for the Galicia
     data, the measurement device has a known standard error of
     $\omega = 0.15$ on the log-scale (i.e., $\omega^2 = 0.0225$). Fit
-    the model $$Y_i = \mu + S(x_i) + Z_i + U_i$$ using `glgpm()` by
-    setting `nugget=TRUE` and `fix_var_me = 0.0225` in the `gp()`
+    the model
+
+    $$
+    Y_i = \mu + S(x_i) + Z_i + U_i
+    $$
+
+    using `glgpm()` by setting `nugget = TRUE` and
+    `fix_var_me = 0.0225` in the `gp()`
     function, with $\kappa = 1.5$. Compare the estimates of $\sigma^2$
     and $\phi$ with those obtained from the model without the nugget
     effect (Equation 3.16). What is the estimated nugget variance
