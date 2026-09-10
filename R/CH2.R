@@ -53,10 +53,8 @@ elev_rast <- ee_as_rast(
   quiet = TRUE
 )
 
-# Mask cells whose centres fall outside Liberia while preserving
-# valid zero-metre elevations
-liberia_mask <- rasterize(vect(liberia_admin0), elev_rast, field = 1)
-elev_rast <- mask(elev_rast, liberia_mask)
+# Mask cells whose centres fall outside Liberia
+elev_rast <- mask(elev_rast, liberia_admin0, touches = FALSE)
 
 writeRaster(
   elev_rast,

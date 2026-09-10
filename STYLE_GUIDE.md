@@ -60,6 +60,15 @@ practical.
   marked `eval: false` and its saved result is loaded separately.
 - Use `readRDS()` for `.rds` files and assign the return value explicitly.
 - Do not use `load()` for `.rds` files.
+- For a function call split across lines, keep the first argument on the same
+  line as the function name, align subsequent arguments with the first, and
+  close the parenthesis on the final argument line:
+
+  ```r
+  fit <- glgpm(formula,
+               data = data,
+               family = "binomial")
+  ```
 
 ## Code chunks
 
