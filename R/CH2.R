@@ -53,7 +53,8 @@ elev_rast <- ee_as_rast(
   quiet = TRUE
 )
 
-elev_rast[elev_rast == 0] <- NA
+# Mask cells whose centres fall outside Liberia
+elev_rast <- mask(elev_rast, liberia_admin0, touches = FALSE)
 
 writeRaster(
   elev_rast,
