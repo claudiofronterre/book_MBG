@@ -153,10 +153,13 @@ table is acceptable when the text explains how to read or translate between
 them. After the output structure has been introduced, use tables for model
 results and discuss only the entries relevant to the argument.
 
-Use ggplot2 for all reader-facing figures, including maps and figures based on
-sf objects. Apply the established book theme, labels, scales, legends, and
-caption conventions. Do not mix base R graphics with ggplot2 in the rendered
-book. Base graphics may be used for private maintenance diagnostics that are
+Use ggplot2 for finished reader-facing figures, including maps and figures
+based on sf objects. Apply the established book theme, labels, scales, legends,
+and caption conventions. A chapter may first use base `plot()` when this forms
+part of an explicit pedagogical progression from quick exploratory
+visualisation to a publication-quality ggplot2 figure. The text should explain
+that purpose, and the exception should not be used merely for convenience.
+Base graphics may also be used for private maintenance diagnostics that are
 not included in a chapter.
 
 ## Rendering and publication
@@ -196,7 +199,8 @@ artifact, but GitHub's custom-domain setting remains authoritative.
 - Slow computations use the visible-code, hidden-load, saved-object pattern.
 - Model output uses a table unless a full first summary has a clear
   pedagogical purpose.
-- Reader-facing figures use ggplot2 and follow the book's visual conventions.
+- Finished reader-facing figures use ggplot2 and follow the book's visual
+  conventions, apart from an explicitly explained pedagogical progression.
 - No local paths, credentials, caches, rendered website files, or `.RData`
   workspaces are included.
 - Relevant HTML and PDF output has been inspected.
