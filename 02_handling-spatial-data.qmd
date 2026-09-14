@@ -52,7 +52,7 @@ A wide range of open-access spatial datasets provide covariates for disease mapp
 | **MODIS**               | Remote Sensing                  | Satellite imagery (e.g., vegetation indices) | *MODIStsp*           |
 | **OpenStreetMap (OSM)** | Human settlements, roads        | Global geographic features                   | *osmdata*            |
 | **Google Earth Engine** | Satellite imagery               | Large-scale environmental data analysis      | *rgee*               |
-| **WorldPop**            | Population data                 | Gridded population density estimates         | *wpgpDownloadR* |
+| **WorldPop**            | Population data                 | Gridded population counts and densities      | *wpgpDownloadR* |
 
 : Some key sources of covariates useful in disease mapping and R packages to retrieve them. {#tbl-data-sources}
 
@@ -90,7 +90,7 @@ plot(liberia_admin1$geometry)
 
 ### Example: Downloading population data {#sec-pop-data}
 
-Population density is a key covariate in geostatistical models for public health research. In this section, we demonstrate how to retrieve high-resolution population data for Liberia from [WorldPop](https://www.worldpop.org/) using the wpgpDownloadR package. This package provides easy access to the WorldPop datasets, which offers gridded population estimates at various spatial resolutions.
+Population distribution is often relevant to geostatistical models for public health research. In this section, we demonstrate how to retrieve high-resolution population data for Liberia from [WorldPop](https://www.worldpop.org/) using the wpgpDownloadR package. This package provides access to several gridded population products. It is important to check whether a selected product represents population counts, population density or another quantity because this determines how its values should be interpreted and processed.
 
 Before downloading the data, we will search for available datasets for Liberia. The function `wpgpListCountryDatasets()` helps in retrieving a list of all available datasets for a specified country.
 
@@ -107,7 +107,7 @@ library(wpgpDownloadR)
 lbr_datasets <- wpgpListCountryDatasets(ISO3 = "LBR")
 ```
 
-We can check the description column to see what datasets are available. Let's download the population data for Liberia for the year 2014 at a 100m resolution. The `wpgpGetCountryDataset()` function will then download a raster dataset based on ISO3 code and covariate name.
+We can check the description column to see what datasets are available. Here we download the unconstrained WorldPop `ppp` product for Liberia in 2014. Its cells are approximately 100 m at the equator and contain estimated numbers of people per grid cell, not population densities. The `wpgpGetCountryDataset()` function downloads a raster based on the ISO3 code and covariate name.
 
 ```{r}
 #| eval: false
@@ -125,7 +125,7 @@ Google Earth Engine (GEE) is a powerful platform that hosts petabytes of environ
 
 > 🔗 **Getting started with rgee**: To use rgee, you need a Google account and must complete a one-time setup process. Follow the official guide here: [https://r-spatial.github.io/rgee/](https://r-spatial.github.io/rgee/). For further tutorials and use cases, see: [https://csaybar.github.io/rgee-examples/](https://csaybar.github.io/rgee-examples/).
 
-In this example, we retrieve elevation data for Liberia using the [SRTM 90m dataset](https://developers.google.com/earth-engine/datasets/catalog/CGIAR_SRTM90_V4). The steps include initializing Earth Engine, access the desired data product with the `ee$Image("ASSET_ID")` function (the `ASSET_ID` can be found on the dataset page under *Earth Engine Snippet*), converting the boundary of Liberia into a format readable by GEE, clipping the global elevation raster to that boundary, and downloading the result as a raster object in R. This process demonstrates how rgee can be integrated into a geostatistical workflow to enrich your data with high-quality environmental covariates.
+In this example, we retrieve elevation data for Liberia from the [SRTM 90 m dataset](https://developers.google.com/earth-engine/datasets/catalog/CGIAR_SRTM90_V4). This is the native source product. We request an output scale of 1,000 m below to reduce the size of the example, so the downloaded raster used in the book has an approximately 1 km grid rather than the native 90 m grid. The steps include initialising Earth Engine, accessing the desired data product with the `ee$Image("ASSET_ID")` function (the `ASSET_ID` can be found on the dataset page under *Earth Engine Snippet*), converting the boundary of Liberia into a format readable by GEE, clipping the global elevation raster to that boundary and downloading the result as a raster object in R.
 
 ::: {.callout-note}
 This example assumes you have already completed rgee setup and authenticated using `ee_Initialize()`.
@@ -166,7 +166,7 @@ elev_rast <- ee_as_rast(
   image = elev_liberia,
   region = liberia_ee$geometry(),
   via = "drive",
-  scale = 1000, # Aggregate to 1000 meters
+  scale = 1000, # Request an output grid of approximately 1 km
   quiet = TRUE
 )
 
@@ -183,7 +183,7 @@ plot(liberia_admin0$geometry, add = TRUE)
 #| echo: false
 #| message: false
 #| warning: false
-#| fig-cap: Elevation (m) in Liberia retrieved via Google Earth Engine (SRTM).
+#| fig-cap: Elevation in metres on the approximately 1 km grid requested from the SRTM 90 m source product.
 
 elev_rast <- rast("data/lbr_elevation_srtm.tif")
 
@@ -235,7 +235,7 @@ lbr_pop_100 <- rast(lbr_pop_url)
 ```{r}
 #| label: fig-lbr-pop
 #| message: false
-#| fig-cap: Liberia population count for 2014 at 100m resolution (log-scale).
+#| fig-cap: Estimated population per approximately 100 m grid cell in Liberia in 2014, shown on the log scale.
 # Load the terra package
 library(terra)
 
@@ -243,7 +243,7 @@ library(terra)
 print(lbr_pop_100)
 
 # Basic plot of the raster (log-scale)
-plot(log(lbr_pop_100), main = "Population per 100m (log-scale)")
+plot(log(lbr_pop_100), main = "Population per grid cell (log scale)")
 plot(liberia_admin0$geometry, add = TRUE)
 ```
 
@@ -351,20 +351,20 @@ liberia_sf_utm <- st_transform(liberia_sf,
                                crs = liberia_utm_crs)
 ```
 
-Reprojecting raster data is more complex than reprojecting vector data due to the continuous nature of raster grids. The process involves recalculating cell values to fit a new grid based on the new CRS, which can lead to challenges like resampling, distortion, and data loss. When reprojecting a raster, the grid must adjust to the new CRS, often requiring resampling of cell values. The method you choose depends on the data type: **nearest neighbor** is best for categorical data like land use while **bilinear or cubic interpolation** is good for continuous data like temperature, where smooth transitions are needed.
+Reprojecting raster data is more complex than reprojecting vector data because it creates a new grid. The new grid may have a different origin, cell size, dimensions and alignment, so values must be estimated from the cells of the original raster. The method must match what the values represent. Bilinear or cubic interpolation is suitable for continuous fields such as elevation or temperature. Nearest-neighbour resampling is appropriate for categorical rasters because it does not create new category codes. Counts and totals are extensive quantities whose values depend on the area represented and are added when areas are combined. They therefore require a total-preserving method rather than interpolation. By contrast, continuous fields and densities are intensive quantities whose values do not simply increase when the represented area becomes larger.
 
-The function `project()` from the terra package can be used to project a raster.
+The `project()` function from the terra package can reproject a raster. The WorldPop raster contains counts, so the `"sum"` method uses weighted contributions from the input cells to preserve the total population. When several rasters must align, it is preferable to supply a template raster that defines the desired CRS, extent, resolution and origin. Here we supply only a CRS because this example does not need to align the output with another raster.
 
 ```{r}
 #| label: raster-project
-lbr_pop_100_utm <- project(lbr_pop_100, 
+lbr_pop_100_utm <- project(lbr_pop_100,
                            crs(liberia_sf_utm),
-                           method = "bilinear")
+                           method = "sum")
 ```
 
-Reprojecting a raster may alter its resolution. For example, reprojecting from geographic (degrees) to projected (meters) CRS can result in a mismatch between the original and new cell sizes. Moreover, distortion can occur when converting between projections, especially at high latitudes. Some cells may be stretched or compressed, leading to potential loss of information or edge artifacts. These distortions arise because the Earth is not flat, and projecting the curved surface of the Earth onto a flat plane (or vice versa) leads to trade-offs. For example, the Mercator projection preserves angles and shapes but distorts area, particularly near the poles.
+The numerical resolution before and after reprojection cannot be compared directly when the units change from degrees to metres. More importantly, resolution describes the output grid rather than the effective detail of the source data. Reprojecting a coarse raster onto a finer grid does not create new spatial information. Projection distortion and resampling may also introduce edge effects or some loss of information.
 
-For these reasons, it's often better to reproject vectors rather than rasters when both data types are used together and avoid as much as possible to change the CRS of rasters. One way to achieve this is to work with WGS84 when performing all spatial operations like extraction of covariates from rasters and then transform only the point data to a projected CRS before fitting the model.
+As a general rule, avoid reprojecting a raster when transforming the vector layer to the raster's CRS achieves the same valid analysis. This avoids unnecessary resampling and alteration of the raster values. Raster reprojection is still appropriate when an analysis requires a particular projected grid or when several rasters must share the same geometry. In these cases, choose the output grid deliberately and use a resampling method suited to the variable. For a geostatistical workflow, covariates can be extracted in the raster's native CRS before the point data are transformed to a suitable projected CRS for model fitting.
 
 ## Extracting covariate data
 
@@ -495,7 +495,7 @@ Visualization is a key part of spatial data analysis, as it allows you to explor
 
 ### Visualizing point data
 
-Point data often represents the locations of observations (e.g., disease cases, sampling sites). ggplot2 allows you to plot these points and optionally color them by a covariate (e.g., disease prevalence or population density). Here is an example that uses the Liberia data.
+Point data often represents the locations of observations (e.g., disease cases, sampling sites). ggplot2 allows you to plot these points and optionally colour them by a covariate (e.g., disease prevalence or population). Here is an example that uses the Liberia data.
 
 ```{r}
 #| label: fig-ggplot-points
@@ -565,24 +565,26 @@ In ggplot2, you can visualize raster data by converting it into a data frame of 
 
 ```{r}
 #| label: fig-ggplot-raster
-#| fig-cap: Log-population in Liberia (2014) visualized as a raster using `geom_raster()` with Viridis color scale.
+#| fig-cap: Estimated population per approximately 100 m grid cell in Liberia in 2014, shown on the log scale using `geom_raster()`.
 # Convert the raster to a data frame for ggplot2
 raster_df <- as.data.frame(log(lbr_pop_100), xy = TRUE)
 
-# Rename of the variable in the data-frame to pass to 'fill'
-colnames(raster_df)[3] <- "pop_dens"
+# Rename the raster value column used for the fill scale
+colnames(raster_df)[3] <- "log_population"
 
 # Plot raster using ggplot2
 ggplot(data = raster_df) +
-  geom_raster(aes(x = x, y = y, fill = pop_dens)) + 
+  geom_raster(aes(x = x, y = y, fill = log_population)) +
   scale_fill_viridis_c() +
   coord_sf(crs = 4326) +
   theme_minimal() +
-  labs(title = "Population per 100m (log-scale)",
-       fill = "Density", x = "", y = "") 
+  labs(title = "Population per grid cell (log scale)",
+       fill = "Log population",
+       x = "",
+       y = "")
 ```
 
-In this example `as.data.frame()` converts the raster into a data frame with x and y coordinates and their corresponding raster values and `geom_raster()` is used to plot the raster cells, coloring them based on the population density.
+In this example `as.data.frame()` converts the raster into a data frame with x and y coordinates and their corresponding raster values. The `geom_raster()` function then colours the cells according to their log population count.
 
 ### Combining multiple spatial data types
 
@@ -590,16 +592,16 @@ In many cases, it is useful to combine different spatial data types (points, pol
 
 ```{r}
 #| label: fig-combined-map
-#| fig-cap: Overlay of raster (population density), polygons (admin-1 boundaries), and points (survey locations) in a single ggplot2 map.
+#| fig-cap: Overlay of population per grid cell, admin-1 boundaries and survey locations in a single ggplot2 map.
 # Combine points, polygons, and raster data in one plot
 combined_map <- ggplot() +
-  geom_raster(data = raster_df, aes(x = x, y = y, fill = pop_dens)) + 
+  geom_raster(data = raster_df, aes(x = x, y = y, fill = log_population)) +
   geom_sf(data = liberia_admin1, fill = NA, color = "black") +    
   geom_sf(data = liberia_sf, shape = 21, col = "black", fill = "white") +
   scale_fill_viridis_c() +  
   theme_minimal() +
   labs(title = "Combined Spatial Data: Points, Polygons, and Raster",
-       fill = "Population Density",
+       fill = "Log population",
        x = "", y = "")
 
 combined_map
