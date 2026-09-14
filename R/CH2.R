@@ -49,7 +49,7 @@ elev_rast <- ee_as_rast(
   image = elev_liberia,
   region = liberia_ee$geometry(),
   via = "drive",
-  scale = 1000,
+  scale = 1000, # Request an output grid of approximately 1 km
   quiet = TRUE
 )
 
