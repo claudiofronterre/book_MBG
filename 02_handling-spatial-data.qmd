@@ -10,12 +10,20 @@ editor_options:
 ```{r}
 #| label: setup-spatial-data
 #| echo: false
-library(wpgpDownloadR)
 library(terra)
 library(sf)
 lbr_pop_100 <- rast("data/lbr_pop_100.tif")
 liberia_admin0 <- readRDS("data/lbr_adm0_geoboundaries.rds")
 liberia_admin1 <- readRDS("data/lbr_adm1_geoboundaries.rds")
+
+required_boundary_fields <- c("shapeName", "geometry")
+if (!all(required_boundary_fields %in% names(liberia_admin0)) ||
+    !all(required_boundary_fields %in% names(liberia_admin1))) {
+  stop("The saved Liberia boundaries do not contain the expected fields.")
+}
+if (!"lbr_ppp_2014" %in% names(lbr_pop_100)) {
+  stop("The saved WorldPop raster does not contain 'lbr_ppp_2014'.")
+}
 ```
 
 # Handling of spatial data in R {#sec-handling-data}
@@ -152,8 +160,8 @@ ee_Initialize(
 # Convert Liberia boundary to Earth Engine Geometry
 liberia_ee <- sf_as_ee(liberia_admin0)
 
-# Access the global SRTM elevation dataset from Earth Engine
-elev <- ee$Image("CGIAR/SRTM90_V4")
+# Access the elevation band of the global SRTM dataset
+elev <- ee$Image("CGIAR/SRTM90_V4")$select("elevation")
 
 # You can check general info about the data produc with ee_print
 ee_print(elev)
@@ -570,7 +578,7 @@ In ggplot2, you can visualize raster data by converting it into a data frame of 
 raster_df <- as.data.frame(log(lbr_pop_100), xy = TRUE)
 
 # Rename the raster value column used for the fill scale
-colnames(raster_df)[3] <- "log_population"
+names(raster_df)[names(raster_df) == "lbr_ppp_2014"] <- "log_population"
 
 # Plot raster using ggplot2
 ggplot(data = raster_df) +
