@@ -630,6 +630,28 @@ combined_map +
                          height = unit(.5, "cm"), width = unit(.5, "cm")) 
 ```
 
+## FAQs
+
+- *How should I choose a CRS?*
+
+Start from the spatial operation and the property that matters, such as distance, area or direction. Preserve the source CRS when it is suitable. For local distance-based geostatistical modelling, use a projected CRS that represents the study region appropriately. A UTM zone is often useful for a compact area contained within that zone, but it is not a universal choice. Always inspect the transformed layers together before analysis.
+
+- *Why did raster extraction return `NA`?*
+
+The location may be outside the raster extent, the source cell may be missing or preprocessing may have masked it. First check the CRS and extent, then plot the location with the raster and inspect the source data. Do not replace the value automatically. A nearby valid cell may be defensible for an isolated gap in a smooth continuous field, but not for locations outside the source coverage or across a meaningful barrier.
+
+- *Should I extract a raster value at a point or summarise a buffer?*
+
+Use a point value when the covariate at the exact sampling location matches the scientific question. Use a buffer when the surrounding environment defines the relevant exposure. Choose the buffer radius using subject-matter knowledge. The summary must also match the raster values, for example a mean for a continuous field or density and a sum for population counts.
+
+- *How should I choose a raster or prediction-grid resolution?*
+
+Resolution should reflect the source data, the spatial scale of the process, the intended output and the available computing resources. A finer grid can make a map look more detailed, but it does not create information beyond that supported by the data and model. When combining rasters, also check their CRS, extent, origin and alignment rather than comparing resolution alone.
+
+- *Where can I find spatial datasets and learn more about working with them in R?*
+
+The sources listed in @tbl-data-sources are useful starting points, but always inspect the product definition, units, reference period, resolution and licence before use. [*Geocomputation with R*](https://r.geocompx.org/) provides a comprehensive introduction to spatial analysis in R, while [rspatialdata](https://rspatialdata.github.io/) catalogues packages and services for obtaining spatial data.
+
 ## Review questions
 
 - What are the main differences between raster and vector data, and in which scenarios is each type commonly used in geostatistical analysis?
