@@ -253,23 +253,25 @@ The output of `print()` provides a detailed summary of the raster's properties. 
 
 When working with spatial data, especially from different sources, one of the most critical tasks is ensuring that all datasets share the same **Coordinate Reference System (CRS)**. A CRS defines how the two-dimensional map data corresponds to locations on the three-dimensional Earth. If different layers (e.g., raster and vector data) have different CRSs, they may not align correctly when plotted or analyzed together, leading to inaccurate analyses or visualizations.
 
-CRSs can either be:
+CRSs fall into two broad groups.
 
--   **Geographic**: These use latitude and longitude coordinates to represent locations on the Earth's surface. The most common example is **WGS84** (EPSG:4326), the default CRS used by GPS and global datasets.
+-   **Geographic CRSs** use angular coordinates, usually longitude and latitude, to represent locations on the Earth's surface. A common example is WGS 84 (EPSG:4326), which is widely used by GPS and global datasets.
 
--   **Projected**: These convert the Earth's curved surface to a flat map and preserve certain properties like area, distance, or direction. Examples include **Universal Transverse Mercator (UTM)** or **Albers Equal Area** projections.
+-   **Projected CRSs** represent locations on a flat surface in linear units such as metres. Every projection introduces distortion, so a CRS should be chosen according to the study area and the property that matters most, such as distance, area or direction. Examples include Universal Transverse Mercator (UTM) and Albers Equal Area projections.
 
-In many cases, using a projected rather than a geographic CRS is preferred, especially when any summary statistic or parameter is distance-related. In a geographic CRS, distances between two points are calculated using angular coordinates (degrees), which do not translate easily into linear units like meters or kilometers. This makes interpreting distances challenging, as the length of a degree of latitude differs from the length of a degree of longitude. In contrast, a projected CRS uses a linear coordinate system (usually meters), ensuring that distances are accurately represented on a flat surface. This is important when computing spatial variograms, covariance functions, or some parameters in geostatistical models, where distance between sampling locations is a key factor. In this context, we assume that the default distance metric is Euclidean distance. However, an important exception to our recommendation arises when analyzing data across large, global-scale regions. In such cases, it is more appropriate to use a geographic CRS along with spherical distances, as these better reflect the curved nature of the Earth's surface.
+Longitude and latitude are angular coordinates, but this does not mean that every spatial function returns distances in degrees. CRS-aware functions can account for the Earth's curvature. For example, `sf::st_distance()` calculates great-circle distances for longitude-latitude geometries by default and reports them in linear units. Ordinary numerical calculations do not have this spatial context. If longitude and latitude are extracted as columns or as a coordinate matrix and Euclidean distance is then applied, the result treats degrees as if they were Cartesian units.
+
+This distinction is important for geostatistical modelling. RiskMap currently extracts the coordinates from an sf object and uses Euclidean calculations internally, so the modelling coordinates should use a suitable projected CRS. A local study contained within one UTM zone can often use that zone. Studies spanning several zones or large regions may require a regional projection chosen for the distances or areas being analysed. For global analyses, methods that work directly with spherical or ellipsoidal geometry may be more appropriate.
 
 ### EPSG codes
 
-An **EPSG code** is a unique identifier that defines a CRS. These codes, managed by the **European Petroleum Survey Group (EPSG)**, are widely used in geographic information systems (GIS) to simplify the use of specific projections, ensuring that spatial data is correctly aligned and interpreted. Each EPSG code corresponds to a unique CRS or map projection, making it easier to standardize and manage spatial data from different sources.
+An **EPSG code** is a unique identifier for a coordinate reference system or another object in the [EPSG Geodetic Parameter Dataset](https://epsg.org/home.html). The dataset is maintained by the Geodesy Subcommittee of the Geomatics Committee of the International Association of Oil & Gas Producers. The familiar EPSG name reflects its origin in the former European Petroleum Survey Group. These identifiers make it easier for software and users to refer to the same definitions consistently.
 
 Some key and often used EPSG codes are:
 
 -   **EPSG:4326**: This code represents **WGS84**, the most commonly used geographic CRS, which uses latitude and longitude to describe locations on the Earth's surface. It is the default CRS for global datasets and GPS systems.
 
--   **EPSG:326XX**: These codes represent the **UTM (Universal Transverse Mercator)** projection, which divides the world into zones. Each zone is optimized to preserve local distances and areas. For example (e.g. EPSG:32629: UTM Zone 29N, covering parts of Western Africa, including Liberia)
+-   **EPSG:326XX** identifies WGS 84 / UTM zones in the northern hemisphere. Liberia lies within UTM zone 29N, represented by EPSG:32629. UTM is designed for local and regional work within a zone, but it is not automatically appropriate for every study area.
 
 -   **EPSG:3857**: This code is for the **Web Mercator projection**, which is widely used for web mapping services, including **Google Maps**, **OpenStreetMap**, and **Bing Maps**. This projected CRS uses meters as the unit of distance and is optimized for visualizing maps on a 2D plane, though it distorts area and distance, especially at high latitudes. It is well-suited for interactive online mapping but not ideal for precise distance-based geostatistical analyses.
 
@@ -299,7 +301,9 @@ par(mar = c(0, 0, 0, 0))  #| hide_line
 plot(liberia_sf)
 ```
 
-The `st_as_sf()` function converts the data frame into an `sf` object. The `coords` argument specifies which columns contain the spatial coordinates and the `crs` argument assigns the CRS that in this case we know being WGS84 (EPSG:4326). The `sf` object can now be used for operations such as spatial joins, distance calculations, and mapping with other spatial layers. Note that the columns containing the spatial coordinates have been replaced by a `geometry` column, which now stores this information. If you would like to retain the original coordinate columns in the output, you can set the `remove` argument to `FALSE` when converting the data frame to an `sf` object.
+The `st_as_sf()` function converts the data frame into an `sf` object. The `coords` argument identifies the columns containing the coordinates. The `crs` argument assigns WGS 84 (EPSG:4326), which is the CRS already used by these longitude and latitude values. Assigning a CRS describes existing coordinates but does not change them. By contrast, `st_transform()` calculates new coordinates in another CRS and should only be used after the source CRS has been assigned correctly.
+
+The resulting `sf` object can be used for spatial joins, distance calculations and mapping. The coordinate columns have been replaced by a `geometry` column. Set `remove = FALSE` in `st_as_sf()` if the original columns should also be retained.
 
 ### Working with CRSs in R
 
@@ -323,17 +327,28 @@ The same can be achieved for raster data with the `crs()` function from the terr
 crs(lbr_pop_100, proj = TRUE, describe = TRUE)
 ```
 
+Two CRS descriptions can use different text while referring to equivalent coordinate systems. Compare complete CRS objects rather than comparing an EPSG number or a stored text field.
+
+```{r}
+#| label: crs-compare
+st_crs(liberia_sf) == st_crs(lbr_pop_100)
+```
+
+A matching CRS is necessary for overlaying these objects, although it does not by itself guarantee that their extents or resolutions are suitable for the intended operation.
+
 #### Reprojecting spatial data to a common CRS
 
-If your datasets have different CRSs or if you want to change CRS (e.g. from geographical to projected) you will need to reproject one or more datasets so they can be spatially aligned. This ensures that they can be overlaid and analyzed together. For vector data, `st_transform()` reprojects the data into a specified CRS. This example transforms the liberia point data from WGS84 into UTM. To know the correct UTM zone and hence EPSG code for Liberia we can use the `propose_utm()` function from the RiskMap package.
+If datasets have different CRSs, one or more of them may need to be transformed before they can be overlaid or analysed together. The `st_transform()` function transforms vector coordinates to a specified CRS. RiskMap's `propose_utm()` function identifies the UTM zone containing the centre of an object. This is a useful candidate for a compact study area, but the analyst must still check that the study lies suitably within that zone.
 
 ```{r}
 #| label: st-transform
-# Obtain EPSG code for UTM for Liberia
-propose_utm(liberia_sf)
+# Obtain the UTM CRS proposed for Liberia
+liberia_utm_crs <- st_crs(propose_utm(liberia_sf))
+liberia_utm_crs
 
 # Reproject the vector data 
-liberia_sf_utm <- st_transform(liberia_sf, crs = propose_utm(liberia_sf))
+liberia_sf_utm <- st_transform(liberia_sf,
+                               crs = liberia_utm_crs)
 ```
 
 Reprojecting raster data is more complex than reprojecting vector data due to the continuous nature of raster grids. The process involves recalculating cell values to fit a new grid based on the new CRS, which can lead to challenges like resampling, distortion, and data loss. When reprojecting a raster, the grid must adjust to the new CRS, often requiring resampling of cell values. The method you choose depends on the data type: **nearest neighbor** is best for categorical data like land use while **bilinear or cubic interpolation** is good for continuous data like temperature, where smooth transitions are needed.
@@ -448,18 +463,19 @@ Missing raster cells and study boundaries require particular care. With `na.rm =
 
 ## Creating a predictive grid
 
-A predictive grid is a regularly spaced set of points or cells that spans the study region. This grid serves as the basis for predictions made by your model. The density of the grid (i.e., the distance between grid points) affects both the resolution of the prediction and the computational cost. For point-based predictions, we can generate a grid of points over a polygon (e.g., administrative boundary) using the sf package and the `st_make_grid()` function.
+A predictive grid is a regularly arranged set of target locations covering the study region. It may be represented by cell polygons or by points at the cell centres, depending on what the predictions represent and how they will be used. Raster pixels are cells with associated values, whereas a grid-centre point has a location but no area of its own.
+
+Here, `st_make_grid(what = "centers")` creates points separated by 5 km rather than square grid cells. Each point represents a location at which the model will make a point prediction. Reducing the spacing produces more prediction locations and a finer-looking map, but it also increases the computational cost. It does not create information at scales finer than those supported by the data and model.
 
 ```{r}
 #| label: fig-pred-grid
-#| fig-cap: Prediction grid (5 km spacing) created within the boundaries of Liberia. Points are spaced regularly in UTM coordinates and filtered to remain within the national boundary.
+#| fig-cap: Prediction locations at the centres of a regular grid with 5 km spacing. Points are generated in UTM coordinates and filtered to remain within Liberia.
 
-# First we convert the Liberia boundaries to the UTM CRS
-# because we want our grid in meters
+# Transform the Liberia boundary to the modelling CRS
 liberia_admin0_utm <- liberia_admin0 |> 
-  st_transform(crs = propose_utm(liberia_sf))
+  st_transform(crs = liberia_utm_crs)
 
-# Generate prediction grid at 5km resolution
+# Generate grid-centre points at 5 km spacing
 pred_locations <- st_make_grid(liberia_admin0_utm, 
                                cellsize = 5000, 
                                what = "centers")
@@ -610,7 +626,7 @@ combined_map +
 
 - Why is it important to ensure that spatial datasets share the same coordinate reference system (CRS)? What problems can arise if CRSs are mismatched?
 
-- What are the advantages of using a projected CRS (e.g., UTM) over a geographic CRS (e.g., WGS84) in geostatistical modeling?
+- Why does RiskMap require suitable projected coordinates for distance-based modelling even though CRS-aware functions such as `sf::st_distance()` can calculate distances from longitude and latitude?
 
 - Describe the purpose of creating a predictive grid. How does the resolution of this grid affect the model?
 
@@ -623,10 +639,10 @@ combined_map +
 
 2.  Obtain raster data for the same country, such as elevation or population density. You may use either the wpgpDownloadR package or access Google Earth Engine through the rgee package. Plot the raster with `terra::plot()` and again with ggplot2. Comment on how the raster is displayed under each method and the flexibility provided by each plotting tool.
 
-3.  Transform the coordinate reference system (CRS) of both your vector and raster datasets to a UTM projection. Begin by checking the CRS of each dataset, then apply the transformation. Plot the transformed datasets together and confirm that the vector and raster layers are properly aligned. Explain why coordinate transformations are important in spatial analysis.
+3.  Check the CRS and geographic extent of your vector and raster datasets, then choose a projected CRS suitable for the study area and analysis. A UTM zone may be appropriate for a compact study contained within that zone. Transform the datasets, plot them together and confirm that they align. Explain why assigning the source CRS and transforming coordinates are different operations.
 
 4.  Generate 50 random points within the boundary of your chosen country. At each of these locations, extract the values of the raster dataset (for example elevation or population). Add these values to the point dataset as new attributes. Reflect on the usefulness of point-level covariates for modelling and prediction.
 
 5.  Create a 2 km buffer around each of the random points generated in the previous exercise. Decide whether the raster represents an intensive quantity, an extensive quantity or a category, and choose an appropriate buffer summary. Account for cells that only partially overlap each buffer where necessary. Compare the buffer summaries with the point extractions, inspect missing coverage and edge effects, and explain how the two covariates answer different scientific questions.
 
-6.  Construct a prediction grid over the country, using grid cells spaced approximately 5 km apart. Overlay this prediction grid on the raster background to check the coverage. At each grid cell, extract covariate values from the raster dataset so that the grid can be used as input to a geostatistical model. Reflect on why prediction grids are a key step in spatial prediction and mapping.
+6.  Construct prediction locations over the country using grid-centre points spaced approximately 5 km apart. Overlay the points on the raster background to check their coverage and extract raster covariates at each location. Explain the difference between these points, polygonal grid cells and raster pixels, and describe how the spacing affects computation and the displayed prediction surface.
