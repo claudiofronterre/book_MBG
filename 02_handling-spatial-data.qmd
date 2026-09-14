@@ -373,7 +373,7 @@ This spatial join enriches each point with the corresponding polygon attribute, 
 
 ### Extracting covariates from raster layers
 
-Raster data provides continuous spatial information, such as elevation, climate data, or population density. Covariate values from raster layers can be extracted for specific points using the **`extract()`** function from the terra package. Each point will receive the value of the raster cell it overlaps.
+Raster layers can represent continuous fields, such as elevation or temperature, categorical variables, such as land-cover class, or quantities associated with cells, such as population count. Covariate values can be extracted for specific points using the `extract()` function from the terra package. By default, each point receives the value of the raster cell that contains it. This is a point extraction, so its scientific interpretation is the value represented by that cell rather than an average over the surrounding area.
 
 ```{r}
 #| label: extract-raster
@@ -381,13 +381,13 @@ Raster data provides continuous spatial information, such as elevation, climate 
 covariate_values <- extract(lbr_pop_100, liberia_sf)
 
 # Combine the extracted values with the point data
-liberia_sf$pop_total <- covariate_values[, 2]
+liberia_sf$pop_cell <- covariate_values$lbr_ppp_2014
 
 # View the updated dataset
 head(liberia_sf)
 ```
 
-In this example, the `extract()` function assigns the raster value from the population density layer to each point in the dataset. This allows the point data to include population density as a covariate in the analysis.
+In this example, `extract()` assigns the estimated population count in the approximately 100 m cell containing each survey location. This differs from population density, which expresses population per unit area. A cell count also depends on the raster resolution because changing the cell size changes the count associated with a point even if the underlying population distribution is unchanged.
 
 #### Missing raster values
 
@@ -410,9 +410,9 @@ nearest_elevation
 
 When a replacement is found, the result also reports its distance and cell number. Set the radius in advance from subject-matter knowledge rather than increasing it until a value is found. This approach is unsuitable for broad areas of missing data, locations outside source coverage or situations where a barrier makes the nearest cell scientifically unrelated. For categorical rasters, do not average category codes, retain the missing value unless a defensible rule supports using a nearby category or a neighbourhood mode.
 
-Finding a nearby cell is an imputation: it attempts to recover the value of the covariate at the point. A buffer summary answers a different question by defining the covariate as exposure over a neighbourhood. A mean within a radius can be appropriate for a continuous or intensive quantity when surrounding conditions are scientifically relevant, whereas a sum may be appropriate for an extensive quantity such as population count. The next example illustrates the mechanics of a buffer summary.
+Finding a nearby cell is an imputation that attempts to recover the value of the covariate at the point. A buffer summary answers a different question by defining the covariate as exposure over a neighbourhood. The summary must match both the scientific question and the type of raster quantity. A mean or area-weighted mean can represent average elevation, temperature or population density around a location. A sum is appropriate when the aim is to estimate an extensive quantity, such as the total population within the neighbourhood. Category codes should not be averaged. Proportions, a majority class or a complete frequency table may instead be meaningful.
 
-Instead of extracting values for exact point locations, it can sometimes be useful to aggregate covariate values within a defined area around each point. This is often done by creating a buffer around each point and calculating summary statistics (e.g., mean, sum) of the raster values within that buffer. For instance, you might want to calculate the average population density or temperature within a 5 km radius around each point to smooth out fine-scale variation.
+The following example creates a 5 km buffer around each survey location and calculates the buffer totals for the first two locations. Because the WorldPop layer contains population counts rather than densities, we sum the cell values. Cells that cross the buffer boundary should contribute in proportion to the area that lies inside it. The argument `weights = TRUE` estimates these overlap fractions approximately and is generally faster, whereas `exact = TRUE` calculates them more accurately but can be substantially slower. We use `exact = TRUE` here to demonstrate the more precise calculation. The distinction matters most when cells are large relative to the buffer or the boundary intersects many cells. For a count raster, either method assumes that the quantity is distributed uniformly within each intersected cell when allocating a fraction of its value. The same call can be applied to all the buffers when these totals are required for an analysis.
 
 ```{r}
 #| label: fig-buffer-extract
@@ -429,21 +429,22 @@ plot(st_geometry(liberia_sf_utm), add = T, pch = 19, col = "red", cex = .2)
 
 ```{r}
 #| label: buffer-extract-values
-# Extract raster values within the buffer areas and calculate the 
-# mean or sum. Note that since we used the utm data to work on the
-# meter scale we need to convert them back to WGS84
-mean_pop_density <- extract(lbr_pop_100, 
-                            st_transform(buffered_points, crs = 4326),
-                            fun = mean, na.rm = TRUE)
+# Transform the buffers back to the raster CRS
+buffered_points_wgs84 <- st_transform(buffered_points,
+                                      crs = crs(lbr_pop_100))
 
-# Add the averaged values to the points dataset
-liberia_sf$pop_mean5km <- mean_pop_density[,2]
-
-# View the updated dataset
-head(liberia_sf)
+# Sum population counts, accounting for partial cell overlap
+population_5km <- extract(lbr_pop_100,
+                          buffered_points_wgs84[1:2, ],
+                          fun = sum,
+                          exact = TRUE,
+                          na.rm = TRUE)
+population_5km
 ```
 
-You can modify the `fun` argument to calculate other summary statistics, such as the sum, min or max of the raster values within the buffer. This approach is particularly useful when the phenomenon being modeled (e.g., disease transmission) is influenced by broader spatial factors around the observation point, rather than just the value at the exact point location.
+The choice between point and buffer extraction is therefore part of defining the covariate, not merely a computational preference. A buffer may be useful when disease risk is influenced by the surrounding environment rather than conditions in one raster cell. Its radius should be chosen from subject-matter knowledge and, where appropriate, examined in a sensitivity analysis.
+
+Missing raster cells and study boundaries require particular care. With `na.rm = TRUE`, a mean describes only the non-missing part of a buffer, while a sum can underestimate a total if populated cells are missing. Buffers near a coastline or the edge of source coverage may contain much less observed land area than inland buffers. Before using the result, inspect raster coverage within each buffer and decide whether the intended exposure concerns the full circular neighbourhood, land only or another scientifically defined area.
 
 ## Creating a predictive grid
 
@@ -626,6 +627,6 @@ combined_map +
 
 4.  Generate 50 random points within the boundary of your chosen country. At each of these locations, extract the values of the raster dataset (for example elevation or population). Add these values to the point dataset as new attributes. Reflect on the usefulness of point-level covariates for modelling and prediction.
 
-5.  Create a 2 km buffer around each of the random points generated in the previous exercise. For each buffer, extract the raster values that fall within it and summarize these values, for example by computing their mean. Compare the buffer-based summaries with the single-point extractions and discuss what these differences reveal about spatial variability.
+5.  Create a 2 km buffer around each of the random points generated in the previous exercise. Decide whether the raster represents an intensive quantity, an extensive quantity or a category, and choose an appropriate buffer summary. Account for cells that only partially overlap each buffer where necessary. Compare the buffer summaries with the point extractions, inspect missing coverage and edge effects, and explain how the two covariates answer different scientific questions.
 
 6.  Construct a prediction grid over the country, using grid cells spaced approximately 5 km apart. Overlay this prediction grid on the raster background to check the coverage. At each grid cell, extract covariate values from the raster dataset so that the grid can be used as input to a geostatistical model. Reflect on why prediction grids are a key step in spatial prediction and mapping.
