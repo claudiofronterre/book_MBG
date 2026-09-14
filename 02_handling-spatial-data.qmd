@@ -3,7 +3,7 @@ filters:
   - code-visibility
 fig-width: 5
 fig-asp: 0.75
-editor_options: 
+editor_options:
   chunk_output_type: console
 ---
 
@@ -30,29 +30,29 @@ if (!"lbr_ppp_2014" %in% names(lbr_pop_100)) {
 
 ## Introduction
 
-Geostatistical analysis primarily deals with **point-referenced data**. However, geostatistical modeling often requires more than just point data, **raster** and **areal (polygon)** data are frequently used to build essential covariates, enhance spatial understanding, or provide environmental context. For instance, population density, climate data, land use, and elevation, often key covariates in many spatial analyses, usually come in raster or polygon formats. Efficient handling of these different data types is critical for successful model-building. This chapter provides a comprehensive guide to the various stages of managing spatial data in R, using the sf and terra packages, to support a complete geostatistical workflow.
+Geostatistical analysis primarily deals with **point-referenced data**. However, geostatistical modelling often requires more than point data. **Raster** and **areal (polygon)** data are frequently used to build essential covariates, enhance spatial understanding and provide environmental context. For instance, population density, climate, land use and elevation are often key covariates in spatial analyses and usually come in raster or polygon formats. Efficiently handling these different data types is critical for successful model building. This chapter provides a comprehensive guide to managing spatial data in R using the sf and terra packages to support a complete geostatistical workflow.
 
 ## Spatial data handling in geostatistical analysis
 
 Throughout a geostatistical analysis, handling spatial data takes place at multiple key stages:
 
-1.  **Retrieving External Spatial Data Sources**: Before starting the modeling process, one often needs to acquire spatial datasets from external sources to improve model accuracy. These could include satellite-derived environmental variables, population data from [WorldPop](https://www.worldpop.org/), or climate data from [WorldClim](https://www.worldclim.org/). Acquiring these datasets and ensuring they are in compatible formats and resolutions is an essential early step in spatial analysis.
+1.  **Retrieving external spatial data sources.** Before starting the modelling process, one often needs to acquire spatial datasets from external sources to improve model accuracy. These could include satellite-derived environmental variables, population data from [WorldPop](https://www.worldpop.org/) or climate data from [WorldClim](https://www.worldclim.org/). Acquiring these datasets and ensuring they have compatible formats and resolutions is an essential early step in spatial analysis.
 
-2.  **Importing and Standardizing Spatial Data**: Once external data is obtained, it must be imported into R. This involves handling various file formats such as shapefiles or geopackages for vector data and GeoTIFFs for raster data. Moreover, different datasets might use different **Coordinate Reference Systems (CRS)**, requiring CRS standardization to ensure that all datasets align correctly. Failure to standardize CRS can result in spatial misalignments and incorrect results.
+2.  **Importing and standardising spatial data.** Once external data are obtained, they must be imported into R. This involves handling various file formats such as shapefiles or GeoPackages for vector data and GeoTIFFs for raster data. Different datasets might use different **coordinate reference systems (CRSs)**, requiring CRS standardisation to ensure that all datasets align correctly. Failure to standardise CRSs can result in spatial misalignment and incorrect results.
 
-3.  **Extracting Covariate Information for Modeling**: Covariate extraction is an essential step in geostatistical modeling. After importing spatial data, it is necessary to extract relevant covariate information both for the **sampled locations** (where we have observed data) and the **prediction locations** (where we wish to make predictions). This step involves linking raster or polygonal covariates, such as climate, population, or land cover data, to the geostatistical data points.
+3.  **Extracting covariate information for modelling.** Covariate extraction is an essential step in geostatistical modelling. After importing spatial data, it is necessary to extract relevant covariate information both for the **sampled locations**, where we have observed data, and the **prediction locations**, where we wish to make predictions. This step involves linking raster or polygonal covariates, such as climate, population or land-cover data, to geostatistical data points.
 
-4.  **Prediction and Creation of a Spatial Grid**: For predictive geostatistical models, a regular grid of points is often created over the study region. Covariates must then be assigned to each grid point to make predictions across the entire region of interest. Creating predictive grids and linking them to the necessary covariates is key to generating continuous spatial predictions from geostatistical models.
+4.  **Prediction and creation of a spatial grid.** For predictive geostatistical models, a regular grid of points is often created over the study region. Covariates must then be assigned to each grid point to make predictions across the entire region of interest. Creating predictive grids and linking them to the necessary covariates is key to generating continuous spatial predictions from geostatistical models.
 
-5.  **Visualizing Spatial Data**: Visualization is crucial for exploring spatial data, interpreting model results, and communicating findings. Whether working with point-referenced data, polygons, or rasters, clear and effective visualization helps reveal patterns that inform the modeling process. Effective visualization can also help highlight covariate trends, spatial clusters, and uncertainty in predictions.
+5.  **Visualising spatial data.** Visualisation is crucial for exploring spatial data, interpreting model results and communicating findings. Whether working with point-referenced data, polygons or rasters, clear and effective visualisation helps reveal patterns that inform the modelling process. It can also highlight covariate trends, spatial clusters and uncertainty in predictions.
 
 ## Accessing covariates for disease mapping
 
-Covariates can play a crucial role in understanding and modeling the spatial variation in disease risk. In geostatistical analysis, incorporating environmental, demographic, and climatic variables might improve the predictive power of models or at least reduce the level of uncertainty in the predictions. These covariates can influence factors such as the spread of infectious diseases, the distribution of disease vectors, and the socio-economic conditions that impact health outcomes.
+Covariates can play a crucial role in understanding and modelling spatial variation in disease risk. In geostatistical analysis, incorporating environmental, demographic and climatic variables might improve the predictive power of models or reduce the uncertainty in predictions. These covariates can influence the spread of infectious diseases, the distribution of disease vectors and the socio-economic conditions that affect health outcomes.
 
-A wide range of open-access spatial datasets provide covariates for disease mapping. These include population density, climate, land cover, and human infrastructure data, which often come in raster or polygon formats. Alongside these environmental covariates, administrative boundaries are also crucial for public health analysis, as they help organize and aggregate data at different levels (e.g., country, region, or district). For example, aggregating health outcomes or covariate data by administrative units allows researchers to identify geographic disparities and allocate resources accordingly. Fortunately, open-source platforms such as [geoBoundaries](https://www.geoboundaries.org/) provide easily accessible administrative boundary data for many countries at various levels of granularity. This data is available in formats compatible with geospatial analysis tools in R, making it easy to integrate into geostatistical workflows.
+A wide range of open-access spatial datasets provide covariates for disease mapping. These include population density, climate, land cover and human infrastructure data, which often come in raster or polygon formats. Administrative boundaries are also crucial for public health analysis because they help organise and aggregate data at different levels, such as countries, regions or districts. For example, aggregating health outcomes or covariate data by administrative units allows researchers to identify geographic disparities and allocate resources accordingly. Open-source platforms such as [geoBoundaries](https://www.geoboundaries.org/) provide administrative boundary data for many countries at various levels of granularity. These data are available in formats compatible with geospatial analysis tools in R and can be integrated into geostatistical workflows.
 
-@tbl-data-sources below summarizes key sources of covariates useful in disease mapping. Each dataset offers specific types of data, from satellite-derived environmental variables to gridded population estimates and administrative boundaries, which can be accessed through various R packages or APIs.
+@tbl-data-sources below summarises key sources of covariates useful in disease mapping. Each dataset offers specific types of data, from satellite-derived environmental variables to gridded population estimates and administrative boundaries, which can be accessed through various R packages or APIs.
 
 | **Source**              | **Data Type**                   | **Description**                              | **R Package**        |
 |-------------------------|---------------------------------|----------------------------------------------|----------------------|
@@ -68,7 +68,7 @@ A wide range of open-access spatial datasets provide covariates for disease mapp
 
 Administrative boundaries provide an essential spatial structure for many types of geostatistical analyses, particularly in disease mapping where data is often aggregated by administrative units such as regions, districts or provinces. The [geoBoundaries](https://www.geoboundaries.org/) datasets, which are accessible via the geobounds package, provide openly available administrative boundary data for nearly every country, allowing researchers to integrate these boundaries into their analyses seamlessly.
 
-Boundary datasets are distributed under different licences, which specify how they may be reused, and attribution identifies the organization or individuals who produced them. These conditions are especially important when publishing maps: depending on the licence, the source and licence may need to be acknowledged in the figure caption, acknowledgements or data-availability statement. The `gb_get_metadata()` function can be used to inspect this information before a map is shared or published. By default, geobounds downloads boundaries from the open `gbOpen` release.
+Boundary datasets are distributed under different licences, which specify how they may be reused, and attribution identifies the organisation or individuals who produced them. These conditions are especially important when publishing maps. Depending on the licence, the source and licence may need to be acknowledged in the figure caption, acknowledgements or data-availability statement. The `gb_get_metadata()` function can be used to inspect this information before a map is shared or published. By default, geobounds downloads boundaries from the open `gbOpen` release.
 
 ```{r}
 #| label: download-liberia-boundaries
@@ -83,7 +83,7 @@ liberia_admin1 <- gb_get_adm1("Liberia")
 
 ```{r}
 #| layout-ncol: 2
-#| label: fig-liberia-admin 
+#| label: fig-liberia-admin
 #| fig-cap: |
 #|   Administrative boundaries for Liberia retrieved using the geobounds package.
 #| fig-subcap:
@@ -110,8 +110,7 @@ Before downloading the data, we will search for available datasets for Liberia. 
 #| warning: false
 library(wpgpDownloadR)
 
-# Search for datasets available for Liberia 
-# usign the ISO3 country code
+# Search for datasets available for Liberia using the ISO3 country code
 lbr_datasets <- wpgpListCountryDatasets(ISO3 = "LBR")
 ```
 
@@ -122,10 +121,10 @@ We can check the description column to see what datasets are available. Here we 
 #| label: liberia-wpop2
 #| cache: false
 #| warning: false
-lbr_pop_url <- wpgpGetCountryDataset(ISO3 = "LBR", covariate = "ppp_2014") 
+lbr_pop_url <- wpgpGetCountryDataset(ISO3 = "LBR", covariate = "ppp_2014")
 ```
 
-This will download a raster file locally in a temporary directory. The path to the downloaded file is contained in the `lbr_pop_url` variable and when we introduce the terra package in the next sections we will show how to upload the population raster into R. It is also possible to specify the directory where we want the raster to be downloaded using the `destDir` argument.
+This downloads a raster file to a temporary directory. The path to the downloaded file is stored in `lbr_pop_url`. When we introduce the terra package in the next sections, we will show how to read the population raster into R. The download directory can also be specified using the `destDir` argument.
 
 ### Example: Downloading data using Google Earth Engine
 
@@ -163,7 +162,7 @@ liberia_ee <- sf_as_ee(liberia_admin0)
 # Access the elevation band of the global SRTM dataset
 elev <- ee$Image("CGIAR/SRTM90_V4")$select("elevation")
 
-# You can check general info about the data produc with ee_print
+# Inspect general information about the data product
 ee_print(elev)
 
 # Clip the elevation data to Liberia
@@ -200,9 +199,9 @@ plot(elev_rast, main = "Elevation in Liberia (m)")
 plot(liberia_admin0$geometry, add = TRUE)
 ```
 
-## Importing and standardizing spatial data
+## Importing and standardising spatial data
 
-In geostatistical analysis, importing and standardizing spatial data is a critical step to ensure that data from different sources align and can be used effectively. Spatial data, whether it's vector data (points, lines, polygons) or raster data (grids), can come in various formats and may use different **Coordinate Reference Systems (CRS)**. To perform accurate spatial analyses, it's essential to import data correctly and ensure consistency in terms of projection and format. This section will cover how to import vector and raster data into R, explain the concept of CRS and ensure that different datasets align properly for subsequent geostatistical analysis.
+In geostatistical analysis, importing and standardising spatial data is critical to ensuring that data from different sources align and can be used effectively. Vector data, such as points, lines and polygons, and raster data can come in various formats and may use different **coordinate reference systems (CRSs)**. Accurate spatial analysis requires the data to be imported correctly and to use consistent projections and formats. This section explains how to import vector and raster data into R, introduces CRSs and shows how to ensure that different datasets align for subsequent geostatistical analysis.
 
 ### Importing vector data
 
@@ -228,7 +227,7 @@ print(admin)
 plot(admin)  # Basic plot of the shapefile
 ```
 
-The `st_read()` function reads various spatial data formats, automatically recognizing file types.
+The `st_read()` function reads various spatial data formats and automatically recognises file types.
 
 ### Importing raster data
 
@@ -237,7 +236,7 @@ Raster data consists of a grid of cells, where each cell holds a value represent
 ```{r}
 #| label: import-raster-data
 #| eval: false
-# Import a raster file 
+# Import a raster file
 lbr_pop_100 <- rast(lbr_pop_url)
 ```
 ```{r}
@@ -255,11 +254,11 @@ plot(log(lbr_pop_100), main = "Population per grid cell (log scale)")
 plot(liberia_admin0$geometry, add = TRUE)
 ```
 
-The output of `print()` provides a detailed summary of the raster's properties. The `rast()` function reads raster files in formats like GeoTIFF, ASCII grid, or other common raster formats and then we used `plot()` as a quick way to visualize raster data.
+The output of `print()` provides a detailed summary of the raster's properties. The `rast()` function reads raster files in formats such as GeoTIFF and ASCII grid. We then use `plot()` to visualise the raster quickly.
 
 ### Understanding coordinate reference systems (CRS)
 
-When working with spatial data, especially from different sources, one of the most critical tasks is ensuring that all datasets share the same **Coordinate Reference System (CRS)**. A CRS defines how the two-dimensional map data corresponds to locations on the three-dimensional Earth. If different layers (e.g., raster and vector data) have different CRSs, they may not align correctly when plotted or analyzed together, leading to inaccurate analyses or visualizations.
+When working with spatial data, especially from different sources, one of the most critical tasks is ensuring that all datasets share the same **coordinate reference system (CRS)**. A CRS defines how two-dimensional map data correspond to locations on the three-dimensional Earth. If different layers, such as raster and vector data, have different CRSs, they may not align correctly when plotted or analysed together, leading to inaccurate analyses or visualisations.
 
 CRSs fall into two broad groups.
 
@@ -275,20 +274,20 @@ This distinction is important for geostatistical modelling. RiskMap currently ex
 
 An **EPSG code** is a unique identifier for a coordinate reference system or another object in the [EPSG Geodetic Parameter Dataset](https://epsg.org/home.html). The dataset is maintained by the Geodesy Subcommittee of the Geomatics Committee of the International Association of Oil & Gas Producers. The familiar EPSG name reflects its origin in the former European Petroleum Survey Group. These identifiers make it easier for software and users to refer to the same definitions consistently.
 
-Some key and often used EPSG codes are:
+Some commonly used EPSG codes are:
 
 -   **EPSG:4326**: This code represents **WGS84**, the most commonly used geographic CRS, which uses latitude and longitude to describe locations on the Earth's surface. It is the default CRS for global datasets and GPS systems.
 
 -   **EPSG:326XX** identifies WGS 84 / UTM zones in the northern hemisphere. Liberia lies within UTM zone 29N, represented by EPSG:32629. UTM is designed for local and regional work within a zone, but it is not automatically appropriate for every study area.
 
--   **EPSG:3857**: This code is for the **Web Mercator projection**, which is widely used for web mapping services, including **Google Maps**, **OpenStreetMap**, and **Bing Maps**. This projected CRS uses meters as the unit of distance and is optimized for visualizing maps on a 2D plane, though it distorts area and distance, especially at high latitudes. It is well-suited for interactive online mapping but not ideal for precise distance-based geostatistical analyses.
+-   **EPSG:3857** represents the **Web Mercator projection**, which is widely used for web mapping services, including **Google Maps**, **OpenStreetMap** and **Bing Maps**. This projected CRS uses metres as the unit of distance and is optimised for displaying maps on a two-dimensional plane, although it distorts area and distance, especially at high latitudes. It is well suited to interactive online mapping but not to precise distance-based geostatistical analyses.
 
 For a more in-depth discussion on how to choose an appropriate CRS, we recommend referring to the excellent treatment in [*Geocomputation with R*](https://r.geocompx.org) [@Lovelace2020-iq], especially [Section 7.6: Which CRS?](https://r.geocompx.org/reproj-geo-data#which-crs).
 
 
 ### Convert a data frame to an `sf` object
 
-In geospatial analysis, data is often provided in tabular formats like CSV files that contain spatial coordinates (e.g., latitude and longitude). To use these data effectively in R, it is necessary to convert the data frame into an `sf` object, which is the standard format for working with spatial data in R. Here we show how to achieve this, we can use the Liberia data available in the RiskMap package as it is a data frame.
+In geospatial analysis, data are often provided in tabular formats such as CSV files that contain spatial coordinates, for example latitude and longitude. To use these data effectively in R, the data frame must be converted into an `sf` object, which is the standard format for working with spatial vector data in R. We demonstrate this conversion using the `liberia` data frame from the RiskMap package.
 
 ```{r}
 #| label: st-as-sf
@@ -299,8 +298,8 @@ library(RiskMap)
 data("liberia")
 
 # Convert the data frame to an sf object
-liberia_sf <- st_as_sf(liberia, 
-                       coords = c("long", "lat"), 
+liberia_sf <- st_as_sf(liberia,
+                       coords = c("long", "lat"),
                        crs = 4326)
 
 # Inspect the new sf object
@@ -354,7 +353,7 @@ If datasets have different CRSs, one or more of them may need to be transformed 
 liberia_utm_crs <- st_crs(propose_utm(liberia_sf))
 liberia_utm_crs
 
-# Reproject the vector data 
+# Reproject the vector data
 liberia_sf_utm <- st_transform(liberia_sf,
                                crs = liberia_utm_crs)
 ```
@@ -442,12 +441,12 @@ The following example creates a 5 km buffer around each survey location and calc
 #| fig-cap: Survey locations (red dots) surrounded by a 5 km buffer (dark circles).
 
 # Create buffers around each point (e.g., 5 km radius)
-buffered_points <- st_buffer(liberia_sf_utm, dist = 5000)  
+buffered_points <- st_buffer(liberia_sf_utm, dist = 5000)
 
-# Plot the buffers for visualization
+# Plot the buffers for visualisation
 par(mar = c(0, 0, 0, 0))  #| hide_line
 plot(st_geometry(buffered_points), border = "black")
-plot(st_geometry(liberia_sf_utm), add = T, pch = 19, col = "red", cex = .2)
+plot(st_geometry(liberia_sf_utm), add = TRUE, pch = 19, col = "red", cex = .2)
 ```
 
 ```{r}
@@ -480,28 +479,28 @@ Here, `st_make_grid(what = "centers")` creates points separated by 5 km rather t
 #| fig-cap: Prediction locations at the centres of a regular grid with 5 km spacing. Points are generated in UTM coordinates and filtered to remain within Liberia.
 
 # Transform the Liberia boundary to the modelling CRS
-liberia_admin0_utm <- liberia_admin0 |> 
+liberia_admin0_utm <- liberia_admin0 |>
   st_transform(crs = liberia_utm_crs)
 
 # Generate grid-centre points at 5 km spacing
-pred_locations <- st_make_grid(liberia_admin0_utm, 
-                               cellsize = 5000, 
+pred_locations <- st_make_grid(liberia_admin0_utm,
+                               cellsize = 5000,
                                what = "centers")
 
 # Exclude locations that fall outside the study area
 pred_locations <- st_intersection(pred_locations, liberia_admin0_utm)
 
-# Visualize the result
+# Visualise the result
 par(mar = c(0, 0, 0, 0))  #| hide_line
 plot(liberia_admin0_utm$geometry, col = "white")
 plot(pred_locations, cex = .01, col = "red", pch = 19, add = TRUE)
 ```
 
-## Visualizing spatial data
+## Visualising spatial data
 
-Visualization is a key part of spatial data analysis, as it allows you to explore and communicate spatial patterns and relationships effectively. R provides a lot of functionalities to visualize spatial data and create very beautiful maps. Until now we have used basic plotting functions. Here we introduce the ggplot2 package that allows to combine different types of geographic data in a map. The ggplot2 package in R provides a flexible and powerful framework for creating both simple and complex visualizations, including maps of point data, polygons, and rasters. With the help of extensions like `geom_sf()` and `geom_raster()`, ggplot2 makes it easy to visualize spatial data, whether you're working with point locations, polygons, or continuous raster data.
+Visualisation is a key part of spatial data analysis because it allows spatial patterns and relationships to be explored and communicated effectively. So far, we have used basic plotting functions for quick inspection. We now introduce the ggplot2 package, which provides a flexible framework for combining geographic data in simple or complex figures. Functions such as `geom_sf()` and `geom_raster()` can display point locations, polygons and continuous raster data.
 
-### Visualizing point data
+### Visualising point data
 
 Point data often represents the locations of observations (e.g., disease cases, sampling sites). ggplot2 allows you to plot these points and optionally colour them by a covariate (e.g., disease prevalence or population). Here is an example that uses the Liberia data.
 
@@ -512,7 +511,7 @@ Point data often represents the locations of observations (e.g., disease cases, 
 #|   Using `geom_sf()` to plot point data.
 #| fig-subcap:
 #|   - "Survey locations."
-#|   - "Survey locations colored by prevalence."
+#|   - "Survey locations coloured by prevalence."
 # Load necessary libraries
 library(ggplot2)
 
@@ -521,22 +520,22 @@ liberia_sf$prevalence <- liberia$npos / liberia$ntest
 
 # Plot only the locations
 ggplot(data = liberia_sf) +
-  geom_sf(col = "black") +  
+  geom_sf(col = "black") +
   theme_minimal() +
   labs(title = "Survey locations")
 
-# Color the points according to prevalence
+# Colour the points according to prevalence
 ggplot(data = liberia_sf) +
-  geom_sf(aes(color = prevalence)) +  
-  scale_color_viridis_c(labels = scales::label_percent()) +  
+  geom_sf(aes(color = prevalence)) +
+  scale_color_viridis_c(labels = scales::label_percent()) +
   theme_minimal() +
   labs(title = "Onchocerciasis in Liberia",
        color = "Prevalence (%)")
 ```
 
-Here `geom_sf()` is used to plot the spatial points. `aes(color = prevalence)` specifies that the points should be colored based on the `prevalence` covariate, providing a visual representation of spatial variation in disease risk. The `scale_color_viridis_c()` function applies the Viridis color scale, which is well-suited for continuous data and is friendly for those with color blindness. The `labels = scales::label_percent()` argument ensures that the color scale's labels are displayed as percentages (e.g., 5, 10%) rather than raw decimal values. To make the plot visually clean and minimal, `theme_minimal()` is applied, stripping away unnecessary background elements and keeping the focus on the data. Finally, the `labs()` defines the plot title and the color legend label.
+Here, `geom_sf()` plots the spatial points. The expression `aes(color = prevalence)` specifies that the points should be coloured according to the `prevalence` covariate, providing a visual representation of spatial variation in disease risk. The `scale_color_viridis_c()` function applies the Viridis colour scale, which is suitable for continuous data and accessible to readers with colour-vision deficiencies. The `labels = scales::label_percent()` argument displays the colour-scale labels as percentages rather than raw decimal values. The `theme_minimal()` function removes unnecessary background elements, while `labs()` defines the plot title and colour-legend label.
 
-### Visualizing polygon data
+### Visualising polygon data
 
 Polygon data typically represents administrative boundaries, land use, or other regional divisions. We can still use `geom_sf()` to create maps of polygons, optionally filling them by a covariate.
 
@@ -547,29 +546,29 @@ Polygon data typically represents administrative boundaries, land use, or other 
 #|   Using `geom_sf()` to plot polygon data.
 #| fig-subcap:
 #|   - "Admin 1 units for Liberia."
-#|   - "Admin 1 units colored according to their area."
-# Plot Liberia admin 1 level boundaries 
+#|   - "Admin 1 units coloured according to their area."
+# Plot Liberia admin 1 level boundaries
 ggplot(data = liberia_admin1) +
-  geom_sf() + 
+  geom_sf() +
   theme_minimal() +
   labs()
 
 # We compute the area of each polygon
 liberia_admin1$area <- as.numeric(st_area(liberia_admin1) / 1000 ^ 2)
 
-# Color the polygons according tis new variable
+# Colour the polygons according to this new variable
 ggplot(data = liberia_admin1) +
-  geom_sf(aes(fill = area), color = "black") + 
+  geom_sf(aes(fill = area), color = "black") +
   scale_fill_distiller(direction = -1) +
   theme_minimal() +
   labs(fill = "Area km^2")
 ```
 
-In this code, `aes(fill = area)` is used to fill each polygon with colors corresponding to its area. The `color = "black"` argument outlines the polygons in black, and you could set `fill = NA` to make the polygons transparent while still displaying the borders. The `scale_fill_distiller(direction = -1)` function applies a color gradient from ColorBrewer, with the `direction = -1` argument reversing the gradient (e.g., darker colors for larger areas).
+In this code, `aes(fill = area)` fills each polygon with a colour corresponding to its area. The `color = "black"` argument outlines the polygons in black. Setting `fill = NA` would make the polygons transparent while retaining their borders. The `scale_fill_distiller(direction = -1)` function applies a colour gradient from ColorBrewer, with `direction = -1` reversing the gradient so that larger areas have darker colours.
 
-### Visualizing raster data
+### Visualising raster data
 
-In ggplot2, you can visualize raster data by converting it into a data frame of coordinates and values. You can convert raster data into a format that ggplot2 can handle by using the `as.data.frame()` function from terra.
+Raster data can be visualised with ggplot2 by using the terra package's `as.data.frame()` function to convert the raster into a data frame of coordinates and values.
 
 ```{r}
 #| label: fig-ggplot-raster
@@ -596,7 +595,7 @@ In this example `as.data.frame()` converts the raster into a data frame with x a
 
 ### Combining multiple spatial data types
 
-In many cases, it is useful to combine different spatial data types (points, polygons, and rasters) in a single visualization. ggplot2 allows you to overlay these layers, providing a more comprehensive view of your spatial data.
+It is often useful to combine different spatial data types, such as points, polygons and rasters, in a single visualisation. The ggplot2 package can overlay these layers to provide a more comprehensive view of the spatial data.
 
 ```{r}
 #| label: fig-combined-map
@@ -604,9 +603,9 @@ In many cases, it is useful to combine different spatial data types (points, pol
 # Combine points, polygons, and raster data in one plot
 combined_map <- ggplot() +
   geom_raster(data = raster_df, aes(x = x, y = y, fill = log_population)) +
-  geom_sf(data = liberia_admin1, fill = NA, color = "black") +    
+  geom_sf(data = liberia_admin1, fill = NA, color = "black") +
   geom_sf(data = liberia_sf, shape = 21, col = "black", fill = "white") +
-  scale_fill_viridis_c() +  
+  scale_fill_viridis_c() +
   theme_minimal() +
   labs(title = "Combined Spatial Data: Points, Polygons, and Raster",
        fill = "Log population",
@@ -615,7 +614,7 @@ combined_map <- ggplot() +
 combined_map
 ```
 
-To enhance spatial visualizations in ggplot2, adding a scale bar and a north arrow improves map readability and professionalism. The ggspatial package offers tools to easily integrate these elements into your maps. Below is an example that demonstrates how to use ggspatial to add a scale bar and north arrow to a map that includes raster, polygon, and point data.
+Adding a scale bar and north arrow can improve the readability of spatial visualisations. The ggspatial package provides tools for integrating these elements into maps. The following example adds a scale bar and north arrow to a map containing raster, polygon and point data.
 
 ```{r}
 #| label: fig-map-elements
@@ -625,9 +624,9 @@ library(ggspatial)
 
 # Add scale bar and north arrow
 combined_map +
-  annotation_scale(location = "bl", width_hint = 0.25) +  
-  annotation_north_arrow(location = "tr", which_north = "true", 
-                         height = unit(.5, "cm"), width = unit(.5, "cm")) 
+  annotation_scale(location = "bl", width_hint = 0.25) +
+  annotation_north_arrow(location = "tr", which_north = "true",
+                         height = unit(.5, "cm"), width = unit(.5, "cm"))
 ```
 
 ## FAQs
@@ -667,7 +666,7 @@ The sources listed in @tbl-data-sources are useful starting points, but always i
 
 ## Exercises
 
-1.  Download a shapefile of administrative boundaries for a country of your choice using the geobounds package. Once the shapefile has been imported into R, visualize it in two different ways: first using base R plotting functions and then using ggplot2. Compare the two visualizations and discuss what advantages or disadvantages each approach offers.
+1.  Download a shapefile of administrative boundaries for a country of your choice using the geobounds package. Once the shapefile has been imported into R, visualise it in two different ways, first using base R plotting functions and then using ggplot2. Compare the two visualisations and discuss the advantages and disadvantages of each approach.
 
 2.  Obtain raster data for the same country, such as elevation or population density. You may use either the wpgpDownloadR package or access Google Earth Engine through the rgee package. Plot the raster with `terra::plot()` and again with ggplot2. Comment on how the raster is displayed under each method and the flexibility provided by each plotting tool.
 
