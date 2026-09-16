@@ -1453,11 +1453,11 @@ RiskMap
 #| label: create-regularized-test-sets
 #| eval: false
 
-regularized <- 
+regularized <-
 assess_prediction(list(M0 = M0_fit, M1 = M1_fit),
-          which_metric = "AnPIT", 
           method = "regularized", min_dist = 20,
-          n_size = 9, iter = 10, messages = FALSE)
+          size = 9, iter = 10,
+          metrics = "AnPIT", messages = FALSE)
 
 ```
 
@@ -1480,9 +1480,9 @@ grid.arrange(p1, p2, nrow = 2, heights = c(1, 1))
 ```
 
 In the above function, we have used a spatially regularized sampling
-scheme (`method = "clusterized"`), where the locations are at least 20
+scheme (`method = "regularized"`), where the locations are at least 20
 kilometers (`min_dist = 20`) apart from each other to create 10 test
-sets (`iter = 10`) each of size 9 (`n_size = 9`) which corresponds to
+sets (`iter = 10`) each of size 9 (`size = 9`) which corresponds to
 10% of the original dataset. The results reported in @fig-anpit-reg,
 show both the AnPIT for each of the 10 test sets and the averaged AnPIT
 across the 10 test sets, for both $M_0$ and $M_1$. The AnPIT plots show
@@ -1498,10 +1498,10 @@ create 10 folds and set `method = "cluster"`.
 #| label: create-clustered-test-sets
 #| eval: false
 
-cluster <- 
+cluster <-
 assess_prediction(list(M0 = M0_fit, M1 = M1_fit),
-          which_metric = "AnPIT", 
-          method = "cluster", fold = 10, messages = FALSE)
+          method = "cluster", fold = 10,
+          metrics = "AnPIT", messages = FALSE)
 
 ```
 
@@ -1652,28 +1652,28 @@ now compare the predictive performance of the two, using both the CRPS
 and SCRPS metrics introduced previously.
 
 The `assess_prediction()` function also allows the user to compute the CRPS and
-SCRPS through the argument `which_metric` as shown below.
+SCRPS through the argument `metrics` as shown below.
 
 ```{r}
 #| label: score-liberia-validation-models
 #| eval: false
-regularized_scores <- 
+regularized_scores <-
 assess_prediction(list(M0 = M0_fit, M1 = M1_fit),
-          which_metric = c("CRSP", "SCRPS"), 
           method = "regularized", min_dist = 20,
-          n_size = 9, iter = 10, messages = FALSE)
+          size = 9, iter = 10,
+          metrics = c("CRPS", "SCRPS"), messages = FALSE)
 
-cluster_scores <- 
+cluster_scores <-
 assess_prediction(list(M0 = M0_fit, M1 = M1_fit),
-          which_metric = c("CRSP", "SCRPS"), 
-          method = "cluster", fold = 10, messages = FALSE)
+          method = "cluster", fold = 10,
+          metrics = c("CRPS", "SCRPS"), messages = FALSE)
 
 
 ```
 
 Note that that `assess_prediction()` can be run once in order to obtain both the
 AnPIT diagnostic, introduced in @sec-anpit; by default
-`which_metric = c("AnPIT", "CRSP", "SCRPS")` which computes all three
+`metrics = c("AnPIT", "CRPS", "SCRPS")` which computes all three
 diagnostic using the same test sets. The reason we have separated the
 AnPIT and the scores computations is only for pedagogical purposes.
 
