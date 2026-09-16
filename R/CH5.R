@@ -83,16 +83,16 @@ saveRDS(underw_prev, file = "data/underw_prev.rds")
 ## --- A3. Cross-validation (PIT) for HAZ and WAZ ---
 set.seed(123)
 assess_haz <- assess_prediction(list(HAZ = haz_fit),
-                                n_size = 100,
+                                method = "regularized",
                                 min_dist = 5,
-                                iter = 10,
-                                method = "regularized")
+                                size = 100,
+                                iter = 10)
 
 assess_waz <- assess_prediction(list(WAZ = waz_fit),
-                                n_size = 100,
+                                method = "regularized",
                                 min_dist = 5,
-                                iter = 10,
-                                method = "regularized")
+                                size = 100,
+                                iter = 10)
 
 saveRDS(assess_haz, file = "data/assess_haz.rds")
 saveRDS(assess_waz, file = "data/assess_waz.rds")
@@ -266,9 +266,9 @@ set.seed(123)
 assess_pred_mlw <- assess_prediction(list(all_cov = mod_all_cov,
                                           pca = mod_pca),
                                      method = "cluster",
-                                     which_metric = c("AnPIT", "CRPS"),
+                                     fold = 3,
                                      iter = 1,
-                                     fold = 3)
+                                     metrics = c("AnPIT", "CRPS"))
 
 saveRDS(assess_pred_mlw, file = "data/assess_pred_mlw.rds")
 
