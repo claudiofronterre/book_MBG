@@ -38,7 +38,7 @@ set.seed(1)
 italy_sim_variog <- variogram(
   italy_sim,
   variable = "rand_eff",
-  scale_to_km = TRUE,
+  distance_units = "km",
   n_permutations = 1000
 )
 
@@ -53,7 +53,7 @@ data(galicia)  # from RiskMap
 
 fit_galicia <- glgpm(log(lead) ~ gp(kappa = 1.5),
                      data = galicia, family = "gaussian",
-                     scale_to_km = TRUE, messages = FALSE)
+                     distance_units = "km", messages = FALSE)
 
 saveRDS(fit_galicia, file = "data/fit_galicia.rds")
 
@@ -69,7 +69,7 @@ for (i in seq_len(n_kappa)) {
   )
   fit_galicia_list[[i]] <- glgpm(formula_i,
                                  data = galicia, family = "gaussian",
-                                 scale_to_km = TRUE, messages = FALSE)
+                                 distance_units = "km", messages = FALSE)
   llik_values[i] <- fit_galicia_list[[i]]$log.lik
   sigma2_me_hat[i] <- coef(fit_galicia_list[[i]])["sigma2_me"]
 }
@@ -88,7 +88,7 @@ saveRDS(galicia_kappa_profile, file = "data/galicia_kappa_profile.rds")
 ## ------------------------------------------------------------
 italy_fit <- glgpm(y ~ log(pop_dens) + gp(kappa = 0.5, nugget = FALSE) +
                      re(region, province),
-                   data = italy_sim, scale_to_km = TRUE,
+                   data = italy_sim, distance_units = "km",
                    family = "gaussian")
 
 saveRDS(italy_fit, file = "data/italy_fit.rds")
@@ -120,7 +120,7 @@ liberia <- st_as_sf(liberia, coords = c("long", "lat"), crs = 4326)
 fit_liberia <-
   glgpm(npos ~ log(elevation) + gp(),
         den = ntest, data = liberia,
-        convert_to_crs = 32629,
+        model_crs = 32629,
         family = "binomial")
 
 saveRDS(fit_liberia, file = "data/fit_Liberia.rds")
@@ -141,7 +141,7 @@ par0_liberia$tau2 <- 0.1
 fit_liberia2 <-
   glgpm(npos ~ log(elevation) + gp(nugget = TRUE),
         den = ntest, data = liberia,
-        convert_to_crs = 32629,
+        model_crs = 32629,
         par0 = par0_liberia,
         control_mcmc = set_control_mcmc(n_sim = 110000,
                                        burnin = 10000,

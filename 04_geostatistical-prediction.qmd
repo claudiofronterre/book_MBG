@@ -254,7 +254,7 @@ liberia_adm0 <- gb_get_adm0("Liberia")
 liberia_adm0 <- st_transform(liberia_adm0, crs = 32629)
 
 # 2) Create the grid at 5 km resolution
-liberia_grid <- create_grid(liberia_adm0, spat_res = 5)
+liberia_grid <- create_grid(liberia_adm0, spacing = 5)
 
 # Download elevation data
 library(elevatr)
@@ -270,7 +270,7 @@ lb_predictors <- data.frame(elevation =
 In the code above, we generated a prediction grid, previously referred
 to as $\tilde{X}$, with a spatial resolution of 5 km. Generally, a
 higher spatial resolution (note that a "higher spatial resolution"
-corresponds to a lower value for `spat_res`) yields more detailed
+corresponds to a lower value for `spacing`) yields more detailed
 prediction maps but also increases the computational cost. In this case,
 the choice of a 5 km grid strikes a balance between sufficient
 visualization clarity and manageable computation time.
@@ -552,7 +552,7 @@ points in a set, and the shape the rubber band forms is the convex hull.
 
 # Create grid from convex hull
 shp_ch <- create_convex_hull(malkenya_comm1000)
-ken_grid <- create_grid(shp_ch, spat_res = 0.5)
+ken_grid <- create_grid(shp_ch, spacing = 0.5)
 
 # Get elevation raster
 ken_elev <- 
@@ -884,7 +884,7 @@ values of elevation observed in the data.
 #| eval: false
 # Create grid from convex hull
 shp_ch <- create_convex_hull(an_fit$data_sf)
-an_grid <- create_grid(shp_ch, spat_res = 2)
+an_grid <- create_grid(shp_ch, spacing = 2)
 
 
 an_elev <- get_elev_raster(locations = shp_ch, 
@@ -1433,13 +1433,13 @@ liberia <- st_as_sf(liberia, coords = c("long", "lat"), crs = 4326)
 # Fitting M0
 set.seed(123)
 M0_fit <- glgpm(npos ~ gp(), den = ntest, data = liberia,
-                convert_to_crs = 32629,
+                model_crs = 32629,
                 family = "binomial", messages = FALSE)
 
 # Fitting M1
 M1_fit <- glgpm(npos ~ elevation + pmax(elevation - 150, 0) + gp(),
                 den = ntest, data = liberia,
-                convert_to_crs = 32629,
+                model_crs = 32629,
                 family = "binomial", messages = FALSE)
 ```
 
@@ -1833,7 +1833,7 @@ set.seed(123)
 true_model <- glgpm(npos ~ elevation + pmax(elevation - 150, 0) + 
                            gp(),
                     den = ntest,
-                    convert_to_crs = 32629,
+                    model_crs = 32629,
                     family = "binomial",
                     data = liberia)
 ```
@@ -1903,8 +1903,7 @@ grid from a raster.
 shp <- gb_get_adm0("Liberia")
 shp <- st_transform(shp, crs= 32629)
 
-pred_grid <- create_grid(shp, spat_res = 5)
-pred_grid <- st_as_sf(pred_grid)
+pred_grid <- create_grid(shp, spacing = 5)
 
 pred_grid$elevation <- terra::extract(liberia_elev, st_coordinates(pred_grid))
 ```

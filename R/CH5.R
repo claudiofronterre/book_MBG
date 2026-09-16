@@ -43,7 +43,7 @@ attr(ghana, "retrieved_on") <- Sys.Date()
 saveRDS(ghana, file = "data/gha_adm0_geoboundaries.rds")
 ghana <- st_transform(ghana, st_crs(malnutrition_sf))
 
-ghana_grid <- create_grid(ghana, spat_res = 10)
+ghana_grid <- create_grid(ghana, spacing = 10)
 n_pred <- nrow(st_coordinates(ghana_grid))
 
 set.seed(123)
@@ -231,7 +231,7 @@ saveRDS(mod_pca, file = "data/mod_pca.rds")
 
 ## --- B4. Grid predictions for both models ---
 mlw_admin0_sf <- st_transform(mlw_admin0_sf, 32736)
-grid_mlw <- create_grid(mlw_admin0_sf, spat_res = 5)
+grid_mlw <- create_grid(mlw_admin0_sf, spacing = 5)
 
 r_covs_p   <- terra::project(r_covs, paste0("epsg:", mlw_crs))
 pc1_rast_p <- terra::project(pc1_rast, paste0("epsg:", mlw_crs))
@@ -313,7 +313,7 @@ set.seed(123)
 variogram_wnv <- variogram(data = wnv_summary,
                            variable = "Z_hat",
                            n_permutations = 1000,
-                           scale_to_km = TRUE,
+                           distance_units = "km",
                            breaks = seq(0, 10, length = 15))
 
 saveRDS(variogram_wnv, file = "data/variogram_wnv.rds")
@@ -465,7 +465,7 @@ chull_sf <- st_convex_hull(geom_union)
 chull_sf <- st_as_sf(data.frame(geometry = st_sfc(chull_sf)),
                      crs = st_crs(inf_fit$data_sf))
 
-grid_pred_sac <- create_grid(chull_sf, spat_res = 0.25)
+grid_pred_sac <- create_grid(chull_sf, spacing = 0.25)
 
 set.seed(123)
 pred_S_inf <- setup_prediction(

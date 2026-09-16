@@ -470,7 +470,7 @@ Missing raster cells and study boundaries require particular care. With `na.rm =
 
 ## Creating a predictive grid
 
-A predictive grid is a regularly arranged set of target locations covering the study region. It may be represented by cell polygons or by points at the cell centres, depending on what the predictions represent and how they will be used. Raster pixels are cells with associated values, whereas a grid-centre point has a location but no area of its own.
+A predictive grid is a regularly arranged set of prediction locations covering the study region. It may be represented by cell polygons or by points at the cell centres, depending on what the predictions represent and how they will be used. Raster pixels are cells with associated values, whereas a grid-centre point has a location but no area of its own.
 
 Here, `st_make_grid(what = "centers")` creates points separated by 5 km rather than square grid cells. Each point represents a location at which the model will make a point prediction. Reducing the spacing produces more prediction locations and a finer-looking map, but it also increases the computational cost. It does not create information at scales finer than those supported by the data and model.
 
@@ -494,6 +494,17 @@ pred_locations <- st_intersection(pred_locations, liberia_admin0_utm)
 par(mar = c(0, 0, 0, 0))  #| hide_line
 plot(liberia_admin0_utm$geometry, col = "white")
 plot(pred_locations, cex = .01, col = "red", pch = 19, add = TRUE)
+```
+
+The RiskMap `create_grid()` function automates these steps and will be used for the remainder of the book. It returns regularly spaced `sf` point locations within the supplied region. The `spacing` argument is interpreted in kilometres by default, while `distance_units = "m"` can be used to specify it in metres. If the region uses longitude and latitude, `create_grid()` transforms it to a suitable UTM coordinate system and reports the transformation. Transforming the region beforehand, as above, gives the user explicit control over the projected coordinate system.
+
+The equivalent 5 km prediction grid can therefore be created as follows:
+
+```{r}
+#| label: create-prediction-grid
+#| message: false
+pred_locations_riskmap <- create_grid(liberia_admin0_utm,
+                                      spacing = 5)
 ```
 
 ## Visualising spatial data

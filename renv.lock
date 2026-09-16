@@ -597,6 +597,7 @@
         "stars",
         "terra",
         "tibble",
+        "units",
         "xtable"
       ],
       "Suggests": [
@@ -615,7 +616,7 @@
       "RemoteUsername": "claudiofronterre",
       "RemoteRepo": "RiskMap",
       "RemoteRef": "dev",
-      "RemoteSha": "36f6e6ddd4cfe7b215ab0f8783599ad336e0c0fc"
+      "RemoteSha": "f5ab89a18618c53e4e1ae86cc8f31ebd1dfc3174"
     },
     "S7": {
       "Package": "S7",
