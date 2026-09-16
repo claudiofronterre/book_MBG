@@ -1255,7 +1255,7 @@ liberia_variog <- variogram(
     15, 30, 40, 80, 120,
     160, 200, 250, 300, 350
   ),
-  scale_to_km = TRUE,
+  distance_units = "km",
   n_permutations = 1000
 )
 ```
@@ -1271,7 +1271,7 @@ to specify the number of permutations that are performed to generate the
 envelope for absence of spatial correlation, previously described.
 ```{r}
 #| label: dist-summaries-liberia
-summarise_distance(data = liberia, scale_to_km = TRUE)
+summarise_distance(data = liberia, distance_units = "km")
 ```
 
 The `summarise_distance()` function within the RiskMap package can be used
@@ -1392,7 +1392,7 @@ galicia$residuals <- lm_fit$residuals
 galicia_variog <- variogram(
   galicia,
   variable = "residuals",
-  scale_to_km = TRUE,
+  distance_units = "km",
   breaks = seq(10, 140, length = 15),
   n_permutations = 1000
 )
@@ -1518,7 +1518,7 @@ italy_sim$rand_eff <- ranef(lmer_fit)$ID_loc[italy_sim$ID_loc, 1]
 # fit, and the 95% confidence level envelope for spatial independence
 italy_sim_variog <- variogram(italy_sim,
   variable = "rand_eff",
-  scale_to_km = TRUE,
+  distance_units = "km",
   n_permutations = 1000
 )
 
@@ -1634,7 +1634,7 @@ sigma2_me_hat <- galicia_kappa_profile$sigma2_me_hat
 # Parameter estimation using the geometry and CRS stored in `galicia`
 fit_galicia <- glgpm(log(lead) ~ gp(kappa = 1.5),
                      data = galicia, family = "gaussian",
-                     scale_to_km = TRUE, messages = FALSE)
+                     distance_units = "km", messages = FALSE)
 ```
 
 The Gaussian process $S(x)$ is specified through `gp()` in the formula.
@@ -1645,9 +1645,9 @@ excluded. Set `nugget = TRUE` to estimate its variance, or pass a positive
 numeric value to fix it. Estimating the nugget for a Gaussian model with
 only one observation per location is not identifiable unless the
 measurement-error variance is fixed through `fix_var_me`; Exercise 7
-returns to this point. The `scale_to_km` argument controls whether spatial
-distances, and therefore the scale of $\phi$, are expressed in kilometres
-or metres.
+returns to this point. The `distance_units` argument controls whether
+spatial distances, and therefore the scale of $\phi$, are expressed in
+kilometres or metres.
 
 ```{r}
 #| label: summarize-fit-galicia
@@ -1712,7 +1712,7 @@ for (i in 1:n_kappa) {
   )
   fit_galicia_list[[i]] <- glgpm(formula_i,
                                  data = galicia, family = "gaussian",
-                                 scale_to_km = TRUE, messages = FALSE)
+                                 distance_units = "km", messages = FALSE)
   llik_values[i] <- fit_galicia_list[[i]]$log.lik
   sigma2_me_hat[i] <- coef(fit_galicia_list[[i]])["sigma2_me"]
 }
@@ -1870,7 +1870,7 @@ for the province, can be included by using the `re()` function into the
 # Location-level, region, and province effects
 italy_fit <- glgpm(y ~ log(pop_dens) + gp(kappa = 0.5, nugget = FALSE) +
                      re(region, province),
-                   data = italy_sim, scale_to_km = TRUE,
+                   data = italy_sim, distance_units = "km",
                    family = "gaussian")
 ```
 
@@ -2030,7 +2030,7 @@ concise summary of the practical aspects provided in @sec-summary.
 #| eval: false
 fit_liberia <- glgpm(npos ~ log(elevation) + gp(),
                      den = ntest, data = liberia,
-                     convert_to_crs = 32629,
+                     model_crs = 32629,
                      family = "binomial")
 ```
 
@@ -2106,7 +2106,7 @@ albeit on a rather small scale.
 
 ```{r}
 #| label: summarize-anopheles-distances
-summarise_distance(anopheles, scale_to_km = TRUE)
+summarise_distance(anopheles, distance_units = "km")
 ```
 
 Using the `summarise_distance()` function, we can see that, among the
@@ -2186,7 +2186,7 @@ geostatistical model.
 #| eval: false
 fit_liberia_no_nugget <- glgpm(npos ~ log(elevation) + gp(),
                                den = ntest, data = liberia,
-                               convert_to_crs = 32629,
+                               model_crs = 32629,
                                family = "binomial")
 ```
 
@@ -2842,7 +2842,7 @@ par0_liberia <- coef(fit_liberia)
 # Refit the model and increase the MCMC samples
 fit_liberia2 <- glgpm(npos ~ log(elevation) + gp(nugget = TRUE),
                       den = ntest, data = liberia,
-                      convert_to_crs = 32629,
+                      model_crs = 32629,
                       par0 = par0_liberia,
                       control_mcmc = set_control_mcmc(n_sim = 110000,
                                                      burnin = 10000,

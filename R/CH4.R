@@ -16,7 +16,7 @@ if (file.exists("data/fit_Liberia.rds")) {
 } else {
   fit_liberia <- glgpm(npos ~ log(elevation) + gp(),
                        den = ntest, data = liberia,
-                       convert_to_crs = 32629,
+                       model_crs = 32629,
                        family = "binomial")
   saveRDS(fit_liberia, file = "data/fit_Liberia.rds")
 }
@@ -42,7 +42,7 @@ if (file.exists("data/an_fit.rds")) {
 library(elevatr)
 
 an_shp <- create_convex_hull(an_fit$data_sf)
-an_grid <- create_grid(an_shp, spat_res = 2)
+an_grid <- create_grid(an_shp, spacing = 2)
 an_elev <- get_elev_raster(locations = an_shp, z = 9, clip = "locations")
 an_predictors <- data.frame(
   elevation = terra::extract(an_elev, st_coordinates(an_grid))
@@ -92,7 +92,7 @@ library(elevatr)
 liberia_adm0 <- readRDS("data/lbr_adm0_geoboundaries.rds")
 liberia_adm0 <- st_transform(liberia_adm0, crs = 32629)
 
-liberia_grid <- create_grid(liberia_adm0, spat_res = 5)
+liberia_grid <- create_grid(liberia_adm0, spacing = 5)
 
 liberia_elev_path <- "data/lbr_elevation_ch4.rds"
 if (file.exists(liberia_elev_path)) {
@@ -143,7 +143,7 @@ saveRDS(fit_malkenya, file = "data/fit_malkenya.rds")
 ##    -> data/pred_aver_pop.rds (pred_aver_pop)
 ## ------------------------------------------------------------
 shp_ch <- create_convex_hull(malkenya_comm1000)
-ken_grid <- create_grid(shp_ch, spat_res = 0.5)
+ken_grid <- create_grid(shp_ch, spacing = 0.5)
 
 ken_elev <- get_elev_raster(locations = shp_ch,
                             z = 9, clip = "locations")
@@ -228,12 +228,12 @@ saveRDS(pred_shp_w, file = "data/pred_shp_w.rds")
 set.seed(123)
 M0_fit <- glgpm(npos ~ gp(),
                 den = ntest, data = liberia,
-                convert_to_crs = 32629,
+                model_crs = 32629,
                 family = "binomial", messages = FALSE)
 
 M1_fit <- glgpm(npos ~ elevation + pmax(elevation - 150, 0) + gp(),
                 den = ntest, data = liberia,
-                convert_to_crs = 32629,
+                model_crs = 32629,
                 family = "binomial", messages = FALSE)
 
 # Default which_metric = c("AnPIT", "CRSP", "SCRPS") computes all
@@ -258,7 +258,7 @@ saveRDS(cluster, file = "data/cluster.rds")
 set.seed(123)
 true_model <- glgpm(npos ~ elevation + pmax(elevation - 150, 0) + gp(),
                     den = ntest,
-                    convert_to_crs = 32629,
+                    model_crs = 32629,
                     family = "binomial",
                     data = liberia)
 
@@ -275,8 +275,7 @@ saveRDS(true_model, file = "data/fit_sp_lib.rds")
 shp <- readRDS("data/lbr_adm0_geoboundaries.rds")
 shp <- st_transform(shp, crs = 32629)
 
-sim_pred_grid <- create_grid(shp, spat_res = 5)
-sim_pred_grid <- st_as_sf(sim_pred_grid)
+sim_pred_grid <- create_grid(shp, spacing = 5)
 sim_pred_grid$elevation <- terra::extract(liberia_elev,
                                           st_coordinates(sim_pred_grid))
 

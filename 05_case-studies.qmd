@@ -264,9 +264,9 @@ library(sf)
 re <- st_transform(re, crs = propose_utm(re))
 
 # Variogram for HAZ
-var_haz <- variogram(re, "Z_hat_haz", scale_to_km = TRUE,
+var_haz <- variogram(re, "Z_hat_haz", distance_units = "km",
                        n_permutations = 1000)
-var_waz <- variogram(re, "Z_hat_waz", scale_to_km = TRUE,
+var_waz <- variogram(re, "Z_hat_waz", distance_units = "km",
                        n_permutations = 1000)
 library(patchwork)
 
@@ -342,7 +342,7 @@ library(geobounds)
 ghana <- gb_get_adm0("Ghana")
 ghana <- st_transform(ghana, st_crs(malnutrition))
 
-ghana_grid <- create_grid(ghana, spat_res = 10)
+ghana_grid <- create_grid(ghana, spacing = 10)
 
 n_pred <- nrow(st_coordinates(ghana_grid))
 
@@ -1019,7 +1019,7 @@ We then compare the predicted prevalence from each model using a regular 5 by 5 
 #| label: predict-malawi-prevalence
 #| eval: false
 # Create a 5 by 5 regular grid 
-grid_mlw <- create_grid(mlw_admin0_sf, spat_res = 5)
+grid_mlw <- create_grid(mlw_admin0_sf, spacing = 5)
 
 # Extract the covariates over the grid
 r_covs <- terra::project(r_covs, paste0("epsg:",mlw_crs))
@@ -1279,7 +1279,7 @@ set.seed(123)
 variogram_wnv <-  variogram(data = wnv_summary, 
                             variable = "Z_hat",
                             n_permutations = 1000,
-                            scale_to_km = TRUE,
+                            distance_units = "km",
                             breaks = seq(0,10, length = 15))
 
 ```
@@ -1516,7 +1516,7 @@ ggplot() +
 ```{r}
 #| label: create-sacramento-prediction-grid
 #| eval: false
-grid_pred_sac <- create_grid(chull_sf, spat_res = 0.25)
+grid_pred_sac <- create_grid(chull_sf, spacing = 0.25)
 
 set.seed(123)
 pred_S_inf <- setup_prediction(
