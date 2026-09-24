@@ -164,7 +164,7 @@ liberia_boot <- simulate_glgpm(n_sim = n_sim, model_fit = fit_liberia_no_nugget)
 
 par_hat <- list()
 
-for (i in 1:n_sim) {
+for (i in seq_len(n_sim)) {
   liberia_boot$data_sim$npos_sim <-
     liberia_boot$data_sim[[paste("npos_sim", i, sep = "")]]
   

@@ -18,6 +18,11 @@ editor_options:
 | `glmer()` | *lme4* | Fitting generalized linear mixed models |
 | `glgpm()` | *RiskMap* | Fitting generalized linear geostatistical models |
 | `variogram()` | *RiskMap* | Computing the empirical variogram and carrying out permutation test for spatial independence |
+| `plot_variogram()` | *RiskMap* | Plotting an empirical variogram and its permutation envelope |
+| `summarise_distance()` | *RiskMap* | Summarising distances between sampling locations |
+| `to_table()` | *RiskMap* | Formatting model estimates as a table |
+| `set_control_mcmc()` | *RiskMap* | Configuring Markov chain Monte Carlo settings |
+| `plot_mcmc()` | *RiskMap* | Checking Markov chain Monte Carlo output |
 
 This chapter introduces the process of moving from exploratory analysis
 to the formal specification of statistical models, through to parameter
@@ -73,8 +78,8 @@ library(sf)
 library(RiskMap)
 library(tidyr)
 library(dplyr)
-library(ggplot2)
 library(lme4)
+library(gridExtra)
 data(galicia)
 data(italy_sim)
 data(liberia)
@@ -84,7 +89,7 @@ data(anopheles)
 
 ```{r}
 #| label: fig-prev-elev-liberia
-#| fig-cap: "Scatter plot of the empirical prevalence for river-blindess against elevation, measured in meters."
+#| fig-cap: "Scatter plot of the empirical prevalence of river blindness against elevation, measured in metres."
 
 # Compute prevalence
 liberia$prev <- liberia$npos / liberia$ntest
@@ -92,12 +97,12 @@ liberia$prev <- liberia$npos / liberia$ntest
 # Scatterplot of prevalence vs. elevation
 ggplot(liberia, aes(x = elevation, y = prev)) +
   geom_point() +
-  labs(x = "Elevation (meters)", y = "Prevalence")
+  labs(x = "Elevation (metres)", y = "Prevalence")
 ```
 
 The plot shown in @fig-prev-elev-liberia shows that, as elevation
-increases from 0 to around 150 meters, prevalence rapidly increases to
-around 0.25 and, for larger values in elevation than 150 meters, the
+increases from 0 to around 150 metres, prevalence rapidly increases to
+around 0.25 and, for elevation values above 150 metres, the
 relationship levels off. How can we account for this in a regression
 model? To answer this question rigorously, the plot in
 @fig-prev-elev-liberia cannot be used. This is because, when the
@@ -123,7 +128,7 @@ logit is undefined.
 
 ```{r}
 #| label: fig-elogit-elev-liberia
-#| fig-cap: "Scatter plot of the empirical prevalence for river-blindess against elevation, measured in meters."
+#| fig-cap: "Scatter plot of the empirical logit of river-blindness prevalence against elevation, measured in metres."
 
 # Empirical logit transformation
 liberia$elogit <- elogit(y = liberia$npos, m = liberia$ntest)
@@ -141,12 +146,12 @@ ggplot(liberia, aes(x = elevation, y = elogit)) +
     col = "darkgreen", lty = "dashed", se = FALSE
   ) +
 
-  # Adding linear regression fit with change point in 150 meters
+  # Adding linear regression fit with change point at 150 metres
   geom_smooth(
     method = "lm", formula = y ~ x + pmax(x - 150, 0),
     col = "orange", lty = "dashed", se = FALSE
   ) +
-  labs(x = "Elevation (meters)", y = "Empirical logit")
+  labs(x = "Elevation (metres)", y = "Empirical logit")
 ```
 
 @fig-elogit-elev-liberia shows the scatter plot of the empirical logit
@@ -157,7 +162,7 @@ spline [@Wood2017-ad], represented by the blue solid line. The smoothing
 spline allows us to better discern the type of relationship and how to
 best capture it using a standard regression approach. As we can see from
 @fig-elogit-elev-liberia, the smoothing spline corroborates our initial
-observation of a positive relationship up to about 150 meters, followed
+observation of a positive relationship up to about 150 metres, followed
 by a plateau.
 
 To capture this non-linear relationship, we can use the two following
@@ -175,13 +180,13 @@ elevation at that location.
 Alternatively, the non-linear effect of elevation on prevalence could be
 captured using a linear spline. Put in simple terms, we want to fit a
 linear regression model that allows for a change in slope above 150
-meters. Formally, this is expressed in a Binomial regression model as
+metres. Formally, this is expressed in a Binomial regression model as
 $$
 \log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_0 + \beta_1 d(x_i) + \beta_{2} \max\{d(x_i)-150, 0\}.
 $$ {#eq-lspline-elev-glm}
 Based on the equation above, the effect of
-elevation below 150 meters is quantified by the parameter $\beta_1$.
-Above 150 meters, instead, the effect of elevation becomes
+elevation below 150 metres is quantified by the parameter $\beta_1$.
+Above 150 metres, instead, the effect of elevation becomes
 $\beta_1 + \beta_2$. Note that the function `pmax()` (and not the
 standard base function `max()`) should be used in R when the computation
 of the maximum between a scalar value and each of the components of a
@@ -193,13 +198,13 @@ the linear spline (@eq-lspline-elev-glm). We observe that both curves
 provide a similar fit to the data, with larger differences observed for
 larger values in elevation, where the log-transformed elevation models
 yield larger values for the predicted prevalence. This also suggests
-that if we were to extrapolate the predictions beyond 600 meters in
+that if we were to extrapolate the predictions beyond 600 metres in
 elevation the implied pattern by the model with the log-transformed
 elevation would predict an increasingly larger elevation, which is
 unrealistic, since the fly that transmits the disease cannot breed at
 those altitudes. The linear spline model instead would generate
 predictions that would be very similar to those observed between 150 and
-600 meters. From this point of view, the linear spline model would thus
+600 metres. From this point of view, the linear spline model would thus
 have more scientific validity than the other model. However, which of
 the two approaches should be chosen to model the effect of elevation is
 a question that closely depends on the research question to be
@@ -210,8 +215,8 @@ between elevation and prevalence, the linear spline model does not only
 provide a more credible explanation but also its regression parameters
 can be more easily interpreted. In fact, for a unit increase in
 elevation, the multiplicative change in the odds for river blindness is
-$\exp\{\beta_1\}$, if elevation is below 150 meters, and
-$\exp\{\beta_1+\beta_2\}$, if elevation is above 150 meters. When
+$\exp\{\beta_1\}$, if elevation is below 150 metres, and
+$\exp\{\beta_1+\beta_2\}$, if elevation is above 150 metres. When
 instead we use the log-transformed elevation, the interpretation of
 $\beta_1$ in @eq-log-elev-glm is more complicated, as it is based on the
 multiplicative increase in elevation by the same amount given by the
@@ -253,16 +258,16 @@ log transformation without adding 1.
 
 ```{r}
 #| label: fig-logcounts-elev-mosq
-#| fig-cap: "Scatter plot of the log transformed number of *Anopheles gambiae* mosquitoes against elevation, measured in meters. The blue line is generated using the least squares fit. "
+#| fig-cap: "Scatter plot of the log-transformed number of *Anopheles gambiae* mosquitoes against elevation, measured in metres. The blue line shows the least-squares fit."
 
-# Apply log-transformation to Anopheles gambiaes counts
+# Apply log-transformation to Anopheles gambiae counts
 anopheles$log_counts <- log(anopheles$An.gambiae)
 
 # Scatterplot of log counts vs. elevation
 ggplot(anopheles, aes(x = elevation, y = log_counts)) +
   geom_point() +
   geom_smooth(method = "lm", formula = y ~ x, se = FALSE) +
-  labs(x = "Elevation (meters)", y = "Log number of An. gambiae mosquitoes")
+  labs(x = "Elevation (metres)", y = "Log number of An. gambiae mosquitoes")
 ```
 
 The scatter plot in @fig-logcounts-elev-mosq shows a weak negative
@@ -518,7 +523,7 @@ glm_age_gender_no_interaction <- glm(
   data = malkenya_comm, family = binomial
 )
 
-# Perform likelihood ration test
+# Perform likelihood ratio test
 anova(glm_age_gender_no_interaction, glm_age_gender_interaction, test = "Chisq")
 ```
 
@@ -632,12 +637,12 @@ the distribution of elevation.
 
 ```{r}
 #| label: fig-elogit-elev-malkenya
-#| fig-cap: "Plot of the empirical logit against elevation measured in meters."
+#| fig-cap: "Plot of the empirical logit against elevation measured in metres."
 
 # Scatterplot of the empirical logit of RDT vs. mean elevation
 ggplot(elev_class_data, aes(x = elevation_mean, y = RDT)) +
   geom_point(aes(size = n_obs)) +
-  labs(x = "Elevation (meters)", y = "Empirical logit")
+  labs(x = "Elevation (metres)", y = "Empirical logit")
 ```
 
 The resulting plot in @fig-elogit-elev-malkenya shows an approximately
@@ -852,7 +857,7 @@ then the linear predictor with elevation as a covariate takes the form
 $$
 \log\{\mu_i\} = \beta_{0} + \beta_{1} d(x_i) + Z_i
 $$ {#eq-anopheles-glmm}
-where $d(x_i)$ indicates the elevation in meters at
+where $d(x_i)$ indicates the elevation in metres at
 location $x_i$ and the $Z_i$ are independent and identically distributed
 Gaussian variables with mean 0 and variance $\tau^2$. The model with an
 intercept only is simply obtained by setting $\beta_1 = 0$.
@@ -868,7 +873,7 @@ covariates.
 #| label: anopheles-glmer
 
 # Create an ID for the location
-anopheles$ID_loc <- 1:nrow(anopheles)
+anopheles$ID_loc <- seq_len(nrow(anopheles))
 
 # Poisson mixed model with elevation
 fit_glmer_elev <- glmer(An.gambiae ~ scale(elevation) + (1 | ID_loc),
@@ -1087,11 +1092,11 @@ is a latent variable. Hence, we require an estimate for $Z_i$ which we
 can then feed into $V_{ij}$. To emphasize this point, from now on, we
 shall replace @eq-squared-diff with
 $$
-\hat{V}{ij} = (\hat{Z}{i} - \hat{Z}_j)^2.
+\hat{V}_{ij} = (\hat{Z}_{i} - \hat{Z}_j)^2.
 $$ {#eq-hat-squared-diff}
 Several options are available for estimating $Z_{i}$. Our choice is to
-use the model of the predictive distribution of $Z_i$, that is the
-distribution of $Z_{i}$ conditioned to the data $y_i$. This estimator
+use the mean of the predictive distribution of $Z_i$, that is, the
+distribution of $Z_{i}$ conditional on the observed data. This estimator
 for $Z_i$ is also readily available from the output of the `lmer()` and
 `glmer()` functions of the lme4 package, as we will illustrate later in
 our example in this section.
@@ -1106,8 +1111,8 @@ $u_{ij}$ into classes, say $\mathcal{U}$, and then take average of all
 the $\hat{V}_{ij}$ that fall within $\mathcal{U}$. We can now write the
 formal definition of the empirical variogram as
 $$
-\hat{V}(\mathcal{U}) = \frac{1}{2 |\mathcal{U}|} \sum_{(i, j): (u_i,
-u_j) \in \mathcal{U}} \hat{V}{ij}
+\hat{V}(\mathcal{U}) = \frac{1}{2 |\mathcal{U}|}
+\sum_{(i, j): u_{ij} \in \mathcal{U}} \hat{V}_{ij}
 $$ {#eq-empirical-variogram}
 where
 $|\mathcal{U}|$ denotes the number of pairs of locations that fall
@@ -1130,17 +1135,20 @@ correlation. Following this principle, we then use a permutation test
 that allows us to generate empirical variograms under the assumption of
 absence of spatial correlation through the following iterative steps.
 
-1.  Permute the order of the locations in the dataset while keeping
-    everything else fixed.
+1.  Randomly reassign the observed values or fitted residuals among the
+    fixed sampling locations. This breaks any spatial association while
+    preserving the values and the spatial configuration of the data.
 
 2.  Compute the empirical variogram $\hat{V}(\mathcal{U})$ for the
     permuted dataset.
 
-3.  Repeat 1 and 2 a large number of times, say 10,000.
+3.  Repeat steps 1 and 2 a large number of times. We recommend 10,000
+    permutations for a stable final analysis. The examples below use
+    1,000 to keep the computation manageable while illustrating the method.
 
-4.  Use the resulting 10,000 empirical variograms to compute 95$\%$
-    confidence intervals, by taking the 0.025 and 0.975 quantiles of
-    these for each distance class $\hat{V}(\mathcal{U})$.
+4.  At each distance class, take the 0.025 and 0.975 quantiles of the
+    permutation distribution. These quantiles form a 95$\%$ pointwise
+    permutation envelope.
 
 5.  If the observed empirical variogram lies entirely within the
     envelope generated in the previous step, we conclude that there is
@@ -1154,11 +1162,12 @@ subtle, with only a few points of the empirical variogram falling
 outside, as we will see in later examples. Such patterns may indicate
 weak spatial dependence that is difficult to recover from the data.
 
-Ultimately, only the fit of a geostatistical model can provide a
-definitive assessment of the extent of the spatial correlation. The
-empirical variogram should therefore be viewed as a diagnostic tool that
-helps to explore residual spatial correlation, rather than as conclusive
-evidence on its own.
+Fitting an explicit geostatistical model provides a formal model-based
+way to estimate residual spatial dependence and its range. The resulting
+assessment is conditional on the chosen model and its assumptions, so it
+should not be regarded as definitive. The empirical variogram should be
+viewed as an exploratory diagnostic rather than conclusive evidence on
+its own.
 
 We now show an application of all the concepts introduced in this
 section to the Liberia data on river blindness.
@@ -1171,7 +1180,7 @@ $$
 \log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_{0} + \beta_{1}\log\{d(x_i)\} + Z_i
 $$ {#eq-liberia-bin-mixed-elev}
 where $d(x_i)$ is the elevation in
-meters at location $x_i$ and the $Z_i$ are i.i.d. Gaussian variables
+metres at location $x_i$ and the $Z_i$ are i.i.d. Gaussian variables
 with mean 0 and variance $\tau^2$. We first fit the model above using
 the `glmer()` function.
 
@@ -1182,7 +1191,7 @@ the `glmer()` function.
 liberia <- st_as_sf(liberia, coords = c("long", "lat"), crs = 4326)
 
 # Create the ID of the location
-liberia$ID_loc <- 1:nrow(liberia)
+liberia$ID_loc <- seq_len(nrow(liberia))
 
 # Binomial mixed model with log-elevation
 fit_glmer_lib <- glmer(cbind(npos, ntest - npos) ~ log(elevation) + (1 | ID_loc),
@@ -1274,7 +1283,7 @@ previously denoted by $\mathcal{U}$; check the help page of
 to `breaks` in the code above correspond to define the following classes
 of distance $\mathcal{U}$: $[15, 30]$, $(30, 40]$ and so forth, with the
 last class being $[350, +\infty)$, i.e. all pairs of locations whose
-distances are above 350km. The argument `n_permutations` allows the user
+distances are above 350 km. The argument `n_permutations` allows the user
 to specify the number of permutations that are performed to generate the
 envelope for absence of spatial correlation, previously described.
 ```{r}
@@ -1287,7 +1296,7 @@ for gauging the extent of the area covered by your dataset, aiding in
 the selection of appropriate values to be passed to the `breaks` argument.
 
 In the provided output above, we observe that for the Liberia dataset,
-the minimum and maximum distances are approximately 3km and 533km,
+the minimum and maximum distances are approximately 3 km and 533 km,
 respectively. While there is not a one-size-fits-all recommendation for
 setting `breaks`, two fundamental principles should inform your choice.
 Firstly, it is advisable to avoid choosing overly large distance
@@ -1295,22 +1304,22 @@ intervals, as the uncertainty associated with the empirical variogram
 tends to increase with distance due to fewer available pairs of
 observations for estimation. Secondly, especially when spatial
 correlation is not strong, it is crucial to carefully explore the
-behavior of the variogram at smaller distances. Consequently, it is
+behaviour of the variogram at smaller distances. Consequently, it is
 generally advisable to experiment with different `breaks` configurations
 and observe how they impact the pattern of the empirical variogram.
 
 ```{r}
 #| label: fig-liberia-variog
-#| fig-cap: "Plot of the empirical variogram (solid line) computed using the estimated random effects from the model in @eq-liberia-bin-mixed-elev. The blue shaded area is the 95% confidence level envelope generated using the permutation procedure described in @sec-expl-spatial."
+#| fig-cap: "Empirical variogram (solid line) computed using the estimated random effects from the model in @eq-liberia-bin-mixed-elev. The blue shaded area is the 95% pointwise permutation envelope for spatial independence described in @sec-expl-spatial."
 plot_variogram(liberia_variog, plot_envelope = TRUE)
 ```
 
-Finally, the `plot_variogram()` function enables us to visualize the
-empirical variogram and, through the `plot_envelope()` argument, include
+Finally, the `plot_variogram()` function enables us to visualise the
+empirical variogram and, through the `plot_envelope` argument, include
 the envelope generated by the permutation procedure. As illustrated in
 @fig-liberia-variog, we observe that the empirical variogram falls
 outside the envelope at relatively short distances, typically below
-30km. However, for distances exceeding 30km, the behavior of the
+30 km. However, for distances exceeding 30 km, the behaviour of the
 empirical variogram does not significantly differ from variograms
 generated under the assumption of spatial independence. In summary, we
 interpret the evidence presented in @fig-liberia-variog as indicative of
@@ -1387,7 +1396,7 @@ the end of the last paragraph.
 
 ```{r}
 #| label: fig-galicia-variog
-#| fig-cap: "Plot of the empirical variogram (solid line) computed using the estimated residuals from the model in @eq-std-lm-galicia. The blue shaded area is the 95% confidence level envelope generated using the permutation procedure described in @sec-expl-spatial."
+#| fig-cap: "Empirical variogram (solid line) computed using the estimated residuals from the model in @eq-std-lm-galicia. The blue shaded area is the 95% pointwise permutation envelope for spatial independence described in @sec-expl-spatial."
 
 # Fitting of the linear model and extraction of the residuals
 lm_fit <- lm(log(lead) ~ 1, data = galicia)
@@ -1396,7 +1405,7 @@ lm_fit <- lm(log(lead) ~ 1, data = galicia)
 galicia$residuals <- lm_fit$residuals
 
 # Compute the variogram, using the residuals from the linear model fit,
-# and the 95% confidence level envelope for spatial independence
+# and the 95% pointwise permutation envelope for spatial independence
 galicia_variog <- variogram(
   galicia,
   variable = "residuals",
@@ -1523,7 +1532,7 @@ these steps is shown below.
 italy_sim$rand_eff <- ranef(lmer_fit)$ID_loc[italy_sim$ID_loc, 1]
 
 # Compute the variogram, using the random effects from the linear mixed model
-# fit, and the 95% confidence level envelope for spatial independence
+# fit, and the 95% pointwise permutation envelope for spatial independence
 italy_sim_variog <- variogram(italy_sim,
   variable = "rand_eff",
   distance_units = "km",
@@ -1536,7 +1545,7 @@ plot_variogram(italy_sim_variog, plot_envelope = TRUE)
 
 ```{r}
 #| label: fig-italy-sim-variog
-#| fig-cap: "Plot of the empirical variogram (solid line) computed using the estimated random effects from the model in @eq-italy-sim-lmm. The blue shaded area is the 95% confidence level envelope generated using the permutation procedure described in @sec-expl-spatial."
+#| fig-cap: "Empirical variogram (solid line) computed using the estimated random effects from the model in @eq-italy-sim-lmm. The blue shaded area is the 95% pointwise permutation envelope for spatial independence described in @sec-expl-spatial."
 #| echo: false
 
 italy_sim_variog <- readRDS("data/italy_sim_variog.rds")
@@ -1713,8 +1722,8 @@ sigma2_me_hat <- rep(NA, length = n_kappa)
 
 # List that will contain all the geostatistical models fitted for
 # the different values of kappa specified in kappa_values
-fit_galicia_list <- list()
-for (i in 1:n_kappa) {
+fit_galicia_list <- vector("list", n_kappa)
+for (i in seq_len(n_kappa)) {
   formula_i <- as.formula(
     sprintf("log(lead) ~ gp(kappa = %s)", kappa_values[i])
   )
@@ -1733,17 +1742,30 @@ for (i in 1:n_kappa) {
 #| fig-width: 12
 #| out-width: "8.5in"
 #| label: fig-galicia-matern
-#| fig-cap: "(a) plot of the maximum likelihood estimate for the variance of the measurement error $U_i$, denoted in the text as $\\omega^2$, against the chosen fixed value for $\\kappa$; (b) profile likelihood for $\\kappa$ with the horizontal dashed line corresponding to the (approximate) threshold for constructing a 95% confidence interval based on a $\\chi^2$ with one degree of freedom. "
-par(mfrow = c(1, 2))
-plot(kappa_values, sigma2_me_hat,
-  type = "b",
-  xlab = expression(kappa), ylab = expression(hat(omega)^2), main = "(a)"
-)
-plot(kappa_values, llik_values,
-  type = "b",
-  xlab = expression(kappa), ylab = "Likelihood function at MLE", main = "(b)"
-)
-abline(h = max(llik_values) - pchisq(0.95, df = 2) / 2, lty = "dashed")
+#| fig-cap: "(a) Maximum likelihood estimate of the measurement-error variance $\\omega^2$ for each fixed value of $\\kappa$. (b) Profile log-likelihood for $\\kappa$. The dashed line is the approximate 95% profile-likelihood cutoff based on a $\\chi^2$ distribution with one degree of freedom."
+profile_cutoff <- max(llik_values) - qchisq(0.95, df = 1) / 2
+profile_data <- data.frame(kappa = kappa_values,
+                           sigma2_me = unlist(sigma2_me_hat),
+                           log_likelihood = llik_values)
+
+measurement_error_plot <- ggplot(profile_data,
+                                 aes(x = kappa, y = sigma2_me)) +
+  geom_line() +
+  geom_point() +
+  labs(x = expression(kappa), y = expression(hat(omega)^2),
+       title = "(a)") +
+  theme(plot.title = element_text(hjust = 0.5))
+
+profile_likelihood_plot <- ggplot(profile_data,
+                                  aes(x = kappa, y = log_likelihood)) +
+  geom_line() +
+  geom_point() +
+  geom_hline(yintercept = profile_cutoff, linetype = "dashed") +
+  labs(x = expression(kappa), y = "Profile log-likelihood",
+       title = "(b)") +
+  theme(plot.title = element_text(hjust = 0.5))
+
+grid.arrange(measurement_error_plot, profile_likelihood_plot, ncol = 2)
 ```
 
 By examining the results shown in panel (a) of @fig-galicia-matern, we
@@ -1759,15 +1781,15 @@ considered 10 values for $\kappa$ within the range 0.5 to 3.5 (see code
 above). In this plot, we have also added a horizontal line to help us to
 approximate a range of the most plausible value for $\kappa$. More
 precisely, the horizontal dashed line is computed by taking the maximum
-observed values of the likelihoods computed for the different values of
-$\kappa$, say $\hat{M}$ and we subtract the quantile 0.95 of a $\chi^2$
-distribution with 1 degree of freedom. In R this horizontal line is
+observed profile log-likelihoods computed for the different values of
+$\kappa$, say $\hat{M}$, and subtract half of the 0.95 quantile of a
+$\chi^2$ distribution with one degree of freedom. In R this horizontal line is
 obtained as
 
 ```{r}
 #| label: galicia-kappa-confidence-interval
 #| eval: false
-max(llik_values) - pchisq(0.95, df = 2) / 2
+max(llik_values) - qchisq(0.95, df = 1) / 2
 ```
 
 where `llik_values` is as defined in the previous chunk of code. Note
@@ -1786,7 +1808,7 @@ because it is empirically very difficult and, under some scenarios, even
 impossible. Estimating $\kappa$ poses a well-documented challenge in
 geostatistics (@zhang2004), which justifies our adoption of a pragmatic
 approach that sets it at a predefined value. This issue is also further
-exacerbated when analyzing count data, which tend to be less informative
+exacerbated when analysing count data, which tend to be less informative
 about the correlation structure than continuously measured data.
 
 ### Modelling hierarchical geostatistical data using the `re()` function {#sec-add-re-glgm}
@@ -1819,8 +1841,6 @@ italy_provinces <- gb_get_adm3("Italy")
 #| message: false
 #| label: fig-italy-maps
 #| fig-cap: "The plot shows the location of the dataset `italy_sim` (red crosses), with the boundaries of the regions (left) and provinces (right) of Italy."
-par(mfrow = c(1, 2))
-
 # Map of the data with the region boundaries
 map_regions <- ggplot() +
   geom_sf(data = italy_sim, pch = 4, color = "red") +
@@ -1837,7 +1857,6 @@ map_provinces <- ggplot() +
   labs(title = "Provinces") +
   theme(plot.title = element_text(hjust = 1 / 2))
 
-library(gridExtra)
 grid.arrange(map_regions, map_provinces, ncol = 2)
 ```
 
@@ -1863,8 +1882,12 @@ where, $d(x_i)$ is the log-transformed population density,
 $I(x \in \mathcal{R})$ is an indicator function that takes value 1 if
 the location $x$ falls within the boundaries of the area denoted by
 $\mathcal{R}$ and 0 otherwise. The covariance function chosen in the
-generation of the data was an exponential correlation function hence
-${\rm cov}\{S(x), S(x') = \sigma^2 \exp\{-||x-x'||/\phi\}$.
+generation of the data was an exponential correlation function. Hence,
+
+$$
+\operatorname{Cov}\{S(x), S(x')\}
+= \sigma^2 \exp\{-\lVert x-x'\rVert/\phi\}.
+$$
 
 The inclusion of the random effects $V_h$, for the region, and $Z_k$,
 for the province, can be included by using the `re()` function into the
@@ -1922,7 +1945,7 @@ We now consider the modelling of count outcomes, focusing our attention
 to the Binomial and Poisson geostatistical models.
 
 The use of Binomial geostatistical model is appropriate whenever the
-reported counts have a known upper bound. For example, when analyzing
+reported counts have a known upper bound. For example, when analysing
 aggregated disease counts from cross-sectional survey data, the total
 number of people sampled at a location defines the largest number of
 possible reported disease cases. Recalling the model specification of
@@ -1945,7 +1968,7 @@ sufficiently large population at location $x_i$, the proportion of
 individuals with the disease would converge closely to the value of
 $p(x_i)$.
 
-A Binomial geostatistical model is also used when analyzing data at
+A Binomial geostatistical model is also used when analysing data at
 individual level where the outcome is binary and usually indicates the
 positive or negative result of a test for a disease under investigation.
 In this analysis, a mix of individual-level variables and location-level
@@ -2046,8 +2069,9 @@ fit_liberia <- glgpm(npos ~ log(elevation) + gp(),
 ```
 
 ```{r}
-#| label: summarize-liberia-geostatistical-model
-summary(fit_liberia)
+#| label: tbl-liberia-geostatistical-model
+#| tbl-cap: "Parameter estimates for the Liberia binomial geostatistical model."
+to_table(fit_liberia, digits = 3)
 ```
 
 When using the `glgpm()` function to fit a Binomial model, we need to
@@ -2089,7 +2113,7 @@ $$
 \log\{\lambda(x_i)\} = \beta_0 + \beta_1 d(x_i) + S(x_i)
 $$ {#eq-anopheles}
 
-where $d(x_i)$ corresponds to the elevation in meters
+where $d(x_i)$ corresponds to the elevation in metres
 at location $x_i$. The `anopheles` dataset is provided as an `sf` object.
 We can then use the following script to fit the model in RiskMap.
 
@@ -2103,8 +2127,9 @@ an_fit <- glgpm(An.gambiae ~ elevation + gp(),
 ```
 
 ```{r}
-#| label: summarize-anopheles-geostatistical-model
-summary(an_fit)
+#| label: tbl-anopheles-geostatistical-model
+#| tbl-cap: "Parameter estimates for the Anopheles gambiae Poisson geostatistical model."
+to_table(an_fit, digits = 3)
 ```
 
 The estimated regression coefficient $\hat{\beta}_1$ is negative, which
@@ -2122,8 +2147,8 @@ summarise_distance(anopheles, distance_units = "km")
 ```
 
 Using the `summarise_distance()` function, we can see that, among the
-locations of the dataset, the average distance is about 55km and the
-minimum is about 387 meters. The estimate of phi of 4km is thus
+locations of the dataset, the average distance is about 55 km and the
+minimum is about 387 metres. The estimate of $\phi$ of 4 km is thus
 relatively small compared to the distances between locations in the
 data. In @sec-geo-prediction, we will further investigate to what extent
 this small-scale spatial correlation can affect the predictions of the
@@ -2190,7 +2215,7 @@ according to the chosen model, for $j = 1, \ldots, B$.
 
 These steps, from 1 to 7A, have been implemented in the `simulate_glgpm()`
 function. To show how to perform parametric bootstrap in RiskMap, let
-us consider the Liberia data on riverblindness and fit the following
+us consider the Liberia data on river blindness and fit the following
 geostatistical model.
 
 ```{r}
@@ -2247,7 +2272,7 @@ liberia_boot <- simulate_glgpm(n_sim = n_sim, model_fit = fit_liberia_no_nugget)
 
 # List where we will store the estimates from each of the simulated datasets
 par_hat <- list()
-for (i in 1:n_sim) {
+for (i in seq_len(n_sim)) {
 
   # Extracting the simulated Binomial data into "npos_sim"
   liberia_boot$data_sim$npos_sim <- liberia_boot$data_sim[[paste("npos_sim", i, sep = "")]]
@@ -2272,7 +2297,7 @@ including the confidence intervals as shown in the code below.
 #| label: summarize-liberia-bootstrap
 
 # Extract all parameters maintaining beta as a vector
-all_params <- sapply(1:n_sim, function(i) {
+all_params <- sapply(seq_len(n_sim), function(i) {
   c(
     par_hat[[i]]$beta,
     par_hat[[i]]$sigma2,
@@ -2827,6 +2852,9 @@ the convergence of the MCMC algorithm can be obtained with the
 `plot_mcmc()` function by passing the fitted model `fit_liberia` to the
 function. The fitted object must contain retained MCMC samples, as
 requested earlier with `return_samples = TRUE`.
+These diagnostic plots are generated by RiskMap using base graphics.
+They are retained here as package diagnostic output rather than as
+finished explanatory figures.
 
 ```{r}
 #| label: fig-check-mcmc-mean
