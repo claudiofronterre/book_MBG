@@ -120,7 +120,9 @@ liberia <- st_as_sf(liberia, coords = c("long", "lat"), crs = 4326)
 fit_liberia <-
   glgpm(npos ~ log(elevation) + gp(),
         den = ntest, data = liberia,
-        model_crs = 32629,
+        convert_to_crs = 32629,
+        control_mcmc = set_control_mcmc(seed = 2026),
+        return_samples = TRUE,
         family = "binomial")
 
 saveRDS(fit_liberia, file = "data/fit_Liberia.rds")
@@ -141,11 +143,13 @@ par0_liberia$tau2 <- 0.1
 fit_liberia2 <-
   glgpm(npos ~ log(elevation) + gp(nugget = TRUE),
         den = ntest, data = liberia,
-        model_crs = 32629,
+        convert_to_crs = 32629,
         par0 = par0_liberia,
         control_mcmc = set_control_mcmc(n_sim = 110000,
                                        burnin = 10000,
-                                       thin = 10),
+                                       thin = 10,
+                                       seed = 2026),
+        return_samples = TRUE,
         family = "binomial", messages = FALSE)
 
 saveRDS(fit_liberia2, file = "data/fit_liberia2.rds")
