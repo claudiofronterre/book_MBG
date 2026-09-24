@@ -414,7 +414,7 @@ plot(underw_prev, which_target = "prev", which_summary = "cv",
      main = "Underweight: Coefficient of Variation")
 ```
 
-To assess the predictive performance and calibration of our geostatistical models for HAZ and WAZ, we perform a cross-validation exercise using the `assess_prediction()` function. Cross-validation is conducted by repeatedly splitting the data into training and testing sets, ensuring that prediction locations are at least 5 km away from the nearest training point. Specifically, we set `n_size = 100` prediction locations for the test set, impose a minimum distance constraint of 5 km (`min_dist = 5`), and repeat the process over 10 test sets randomly drawn under those conditions (`iter = 10`) using `method="regularized"` as the sampling method.
+To assess the predictive performance and calibration of our geostatistical models for HAZ and WAZ, we perform a cross-validation exercise using the `assess_prediction()` function. Cross-validation is conducted by repeatedly splitting the data into training and testing sets, ensuring that prediction locations are at least 5 km away from the nearest training point. Specifically, we set `size = 100` prediction locations for the test set, impose a minimum distance constraint of 5 km (`min_dist = 5`), and repeat the process over 10 test sets randomly drawn under those conditions (`iter = 10`) using `method = "regularized"` as the sampling method.
 
 ```{r}
 #| label: assess-malnutrition-calibration
@@ -422,17 +422,17 @@ To assess the predictive performance and calibration of our geostatistical model
 # HAZ
 set.seed(123)
 assess_haz <- assess_prediction(list(HAZ = haz_fit),
-                                n_size = 100,
+                                method = "regularized",
                                 min_dist = 5,
-                                iter = 10,
-                                method = "regularized")
+                                size = 100,
+                                iter = 10)
 
 # WAZ
 assess_waz <- assess_prediction(list(WAZ = waz_fit),
-                                n_size = 100,
+                                method = "regularized",
                                 min_dist = 5,
-                                iter = 10,
-                                method = "regularized")
+                                size = 100,
+                                iter = 10)
 
 ```
 
@@ -1071,9 +1071,9 @@ set.seed(123)
 assess_pred_mlw <- assess_prediction(list(all_cov = mod_all_cov,
                                           pca = mod_pca),
                                      method = "cluster",
-                                     which_metric = c("AnPIT", "CRPS"),
+                                     fold = 3,
                                      iter = 1,
-                                     fold = 3)
+                                     metrics = c("AnPIT", "CRPS"))
 ```
 
 ```{r}

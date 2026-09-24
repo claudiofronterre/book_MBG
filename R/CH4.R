@@ -236,12 +236,12 @@ M1_fit <- glgpm(npos ~ elevation + pmax(elevation - 150, 0) + gp(),
                 model_crs = 32629,
                 family = "binomial", messages = FALSE)
 
-# Default which_metric = c("AnPIT", "CRSP", "SCRPS") computes all
+# Default metrics = c("AnPIT", "CRPS", "SCRPS") computes all
 # three diagnostics in one pass, which is what is cached here.
 regularized <-
   assess_prediction(list(M0 = M0_fit, M1 = M1_fit),
                     method = "regularized", min_dist = 20,
-                    n_size = 9, iter = 10, messages = FALSE)
+                    size = 9, iter = 10, messages = FALSE)
 
 saveRDS(regularized, file = "data/regularized.rds")
 
