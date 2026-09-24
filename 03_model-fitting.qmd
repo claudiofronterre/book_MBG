@@ -2323,30 +2323,42 @@ standard regression modeling can also be used, however, because of the
 presence of random effects $W_i$, their definition becomes more
 convoluted.
 
-Let us consider the *Pearson residuals*. Conditionally on $W_i$ we can
-define these as:
+Let us consider the *Pearson residuals*. We define these using the
+predictive mean and variance as
 
 $$
-\operatorname{PR}_i(W_i) =
-\frac{y_i - \widehat{\operatorname{E}}[Y_i]}
-{\sqrt{\widehat{\operatorname{Var}}[Y_i]}}
+\operatorname{PR}_i =
+\frac{y_i - \widehat{\operatorname{E}}[Y_i^*]}
+{\sqrt{\widehat{\operatorname{Var}}[Y_i^*]}}
 $$
 
-where $\widehat{\operatorname{E}}[Y_i]$ and
-$\widehat{\operatorname{Var}}[Y_i]$ are estimates of the predictive
-expectation and variance of $Y_i$. Using Monte Carlo samples, say
-$W_{i,(j)}$ for $j = 1, \ldots, B$, from the distribution of $W_i$ given
-the data (see @sec-mcmc-mala for how these samples are generated in
-RiskMap), the expectations can be estimated as:
+where $\widehat{\operatorname{E}}[Y_i^*]$ and
+$\widehat{\operatorname{Var}}[Y_i^*]$ are estimates of the predictive
+expectation and variance of a replicate $Y_i^*$ given the observed data,
+with the model parameters fixed at their maximum likelihood estimates.
+Using Monte Carlo samples $W_{i,(j)}$, for $j = 1, \ldots, B$, from the
+distribution of $W_i$ given the data (see @sec-mcmc-mala for how these
+samples are generated in RiskMap), let
 
 $$
-\widehat{\operatorname{E}}[Y_i]
-= \frac{1}{B} \sum_{j=1}^B
-\widehat{\operatorname{E}}[Y_i \mid W_{i,(j)}], \quad
-\widehat{\operatorname{Var}}[Y_i]
-= \frac{1}{B} \sum_{j=1}^B
-\widehat{\operatorname{Var}}[Y_i \mid W_{i,(j)}]
+m_{ij} = \widehat{\operatorname{E}}[Y_i^* \mid W_{i,(j)}], \qquad
+v_{ij} = \widehat{\operatorname{Var}}[Y_i^* \mid W_{i,(j)}]
 $$
+
+and $\bar m_i = B^{-1}\sum_{j=1}^B m_{ij}$. The predictive moments can
+then be estimated as
+
+$$
+\widehat{\operatorname{E}}[Y_i^*] = \bar m_i, \qquad
+\widehat{\operatorname{Var}}[Y_i^*]
+= \frac{1}{B}\sum_{j=1}^B v_{ij}
++ \frac{1}{B-1}\sum_{j=1}^B(m_{ij}-\bar m_i)^2.
+$$
+
+The two terms in the variance estimator follow from the law of total
+variance. The first averages the conditional variances, while the second
+accounts for variation in the conditional means across the sampled random
+effects.
 
 An alternative, especially useful when $Y_i$ is binary, is the *deviance
 residual*:
@@ -2354,9 +2366,10 @@ $$
 {\rm DR}_i = \text{sign}(y_i - \hat{y}_i) \sqrt{2 \left( \ell_i^{S} - \ell_i^{F} \right)}
 $$
 where $\ell_i^{S}$ is the log-likelihood of the so-called *saturated
-model*, and $\ell_i^{F}$ is the log-likelihood of the fitted model, both
-conditional on $W_i$. The saturated model is a hypothetical model that
-fits the data **perfectly**, meaning it has as many parameters as data
+model*, and $\ell_i^{F}$ is the log-likelihood of the fitted model evaluated
+at $\widehat W_i = \operatorname{E}(W_i \mid y)$. The saturated model is a
+hypothetical model that
+fits the data perfectly, meaning it has as many parameters as data
 points. In such a model, the predicted values are exactly equal to the
 observed values, and therefore the log-likelihood reaches its maximum
 possible value. This model serves as a benchmark or upper bound against
@@ -2366,16 +2379,25 @@ much worse our model fits the data compared to this idealized scenario.
 
 While the residuals discussed above can provide useful insights into
 model fit, they are often less informative in the context of count data,
-especially for binary data and low counts. Moreover, even in the simpler
-case of linear geostatistical models where all three types of residuals
-introduced earlier (random effects residuals, Pearson residuals, and
-deviance residuals) are mathematically equivalent, it is easy to show
-that the correlation structure of the estimated residuals is related to
-the spatial correlation matrix of the fitted geostatistical model (see
-@sec-h-matrix). Whether this correlation in the estimated residuals is
-unimportant or poses a problem, particularly when using residuals to
-assess whether spatial dependence has been fully accounted for by the
-model, is still an open question and requires further investigation.
+especially for binary data and low counts. In a linear geostatistical
+model, the distinction between these residuals can be expressed explicitly.
+Let $r = y-D\widehat\beta$ and $V=\Sigma+\tau^2I$. The predictors of the
+structured spatial effect and the remaining response error are
+
+$$
+\widehat W=\Sigma V^{-1}r, \qquad
+\widehat e=\tau^2V^{-1}r.
+$$
+
+The response residual, Pearson residual based on the conditional variance,
+and Gaussian deviance residual are proportional to $\widehat e$. The random
+effects residual $\widehat W$ is a different quantity, and
+$\widehat W+\widehat e=r$. It is also easy to show that the correlation
+structure of the estimated response residuals is related to the spatial
+correlation matrix of the fitted geostatistical model (see @sec-h-matrix).
+Whether this correlation is unimportant or poses a problem, particularly
+when residuals are used to assess whether the model has fully accounted for
+spatial dependence, requires further investigation.
 
 Given these complexities, especially in the context of count data, we
 have chosen not to delve deeper into residual diagnostics in this
@@ -2934,55 +2956,64 @@ covariance parameters are known, the generalized least squares estimator
 for $\beta$ is
 
 $$
-\hat{\beta} = (D^T V^{-1} D)^{-1} D^T V^{-1} Y.
+\hat{\beta} = (D^\top V^{-1} D)^{-1} D^\top V^{-1} Y.
 $$
 
-The predictor for $S$ is the conditional expectation
-$E[S(x_i) \: | \: Y_i]$ is
+Treating the covariance parameters as known, or fixed at their estimates,
+the empirical best linear unbiased predictor of $S$ is
 
 $$
 \hat{S} = \Sigma V^{-1} (Y - D\hat{\beta}).
 $$
 
-so the predictors for $Y$ can be written as
+The fitted values can therefore be written as
 
 $$
 \hat{Y} = D\hat{\beta} + \hat{S}.
 $$
 
-The hat matrix, which projects observations onto the fitted space, is
+Writing $\widehat Y=HY$ gives the smoother matrix
 
 $$
-H = [D - \Sigma V^{-1} D] (D^T V^{-1} D)^{-1} D^T V^{-1} + \Sigma V^{-1}.
+H = \Sigma V^{-1}
++ \tau^2 V^{-1}D(D^\top V^{-1}D)^{-1}D^\top V^{-1},
 $$
 
-This matrix is symmetric since it consists of symmetric components,
-satisfying $H^T = H$. It is also idempotent, meaning $H^2 = H$, which
-follows from the properties of projection matrices. The diagonal
-elements $h_{ii}$ represent the leverage of each observation,
-quantifying how much each $Y_i$ influences its own fitted value. The
-rank of $H$ is at most $p$, constrained by the rank of $D$.
+where we have used $I-\Sigma V^{-1}=\tau^2V^{-1}$. The matrix $H$ is
+symmetric because $\Sigma$ and $V$ commute. Unlike the hat matrix in
+ordinary least squares, however, it is not idempotent and is therefore a
+shrinkage smoother rather than a projection. Under the usual positive-definite
+covariance assumptions, $H$ has full rank. It also satisfies $HD=D$, and its
+effective degrees of freedom $\operatorname{tr}(H)$ lie between $p$ and $n$.
+The diagonal element $h_{ii}$ describes the influence of $Y_i$ on its own
+fitted value.
 
-Unlike in ordinary least squares where the hat matrix is
-$H = D (D^T D)^{-1} D^T$, here it depends on $V^{-1}$, accounting for
-spatial dependence. Since $V \neq I$, the hat matrix represents an
-oblique projection rather than an orthogonal one.
-
-The residuals, i.e. the estimate of $Z$ are given by
+Under these assumptions, the difference between an observation and its fitted
+value is the empirical best linear unbiased predictor of the nugget effect:
 
 $$
-\hat{Z} = Y - \hat{Y} = (I - H) Y.
+\widehat Z = Y - \widehat Y
+= \tau^2V^{-1}(Y-D\widehat\beta)
+= (I-H)Y.
 $$
 
-We note that the covariance structure of $\hat{Z}$ is
+This does not mean that $\widehat Z$ is the unobserved realisation of $Z$.
+Rather, it is the model-based predictor obtained after estimating $\beta$ by
+generalized least squares. Defining
 
 $$
-\text{Var}(\hat{Z}) = (I - H) V (I - H)^T.
+Q=V^{-1}-V^{-1}D(D^\top V^{-1}D)^{-1}D^\top V^{-1},
 $$
 
-Hence, the estimated residuals from a linear geostatistical model do
-have a correlation structure which relates to the chosen spatial
-correlation structure in $\Sigma$.
+we have $I-H=\tau^2Q$ and hence
+
+$$
+\operatorname{Var}(\widehat Z)=\tau^4Q.
+$$
+
+The estimated nugget residuals are therefore correlated, with a covariance
+structure determined by both the fitted spatial covariance $\Sigma$ and the
+fixed-effects design matrix $D$.
 
 ## Review questions
 
