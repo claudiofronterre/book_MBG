@@ -616,7 +616,7 @@
       "RemoteUsername": "claudiofronterre",
       "RemoteRepo": "RiskMap",
       "RemoteRef": "dev",
-      "RemoteSha": "f5ab89a18618c53e4e1ae86cc8f31ebd1dfc3174"
+      "RemoteSha": "3d22be79db3f29cb2f9c58afa3de258b0cfd674f"
     },
     "S7": {
       "Package": "S7",

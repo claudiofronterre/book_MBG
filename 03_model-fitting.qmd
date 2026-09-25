@@ -23,6 +23,8 @@ editor_options:
 | `to_table()` | *RiskMap* | Formatting model estimates as a table |
 | `set_control_mcmc()` | *RiskMap* | Configuring Markov chain Monte Carlo settings |
 | `plot_mcmc()` | *RiskMap* | Checking Markov chain Monte Carlo output |
+| `simulate_glgpm()` | *RiskMap* | Simulating replicated data from a fitted geostatistical model |
+| `simulated_data()` | *RiskMap* | Extracting one simulated dataset |
 
 This chapter introduces the process of moving from exploratory analysis
 to the formal specification of statistical models, through to parameter
@@ -1730,8 +1732,8 @@ for (i in seq_len(n_kappa)) {
   fit_galicia_list[[i]] <- glgpm(formula_i,
                                  data = galicia, family = "gaussian",
                                  distance_units = "km", messages = FALSE)
-  llik_values[i] <- fit_galicia_list[[i]]$log.lik
-  sigma2_me_hat[i] <- coef(fit_galicia_list[[i]])["sigma2_me"]
+  llik_values[i] <- fit_galicia_list[[i]]$log_lik
+  sigma2_me_hat[i] <- coef(fit_galicia_list[[i]])$sigma2_me
 }
 ```
 
@@ -2061,8 +2063,8 @@ concise summary of the practical aspects provided in @sec-summary.
 #| label: fit-liberia-geostatistical-model
 #| eval: false
 fit_liberia <- glgpm(npos ~ log(elevation) + gp(),
-                     den = ntest, data = liberia,
-                     convert_to_crs = 32629,
+                     denominator = ntest, data = liberia,
+                     model_crs = 32629,
                      control_mcmc = set_control_mcmc(seed = 2026),
                      return_samples = TRUE,
                      family = "binomial")
@@ -2076,7 +2078,7 @@ to_table(fit_liberia, digits = 3)
 
 When using the `glgpm()` function to fit a Binomial model, we need to
 specify the Binomial denominators, i.e. the number of people tested at a
-location in this case, through the argument `den`. Other arguments of
+location in this case, through the argument `denominator`. Other arguments of
 `glgpm()` that are used for carrying out MCML include `control_mcmc`,
 which receives the settings created by `set_control_mcmc()`, and `par0`,
 which represents an initial guess for the unknown parameters of the
@@ -2120,10 +2122,11 @@ We can then use the following script to fit the model in RiskMap.
 ```{r}
 #| label: fit-anopheles-geostatistical-model
 #| eval: false
-set.seed(1)
 an_fit <- glgpm(An.gambiae ~ elevation + gp(),
                 data = anopheles,
-                family = "poisson", messages = FALSE)
+                family = "poisson",
+                control_mcmc = set_control_mcmc(seed = 2026),
+                messages = FALSE)
 ```
 
 ```{r}
@@ -2185,6 +2188,7 @@ The way we have formulated geostatistical models in @sec-geostat-models
 provides a hint as to what step should be followed when simulating from
 a geostatistical model. Using the same notation of @sec-geostat-models,
 these are the steps.
+
 1.  For a given set of predefined locations $X$ compute the covariance
     matrix $\Sigma$ with $(i,j)$-th entry $\sigma^2 \rho(u_{ij})$.
 2.  Compute the covariate effects $d(x)^\top \beta$ for all the
@@ -2203,17 +2207,18 @@ to the data, the values of the model parameters should be the maximum
 likelihood estimates. If the goal is to simulate actual observations for
 the outcome $Y$ at the locations $X$, then we need to add the following
 steps.
-5A. If the nugget term is included in the model, draw samples $Z_{(j)}$
-for each location in $X$ from a Gaussian distribution with mean 0 and
-variance $\tau^2$. Add the simulated values $Z_{(j)}$ to
-$g\{\mu_{(j)}(x)\}$.
-6A. Compute $\mu_{(j)}(x)$ by applying the inverse link function
-$g^{-1}(\cdot)$ to the samples of the linear predictor previously
-computed.
-7A. Simulate from the distribution of $Y$ given $\mu_{(j)}(x)$,
-according to the chosen model, for $j = 1, \ldots, B$.
 
-These steps, from 1 to 7A, have been implemented in the `simulate_glgpm()`
+5.  If the nugget term is included in the model, draw samples $Z_{(j)}$
+    for each location in $X$ from a Gaussian distribution with mean 0
+    and variance $\tau^2$. Add the simulated values $Z_{(j)}$ to
+    $g\{\mu_{(j)}(x)\}$.
+6.  Compute $\mu_{(j)}(x)$ by applying the inverse link function
+    $g^{-1}(\cdot)$ to the samples of the linear predictor previously
+    computed.
+7.  Simulate from the distribution of $Y$ given $\mu_{(j)}(x)$,
+    according to the chosen model, for $j = 1, \ldots, B$.
+
+These steps have been implemented in the `simulate_glgpm()`
 function. To show how to perform parametric bootstrap in RiskMap, let
 us consider the Liberia data on river blindness and fit the following
 geostatistical model.
@@ -2222,8 +2227,9 @@ geostatistical model.
 #| label: fit-liberia-bootstrap-model
 #| eval: false
 fit_liberia_no_nugget <- glgpm(npos ~ log(elevation) + gp(),
-                               den = ntest, data = liberia,
-                               convert_to_crs = 32629,
+                               denominator = ntest, data = liberia,
+                               model_crs = 32629,
+                               control_mcmc = set_control_mcmc(seed = 2026),
                                family = "binomial")
 ```
 
@@ -2233,27 +2239,32 @@ dataset as follows:
 ```{r}
 #| label: simulate-liberia-dataset
 #| eval: false
-liberia_sim <- simulate_glgpm(n_sim = 1, model_fit = fit_liberia_no_nugget)
+liberia_sim <- simulate_glgpm(fit_liberia_no_nugget,
+                              nsim = 1,
+                              what = "data",
+                              seed = 2026)
+sim_data <- simulated_data(liberia_sim, simulation = 1)
 ```
 
-The output `liberia_sim` is a list with as many components as indicated
-by `n_sim`. In this case, we can access the simulated dataset as
-`liberia_sim[[1]]`. For example, we could refit the same model to the
-simulated data as
+The fitted parameters are held fixed while a new spatial effect and a
+new outcome are generated at the observed locations. The
+`simulated_data()` function extracts one simulated dataset and retains
+the original covariates, denominator and geometry. We can therefore
+refit the same model to `sim_data` as follows.
 
 ```{r}
 #| label: refit-liberia-simulation
 #| eval: false
 fit_liberia_no_nugget_sim <- glgpm(formula = npos ~ log(elevation) + gp(),
-                                   data = liberia_sim[[1]],
-                                   family = "binomial", den = ntest)
+                                   data = sim_data,
+                                   family = "binomial",
+                                   denominator = ntest,
+                                   control_mcmc = set_control_mcmc(seed = 2027))
 ```
 
-Note that if the data's CRS has been converted, the simulated dataset
-will inherit the new CRS rather than the original. This means that any
-transformation applied to the CRS before simulation (e.g., from
-geographic to projected coordinates) will affect the spatial scale and
-interpretation of the simulated data.
+The simulated dataset uses the modelling CRS and distance units stored
+in the fitted model. This ensures that the covariance parameters retain
+the same spatial interpretation when the model is refitted.
 
 This idea can be extended naturally to perform parametric bootstrap. The
 procedure involves simulating multiple datasets from the fitted model,
@@ -2268,21 +2279,26 @@ coefficients:
 
 # Simulate 100 datasets
 n_sim <- 100
-liberia_boot <- simulate_glgpm(n_sim = n_sim, model_fit = fit_liberia_no_nugget)
+liberia_boot <- simulate_glgpm(fit_liberia_no_nugget,
+                               nsim = n_sim,
+                               what = "data",
+                               seed = 2026)
 
 # List where we will store the estimates from each of the simulated datasets
-par_hat <- list()
+par_hat <- vector("list", n_sim)
 for (i in seq_len(n_sim)) {
 
-  # Extracting the simulated Binomial data into "npos_sim"
-  liberia_boot$data_sim$npos_sim <- liberia_boot$data_sim[[paste("npos_sim", i, sep = "")]]
+  # Extract one simulated dataset
+  sim_data <- simulated_data(liberia_boot, simulation = i)
 
   # Fitting the geostatistical model
-  fit_sim <- glgpm(formula = npos_sim ~ log(elevation) + gp(),
-                   data = liberia_boot$data_sim,
+  fit_sim <- glgpm(formula = npos ~ log(elevation) + gp(),
+                   data = sim_data,
                    family = "binomial",
                    par0 = coef(fit_liberia_no_nugget),
-                   den = ntest)
+                   denominator = ntest,
+                   control_mcmc = set_control_mcmc(seed = 2026 + i),
+                   messages = FALSE)
 
   # Extracting the parameter estimates
   par_hat[[i]] <- coef(fit_sim)
@@ -2320,15 +2336,16 @@ coefficients.
 This discrepancy arises because the Wald-type confidence intervals from
 `summary()` rely on a Gaussian approximation of the maximum likelihood
 estimator for the covariance parameters, which may not be entirely
-reliable. (To improve the accuracy of this approximation, RiskMap
-applies it to the log-transformed parameters and then transforms the
-confidence intervals back to the original scale.) On the other hand,
-bootstrap-based confidence intervals tend to be more reliable, as they
-are not dependent on the Gaussian assumption. However, they are also
+reliable. RiskMap improves the accuracy of this approximation by
+applying it to the log-transformed parameters and then transforming the
+confidence intervals back to the original scale. On the other hand,
+bootstrap-based confidence intervals can better represent finite-sample
+asymmetry in the estimator, although they remain conditional on the
+fitted model being an adequate data-generating mechanism. They are also
 more computationally demanding. The use of only 100 bootstrap samples,
-as shown above, may indeed be insufficient. It is generally recommended
-to use at least 1000 iterations, if computationally feasible, to
-minimize the Monte Carlo error arising from the bootstrap simulations.
+as shown above, may be insufficient. It is generally recommended to use
+at least 1000 iterations, if computationally feasible, to reduce the
+Monte Carlo error arising from the bootstrap simulations.
 
 ## The residuals of a geostatistical model: issues to consider
 
@@ -2895,8 +2912,8 @@ par0_liberia$tau2 <- 0.1
 
 # Refit the model and increase the MCMC samples
 fit_liberia2 <- glgpm(npos ~ log(elevation) + gp(nugget = TRUE),
-                      den = ntest, data = liberia,
-                      convert_to_crs = 32629,
+                      denominator = ntest, data = liberia,
+                      model_crs = 32629,
                       par0 = par0_liberia,
                       control_mcmc = set_control_mcmc(n_sim = 110000,
                                                      burnin = 10000,
@@ -3123,7 +3140,7 @@ fixed-effects design matrix $D$.
 
 6.  *Parametric bootstrap.* Using the model fitted to the Anopheles
     gambiae mosquitoes in @sec-anopheles-fit, simulate 1000 datasets
-    using the `simulate_glgpm()` function and estimate the model to each of the
+    using the `simulate_glgpm()` function and fit the model to each
     simulated dataset. Use the resulting 1000 estimates to compute
     95$\%$ confidence intervals for each of the model parameters and
     compare this with the confidence intervals obtained from the model
