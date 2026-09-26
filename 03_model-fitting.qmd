@@ -1756,17 +1756,16 @@ profile log-likelihood. In R, this cutoff is obtained as
 profile_cutoff <- max(llik_values) - qchisq(0.95, df = 1) / 2
 ```
 
-All the evaluated values lie above the cutoff. The profile therefore
-does not provide a bounded confidence interval for $\kappa$ within the
-range considered and does not identify a clearly preferred value. A
-finer grid would make the curve smoother but would not resolve this lack
-of information. We consequently fix $\kappa=1.5$ as a pragmatic choice
-and recognise that other values in the examined range are also
-compatible with the data. The difficulty of estimating $\kappa$ is well
-documented in geostatistics (@zhang2004), which supports this pragmatic
-approach. The problem is further exacerbated for count data, which tend
-to be less informative about the correlation structure than continuously
-measured data.
+All the values of $\kappa$ considered lie above the horizontal line, so
+the profile log-likelihood is essentially flat over this range. The data
+provide little information to distinguish between these values, which
+clearly illustrates the weak identifiability of $\kappa$. We therefore
+fix $\kappa=1.5$ as a pragmatic choice that the data do not contradict,
+rather than one selected by the likelihood. The difficulty of estimating
+$\kappa$ is well documented in geostatistics (@zhang2004), which supports
+this pragmatic approach. The problem is further exacerbated for count
+data, which tend to be less informative about the correlation structure
+than continuously measured data.
 
 ### Modelling hierarchical geostatistical data using the `re()` function {#sec-add-re-glgm}
 
