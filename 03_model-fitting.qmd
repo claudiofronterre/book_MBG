@@ -143,23 +143,19 @@ ggplot(liberia, aes(x = elevation, y = elogit)) +
   geom_smooth(method = "gam", formula = y ~ s(x), se = FALSE) +
 
   # Adding linear regression fit with log-transformed elevation
-  geom_smooth(
-    method = "lm", formula = y ~ log(x),
-    col = "darkgreen", lty = "dashed", se = FALSE
-  ) +
+  geom_smooth(method = "lm", formula = y ~ log(x),
+              col = "darkgreen", lty = "dashed", se = FALSE) +
 
   # Adding linear regression fit with change point at 150 metres
-  geom_smooth(
-    method = "lm", formula = y ~ x + pmax(x - 150, 0),
-    col = "orange", lty = "dashed", se = FALSE
-  ) +
+  geom_smooth(method = "lm", formula = y ~ x + pmax(x - 150, 0),
+              col = "orange", lty = "dashed", se = FALSE) +
   labs(x = "Elevation (metres)", y = "Empirical logit")
 ```
 
 @fig-elogit-elev-liberia shows the scatter plot of the empirical logit
 against elevation. In this plot, we have also added three curves through
 the `geom_smooth()` function from the ggplot2 package. Using this
-function, we first specify `method = "gam"` to add a penalized smoothing
+function, we first specify `method = "gam"` to add a penalised smoothing
 spline [@Wood2017-ad], represented by the blue solid line. The smoothing
 spline allows us to better discern the type of relationship and how to
 best capture it using a standard regression approach. As we can see from
@@ -175,7 +171,7 @@ regression model, this would take the form
 $$
 \log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_0 + \beta_1 \log\{d(x_i)\}
 $$ {#eq-log-elev-glm}
-where $p(x_i)$ denote the the probability of
+where $p(x_i)$ denotes the probability of
 river blindness infection at sampled location $x_i$, and $d(x_i)$ is the
 elevation at that location.
 
@@ -306,9 +302,8 @@ proceed as follows.
 
 # Grouping of ages into classes defined through "breaks"
 malkenya_comm$Age_class <- cut(malkenya_comm$Age,
-  breaks = c(0, 5, 10, 15, 30, 40, 50, 100),
-  include.lowest = TRUE
-)
+                               breaks = c(0, 5, 10, 15, 30, 40, 50, 100),
+                               include.lowest = TRUE)
 ```
 
 Using the `cut()` function, we first split age (in years) into classes
@@ -323,9 +318,8 @@ categories used here are intended purely for illustration.
 
 # Computation of the empirical logit by age class and gender
 age_class_data <- aggregate(RDT ~ Age_class + Gender,
-  data = malkenya_comm,
-  FUN = function(y) elogit(sum(y), length(y))
-)
+                            data = malkenya_comm,
+                            FUN = function(y) elogit(sum(y), length(y)))
 ```
 
 We then compute the empirical logit, using the total number of cases
@@ -348,25 +342,23 @@ data frame, shows that the empirical logit is found in the column named
 ```{r}
 #| label: average-age-class
 
-# Computation of the average age by age class and gender
-age_class_data$age_mean_point <- aggregate(Age ~ Age_class + Gender,
-  data = malkenya_comm,
-  FUN = mean
-)$Age
+# Compute the average age by age class and gender
+age_mean <- aggregate(Age ~ Age_class + Gender,
+                      data = malkenya_comm,
+                      FUN = mean)
+age_class_data$age_mean_point <- age_mean$Age
 
-# Number of individuals by age class and gender
-age_class_data$n_obs <- aggregate(Age ~ Age_class + Gender,
-  data = malkenya_comm,
-  FUN = length
-)$Age
+# Compute the number of individuals by age class and gender
+age_n <- aggregate(Age ~ Age_class + Gender,
+                   data = malkenya_comm,
+                   FUN = length)
+age_class_data$n_obs <- age_n$Age
 ```
 
 In order to generate the scatter-plot, we compute the average age within
 each age group by gender, and use these as our values for the x-axis.
-Note that since we only need to obtain the average age from this output,
-we use `$Age` to extract this only and allocate to the column
-`age_mean_point`. Finally, we also compute the number of observations
-within each of the groups and place this in `n_obs`.
+The resulting `Age` columns are assigned to `age_mean_point` and
+`n_obs`, respectively.
 
 ```{r}
 #| label: fig-elogit-age-malkenya
@@ -449,12 +441,13 @@ recovered.
 #| label: fit-binom-age-gender
 
 # Fit binomial model with age (piecewise linear) and gender interaction
-glm_age_gender_interaction <- glm(
-  RDT ~ Age + Gender:Age +
-    pmax(Age - 15, 0) + Gender:pmax(Age - 15, 0) +
-    pmax(Age - 40, 0) + Gender:pmax(Age - 40, 0),
-  data = malkenya_comm, family = binomial
-)
+glm_age_gender_interaction <- glm(RDT ~ Age + Gender:Age +
+                                    pmax(Age - 15, 0) +
+                                    Gender:pmax(Age - 15, 0) +
+                                    pmax(Age - 40, 0) +
+                                    Gender:pmax(Age - 40, 0),
+                                  data = malkenya_comm,
+                                  family = binomial)
 ```
 
 The code above shows how to fit the model specified in
@@ -518,12 +511,11 @@ likelihood ratio test, as shown below.
 #| results: false
 
 # Fit binomial model with age (piecewise linear)
-glm_age_gender_no_interaction <- glm(
-  RDT ~ Age +
-    pmax(Age - 15, 0) +
-    pmax(Age - 40, 0),
-  data = malkenya_comm, family = binomial
-)
+glm_age_gender_no_interaction <- glm(RDT ~ Age +
+                                       pmax(Age - 15, 0) +
+                                       pmax(Age - 40, 0),
+                                     data = malkenya_comm,
+                                     family = binomial)
 
 # Perform likelihood ratio test
 anova(glm_age_gender_no_interaction, glm_age_gender_interaction, test = "Chisq")
@@ -534,11 +526,9 @@ anova(glm_age_gender_no_interaction, glm_age_gender_interaction, test = "Chisq")
 #| tbl-cap: "Likelihood ratio test comparing models with and without age-by-sex interactions."
 #| echo: false
 
-lrt <- anova(
-  glm_age_gender_no_interaction,
-  glm_age_gender_interaction,
-  test = "Chisq"
-)
+lrt <- anova(glm_age_gender_no_interaction,
+             glm_age_gender_interaction,
+             test = "Chisq")
 
 lrt_tab <- data.frame(
   Model = c(
@@ -594,12 +584,9 @@ variable `elevation` from the `malkenya` dataset.
 
 # Split elevation into classes by deciles
 malkenya_comm$elevation_class <- cut(malkenya_comm$elevation,
-  breaks = quantile(
-    malkenya_comm$elevation,
-    seq(0, 1, by = 0.1)
-  ),
-  include.lowest = TRUE
-)
+                                     breaks = quantile(malkenya_comm$elevation,
+                                                       seq(0, 1, by = 0.1)),
+                                     include.lowest = TRUE)
 ```
 
 Following the same approach used for age, we first split elevation into
@@ -614,21 +601,20 @@ same.
 
 # Computation of the empirical logit by classes of elevation
 elev_class_data <- aggregate(RDT ~ elevation_class,
-  data = malkenya_comm,
-  FUN = function(y) elogit(sum(y), length(y))
-)
+                             data = malkenya_comm,
+                             FUN = function(y) elogit(sum(y), length(y)))
 
-# Computation of the average elevation within each class of elevation
-elev_class_data$elevation_mean <- aggregate(elevation ~ elevation_class,
-  data = malkenya_comm,
-  FUN = mean
-)$elevation
+# Compute the average elevation within each elevation class
+elevation_mean <- aggregate(elevation ~ elevation_class,
+                            data = malkenya_comm,
+                            FUN = mean)
+elev_class_data$elevation_mean <- elevation_mean$elevation
 
-# Computation of the number of observations within each class of elevation
-elev_class_data$n_obs <- aggregate(elevation ~ elevation_class,
-  data = malkenya_comm,
-  FUN = length
-)$elevation
+# Compute the number of observations within each elevation class
+elevation_n <- aggregate(elevation ~ elevation_class,
+                         data = malkenya_comm,
+                         FUN = length)
+elev_class_data$n_obs <- elevation_n$elevation
 ```
 
 We then compute the empirical logit, the average elevation and total
@@ -699,7 +685,7 @@ geostatistical models, the most natural approach to assess
 overdispersion is through the use of generalized linear mixed models
 (GLMMs). The class of GLMMs that we consider in this and the next
 section are obtained by replacing the spatial Gaussian process $S(x_i)$
-in introduced in @eq-linear-predictor-ch1 with a set of mutually
+introduced in @eq-linear-predictor-ch1 with a set of mutually
 independent random effects, which we denote as $Z_i$, and thus write
 $$
 g(\mu_i) = d(x_i)^\top \beta + Z_i.
@@ -790,26 +776,17 @@ var_binomial <- bin_denom * mean_prob * (1 - mean_prob)
 #| fig-cap: "Plot of the variances of the standard Binomial model and the Binomial mixed model (see @eq-bin-glmm-example) against  $\\beta_0$"
 
 # Create a data.frame for plotting the results
-plot_df <- data.frame(
-  beta0 = beta0,
-  Binomial.mixed.model = var_data,
-  Standard.Binomial.model = var_binomial
-) |>
-  pivot_longer(
-    cols = c(Binomial.mixed.model, Standard.Binomial.model),
-    names_to = "Model",
-    values_to = "Variance"
-  ) |>
+plot_df <- data.frame(beta0 = beta0,
+                      Binomial.mixed.model = var_data,
+                      Standard.Binomial.model = var_binomial) |>
+  pivot_longer(cols = c(Binomial.mixed.model, Standard.Binomial.model),
+               names_to = "Model",
+               values_to = "Variance") |>
   mutate(Model = factor(Model,
-    levels = c(
-      "Binomial.mixed.model",
-      "Standard.Binomial.model"
-    ),
-    labels = c(
-      "Binomial mixed model",
-      "Standard Binomial model"
-    )
-  ))
+                        levels = c("Binomial.mixed.model",
+                                   "Standard.Binomial.model"),
+                        labels = c("Binomial mixed model",
+                                   "Standard Binomial model")))
 
 ggplot(plot_df, aes(x = beta0, y = Variance, color = Model)) +
   geom_point() +
@@ -879,13 +856,11 @@ anopheles$ID_loc <- seq_len(nrow(anopheles))
 
 # Poisson mixed model with elevation
 fit_glmer_elev <- glmer(An.gambiae ~ scale(elevation) + (1 | ID_loc),
-  family = poisson, data = anopheles, nAGQ = 25
-)
+                        family = poisson, data = anopheles, nAGQ = 25)
 
 # Poisson mixed model with intercept only
 fit_glmer_int <- glmer(An.gambiae ~ (1 | ID_loc),
-  family = poisson, data = anopheles, nAGQ = 25
-)
+                       family = poisson, data = anopheles, nAGQ = 25)
 ```
 
 To fit the model with `glmer()`, we first must create a variable in our
@@ -896,10 +871,10 @@ save this in a new column called `ID_loc`. The random effects $Z_i$ are
 then included in the model by adding `(1 | ID_loc)` in the formula of
 the `glmer()` function.
 
-When introducing the variable elevation, we standardize it so that its
+When introducing the variable elevation, we standardise it so that its
 mean is 0 and its variance is 1. This helps the model-fitting algorithm
 converge more reliably and is generally good practice when covariates
-are measured on very different scales. Importantly, standardizing a
+are measured on very different scales. Importantly, standardising a
 variable does not change the fit of the model to the data, it only
 changes how we interpret the regression coefficients. In other words,
 the model is mathematically equivalent; only the units of measurement
@@ -908,17 +883,17 @@ measured in metres and obtain a regression coefficient of $-0.002$. Under
 our log-link model, this implies that a one-metre increase in elevation
 multiplies the expected mosquito count by $\exp(-0.002) \approx0.998$,
 corresponding to an approximate decrease of
-$100\%\times{\exp(−0.002)−1}\approx−0.2\%$. If we instead standardize
+$100\%\times{\exp(−0.002)−1}\approx−0.2\%$. If we instead standardise
 elevation so that one unit represents one standard deviation (say 150
 m), the corresponding coefficient becomes $-0.002 \times 150 = -0.30$. Both
 models yield identical fitted values and predictions. The only
-difference is that in the standardized model, the coefficient refers to
+difference is that in the standardised model, the coefficient refers to
 a one-standard-deviation change in elevation rather than a one-metre
 change. Standardization also changes the interpretation of the
-intercept. In the unstandardized model, the intercept corresponds to the
-expected response when elevation is 0 m, whereas in the standardized
+intercept. In the unstandardised model, the intercept corresponds to the
+expected response when elevation is 0 m, whereas in the standardised
 model it corresponds to the expected response at the mean elevation.
-Since the latter is often more meaningful, standardization can also
+Since the latter is often more meaningful, standardisation can also
 improve the interpretability of the intercept.
 
 The argument `nAGQ` is used to define the precision of the approximation
@@ -1053,11 +1028,11 @@ apart." After we have identified the key variables to introduce as
 covariates in the model (@sec-expl-assoc) and, in the case of count
 data, assessed the presence of overdispersion (@sec-overdispersion), our
 final exploratory step consists of assessing whether the residuals of
-the non spatial model show evidence of spatial correlation. Hence, in
+the non-spatial model show evidence of spatial correlation. Hence, in
 geostatistical modelling, the interest is not in the spatial correlation
 of the data, but rather in understanding whether the variation in the
 outcome unexplained by the covariates exhibits spatial correlation. We
-call this *residual spatial correlation*, to emphasize that spatial
+call this *residual spatial correlation*, to emphasise that spatial
 correlation is a concept relative to the covariates that we have
 introduced in the model.
 
@@ -1091,7 +1066,7 @@ can generate and plot the empirical variogram.
 
 The first issue is that we do not observe $Z_i$ as, by definition, this
 is a latent variable. Hence, we require an estimate for $Z_i$ which we
-can then feed into $V_{ij}$. To emphasize this point, from now on, we
+can then feed into $V_{ij}$. To emphasise this point, from now on, we
 shall replace @eq-squared-diff with
 $$
 \hat{V}_{ij} = (\hat{Z}_{i} - \hat{Z}_j)^2.
@@ -1196,9 +1171,9 @@ liberia <- st_as_sf(liberia, coords = c("long", "lat"), crs = 4326)
 liberia$ID_loc <- seq_len(nrow(liberia))
 
 # Binomial mixed model with log-elevation
-fit_glmer_lib <- glmer(cbind(npos, ntest - npos) ~ log(elevation) + (1 | ID_loc),
-  family = binomial, data = liberia, nAGQ = 25
-)
+fit_glmer_lib <- glmer(cbind(npos, ntest - npos) ~ log(elevation) +
+                         (1 | ID_loc),
+                       family = binomial, data = liberia, nAGQ = 25)
 ```
 
 ```{r}
@@ -1260,32 +1235,28 @@ accounting for elevation and represents a moderate level of overdispersion.
 liberia$Z_hat <- ranef(fit_glmer_lib)$ID_loc[, 1]
 ```
 
-Through the function `ranef()` when extracting the estimates of the random
-effects $Z_i$ and save these in the data set. We then use the function
-`variogram()` from the RiskMap package to compute the empirical
+We use `ranef()` to extract the estimates of the random effects $Z_i$
+and save them in the dataset. We then use `variogram()` from RiskMap to
+compute the empirical
 variogram for the estimated $\hat{Z}_i$.
 
 ```{r}
 #| label: liberia-variog
-liberia_variog <- variogram(
-  data = liberia,
-  variable = "Z_hat",
-  breaks = c(
-    15, 30, 40, 80, 120,
-    160, 200, 250, 300, 350
-  ),
-  distance_units = "km",
-  n_permutations = 1000
-)
+liberia_variog <- variogram(data = liberia,
+                            variable = "Z_hat",
+                            breaks = c(15, 30, 40, 80, 120,
+                                       160, 200, 250, 300, 350),
+                            distance_units = "km",
+                            n_permutations = 1000)
 ```
 
 Through the argument `breaks` we can specify the classes of distance,
 previously denoted by $\mathcal{U}$; check the help page of
 `variogram()` to see how this is defined by default. The values passed
-to `breaks` in the code above correspond to define the following classes
-of distance $\mathcal{U}$: $[15, 30]$, $(30, 40]$ and so forth, with the
-last class being $[350, +\infty)$, i.e. all pairs of locations whose
-distances are above 350 km. The argument `n_permutations` allows the user
+to `breaks` in the code above define the following distance classes
+$\mathcal{U}$: $[15, 30]$, $(30, 40]$ and so forth, with the final class
+being $(300, 350]$. Pairs separated by less than 15 km or more than
+350 km are excluded. The argument `n_permutations` allows the user
 to specify the number of permutations that are performed to generate the
 envelope for absence of spatial correlation, previously described.
 ```{r}
@@ -1328,7 +1299,7 @@ interpret the evidence presented in @fig-liberia-variog as indicative of
 residual spatial correlation within the data. Nevertheless, it is
 essential to exercise caution when attempting to ascertain the scale of
 the spatial correlation using the empirical variogram. As we will
-emphasize throughout this book, the empirical variogram's sensitivity to
+emphasise throughout this book, the empirical variogram's sensitivity to
 the choice of breaks values renders it an unreliable tool for drawing
 statistical inferences. In other words, we recommend employing the
 empirical variogram primarily to assess the presence of residual
@@ -1408,13 +1379,11 @@ galicia$residuals <- lm_fit$residuals
 
 # Compute the variogram, using the residuals from the linear model fit,
 # and the 95% pointwise permutation envelope for spatial independence
-galicia_variog <- variogram(
-  galicia,
-  variable = "residuals",
-  distance_units = "km",
-  breaks = seq(10, 140, length = 15),
-  n_permutations = 1000
-)
+galicia_variog <- variogram(galicia,
+                            variable = "residuals",
+                            distance_units = "km",
+                            breaks = seq(10, 140, length = 15),
+                            n_permutations = 1000)
 
 # Plotting the results
 plot_variogram(galicia_variog, plot_envelope = TRUE)
@@ -1536,10 +1505,9 @@ italy_sim$rand_eff <- ranef(lmer_fit)$ID_loc[italy_sim$ID_loc, 1]
 # Compute the variogram, using the random effects from the linear mixed model
 # fit, and the 95% pointwise permutation envelope for spatial independence
 italy_sim_variog <- variogram(italy_sim,
-  variable = "rand_eff",
-  distance_units = "km",
-  n_permutations = 1000
-)
+                              variable = "rand_eff",
+                              distance_units = "km",
+                              n_permutations = 1000)
 
 # Plot the variogram
 plot_variogram(italy_sim_variog, plot_envelope = TRUE)
@@ -1617,7 +1585,7 @@ Y_i = \mu + S(x_i) + U_i
 $$ {#eq-galicia-lgm}
 
 where were $S(x)$ is a Matern process with variance
-$\sigma^2$, scale parameter $\phi$ and and smoothness parameter
+$\sigma^2$, scale parameter $\phi$ and smoothness parameter
 $\kappa$; the $U_i$ correspond to the measurement error term and denote
 with $\omega^2$ their variance.
 
@@ -1678,16 +1646,16 @@ through the `summary()` function of the model as shown in the code chunk
 above. This output is presented in three sections: in the first section,
 we have the results for the regression coefficients; in the second
 section, we have the estimate for the variance of the measurement error
-component, $\omega^2$ whose point estimate is about 0.015; in the final
+component, $\omega^2$, whose point estimate is about 0.015; in the final
 section, we have the estimates for the parameters of the spatial
-covariance function, $\sigma^2$ and $\phi$ which are about 0.171 and
+covariance function, $\sigma^2$ and $\phi$, which are about 0.171 and
 9.021 (km), respectively. The message
 `Variance of the nugget effect fixed at 0` indicates that the nugget has
-not been included in the mode.
+not been included in the model.
 
-At this point, you may be wondering, why we have used 1.5 for the value
-of $\kappa$ and whether there is a statistical approach to find the most
-suitable value for this. We show such an approach in the code below.
+At this point, you may be wondering why we have used 1.5 for the value
+of $\kappa$ and whether there is a statistical approach for finding a
+suitable value. We show such an approach in the code below.
 
 However, before examining the code, we would like to point out an
 important aspect that relates to how the value of $\kappa$ can affect
@@ -1698,10 +1666,9 @@ case of a single observation, when $\kappa$ is closer to zero, it will
 thus become increasingly difficult to estimate $\omega^2$ since the
 likelihood function may attribute most of the noisiness to $S(x)$ and
 rely less on $U_i$ to explain the unstructured random variation found in
-the data. As a consequence of this, we can expect that for value of
-$\kappa$ closer to zero, the estimates of $\omega^2$ will also be
-smaller and, on the contrary, when $\kappa$ is larger, the estimates of
-$\omega^2$ will also increase. The results generated in the code below
+the data. We can therefore expect smaller estimates of $\omega^2$ when
+$\kappa$ is closer to zero and larger estimates when $\kappa$ increases.
+The results generated in the code below
 clearly illustrate this point.
 
 ```{r}
@@ -1726,9 +1693,8 @@ sigma2_me_hat <- rep(NA, length = n_kappa)
 # the different values of kappa specified in kappa_values
 fit_galicia_list <- vector("list", n_kappa)
 for (i in seq_len(n_kappa)) {
-  formula_i <- as.formula(
-    sprintf("log(lead) ~ gp(kappa = %s)", kappa_values[i])
-  )
+  formula_i <- as.formula(sprintf("log(lead) ~ gp(kappa = %s)",
+                                  kappa_values[i]))
   fit_galicia_list[[i]] <- glgpm(formula_i,
                                  data = galicia, family = "gaussian",
                                  distance_units = "km", messages = FALSE)
@@ -1759,7 +1725,8 @@ measurement_error_plot <- ggplot(profile_data,
   theme(plot.title = element_text(hjust = 0.5))
 
 profile_likelihood_plot <- ggplot(profile_data,
-                                  aes(x = kappa, y = log_likelihood)) +
+                                  aes(x = kappa,
+                                      y = log_likelihood)) +
   geom_line() +
   geom_point() +
   geom_hline(yintercept = profile_cutoff, linetype = "dashed") +
@@ -1767,51 +1734,39 @@ profile_likelihood_plot <- ggplot(profile_data,
        title = "(b)") +
   theme(plot.title = element_text(hjust = 0.5))
 
-grid.arrange(measurement_error_plot, profile_likelihood_plot, ncol = 2)
+grid.arrange(measurement_error_plot, profile_likelihood_plot, ncol = 2) #| hide_line
 ```
 
-By examining the results shown in panel (a) of @fig-galicia-matern, we
-observe that, as expected, smaller values for $\kappa$ lead to smaller
-point estimates for $\omega^2$ and viceversa. This begs the question,
-what should be our chosen value for $\kappa$?
+Panel (a) of @fig-galicia-matern shows that smaller values of $\kappa$
+lead to smaller point estimates of $\omega^2$, and vice versa. This
+raises the question of which value should be chosen for $\kappa$.
 
 To answer this question, a natural approach is to estimate the model for
 different values of $\kappa$ and see which one gives the best fit to the
 data, according to the likelihood function. In panel (b) of
-@fig-galicia-matern, we show the results of this approach where we
-considered 10 values for $\kappa$ within the range 0.5 to 3.5 (see code
-above). In this plot, we have also added a horizontal line to help us to
-approximate a range of the most plausible value for $\kappa$. More
-precisely, the horizontal dashed line is computed by taking the maximum
-observed profile log-likelihoods computed for the different values of
-$\kappa$, say $\hat{M}$, and subtract half of the 0.95 quantile of a
-$\chi^2$ distribution with one degree of freedom. In R this horizontal line is
-obtained as
+@fig-galicia-matern, we show the profile log-likelihood for 10 values of
+$\kappa$ between 0.5 and 3.5. The horizontal dashed line gives the
+approximate 95% cutoff obtained by subtracting half of the 0.95 quantile
+of a $\chi^2$ distribution with one degree of freedom from the maximum
+profile log-likelihood. In R, this cutoff is obtained as
 
 ```{r}
 #| label: galicia-kappa-confidence-interval
 #| eval: false
-max(llik_values) - qchisq(0.95, df = 1) / 2
+profile_cutoff <- max(llik_values) - qchisq(0.95, df = 1) / 2
 ```
 
-where `llik_values` is as defined in the previous chunk of code. Note
-that this approach is essentially constructing the profile likelihood
-for $\kappa$ which one could use to derive a confidence interval for
-$\kappa$ with a finer segmentation for `kappa_values`. However, our
-current objective is not to derive the confidence interval for $\kappa$,
-but rather to gain a broad understanding of the $\kappa$ values
-supported by the dataset. The values of $\kappa$ that correspond to
-likelihood values above the horizontal line are approximately between
-0.75 and 2.75. Hence, selecting $\kappa=1.5$ seems to be a reasonable
-choice in this case. Now, you may be pondering: are there values other
-than $\kappa=1.5$ that could fit the data even better? Our answer is
-that it is not worth the effort to try estimate $\kappa$ more precisely
-because it is empirically very difficult and, under some scenarios, even
-impossible. Estimating $\kappa$ poses a well-documented challenge in
-geostatistics (@zhang2004), which justifies our adoption of a pragmatic
-approach that sets it at a predefined value. This issue is also further
-exacerbated when analysing count data, which tend to be less informative
-about the correlation structure than continuously measured data.
+All the evaluated values lie above the cutoff. The profile therefore
+does not provide a bounded confidence interval for $\kappa$ within the
+range considered and does not identify a clearly preferred value. A
+finer grid would make the curve smoother but would not resolve this lack
+of information. We consequently fix $\kappa=1.5$ as a pragmatic choice
+and recognise that other values in the examined range are also
+compatible with the data. The difficulty of estimating $\kappa$ is well
+documented in geostatistics (@zhang2004), which supports this pragmatic
+approach. The problem is further exacerbated for count data, which tend
+to be less informative about the correlation structure than continuously
+measured data.
 
 ### Modelling hierarchical geostatistical data using the `re()` function {#sec-add-re-glgm}
 
@@ -1834,7 +1789,6 @@ italy_provinces <- readRDS("data/ita_adm3_geoboundaries.rds")
 #| label: download-italy-boundaries
 #| eval: false
 library(geobounds)
-library(mapview)
 italy_regions <- gb_get_adm2("Italy")
 italy_provinces <- gb_get_adm3("Italy")
 ```
@@ -1859,7 +1813,7 @@ map_provinces <- ggplot() +
   labs(title = "Provinces") +
   theme(plot.title = element_text(hjust = 1 / 2))
 
-grid.arrange(map_regions, map_provinces, ncol = 2)
+grid.arrange(map_regions, map_provinces, ncol = 2) #| hide_line
 ```
 
 Let $V_h$, for $h=1,\ldots,n_V$ and $Z_k$, for $k=1,\ldots,n_{Z}$, be a
@@ -1891,9 +1845,9 @@ $$
 = \sigma^2 \exp\{-\lVert x-x'\rVert/\phi\}.
 $$
 
-The inclusion of the random effects $V_h$, for the region, and $Z_k$,
-for the province, can be included by using the `re()` function into the
-`formula` passed to `glgpm()` as shown below.
+The random effects $V_h$, for the region, and $Z_k$, for the province,
+can be included by using the `re()` function in the `formula` passed to
+`glgpm()`, as shown below.
 
 ```{r}
 #| label: fit-italy-spatial-mixed-model
@@ -1907,36 +1861,15 @@ italy_fit <- glgpm(y ~ log(pop_dens) + gp(kappa = 0.5, nugget = FALSE) +
                    family = "gaussian")
 ```
 
-```{r}
-#| label: summarize-italy-spatial-mixed-model
-summary(italy_fit)
-```
-
 In the code above, the `factor` variables `region` and `province` found
-in `italy_sim` are passed to `re()` and these are estimated as
-unstructured random effects as defined by @eq-italy-sim-model. From the
-summary of the model, we then obtain the parameter and interval
-estimates as reported in @tbl-italy-sim-mle.
-
-| Parameter      | Point estimate | Lower limit | Upper limit |
-|----------------|----------------|-------------|-------------|
-| $\beta_0$      | -1.074         | -2.032      | -0.117      |
-| $\beta_1$      | 1.373          | 1.331       | 1.415       |
-| $\sigma^2$     | 0.917          | 0.250       | 3.362       |
-| $\phi$         | 214.520        | 56.396      | 815.994     |
-| $\sigma^2_{V}$ | 0.241          | 0.012       | 4.904       |
-| $\sigma^2_{Z}$ | 1.457          | 0.989       | 2.146       |
-| $\omega^2$     | 0.196          | 0.184       | 0.209       |
-: Maximum likelihood estimates and, lower and upper limits of the 95%
-confidence interval for the parameters of the model in
-@eq-italy-sim-lmm. {#tbl-italy-sim-mle}
-
-The function `to_table()` from the RiskMap package can be used to obtain
-the Latex or HTML code directly from a fit of the model. Here is an
-example.
+in `italy_sim` are passed to `re()` and estimated as unstructured random
+effects, as defined by @eq-italy-sim-model. The `to_table()` function
+from RiskMap produces the presentation-ready parameter and interval
+estimates reported in @tbl-italy-spatial-mixed-model.
 
 ```{r}
 #| label: tbl-italy-spatial-mixed-model
+#| tbl-cap: "Maximum likelihood estimates and 95% confidence intervals for the parameters of the Italy spatial mixed model."
 #| message: false
 to_table(italy_fit, digits = 3)
 ```
@@ -1944,9 +1877,9 @@ to_table(italy_fit, digits = 3)
 ## Generalized linear geostatistical models
 
 We now consider the modelling of count outcomes, focusing our attention
-to the Binomial and Poisson geostatistical models.
+on the Binomial and Poisson geostatistical models.
 
-The use of Binomial geostatistical model is appropriate whenever the
+The use of a Binomial geostatistical model is appropriate whenever the
 reported counts have a known upper bound. For example, when analysing
 aggregated disease counts from cross-sectional survey data, the total
 number of people sampled at a location defines the largest number of
@@ -1991,7 +1924,7 @@ that instead quantify the effect on $p_{ij}$ resulting from the
 environmental attributes of location $x_i$ (such as elevation,
 temperature, and precipitation). In this model, $p_{ij}$ is the
 probability of a positive test and can once again be interpreted as the
-disease prevalence for a population characterized by the individual
+disease prevalence for a population characterised by the individual
 traits $e_{ij}$ and residing at location $x_i$.
 
 Finally, when the counts arise from a population whose size is unknown
@@ -2049,7 +1982,7 @@ $$ {#eq-liberia-geostat-bin-elev}
 
 We shall assume that $S(x_i)$ is a
 stationary isotropic Gaussian process with an exponential correlation
-function function $\rho(u) = \exp\{-u/\phi\}$, with scale parameter
+function $\rho(u) = \exp\{-u/\phi\}$, with scale parameter
 $\phi$.
 
 We apply the Monte Carlo Maximum Likelihood (MCML) method for parameter
@@ -2310,25 +2243,36 @@ them in a matrix format to facilitate the computation of any summary,
 including the confidence intervals as shown in the code below.
 
 ```{r}
-#| label: summarize-liberia-bootstrap
+#| label: tbl-liberia-bootstrap-intervals
+#| tbl-cap: "Wald and parametric-bootstrap 95% confidence intervals for the Liberia binomial geostatistical model."
 
 # Extract all parameters maintaining beta as a vector
 all_params <- sapply(seq_len(n_sim), function(i) {
-  c(
-    par_hat[[i]]$beta,
+  c(par_hat[[i]]$beta,
     par_hat[[i]]$sigma2,
-    par_hat[[i]]$phi
-  )
+    par_hat[[i]]$phi)
 })
 CI <- t(apply(all_params, 1, function(x) quantile(x, c(0.025, 0.975))))
-p <- 2
-rownames(CI)[(p + 1):(p + 2)] <- c("sigma^2", "phi")
-summary(fit_liberia_no_nugget)
-CI
+
+# Combine the Wald and bootstrap intervals for comparison
+fit_summary <- summary(fit_liberia_no_nugget)
+wald_CI <- rbind(fit_summary$reg_coef[, c("Lower limit", "Upper limit")],
+                 fit_summary$sp[, c("Lower limit", "Upper limit")])
+parameter_names <- rownames(wald_CI)
+rownames(CI) <- parameter_names
+
+interval_comparison <- data.frame(Parameter = parameter_names,
+                                  `Wald lower` = wald_CI[, "Lower limit"],
+                                  `Wald upper` = wald_CI[, "Upper limit"],
+                                  `Bootstrap lower` = CI[, "2.5%"],
+                                  `Bootstrap upper` = CI[, "97.5%"],
+                                  check.names = FALSE)
+
+knitr::kable(interval_comparison, digits = 3, row.names = FALSE)
 ```
 
-By comparing the 95$\%$ confidence intervals obtained from the `summary()`
-of the fitted model with those derived from the bootstrap approach, we
+By comparing the Wald confidence intervals with those derived from the
+bootstrap approach in @tbl-liberia-bootstrap-intervals, we
 observe that the former are considerably narrower for the covariance
 parameters, while the intervals are fairly similar for the regression
 coefficients.
@@ -2352,7 +2296,7 @@ Monte Carlo error arising from the bootstrap simulations.
 In geostatistical models, the concept of residuals, which are widely
 used in regression modelling to carry out model diagnostics, becomes
 more nuanced than in standard regression models (i.e., models that do
-not include random effects) . Generally, residuals aim to quantify the
+not include random effects). Generally, residuals aim to quantify the
 discrepancy between observed outcomes and what the model predicts.
 
 However, in GLGMs, there are multiple valid definitions of residuals.
@@ -2365,7 +2309,7 @@ included. We refer to these as *random effects residuals*.
 Let $W_i$ denote the sum of all the random effects in the model, whether
 $W_i = S(x_i)$, $W_i = S(x_i) + Z_i$, or any other random effects
 structure. In addition to RERs, other types of residuals more common in
-standard regression modeling can also be used, however, because of the
+standard regression modelling can also be used, however, because of the
 presence of random effects $W_i$, their definition becomes more
 convoluted.
 
@@ -2421,7 +2365,7 @@ observed values, and therefore the log-likelihood reaches its maximum
 possible value. This model serves as a benchmark or upper bound against
 which the fit of any other model, including our fitted model, is
 compared. Hence, the difference $\ell_i^{S} - \ell_i^{F}$ reflects how
-much worse our model fits the data compared to this idealized scenario.
+much worse our model fits the data compared to this idealised scenario.
 
 While the residuals discussed above can provide useful insights into
 model fit, they are often less informative in the context of count data,
@@ -2514,7 +2458,7 @@ function `glmer()` used in @sec-empirical-variog-lm provides both the
 Laplace and Gaussian quadrature approximations options. The former
 consists of finding the *peak* of the integrand - i.e. the function that
 is being integrated - and approximating that with a Gaussian
-distribution centered at that *peak*, using the curvature of the
+distribution centred at that *peak*, using the curvature of the
 original distribution to determine the width of the Gaussian
 distribution. The Gaussian quadrature is another numerical integration
 technique used to approximate the integral of a function. It involves
@@ -2586,7 +2530,7 @@ approximate @eq-glgm-lik2.
 
 #### Monte Carlo maximum likelihood {#sec-mcml}
 
-In maximum likelihood estimation, we aim to maximize the likelihood
+In maximum likelihood estimation, we aim to maximise the likelihood
 function to find the parameters that make our data the most likely to
 have been observed. Monte Carlo Maximum Likelihood (MCML) (see the
 seminal work by @geyer1991) is designed to handle situations where the
@@ -2614,8 +2558,8 @@ $$ {#eq-mcml1}
 where $\theta_0$ represents an initial guess for $\theta$. The
 expectation is taken with respect to $[W \mid Y; \theta_0]$, which is
 the *importance sampling distribution*. Because $L(\theta_0)$ does not
-depend on $\theta$, maximizing this likelihood ratio is equivalent to
-maximizing $L(\theta)$.
+depend on $\theta$, maximising this likelihood ratio is equivalent to
+maximising $L(\theta)$.
 
 Let $W_{(j)}$ represent the $j$-th sample out of $B$ drawn from the
 distribution $[W \mid Y; \theta_0]$. To simulate samples from
@@ -2632,8 +2576,8 @@ $$ {#eq-mcml2}
 As $B \rightarrow \infty$, the Monte Carlo approximation
 $R_{MC}(\theta, \theta_0)$ converges to the exact likelihood ratio in
 @eq-mcml1. It therefore estimates the likelihood up to the constant
-$L(\theta_0)$. The maximization of this approximation is performed using an
-optimization algorithm that uses the analytical expressions of the first
+$L(\theta_0)$. The maximisation of this approximation is performed using an
+optimisation algorithm that uses the analytical expressions of the first
 and second derivatives. This approach is especially useful for exploring
 the likelihood surface, which can be relatively flat, particularly in
 the space of covariance parameters. To improve the approximation of the
@@ -2656,7 +2600,7 @@ Building on the outline of the MCML method from the previous section, we
 now address the task of sampling from the distribution $[W \mid Y]$ to
 generate the samples $W_{(j)}$ used in equation @eq-mcml2. To simplify
 the notation, we will use $[W \mid Y]$ in place of
-$[W \mid Y; \theta_0]$, but it is important to emphasize that the
+$[W \mid Y; \theta_0]$, but it is important to emphasise that the
 parameters $\theta_0$ are considered fixed when sampling from
 $[W \mid Y]$. Since direct simulation from $[W \mid Y]$ is not feasible,
 we must rely on Markov chain Monte Carlo (MCMC) methods, which we will
@@ -2674,10 +2618,10 @@ its stationary distribution. In what follows, we shall use $\pi(W)$ to
 denote the density function of $[W \mid Y]$ up to a constant of
 proportionality.
 
-Given a current realization $W_{(k)}$ of the distribution $[W \mid Y]$ in
+Given a current realisation $W_{(k)}$ of the distribution $[W \mid Y]$ in
 the Markov chain, the algorithm proceeds as follows.
 
--   Propose a new realization $W_{(k+1)}$ from
+-   Propose a new realisation $W_{(k+1)}$ from
     $q(W_{(k+1)} \mid W_{(k)})$, where $q(\cdot \mid \cdot)$ is the
     density function of a chosen proposal distribution.
 -   Compute the acceptance probability:
@@ -2685,8 +2629,8 @@ the Markov chain, the algorithm proceeds as follows.
 $$
     \alpha = \min \left(1, \frac{\pi(W_{(k+1)}) q(W_{(k)} \mid W_{(k+1)})}{\pi(W_{(k)}) q(W_{(k+1)} \mid W_{(k)})} \right).
 $$
--   Accept the proposed realization $W_{(k+1)}$ with probability
-    $\alpha$. Otherwise, retain the current realization $W_{(k)}$.
+-   Accept the proposed realisation $W_{(k+1)}$ with probability
+    $\alpha$. Otherwise, retain the current realisation $W_{(k)}$.
 
 The algorithm ensures that, under certain conditions, the chain
 converges to the target distribution $\pi(W)$ as the number of steps
@@ -2723,7 +2667,7 @@ which is challenging due to high dimensionality and complex dependence
 structures.
 
 The Laplace sampling method, as implemented in the RiskMap package,
-utilizes a specific form of MALA. Here, the proposal distribution is
+uses a specific form of MALA. Here, the proposal distribution is
 derived from a second-order Taylor expansion around the mode of the
 target distribution $[W \mid Y]$. Let $\hat{w}$ be the mode of this
 conditional distribution, and let $\hat{\Omega}$ be the inverse of the
@@ -2773,7 +2717,7 @@ obtained MCMC samples.
 
 Other diagnostics can provide complementary information. The
 Gelman--Rubin diagnostic compares variation between and within multiple
-independently initialized chains, so it cannot be calculated from a
+independently initialised chains, so it cannot be calculated from a
 single chain alone [@gelman1992inference]. The Geweke diagnostic compares
 the means of an early and a late segment of one chain
 [@geweke1992evaluating]. No single diagnostic proves convergence, and
@@ -2817,7 +2761,7 @@ Likelihood (MCML):
 2.  Simulate samples from $[W \mid Y; \theta_0]$ using MCMC methods.
     Perform a check on the MCMC samples to assess convergence of the
     MCMC algorithm.
-3.  Compute and maximize the approximate likelihood function in @eq-mcml2.
+3.  Compute and maximise the approximate likelihood function in @eq-mcml2.
 4.  Set the newly estimated parameter as $\theta_0$ for the next
     iteration.
 5.  Repeat steps 2 to 4 until convergence is achieved.
@@ -2875,7 +2819,7 @@ finished explanatory figures.
 
 ```{r}
 #| label: fig-check-mcmc-mean
-#| fig-cap: "Trace plot (left panel) and autocorrelation function plot (right panel) for the averaged spatial random effects from the river blindness data analysis. The title of the right panel also shows the effective sample size of the 1000 Markov chain Monte Carlo (MCMC) samples. The MCMC samples are obtained by running the MCMC algorithm for 12000 iterations, with a burn-in of 2000 and thinning of 10."
+#| fig-cap: "Trace plot (left panel) and autocorrelation function plot (right panel) for the averaged spatial random effects from the river blindness data analysis. The title of the right panel also shows the effective sample size of the 1,000 Markov chain Monte Carlo (MCMC) samples. The MCMC samples are obtained by running the MCMC algorithm for 12,000 iterations, with a burn-in of 2,000 and thinning of 10."
 plot_mcmc(fit_liberia)
 ```
 
@@ -2889,7 +2833,7 @@ be done as follows.
 
 ```{r}
 #| label: fig-check-comp10-mcmc
-#| fig-cap: "Trace plot (left panel) and autocorrelation function plot (right panel) for the tenth component of the spatial random effects from the river blindness data analysis. "
+#| fig-cap: "Trace plot (left panel) and autocorrelation function plot (right panel) for the tenth component of the spatial random effects from the river blindness data analysis."
 plot_mcmc(fit_liberia, check_mean = FALSE, component = 10)
 ```
 
@@ -2925,7 +2869,7 @@ fit_liberia2 <- glgpm(npos ~ log(elevation) + gp(nugget = TRUE),
 
 ```{r}
 #| label: fig-mcmc-10k
-#| fig-cap: "Trace plot (left panel) and autocorrelation function plot (right panel) for the averaged spatial random effects from the river blindness data analysis. The Markov chain Monte Carlo (MCMC) samples are obtained by running the MCMC algorithm for 110000 iterations, with a burn-in of 10000 and thinning of 10."
+#| fig-cap: "Trace plot (left panel) and autocorrelation function plot (right panel) for the averaged spatial random effects from the river blindness data analysis. The Markov chain Monte Carlo (MCMC) samples are obtained by running the MCMC algorithm for 110,000 iterations, with a burn-in of 10,000 and thinning of 10."
 plot_mcmc(fit_liberia2)
 ```
 
@@ -2952,7 +2896,7 @@ not require the specification of arbitrary prior distributions when
 prior information on the model parameters is unavailable.
 
 Alternative methods worth mentioning include the
-expectation-maximization algorithm for maximum likelihood estimation
+expectation-maximisation algorithm for maximum likelihood estimation
 [@zhang2002], integrated nested Laplace approximation (INLA) [@rue2009],
 and implementations of the Metropolis-Adjusted Langevin Algorithm (MALA)
 for Bayesian inference [@christensen2006]. While these methods are
