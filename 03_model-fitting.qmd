@@ -17,11 +17,12 @@ editor_options:
 | `lmer()` | *lme4* | Fitting linear mixed models |
 | `glmer()` | *lme4* | Fitting generalized linear mixed models |
 | `glgpm()` | *RiskMap* | Fitting generalized linear geostatistical models |
-| `variogram()` | *RiskMap* | Computing the empirical variogram and carrying out permutation test for spatial independence |
-| `plot_variogram()` | *RiskMap* | Plotting an empirical variogram and its permutation envelope |
+| `variogram()` | *RiskMap* | Computing the empirical variogram and a global envelope for spatial independence |
+| `plot_variogram()` | *RiskMap* | Plotting an empirical variogram and its global envelope |
 | `summarise_distance()` | *RiskMap* | Summarising distances between sampling locations |
 | `to_table()` | *RiskMap* | Formatting model estimates as a table |
 | `set_control_mcmc()` | *RiskMap* | Configuring Markov chain Monte Carlo settings |
+| `set_control_mcml()` | *RiskMap* | Configuring repeated Monte Carlo maximum-likelihood updates |
 | `plot_mcmc()` | *RiskMap* | Checking Markov chain Monte Carlo output |
 | `simulate_glgpm()` | *RiskMap* | Simulating replicated data from a fitted geostatistical model |
 | `simulated_data()` | *RiskMap* | Extracting one simulated dataset |
@@ -1095,9 +1096,9 @@ where
 $|\mathcal{U}|$ denotes the number of pairs of locations that fall
 within the distance class $\mathcal{U}$. The rationale behind dividing
 by 2 in $1/2 |\mathcal{U}|$ from the above equation, will be elucidated
-in @sec-linear-model. When creating the empirical variogram plot, we
-select the midpoint values of the distance classes $\mathcal{U}$ to
-represent the x-axis values.
+in @sec-linear-model. When creating the empirical variogram plot, each
+estimate is placed at the mean distance of the pairs in its distance
+class $\mathcal{U}$.
 
 Before we can evaluate residual spatial correlation, there remains one
 crucial concern: relying solely on a visual inspection of the empirical
@@ -1105,12 +1106,9 @@ variogram is susceptible to human subjectivity. Furthermore, it is worth
 noting that even a seemingly upward trend observed in the empirical
 variogram might be merely a product of random fluctuations, rather than
 a reliable indication of actual residual spatial correlation. To address
-these concerns and enhance the objectivity of the use of the empirical
-variogram, one approach would involve comparing the observed empirical
-variogram pattern with those generated in the absence of spatial
-correlation. Following this principle, we then use a permutation test
-that allows us to generate empirical variograms under the assumption of
-absence of spatial correlation through the following iterative steps.
+these concerns, we compare the observed empirical variogram with
+variograms generated under spatial independence. This comparison is an
+exploratory diagnostic, constructed through the following steps.
 
 1.  Randomly reassign the observed values or fitted residuals among the
     fixed sampling locations. This breaks any spatial association while
@@ -1119,25 +1117,23 @@ absence of spatial correlation through the following iterative steps.
 2.  Compute the empirical variogram $\hat{V}(\mathcal{U})$ for the
     permuted dataset.
 
-3.  Repeat steps 1 and 2 a large number of times. We recommend 10,000
-    permutations for a stable final analysis. The examples below use
-    1,000 to keep the computation manageable while illustrating the method.
+3.  Repeat steps 1 and 2 many times. The examples below use 999
+    permutations; together with the observed variogram, this gives 1,000
+    exchangeable curves.
 
-4.  At each distance class, take the 0.025 and 0.975 quantiles of the
-    permutation distribution. These quantiles form a 95$\%$ pointwise
-    permutation envelope.
+4.  Rank the complete curves using extreme-rank-length ordering and form
+    a 95$\%$ global envelope. Unlike separate intervals at each distance,
+    this construction considers departures anywhere along the curve.
 
-5.  If the observed empirical variogram lies entirely within the
-    envelope generated in the previous step, we conclude that there is
-    no evidence of residual spatial correlation in the data. When,
-    instead, parts of the empirical variogram fall outside the envelope,
-    this suggests the presence of residual spatial dependence.
+5.  Compare the observed curve with the envelope. Departures from the
+    envelope, particularly a coherent pattern across short distances,
+    suggest that spatial independence may be implausible and warrant
+    further modelling.
 
-In point 5 above, the extent and pattern of these deviations can vary
-considerably. In many cases, the departures from the envelope are quite
-subtle, with only a few points of the empirical variogram falling
-outside, as we will see in later examples. Such patterns may indicate
-weak spatial dependence that is difficult to recover from the data.
+The extent and pattern of these deviations can vary considerably. A few
+departures may reflect weak dependence, random variation or sensitivity
+to the chosen distance classes, so the whole pattern should be
+considered rather than treating an individual point as a formal test.
 
 Fitting an explicit geostatistical model provides a formal model-based
 way to estimate residual spatial dependence and its range. The resulting
@@ -1247,7 +1243,8 @@ liberia_variog <- variogram(data = liberia,
                             breaks = c(15, 30, 40, 80, 120,
                                        160, 200, 250, 300, 350),
                             distance_units = "km",
-                            n_permutations = 1000)
+                            n_permutations = 999,
+                            seed = 2026)
 ```
 
 Through the argument `breaks` we can specify the classes of distance,
@@ -1257,8 +1254,9 @@ to `breaks` in the code above define the following distance classes
 $\mathcal{U}$: $[15, 30]$, $(30, 40]$ and so forth, with the final class
 being $(300, 350]$. Pairs separated by less than 15 km or more than
 350 km are excluded. The argument `n_permutations` allows the user
-to specify the number of permutations that are performed to generate the
-envelope for absence of spatial correlation, previously described.
+to specify the number of permutations used to generate the global
+envelope for spatial independence. The `seed` argument makes the
+permutations reproducible.
 
 Both `variogram()` and `summarise_distance()` compute distances in the
 units selected through `distance_units`. If the data already use a
@@ -1292,24 +1290,18 @@ and observe how they impact the pattern of the empirical variogram.
 
 ```{r}
 #| label: fig-liberia-variog
-#| fig-cap: "Empirical variogram (solid line) computed using the estimated random effects from the model in @eq-liberia-bin-mixed-elev. The blue shaded area is the 95% pointwise permutation envelope for spatial independence described in @sec-expl-spatial."
+#| fig-cap: "Empirical variogram (solid line) computed using the estimated random effects from the model in @eq-liberia-bin-mixed-elev. The blue shaded area is the 95% global envelope for spatial independence described in @sec-expl-spatial."
 plot_variogram(liberia_variog, plot_envelope = TRUE)
 ```
 
-The empirical variogram in @fig-liberia-variog falls
-outside the envelope at relatively short distances, typically below
-30 km. However, for distances exceeding 30 km, the behaviour of the
-empirical variogram does not significantly differ from variograms
-generated under the assumption of spatial independence. In summary, we
-interpret the evidence presented in @fig-liberia-variog as indicative of
-residual spatial correlation within the data. Nevertheless, it is
-essential to exercise caution when attempting to ascertain the scale of
-the spatial correlation using the empirical variogram. As we will
-emphasise throughout this book, the empirical variogram's sensitivity to
-the choice of breaks values renders it an unreliable tool for drawing
-statistical inferences. In other words, we recommend employing the
-empirical variogram primarily to assess the presence of residual
-correlation.
+The empirical variogram in @fig-liberia-variog remains within the global
+envelope. This exploratory diagnostic therefore does not reveal a clear
+departure from spatial independence. It does not establish that residual
+spatial correlation is absent: the result depends on the selected
+distance classes and on how much information the data contain about the
+spatial pattern. As we will emphasise throughout this book, the empirical
+variogram should be used to guide further modelling rather than to draw
+formal statistical conclusions.
 
 #### Exploring residual spatial correlation with linear Gaussian models {#sec-empirical-variog-lm}
 
@@ -1375,7 +1367,7 @@ the end of the last paragraph.
 
 ```{r}
 #| label: fig-galicia-variog
-#| fig-cap: "Empirical variogram (solid line) computed using the estimated residuals from the model in @eq-std-lm-galicia. The blue shaded area is the 95% pointwise permutation envelope for spatial independence described in @sec-expl-spatial."
+#| fig-cap: "Empirical variogram (solid line) computed using the estimated residuals from the model in @eq-std-lm-galicia. The blue shaded area is the 95% global envelope for spatial independence described in @sec-expl-spatial."
 
 # Fitting of the linear model and extraction of the residuals
 lm_fit <- lm(log(lead) ~ 1, data = galicia)
@@ -1384,12 +1376,13 @@ lm_fit <- lm(log(lead) ~ 1, data = galicia)
 galicia$residuals <- lm_fit$residuals
 
 # Compute the variogram, using the residuals from the linear model fit,
-# and the 95% pointwise permutation envelope for spatial independence
+# and the 95% global envelope for spatial independence
 galicia_variog <- variogram(galicia,
                             variable = "residuals",
                             distance_units = "km",
                             breaks = seq(10, 140, length = 15),
-                            n_permutations = 1000)
+                            n_permutations = 999,
+                            seed = 2026)
 
 # Plotting the results
 plot_variogram(galicia_variog, plot_envelope = TRUE)
@@ -1399,9 +1392,10 @@ In the code above, we first fit the linear model in
 @eq-std-lm-galicia and then extract the residuals from this. Note that
 for this simple model, the residuals of the model are obtained by simply
 centering the log-transformed outcome to zero by subtracting its mean.
-@fig-galicia-variog shows the empirical variogram and the 95% envelope
-for spatial independence. This clearly shows that the log-transformed
-lead concentrations are spatially correlated.
+@fig-galicia-variog shows the empirical variogram and the 95% global
+envelope for spatial independence. Its coherent departure from the
+envelope at short distances suggests spatial correlation in the
+log-transformed lead concentrations.
 
 ##### More than one observation per location {#sec-explanal-lm}
 
@@ -1509,11 +1503,12 @@ these steps is shown below.
 italy_sim$rand_eff <- ranef(lmer_fit)$ID_loc[italy_sim$ID_loc, 1]
 
 # Compute the variogram, using the random effects from the linear mixed model
-# fit, and the 95% pointwise permutation envelope for spatial independence
+# fit, and the 95% global envelope for spatial independence
 italy_sim_variog <- variogram(italy_sim,
                               variable = "rand_eff",
                               distance_units = "km",
-                              n_permutations = 1000)
+                              n_permutations = 999,
+                              seed = 2026)
 
 # Plot the variogram
 plot_variogram(italy_sim_variog, plot_envelope = TRUE)
@@ -1521,18 +1516,17 @@ plot_variogram(italy_sim_variog, plot_envelope = TRUE)
 
 ```{r}
 #| label: fig-italy-sim-variog
-#| fig-cap: "Empirical variogram (solid line) computed using the estimated random effects from the model in @eq-italy-sim-lmm. The blue shaded area is the 95% pointwise permutation envelope for spatial independence described in @sec-expl-spatial."
+#| fig-cap: "Empirical variogram (solid line) computed using the estimated random effects from the model in @eq-italy-sim-lmm. The blue shaded area is the 95% global envelope for spatial independence described in @sec-expl-spatial."
 #| echo: false
 
 italy_sim_variog <- readRDS("data/italy_sim_variog.rds")
 plot_variogram(italy_sim_variog, plot_envelope = TRUE)
 ```
 
-The application of the empirical variogram, whose results are shown in
-@fig-italy-sim-variog, indicates the presence of residual correlation.
-This is because we observe that the solid line representing the
-empirical variogram falls outside of the 95% envelope for spatial
-independence.
+In @fig-italy-sim-variog, the empirical variogram departs from the global
+envelope over several neighbouring distance classes. This exploratory
+pattern suggests residual spatial correlation and motivates fitting a
+geostatistical model.
 
 ## The linear geostatistical model {#sec-linear-model}
 
@@ -2022,9 +2016,10 @@ When using the `glgpm()` function to fit a Binomial model, we need to
 specify the Binomial denominators, i.e. the number of people tested at a
 location in this case, through the argument `denominator`. Other arguments of
 `glgpm()` that are used for carrying out MCML include `control_mcmc`,
-which receives the settings created by `set_control_mcmc()`, and `par0`,
-which represents an initial guess for the unknown parameters of the
-Binomial geostatistical model. Here, `return_samples = TRUE` retains the
+which receives the settings created by `set_control_mcmc()`. Initial
+values for the model parameters can be supplied through `start_pars`;
+when it is omitted, RiskMap constructs default starting values. Here,
+`return_samples = TRUE` retains the
 MCMC samples so that they can be examined later with `plot_mcmc()`.
 The seed recorded in `set_control_mcmc()` makes those samples
 reproducible. For more information on the default values of these
@@ -2237,7 +2232,7 @@ for (i in seq_len(n_sim)) {
   fit_sim <- glgpm(formula = npos ~ log(elevation) + gp(),
                    data = sim_data,
                    family = "binomial",
-                   par0 = coef(fit_liberia_no_nugget),
+                   start_pars = coef(fit_liberia_no_nugget),
                    denominator = ntest,
                    control_mcmc = set_control_mcmc(seed = 2026 + i),
                    messages = FALSE)
@@ -2252,8 +2247,7 @@ them in a matrix format to facilitate the computation of any summary,
 including the confidence intervals as shown in the code below.
 
 ```{r}
-#| label: tbl-liberia-bootstrap-intervals
-#| tbl-cap: "Wald and parametric-bootstrap 95% confidence intervals for the Liberia binomial geostatistical model."
+#| label: prepare-liberia-bootstrap-intervals
 
 # Extract all parameters maintaining beta as a vector
 all_params <- sapply(seq_len(n_sim), function(i) {
@@ -2276,7 +2270,12 @@ interval_comparison <- data.frame(Parameter = parameter_names,
                                   `Bootstrap lower` = CI[, "2.5%"],
                                   `Bootstrap upper` = CI[, "97.5%"],
                                   check.names = FALSE)
+```
 
+```{r}
+#| label: tbl-liberia-bootstrap-intervals
+#| tbl-cap: "Wald and parametric-bootstrap 95% confidence intervals for the Liberia binomial geostatistical model."
+#| echo: false
 knitr::kable(interval_comparison, digits = 3, row.names = FALSE)
 ```
 
@@ -2783,13 +2782,18 @@ Likelihood (MCML):
     a second iteration with 10,000 samples, as prediction is less
     affected by Monte Carlo error.
 
-In RiskMap, steps 1 to 3 are automated (with the exception of the
-check on the convergence of the MCMC algorithm in step 2), while steps 4
-to 7 require manual implementation. In @sec-liberia-estim1, estimation
-is performed using a geostatistical model fitted to prevalence data. The
-`par0` argument in the `glgpm()` function allows you to specify initial
-guesses for the model parameters $\theta_0$. If no values are provided
-for `par0` (as in @sec-liberia-estim1), the following defaults are used:
+RiskMap automates these steps through `glgpm()`. The MCMC sample should
+still be inspected by the user. Repeated MCML updates are configured with
+`set_control_mcml()` and passed through `control_mcml`; its default of one
+update preserves the usual single-stage fit. With repeated updates,
+convergence requires both a sufficiently small change in the parameter
+estimates, measured relative to their standard errors, and adequate
+overlap of the importance weights. The `max_iterations` argument sets an
+upper limit rather than guaranteeing convergence. In @sec-liberia-estim1,
+estimation is performed using a geostatistical model fitted to prevalence
+data. The `start_pars` argument allows initial values for the model
+parameters to be supplied. If it is omitted, as in @sec-liberia-estim1,
+the following defaults are used:
 
 -   The initial guess for the regression coefficients $\beta$ is set to
     the maximum likelihood estimates obtained from a standard
@@ -2802,9 +2806,17 @@ for `par0` (as in @sec-liberia-estim1), the following defaults are used:
     function $\phi$ is based on the 0.1 quantile of the distances
     between all pairs of locations.
 
-In our experience, this set of initial guesses works reasonably well.
-However, more iterations of the MCMC algorithm, as suggested in the step
-7 above, are generally recommended.
+For Binomial and Poisson models with their canonical links, RiskMap also
+fits an equivalent transformed-Gaussian model with the same spatial,
+nugget and random-effect structure. It compares this candidate with the
+default values above using a Laplace approximation and retains the better
+starting point. Values supplied explicitly through `start_pars` remain
+authoritative and bypass this automatic comparison.
+
+In our experience, this automatic procedure provides useful starting
+values across a range of settings. Further MCML updates or longer MCMC
+samples may still be needed, depending on the parameter stability,
+importance-weight overlap and MCMC diagnostics.
 
 An alternative approach for setting initial guesses for the covariance
 parameters $\sigma^2$, $\tau^2$, and $\phi$ is to apply an interpolation
@@ -2859,19 +2871,20 @@ precision of the Monte Carlo approximation.
 #| label: refit-liberia-large-mcmc
 #| eval: false
 
-# Update the guesses for the model parameters
-par0_liberia <- coef(fit_liberia)
-par0_liberia$tau2 <- 0.1
+# Set starting values for the model with a nugget effect
+start_liberia <- coef(fit_liberia)
+start_liberia$tau2 <- 0.1
 
 # Refit the model and increase the MCMC samples
 fit_liberia2 <- glgpm(npos ~ log(elevation) + gp(nugget = TRUE),
                       denominator = ntest, data = liberia,
                       model_crs = 32629,
-                      par0 = par0_liberia,
+                      start_pars = start_liberia,
                       control_mcmc = set_control_mcmc(n_sim = 110000,
                                                      burnin = 10000,
                                                      thin = 10,
                                                      seed = 2026),
+                      control_mcml = set_control_mcml(max_iterations = 2),
                       return_samples = TRUE,
                       family = "binomial", messages = FALSE)
 ```
@@ -2882,8 +2895,9 @@ fit_liberia2 <- glgpm(npos ~ log(elevation) + gp(nugget = TRUE),
 plot_mcmc(fit_liberia2)
 ```
 
-The code above performs an additional step in the MCML estimation, using
-10,000 MCMC samples. As shown in @fig-mcmc-10k, these MCMC samples
+The code above allows up to two MCML updates, regenerating the importance
+sample around the estimate from the preceding update. Each update uses
+10,000 retained MCMC samples. As shown in @fig-mcmc-10k, these MCMC samples
 exhibit good mixing and low autocorrelation, which indicates that they
 adequately approximate the likelihood function of the Binomial
 geostatistical model. Although additional MCMC iterations could be run

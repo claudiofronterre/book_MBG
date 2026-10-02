@@ -34,12 +34,12 @@ lmer_fit <- lmer(y ~ log(pop_dens) + (1 | ID_loc), data = italy_sim)
 
 italy_sim$rand_eff <- ranef(lmer_fit)$ID_loc[italy_sim$ID_loc, 1]
 
-set.seed(1)
 italy_sim_variog <- variogram(
   italy_sim,
   variable = "rand_eff",
   distance_units = "km",
-  n_permutations = 1000
+  n_permutations = 999,
+  seed = 2026
 )
 
 saveRDS(italy_sim_variog, file = "data/italy_sim_variog.rds")
@@ -135,17 +135,18 @@ saveRDS(fit_liberia_no_nugget, file = "data/fit_liberia_no_nugget.rds")
 
 ## --- 6c. Refit with the nugget estimated and a much larger
 ##         MCMC sample (110000 iterations, burn-in 10000, thin 10)
-par0_liberia <- coef(fit_liberia)
-par0_liberia$tau2 <- 0.1
+start_liberia <- coef(fit_liberia)
+start_liberia$tau2 <- 0.1
 
 fit_liberia2 <- glgpm(npos ~ log(elevation) + gp(nugget = TRUE),
                       denominator = ntest, data = liberia,
                       model_crs = 32629,
-                      par0 = par0_liberia,
+                      start_pars = start_liberia,
                       control_mcmc = set_control_mcmc(n_sim = 110000,
                                                      burnin = 10000,
                                                      thin = 10,
                                                      seed = 2026),
+                      control_mcml = set_control_mcml(max_iterations = 2),
                       return_samples = TRUE,
                       family = "binomial", messages = FALSE)
 
@@ -170,7 +171,7 @@ for (i in seq_len(n_sim)) {
   fit_sim <- glgpm(formula = npos ~ log(elevation) + gp(),
                    data = sim_data,
                    family = "binomial",
-                   par0 = coef(fit_liberia_no_nugget),
+                   start_pars = coef(fit_liberia_no_nugget),
                    denominator = ntest,
                    control_mcmc = set_control_mcmc(seed = 2026 + i),
                    messages = FALSE)
