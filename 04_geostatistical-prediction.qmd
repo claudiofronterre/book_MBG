@@ -105,10 +105,9 @@ likelihood that $T(x)$ exceeds 0.2 at any given location $x$.
 
 In summary, the first two steps of spatial prediction are:
 
-- Step 1. define the predictive target $T(x)$;
-
-- Step 2. obtain the predictive distribution of $T(x)$ and use this to
-  compute summaries that helps to answer your original research
+1.  Define the predictive target $T(x)$;
+2.  Obtain the predictive distribution of $T(x)$ and use this to
+  compute summaries that help to answer your original research
   question.
 
 This raises two practical questions: "How do we obtain the predictive
@@ -498,7 +497,7 @@ representative of the target population. In the data used for this
 example, we believe these assumptions are reasonable, given the
 relatively small study area, where age is unlikely to exhibit
 significant spatial variation, and the fact that the data are a random
-sample from the community. We can the proceed through the following
+sample from the community. We can then proceed through the following
 iterative steps to account for age in our predictions.
 
 1.  Obtain the empirical distribution of age from the data.
@@ -560,7 +559,7 @@ get_elev_raster(locations = shp_ch,
                 z = 9, clip = "locations")
 ```
 
-We then create the data frame of predictors where age is set to 15.
+We then create the dataframe of predictors where age is set to 15.
 
 ```{r}
 #| label: prepare-kenya-prediction-covariates
@@ -585,7 +584,7 @@ predict_grid_target(pred_ken_S,
                  pd_summary = list(mean = function(Tx) mean(Tx)))
 ```
 
-The code below shows how to perform the 4 steps described above to
+The code below shows how to perform the four steps described above to
 generate a predictive map for the general population. Below we use the
 function `update_predictors()` to update the covariates effects that are
 stored in `mu_pred`, a list element generated as the output of
@@ -601,7 +600,7 @@ n_sim <- ncol(pred_age15$lp_samples)
 n_pred <- nrow(predictors)
 
 # The create object `pred_ken_S_i` with the goal of changing the 
-# coviariates effects stored in `mu_pred` according the sample values of age
+# covariates effects stored in `mu_pred` according the sample values of age
 pred_ken_S_i <- pred_ken_S
 pred_ken_S_i$mu_pred <- matrix(NA, nrow = n_pred, ncol = n_sim)
 
@@ -634,7 +633,7 @@ par(mfrow = c(1,1))
 
 The exploratory analysis of @sec-indiv-expl-analysis had shown that the
 prevalence around the age of 15 is higher than at other ages. This is
-also reflected in @fig-malaria-maps, when the left panel, corresponding
+also reflected in @fig-malaria-maps, where the left panel, corresponding
 to the RDT prevalence for children at the age of 15 years, shows a
 higher level of prevalence than the right panel, which is instead for
 the general population.
@@ -676,7 +675,7 @@ will be applied to other areal-level targets discussed in this section.
 However, for simplicity, we will omit the detailed explanation of this
 step and instead express the predictive target as an integral.
 
-For instance, in the study of Anopheles mosquitoes in Cameroon, we may
+For instance, in the study of *Anopheles* mosquitoes in Cameroon, we may
 be interested in estimating the total number of mosquitoes that could be
 trapped within the study area ($A_i$ represents a single region in this
 case). If $T(x)$ denotes the number of mosquitoes trapped at location
@@ -757,7 +756,7 @@ pred_shp <- predict_areal_target(lb_pred_S_j, shp = lb_adm1,
 
 ```
 
-The argument `shp_target` is used define the type of aggregation
+The argument `shp_target` is used to define the type of aggregation
 function over the region $A_i$, in this case the mean of the target
 $T(x)$. Also note that, like for spatially continuous targets, we can
 define any summary of the predictive distribution of $\mathcal{M}_i$
@@ -852,8 +851,8 @@ In @fig-average-prev-Liberia, we observe that the differences between
 the two predictive targets, with and without weights, are not
 substantial. However, we observe that the predicted average prevalence
 shows slightly greater variation in coastal regions, particularly in
-Montserrado County, where the majority of the population residing in the
-capital of Monrovia. This concentration of population likely accounts
+Montserrado County, where the majority of the population resides in the
+capital city of Monrovia. This concentration of population likely accounts
 for the more noticeable differences in this area.
 
 ### Example: predicting the total number of Anopheles gambiae mosquitoes (continuing from @sec-anopheles-fit) {#sec-anopheles-pred}
@@ -958,7 +957,7 @@ Since we are not standardizing the weights, there is no need to specify
 `standardize_weights`, as it is set to `FALSE` by default. In the code
 above, we printed the mean of the predictive distribution of $T$ along
 with the 95% prediction interval. The point estimate of approximately
-17,719 mosquitoes is likely an underestimate of the total number of
+`r round(pred_n_mosq_shp$target$reg1$n_mosq$mean, 0)` mosquitoes is likely an underestimate of the total number of
 *Anopheles gambiae* in the area, as the trap used to count the mosquitoes
 may not capture all of them, particularly those outside the immediate
 trapping zone or those active at different times.
