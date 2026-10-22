@@ -1141,8 +1141,8 @@ The outcome variable for this analysis is `total_females`, which records the tot
 #| label: prepare-mosquito-abundance-data
 abund_sma <- abund_sma %>%
   mutate(trap_group = case_when(
-    trap_type %in% c("BACKPACK", "LCKR", "NJLT", "OVI") ~ "low yeild",
-    trap_type %in% c("GRVD", "MMT") ~ "moderate yeild",
+    trap_type %in% c("BACKPACK", "LCKR", "NJLT", "OVI") ~ "low yield",
+    trap_type %in% c("GRVD", "MMT") ~ "moderate yield",
     trap_type %in% c("CO2", "BGSENT") ~ "high yield"
   ))
 ```
