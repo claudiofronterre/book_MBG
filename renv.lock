@@ -625,8 +625,8 @@
       "RemoteHost": "api.github.com",
       "RemoteUsername": "claudiofronterre",
       "RemoteRepo": "RiskMap",
-      "RemoteRef": "92fb4b4e161739c86756de8d0e579abe0efaf508",
-      "RemoteSha": "92fb4b4e161739c86756de8d0e579abe0efaf508"
+      "RemoteRef": "83f5e5ef43ba20695792346bbad236eaffd75612",
+      "RemoteSha": "83f5e5ef43ba20695792346bbad236eaffd75612"
     },
     "S7": {
       "Package": "S7",
