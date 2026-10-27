@@ -12,6 +12,7 @@ editor_options:
 #| echo: false
 library(terra)
 library(sf)
+library(RiskMap)
 lbr_pop_100 <- rast("data/lbr_pop_100.tif")
 liberia_admin0 <- readRDS("data/lbr_adm0_geoboundaries.rds")
 liberia_admin1 <- readRDS("data/lbr_adm1_geoboundaries.rds")
@@ -24,6 +25,7 @@ if (!all(required_boundary_fields %in% names(liberia_admin0)) ||
 if (!"lbr_ppp_2014" %in% names(lbr_pop_100)) {
   stop("The saved WorldPop raster does not contain 'lbr_ppp_2014'.")
 }
+names(lbr_pop_100) <- "population"  # the layer name used by get_worldpop()
 ```
 
 # Handling of spatial data in R {#sec-handling-data}
@@ -60,7 +62,7 @@ A wide range of open-access spatial datasets provide covariates for disease mapp
 | **MODIS**               | Remote Sensing                  | Satellite imagery (e.g., vegetation indices) | *MODIStsp*           |
 | **OpenStreetMap (OSM)** | Human settlements, roads        | Global geographic features                   | *osmdata*            |
 | **Google Earth Engine** | Satellite imagery               | Large-scale environmental data analysis      | *rgee*               |
-| **WorldPop**            | Population data                 | Gridded population counts and densities      | *wpgpDownloadR* |
+| **WorldPop**            | Population data                 | Gridded population counts and densities      | *RiskMap*            |
 
 : Some key sources of covariates useful in disease mapping and R packages to retrieve them. {#tbl-data-sources}
 
@@ -98,33 +100,28 @@ plot(liberia_admin1$geometry)
 
 ### Example: Downloading population data {#sec-pop-data}
 
-Population distribution is often relevant to geostatistical models for public health research. In this section, we demonstrate how to retrieve high-resolution population data for Liberia from [WorldPop](https://www.worldpop.org/) using the wpgpDownloadR package. This package provides access to several gridded population products. It is important to check whether a selected product represents population counts, population density or another quantity because this determines how its values should be interpreted and processed.
+Population distribution is often relevant to geostatistical models for public health research. In this section, we demonstrate how to retrieve high-resolution population data for Liberia from [WorldPop](https://www.worldpop.org/). WorldPop estimates the number of people in each cell of a fine grid by distributing census totals with statistical models that use covariates such as settlement maps, roads and night-time lights. Its products differ in ways that matter for analysis:
 
-Before downloading the data, we will search for available datasets for Liberia. The function `wpgpListCountryDatasets()` helps in retrieving a list of all available datasets for a specified country.
+- **Unconstrained** estimates place people in every land cell, so sparsely populated or uninhabited areas receive small counts. They are available for every year from 2000 to 2020, for the whole population and by age and sex, at about 100 m and 1 km.
+- **Constrained** estimates place people only in cells mapped as built-up settlements. They locate people more sharply, particularly at fine resolution, but can miss small rural settlements. They are available from 2015 onwards.
+- **UN-adjusted** estimates rescale national totals to match United Nations population estimates.
+- **Bottom-up** estimates, available for a few countries, are modelled from household surveys rather than from census totals, and come with measures of uncertainty.
 
-```{r}
-#| eval: false
-#| label: liberia-wpop1
-#| cache: false
-#| message: false
-#| warning: false
-library(wpgpDownloadR)
+Unconstrained estimates suit population weights on grids of a few kilometres and the analysis of surveys carried out before 2015. Constrained estimates suit fine-scale analyses of recent years, and UN-adjusted totals suit reporting absolute numbers of people. Whatever the product, check whether it contains counts per cell or population densities, because this determines how its values are aggregated.
 
-# Search for datasets available for Liberia using the ISO3 country code
-lbr_datasets <- wpgpListCountryDatasets(ISO3 = "LBR")
-```
-
-We can check the description column to see what datasets are available. Here we download the unconstrained WorldPop `ppp` product for Liberia in 2014. Its cells are approximately 100 m at the equator and contain estimated numbers of people per grid cell, not population densities. The `wpgpGetCountryDataset()` function downloads a raster based on the ISO3 code and covariate name.
+The RiskMap function `get_worldpop()` finds a product in the WorldPop catalogue, downloads it and returns it as a raster of people per cell. Here we download the unconstrained estimates for Liberia in 2014 at about 100 m, saving the GeoTIFF file in the `data` folder.
 
 ```{r}
 #| eval: false
-#| label: liberia-wpop2
-#| cache: false
-#| warning: false
-lbr_pop_url <- wpgpGetCountryDataset(ISO3 = "LBR", covariate = "ppp_2014")
+#| label: liberia-wpop
+# Load the RiskMap package
+library(RiskMap)
+
+# Download WorldPop population counts for Liberia in 2014
+lbr_pop_100 <- get_worldpop("LBR", year = 2014, dest_dir = "data")
 ```
 
-This downloads a raster file to a temporary directory. The path to the downloaded file is stored in `lbr_pop_url`. When we introduce the terra package in the next sections, we will show how to read the population raster into R. The download directory can also be specified using the `destDir` argument.
+The `ages` and `sex` arguments select age groups, whose counts are added together. For example, `get_worldpop("LBR", year = 2011, ages = c(20, Inf), resolution = "1km")` returns the number of adults aged 20 and over in each cell of about 1 km, which we use in @sec-geo-prediction. The `constrained` and `un_adjusted` arguments select the other products described above.
 
 ### Example: Downloading data using Google Earth Engine
 
@@ -231,13 +228,13 @@ The `st_read()` function reads various spatial data formats and automatically re
 
 ### Importing raster data
 
-Raster data consists of a grid of cells, where each cell holds a value representing a spatial attribute such as elevation or temperature. The terra package in R is designed to work with raster data and has superseded the older raster package due to better performance and greater functionality. Let's see now how to import a GeoTIFF file using terra. We can upload the population raster for Liberia that we have downloaded in @sec-pop-data.
+Raster data consists of a grid of cells, where each cell holds a value representing a spatial attribute such as elevation or temperature. The terra package in R is designed to work with raster data and has superseded the older raster package due to better performance and greater functionality. Let's see now how to import a GeoTIFF file using terra. The function `get_worldpop()` in @sec-pop-data returned the population raster directly and also saved it as a GeoTIFF file, which `rast()` can read again at any time.
 
 ```{r}
 #| label: import-raster-data
 #| eval: false
 # Import a raster file
-lbr_pop_100 <- rast(lbr_pop_url)
+lbr_pop_100 <- rast("data/lbr_ppp_2014.tif")
 ```
 ```{r}
 #| label: fig-lbr-pop
@@ -291,10 +288,7 @@ In geospatial analysis, data are often provided in tabular formats such as CSV f
 
 ```{r}
 #| label: st-as-sf
-# Load the RiskMap package
-library(RiskMap)
-
-# Load the Liberia data set
+# Load the Liberia data set from RiskMap
 data("liberia")
 
 # Convert the data frame to an sf object
@@ -312,7 +306,7 @@ The `st_as_sf()` function converts the data frame into an `sf` object. The `coor
 
 The resulting `sf` object can be used for spatial joins, distance calculations and mapping. The coordinate columns have been replaced by a `geometry` column. Set `remove = FALSE` in `st_as_sf()` if the original columns should also be retained.
 
-### Working with CRSs in R
+### Working with CRSs in R {#sec-crs-r}
 
 When working with data from multiple sources, such as environmental layers, population data, or administrative boundaries, ensuring that all datasets share the same CRS is essential for accurate spatial analysis. This section covers the core tasks involved in managing CRSs in R: checking the CRS of spatial data to ensure datasets are compatible and reprojecting spatial data into a common CRS when necessary.
 
@@ -503,9 +497,35 @@ The equivalent 5 km prediction grid can therefore be created as follows:
 ```{r}
 #| label: create-prediction-grid
 #| message: false
-pred_locations_riskmap <- create_grid(liberia_admin0_utm,
-                                      spacing = 5)
+pred_locations_riskmap <- create_grid(liberia_admin0_utm, spacing = 5)
 ```
+
+### Building the grid from population counts {#sec-population-grid}
+
+When predictions will be combined using population, for example to average prevalence over the people living in an area or to count the people affected, the grid can be built from the population raster itself. We aggregate the counts to the resolution of the grid and use the centres of the aggregated cells as prediction locations. The population of each cell is then attached to the grid by construction, with no extraction step.
+
+The counts must be summed, not averaged or interpolated, because they are an extensive quantity (see @sec-crs-r). We first project the raster to the modelling CRS at 100 m with the total-preserving `"sum"` method, choosing a resolution that divides the 5 km spacing exactly. We then add up blocks of 50 by 50 cells with `aggregate()`.
+
+```{r}
+#| label: create-population-grid
+#| message: false
+# Project the population counts to UTM at 100 m, preserving totals
+lbr_pop_utm <- project(lbr_pop_100, crs(liberia_admin0_utm), res = 100,
+                       method = "sum")
+
+# Sum blocks of 50 by 50 cells into 5 km cells
+lbr_pop_5km <- aggregate(lbr_pop_utm, fact = 50, fun = "sum", na.rm = TRUE)
+
+# Use the 5 km cells that overlap Liberia as prediction locations
+pop_grid <- create_grid(liberia_admin0_utm, raster = lbr_pop_5km,
+                        keep = "overlap")
+
+# Compare the total population before and after aggregation
+c(original = global(lbr_pop_100, "sum", na.rm = TRUE)[[1]],
+  grid = sum(pop_grid$population, na.rm = TRUE))
+```
+
+The grid holds almost the whole population; the small difference comes from WorldPop cells just outside the boundary used here. The grid stores the population of each cell in the column `population`, so it can be used directly as weights, as we do in @sec-geo-prediction. We keep every cell that overlaps the country with `keep = "overlap"`. Keeping only cells whose centre lies inside the boundary would leave out the people living in the edge cells, which along the coast of Liberia is a large part of the population.
 
 ## Visualising spatial data
 
@@ -588,7 +608,7 @@ Raster data can be visualised with ggplot2 by using the terra package's `as.data
 raster_df <- as.data.frame(log(lbr_pop_100), xy = TRUE)
 
 # Rename the raster value column used for the fill scale
-names(raster_df)[names(raster_df) == "lbr_ppp_2014"] <- "log_population"
+names(raster_df)[names(raster_df) == "population"] <- "log_population"
 
 # Plot raster using ggplot2
 ggplot(data = raster_df) +
@@ -679,7 +699,7 @@ The sources listed in @tbl-data-sources are useful starting points, but always i
 
 1.  Download a shapefile of administrative boundaries for a country of your choice using the geobounds package. Once the shapefile has been imported into R, visualise it in two different ways, first using base R plotting functions and then using ggplot2. Compare the two visualisations and discuss the advantages and disadvantages of each approach.
 
-2.  Obtain raster data for the same country, such as elevation or population density. You may use either the wpgpDownloadR package or access Google Earth Engine through the rgee package. Plot the raster with `terra::plot()` and again with ggplot2. Comment on how the raster is displayed under each method and the flexibility provided by each plotting tool.
+2.  Obtain raster data for the same country, such as elevation or population density. You may use either `get_worldpop()` from RiskMap or access Google Earth Engine through the rgee package. Plot the raster with `terra::plot()` and again with ggplot2. Comment on how the raster is displayed under each method and the flexibility provided by each plotting tool.
 
 3.  Check the CRS and geographic extent of your vector and raster datasets, then choose a projected CRS suitable for the study area and analysis. A UTM zone may be appropriate for a compact study contained within that zone. Transform the datasets, plot them together and confirm that they align. Explain why assigning the source CRS and transforming coordinates are different operations.
 
