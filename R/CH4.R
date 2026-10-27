@@ -363,7 +363,8 @@ malkenya_comm1000 <- malkenya_comm[1:1000, ] |>
 
 set.seed(2026)
 fit_malkenya <- glgpm(RDT ~ Age + pmax(Age - 15, 0) +
-                        pmax(Age - 40, 0) + elevation + gp(nugget = TRUE),
+                        pmax(Age - 40, 0) + elevation +
+                        gp(nugget = TRUE),
                       data = malkenya_comm1000,
                       family = "binomial",
                       messages = FALSE)
@@ -417,6 +418,9 @@ names(adults_5km) <- "adults"
 county_grid <- create_grid(liberia_adm0, raster = adults_5km,
                            keep = "overlap")
 county_grid$adults[is.na(county_grid$adults)] <- 0
+
+# Adults in thousands, so that weighted sums are in thousands
+county_grid$adults <- county_grid$adults / 1000
 county_points <- st_transform(county_grid, crs(liberia_elev))
 county_grid$elevation <- extract(liberia_elev, county_points,
                                  search_radius = 5000)[[2]]
@@ -437,8 +441,8 @@ liberia_county_adults <- predict(fit_liberia,
                                  boundaries = liberia_adm1,
                                  aggregate = c("mean", "sum"),
                                  weights = "adults",
-                                 summaries = c("mean", "lower", "upper",
-                                               "exceedance"),
+                                 summaries = c("mean", "lower",
+                                               "upper", "exceedance"),
                                  thresholds = 0.2,
                                  seed = 2026,
                                  messages = FALSE)
@@ -466,7 +470,8 @@ if (!file.exists(anopheles_elev_path)) {
 }
 anopheles_elev <- rast(readRDS(anopheles_elev_path))
 anopheles_points <- st_transform(anopheles_grid, crs(anopheles_elev))
-anopheles_grid$elevation <- extract(anopheles_elev, anopheles_points)[[2]]
+anopheles_grid$elevation <- extract(anopheles_elev,
+                                    anopheles_points)[[2]]
 observed_elevation <- range(an_fit$data$elevation)
 anopheles_grid$suitable <- as.numeric(
   anopheles_grid$elevation >= observed_elevation[1] &
@@ -477,7 +482,8 @@ anopheles_prediction <- predict(an_fit,
                                 boundaries = anopheles_hull,
                                 aggregate = "mean",
                                 weights = "suitable",
-                                summaries = c("mean", "lower", "upper"),
+                                summaries = c("mean", "lower",
+                                              "upper"),
                                 seed = 2026,
                                 messages = FALSE)
 saveRDS(anopheles_prediction, "data/anopheles_prediction.rds")

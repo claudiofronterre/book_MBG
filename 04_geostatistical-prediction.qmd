@@ -357,7 +357,8 @@ The result is built with the ggplot2 and patchwork packages, so we can add layer
 #| fig-asp: 1.2
 #| out-width: "100%"
 #| fig-cap: "Predicted nodule prevalence in Liberia, conditional on the estimated model parameters, with the surveyed villages. Top left: predictive mean. Top right: width of the 95% prediction interval. Bottom: probability that prevalence exceeds 20%."
-plot(liberia_prediction, summary = c("mean", "interval_width", "exceedance")) &
+plot(liberia_prediction,
+     summary = c("mean", "interval_width", "exceedance")) &
   geom_sf(data = liberia, shape = 21, size = 0.7, fill = "white",
           colour = "black", stroke = 0.3, inherit.aes = FALSE)
 ```
@@ -384,9 +385,11 @@ components$predictions$fixed <- components$predictions$fixed -
   mean(components$predictions$fixed)
 
 # Use the same symmetric colour limits for both maps
-component_limits <- c(-1, 1) * max(abs(c(components$predictions$fixed,
-                                         components$predictions$spatial_mean)))
-plot(components, quantity = c("fixed", "spatial"), limits = component_limits)
+component_range <- max(abs(c(components$predictions$fixed,
+                             components$predictions$spatial_mean)))
+component_limits <- c(-1, 1) * component_range
+plot(components, quantity = c("fixed", "spatial"),
+     limits = component_limits)
 ```
 
 In @fig-lb-components, elevation produces a broad gradient from the coast inland.
@@ -521,9 +524,12 @@ We compare the two predictions location by location, grouping the locations by e
 # Interval widths in percentage points, one row per grid location
 widths <- data.frame(
   fixed = 100 * liberia_fixed$predictions$response_interval_width,
-  propagated = 100 * liberia_uncertain$predictions$response_interval_width,
-  elevation = cut(liberia_grid$elevation, breaks = c(0, 100, 300, Inf),
-                  labels = c("Below 100 m", "100 to 300 m", "Above 300 m"))
+  propagated = 100 *
+    liberia_uncertain$predictions$response_interval_width,
+  elevation = cut(liberia_grid$elevation,
+                  breaks = c(0, 100, 300, Inf),
+                  labels = c("Below 100 m", "100 to 300 m",
+                             "Above 300 m"))
 )
 
 ggplot(widths, aes(x = fixed, y = propagated, colour = elevation)) +
@@ -600,10 +606,11 @@ With a single binary outcome per location it could not be separated from the bin
 ```{r}
 #| label: fit-malkenya-geostatistical-model
 #| eval: false
-# Fit the model with linear splines in age at 15 and 40 years and a nugget
+# Linear splines in age with knots at 15 and 40 years, and a nugget
 set.seed(2026)
 fit_malkenya <- glgpm(RDT ~ Age + pmax(Age - 15, 0) +
-                        pmax(Age - 40, 0) + elevation + gp(nugget = TRUE),
+                        pmax(Age - 40, 0) + elevation +
+                        gp(nugget = TRUE),
                       data = malkenya_comm1000,
                       family = "binomial",
                       messages = FALSE)
@@ -657,7 +664,7 @@ kenya_subcounties <- gb_get_adm2("Kenya") |>
 kenya_grid <- create_grid(kenya_subcounties, spacing = 0.5,
                           distance_units = "km", keep = "overlap")
 
-# Download elevation with a 1 km margin and extract it at the grid locations
+# Elevation with a 1 km margin, extracted at the grid locations
 kenya_elev <- get_elev_raster(locations = kenya_grid, z = 9,
                               clip = "bbox", expand = 1000) |>
   rast()
@@ -699,8 +706,9 @@ We map the two predictions with common colour limits, so that colours mean the s
 #| out-width: "100%"
 #| fig-cap: "Predictive mean of rapid diagnostic test (RDT) prevalence at age 15 (left) and age-standardised to the surveyed population (right), with common colour limits."
 # Use common colour limits for the two maps
-kenya_limits <- range(pretty(c(kenya_age15$predictions$response_mean,
-                               kenya_standardised$predictions$response_mean)))
+kenya_means <- c(kenya_age15$predictions$response_mean,
+                 kenya_standardised$predictions$response_mean)
+kenya_limits <- range(pretty(kenya_means))
 age15_map <- plot(kenya_age15, limits = kenya_limits) +
   labs(fill = "Mean prevalence, age 15")
 standardised_map <- plot(kenya_standardised, limits = kenya_limits) +
@@ -770,7 +778,7 @@ This grid replaces the one built from the national boundary in @sec-pred-samples
 liberia_adults <- get_worldpop("LBR", year = 2011, ages = c(20, Inf),
                                resolution = "1km")
 
-# Project to UTM zone 29N at 1 km, preserving totals, and sum into 5 km cells
+# Project to UTM 29N at 1 km, keeping totals, and sum to 5 km cells
 adults_5km <- project(liberia_adults, "EPSG:32629", res = 1000,
                       method = "sum") |>
   aggregate(fact = 5, fun = "sum", na.rm = TRUE)
@@ -780,6 +788,9 @@ names(adults_5km) <- "adults"
 county_grid <- create_grid(liberia_adm0, raster = adults_5km,
                            keep = "overlap")
 county_grid$adults[is.na(county_grid$adults)] <- 0
+
+# Adults in thousands, so that weighted sums are in thousands
+county_grid$adults <- county_grid$adults / 1000
 
 # Extract elevation at the new locations, as for the national grid
 county_points <- st_transform(county_grid, crs(liberia_elev))
@@ -810,14 +821,14 @@ liberia_county_area <- predict(fit_liberia,
                                seed = 2026,
                                messages = FALSE)
 
-# Prevalence among adults and number of adults with nodules in each county
+# Adult prevalence and number of adults with nodules in each county
 liberia_county_adults <- predict(fit_liberia,
                                  newdata = county_grid,
                                  boundaries = liberia_adm1,
                                  aggregate = c("mean", "sum"),
                                  weights = "adults",
-                                 summaries = c("mean", "lower", "upper",
-                                               "exceedance"),
+                                 summaries = c("mean", "lower",
+                                               "upper", "exceedance"),
                                  thresholds = 0.2,
                                  seed = 2026,
                                  messages = FALSE)
@@ -851,10 +862,11 @@ The `to_table()` function formats them for a report, with one row per county, th
 
 ```{r}
 #| label: tbl-liberia-counties
-#| tbl-cap: "Nodule prevalence among adults in each county of Liberia, with its 95% prediction interval, the probability that it exceeds 20%, and the expected number of adults with nodules, with its 95% prediction interval."
+#| tbl-cap: "Nodule prevalence among adults in each county of Liberia, with its 95% prediction interval, the probability that it exceeds 20%, and the expected number of adults with nodules, in thousands, with its 95% prediction interval."
 to_table(liberia_county_adults, label = "shapeName", sort_by = "mean",
-         col_names = c("County", "Adult prevalence (%)", "P(> 20%) (%)",
-                       "Adults with nodules"))
+         col_names = c("County", "Adult prevalence (%)",
+                       "P(> 20%) (%)",
+                       "Adults with nodules (thousands)"))
 ```
 
 ```{r}
@@ -871,14 +883,14 @@ county_mean <- function(prediction, county) {
 }
 national_value <- function(summary_name) {
   value <- national$value[national$summary == summary_name]
-  format(round(value, -3), big.mark = ",")
+  format(round(1000 * value, -3), big.mark = ",")
 }
 ```
 
 Weighting by adults matters most where they are concentrated in part of a county.
 In Montserrado, which contains the capital, Monrovia, prevalence averaged over the county's area is `r county_mean(liberia_county_area, "Montserrado")`, but among its adults it is only `r county_mean(liberia_county_adults, "Montserrado")`, because most of them live in the city, where prevalence is low.
 The burden column ranks counties differently from prevalence, because a populous county with moderate prevalence can contain more affected adults than a sparsely populated county with high prevalence.
-Nationally, about `r national_value("mean")` adults have nodules (95% prediction interval `r national_value("lower")` to `r national_value("upper")`), out of `r format(round(sum(county_grid$adults), -3), big.mark = ",")` adults.
+Nationally, about `r national_value("mean")` adults have nodules (95% prediction interval `r national_value("lower")` to `r national_value("upper")`), out of `r format(round(1000 * sum(county_grid$adults), -3), big.mark = ",")` adults.
 
 For a decision about mass drug administration, the exceedance probability is the most direct summary.
 A common way to act on it is to classify each county as likely above the threshold, likely below it, or uncertain.
@@ -974,12 +986,13 @@ anopheles_hull <- create_convex_hull(an_fit$data)
 anopheles_grid <- create_grid(anopheles_hull, spacing = 2,
                               distance_units = "km")
 
-# Download elevation with a 1 km margin and extract it at the grid locations
+# Elevation with a 1 km margin, extracted at the grid locations
 anopheles_elev <- get_elev_raster(locations = anopheles_grid, z = 9,
                                   clip = "bbox", expand = 1000) |>
   rast()
 anopheles_points <- st_transform(anopheles_grid, crs(anopheles_elev))
-anopheles_grid$elevation <- extract(anopheles_elev, anopheles_points)[[2]]
+anopheles_grid$elevation <- extract(anopheles_elev,
+                                    anopheles_points)[[2]]
 
 # Weight 1 within the observed elevation range of the traps, 0 outside
 observed_elevation <- range(an_fit$data$elevation)
@@ -993,7 +1006,8 @@ anopheles_prediction <- predict(an_fit,
                                 boundaries = anopheles_hull,
                                 aggregate = "mean",
                                 weights = "suitable",
-                                summaries = c("mean", "lower", "upper"),
+                                summaries = c("mean", "lower",
+                                              "upper"),
                                 seed = 2026,
                                 messages = FALSE)
 ```

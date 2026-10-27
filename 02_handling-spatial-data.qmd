@@ -380,7 +380,7 @@ Polygon layers represent discrete spatial features such as administrative bounda
 # Perform a spatial join to transfer polygon attributes to the points
 points_with_admin <- st_join(liberia_sf, liberia_admin1["shapeName"])
 
-# View the results, points now include covariates from the polygon layer
+# The points now include the attributes of the polygon layer
 head(points_with_admin)
 ```
 
@@ -440,7 +440,8 @@ buffered_points <- st_buffer(liberia_sf_utm, dist = 5000)
 # Plot the buffers for visualisation
 par(mar = c(0, 0, 0, 0))  #| hide_line
 plot(st_geometry(buffered_points), border = "black")
-plot(st_geometry(liberia_sf_utm), add = TRUE, pch = 19, col = "red", cex = .2)
+plot(st_geometry(liberia_sf_utm), add = TRUE, pch = 19, col = "red",
+     cex = .2)
 ```
 
 ```{r}
@@ -510,11 +511,12 @@ The counts must be summed, not averaged or interpolated, because they are an ext
 #| label: create-population-grid
 #| message: false
 # Project the population counts to UTM at 100 m, preserving totals
-lbr_pop_utm <- project(lbr_pop_100, crs(liberia_admin0_utm), res = 100,
-                       method = "sum")
+lbr_pop_utm <- project(lbr_pop_100, crs(liberia_admin0_utm),
+                       res = 100, method = "sum")
 
 # Sum blocks of 50 by 50 cells into 5 km cells
-lbr_pop_5km <- aggregate(lbr_pop_utm, fact = 50, fun = "sum", na.rm = TRUE)
+lbr_pop_5km <- aggregate(lbr_pop_utm, fact = 50, fun = "sum",
+                         na.rm = TRUE)
 
 # Use the 5 km cells that overlap Liberia as prediction locations
 pop_grid <- create_grid(liberia_admin0_utm, raster = lbr_pop_5km,
@@ -633,9 +635,11 @@ It is often useful to combine different spatial data types, such as points, poly
 #| fig-cap: Overlay of population per grid cell, admin-1 boundaries and survey locations in a single ggplot2 map.
 # Combine points, polygons, and raster data in one plot
 combined_map <- ggplot() +
-  geom_raster(data = raster_df, aes(x = x, y = y, fill = log_population)) +
+  geom_raster(data = raster_df,
+              aes(x = x, y = y, fill = log_population)) +
   geom_sf(data = liberia_admin1, fill = NA, color = "black") +
-  geom_sf(data = liberia_sf, shape = 21, col = "black", fill = "white") +
+  geom_sf(data = liberia_sf, shape = 21, col = "black",
+          fill = "white") +
   scale_fill_viridis_c() +
   theme_minimal() +
   labs(title = "Combined Spatial Data: Points, Polygons, and Raster",
@@ -657,7 +661,8 @@ library(ggspatial)
 combined_map +
   annotation_scale(location = "bl", width_hint = 0.25) +
   annotation_north_arrow(location = "tr", which_north = "true",
-                         height = unit(.5, "cm"), width = unit(.5, "cm"))
+                         height = unit(.5, "cm"),
+                         width = unit(.5, "cm"))
 ```
 
 ## FAQs
