@@ -1,11 +1,12 @@
 ---
 fig-width: 5
 fig-asp: 0.75
+code-link: false
 editor_options: 
   chunk_output_type: console
 editor: 
   markdown: 
-    wrap: 72
+    wrap: sentence
 ---
 
 # Geostatistical prediction {#sec-geo-prediction}
@@ -14,956 +15,1020 @@ editor:
 
 | Function | R Package | Used for |
 |-------------------------|------------------|-----------------------------|
-| `setup_prediction()` | *RiskMap* | Predicting the different component of the linear predictor over a grid: the covariates effects and the random effects |
-| `predict_grid_target()` | *RiskMap* | Predictions of target defined at pixel-level |
-| `predict_areal_target()` | *RiskMap* | Predictions of targets defined at areal level |
+| `create_grid()` | *RiskMap* | Creating a regular grid of prediction locations over a study area |
+| `predict()` | *RiskMap* | Predicting scientific targets at individual locations and across areas |
+| `plot()` | *RiskMap* | Mapping predictive summaries at locations, across areas or both |
+| `assess_extrapolation()` | *RiskMap* | Locating predictions that extrapolate in space or in the covariates |
+| `create_convex_hull()` | *RiskMap* | Creating a study area from the convex hull of the sampled locations |
 | `assess_prediction()` | *RiskMap* | Assessing the predictive performance of geostatistical models using cross-validation |
 | `simulate_surface()` | *RiskMap* | Simulating surfaces and data from geostatistical models |
 | `assess_simulation()` | *RiskMap* | Assessing the predictive performance of geostatistical models using simulations |
 
-Geostatistics was originally developed and applied as a predictive tool
-for improving mining operations and planning. In the seminal paper on
-model-based geostatistics (MBG) [@diggle1998], the authors begin by
-stating:
+Geostatistics was originally developed and applied as a predictive tool for improving mining operations and planning.
+In the seminal paper on model-based geostatistics (MBG) [@diggle1998], the authors begin by stating:
 
-> "Conventional geostatistical methodology solves the problem of
-> predicting the realized value of a linear functional of a Gaussian
-> spatial stochastic process $S(x)$ based on observations
-> $Y_i= S(x_i) + Z_i$ at sampling locations $x_i$, where the $Z_i$ are
-> mutually independent, zero-mean Gaussian random variables."
+> "Conventional geostatistical methodology solves the problem of predicting the realized value of a linear functional of a Gaussian spatial stochastic process $S(x)$ based on observations $Y_i= S(x_i) + Z_i$ at sampling locations $x_i$, where the $Z_i$ are mutually independent, zero-mean Gaussian random variables."
 
-It is no coincidence that, although MBG represents a broad class of
-statistical models applicable to both estimation and prediction
-problems, the majority of its applications have focused on prediction.
-This is evident in many scientific fields where MBG has been used,
-including global public health, which is the primary application focus
-in this book. In line with the quote above, for most of the examples
-considered in this book, the analyses we illustrate aim to use a finite
-set of locations $x_i$ --- typically corresponding to households or
-villages --- to make inferences about an observed disease risk surface.
-Having performed estimation of MBG models in @sec-estimation, we can now
-carry out spatial prediction to answer critical public health questions,
-such as identifying hot-spots and cold-spots --- areas of unusually high
-or low disease risk, respectively --- or determining whether the average
-prevalence across a region exceeds a predefined policy threshold.
+It is no coincidence that, although MBG represents a broad class of statistical models applicable to both estimation and prediction problems, the majority of its applications have focused on prediction.
+This is evident in many scientific fields where MBG has been used, including global public health, which is the primary application focus in this book.
+In line with the quote above, for most of the examples considered in this book, the analyses we illustrate aim to use a finite set of locations $x_i$, typically corresponding to households or villages, to make inferences about an unobserved disease risk surface.
+Having performed estimation of MBG models in @sec-estimation, we can now carry out spatial prediction to answer critical public health questions, such as identifying hot-spots and cold-spots (areas of unusually high or low disease risk, respectively) or determining whether the average prevalence across a region exceeds a predefined policy threshold.
 
-In this chapter, we will explore these issues, beginning with a formal
-statistical formulation of the spatial prediction problem and a
-description of the necessary steps for its implementation. We will then
-demonstrate how spatial prediction is performed when considering
-predictive targets at both the *pixel-level* and *areal-level*. Finally,
-we will conclude the chapter by presenting methods for comparing the
-predictive performance of different models, with some insights into
-their relative strengths and weaknesses.
+In this chapter, we will explore these issues, beginning with a formal statistical formulation of the spatial prediction problem and a description of the necessary steps for its implementation.
+We will then demonstrate how spatial prediction is performed when considering predictive targets at individual locations and over areas.
+Finally, we will conclude the chapter by presenting methods for comparing the predictive performance of different models, with some insights into their relative strengths and weaknesses.
 
 ## Spatial prediction using geostatistical models {#sec-spat-pred-target}
 
-Let us consider the class of generalized linear geostatistical models
-(GLGM) as in @sec-geostat-models. In the formulation of prediction
-problems, the first step consists of defining our predictive target,
-which we denote as $T(x)$ where $x$ denotes any locations within the
-study, which is usually not part of the sampled data. For example in the
-analysis of the river blindness in Liberia, our interest lies in
-identifying areas where disease prevalence exceeds 20$\%$, a threshold
-that use been used in the past to identify areas in need of mass drug
-administration due to the potential for significant disease burden and
-transmission [@amazigo2008]. Hence, in this case, disease prevalence
-corresponds to our predictive target, which we define formally as
-$T(x) = \exp\{d(x)^\top \beta + S(x)\}/(1+\exp\{d(x)^\top \beta + S(x)\})$.
-As we will explain in more detail shortly, note that $T(x)$ is generally
-a function of the spatial process $S(x)$. Therefore, understanding how
-to predict $T(x)$ requires that we first understand how the prediction
-of $S(x)$ at any location $x$ should be carried out.
+Consider a generalised linear geostatistical model as defined in @sec-geostat-models.
+The first step in spatial prediction is to define what we want to predict.
+We denote a location-specific *predictive target* by $T(x)$, where $x$ can be a sampled or an unsampled location in the study region $A$.
+For the river blindness example in Liberia, our target is the underlying nodule prevalence surface,
+$$
+T(x) = p(x) = \operatorname{logit}^{-1}\{d(x)^\top\beta + S(x)\}.
+$$
+This target describes the prevalence of palpable nodules in the population, the indicator measured by the Rapid Epidemiological Mapping of Onchocerciasis, rather than the result of a new survey with a particular sample size.
+One question is where nodule prevalence exceeds 20%, a threshold historically used to identify areas for mass drug administration [@amazigo2008].
+We use it here to illustrate prediction of threshold exceedance.
 
-To draw inferences on $T(x)$ and answer questions such as where $T(x)$
-exceeds a 20% threshold, we first need to obtain the so-called
-*predictive distribution* of $S(x)$. More specifically, the *predictive
-distribution* of $S(x)$ is the distribution of $S(x)$ conditioned on the
-data, which we denote by $[S(x) \mid y]$. Similarly, we denote the
-predictive distribution of $T(x)$ by $[T(x) \mid y]$. The relationship
-between these two predictive distributions is straightforward: since
-$T(x)$ is a deterministic function of $S(x)$, we can obtain samples from
-$[T(x) \mid y]$ by first sampling from $[S(x) \mid y]$ and then
-transforming those samples according to the definition of $T(x)$. This
-functional relationship means that deriving the predictive distribution
-of $S(x)$ is the key step in making inferences about any target $T(x)$
-that depends on it. More importantly, by incorporating the information
-provided by the data, the predictive distribution of $S(x)$ enables us
-to quantify the uncertainty stemming from the stochastic nature of the
-process we are modeling and propagate it into $T(x)$. In other words,
-the predictive distribution of $S(x)$ allows us to understand the range
-of possible values that the target $T(x)$ can take and their likelihoods
-based on the model we have fitted to the data. As we shall see in our
-examples, we can use the predictive distribution of $T(x)$ both to
-provide what is our "best guess" for $T(x)$ and a summary of uncertainty
-which quantifies how concentrated is the predictive distribution around
-that guess. However, providing a single "best guess" for $T(x)$ is not
-always the answer to our research question. In the example on
-river blindness mentioned at the start of the this section, a more
-natural way to use the predictive distribution would be to compute the
-likelihood that $T(x)$ exceeds 0.2 at any given location $x$.
+The *predictive distribution* describes the possible values of the target conditional on the observed data.
+We write this as $[T(x)\mid y]$.
+By default, RiskMap treats the estimated regression coefficients and covariance parameters as fixed when making predictions.
+The resulting uncertainty describes the unobserved surface under the fitted model.
+It does not account for uncertainty in those parameter estimates.
+We use this default for the first Liberia predictions, then show how to propagate parameter uncertainty in @sec-pred-parameter-uncertainty.
 
-In summary, the first two steps of spatial prediction are:
+With the parameters held fixed, $T(x)$ is a deterministic transformation of $S(x)$.
+We can therefore obtain samples from $[T(x)\mid y]$ by drawing from $[S(x)\mid y]$ and applying the target's transformation to each draw.
+The resulting samples can be used to calculate a predictive mean, a prediction interval, or an exceedance probability such as $P\{T(x)>0.2\mid y\}$.
+These summaries answer different questions: the mean provides a point prediction, an interval describes uncertainty, and an exceedance probability quantifies how strongly the fitted model and data support exceeding the specified threshold.
+The two steps are therefore to define the scientific target and then use its predictive distribution to answer the question of interest.
+For a mathematical derivation of the predictive distribution, including its analytical form for linear geostatistical models, see @sec-theory-prediction.
+Here we use Monte Carlo samples to provide a common approach for linear and generalised linear models.
 
-- Step 1. define the predictive target $T(x)$;
+We distinguish two types of target:
 
-- Step 2. obtain the predictive distribution of $T(x)$ and use this to
-  compute summaries that helps to answer your original research
-  question.
+- **Spatially continuous targets** describe an unobserved surface, $\mathcal{T}=\{T(x):x\in A\}$, such as prevalence across a country.
+  Maps evaluate this surface at a finite set of prediction locations.
+- **Areal-level targets** summarise that surface over a region.
+  For example, the spatial average is $\mathcal{T}_A=|A|^{-1}\int_A T(x)\,dx$, where $|A|$ is the region's area.
+  This differs from a population-weighted average when population density varies across the region.
 
-This raises two practical questions: "How do we obtain the predictive
-distribution of $S(x)$?" and "How do we use the predictive distribution
-to compute summaries for our target $T(x)$?". For a mathematical
-derivation of the predictive distribution and the form that this takes
-in the special case of a linear geostatistical model, see
-@sec-theory-prediction. In what follows, we shall assume that we can
-simulate directly from $[S(x) \mid y]$, and consequently from
-$[T(x) \mid y]$, using either direct simulation or Markov Chain Monte
-Carlo methods (see @sec-mcmc-mala). We shall distinguish between two
-types of predictive targets.
+To approximate a continuous surface, we first choose prediction locations $\tilde X=\{\tilde x_1,\ldots,\tilde x_q\}$, often the centres of a regular grid.
+We then generate predictive draws at those locations.
+The required dependence between locations depends on the question:
 
-- **Spatially continuous targets** correspond to an unobserved spatially
-  continuous surface, such as disease prevalence at all locations within
-  a region. Formally, we denote this by
-  $\mathcal{T} = \{T(x), x \in A\}$, where $A$ is our region of
-  interest.
+- **Marginal prediction** provides draws with the correct predictive distribution at each location, without preserving the full dependence between locations.
+  It is sufficient for location-specific means, intervals and exceedance probabilities.
+- **Joint prediction** preserves the predictive dependence between locations.
+  Each draw represents one possible spatial surface and can be used to calculate quantities involving several locations together.
 
-- **Areal-level targets** are summaries of the spatially continuous
-  surface $\mathcal{T}$ over the region $A$, which we denote as
-  $\mathcal{T}_{A} = F(\mathcal{T}, A)$. For example, the average of
-  $T(x)$ over $A$ is an areal-level target, formally defined as
-  $F(\mathcal{T}, A) = \int_{A} T(x) \, dx / |A|$, where $|A|$ denotes
-  the area of $A$.
+Joint prediction is generally more computationally demanding.
+For a map of location-specific summaries, marginal prediction is sufficient.
+For the distribution of a spatial average, total, maximum, or a simultaneous exceedance event, we need joint prediction.
+The expectation of a spatial average can be calculated from marginal means, but its variance also depends on the covariances between locations.
+Marginal draws must not be treated as complete spatial surfaces when calculating this uncertainty.
 
-Before we consider these two types of prediction targets more in detail,
-we first explain the preliminary steps that need to be performed and are
-common to both. Whether our goal is predict a spatially continuous or
-areal-level target, the initial task is to draw Monte Carlo samples from
-the predictive distribution of the spatial process $S(x)$. Next, we
-define a set of prediction locations, say $q$ in total, denoted as
-$\tilde{X} = {\tilde{x}_1, \ldots, \tilde{x}_q}$. These locations
-correspond to a regular grid that spans our region of interest, $A$. the
-predictive distribution of the spatial process over the grid,
-represented as $[S(\tilde{X}) \: |\: y]$. This distribution allows us to
-generate Monte Carlo samples for $S(\tilde{X})$, which will later be
-used for computing our target.
+#### Why dependence matters for a regional prediction {.unnumbered}
 
-::: callout-note
-Here, we are overlooking the fact that when $T(x)$ is a linear
-transformation of $S(x)$ and the model fitted to the data is a linear
-geostatistical model, then we can derive any summary of the predictive
-distribution analytically, without the need of carrying out any
-simulation. Although this may displease some of our fellow statisticians
-who care about computational efficiency, for pedagogical reasons, here
-we have chosen to explain only the Monte Carlo based approach, which
-works in all scenarios.
-:::
-
-At this stage, we need to consider which of the two following types of
-predictions from $[S(\tilde{X}) \: |\: y]$ are required.
-
-- **Marginal predictions** are obtained by simulating independently from
-  the $q$ marginal predictive distributions of $[S(\tilde{X}) | y]$. In
-  other words, we consider a prediction location $\tilde{x}_j$, simulate
-  from $[S(\tilde{x}_j) \: |\: y]$ say $B$ samples, and repeat this for
-  $j=1,\ldots,q$
-
-- **Joint predictions** are obtained by simulating from the joint
-  distribution of $[S(\tilde{X}) \: |\: y]$. Unlike marginal
-  predictions, joint predictions take into account the correlation
-  between the different components of $[S(\tilde{X}) \: |\: y]$.
-
-To better understand the technical differences between marginal and
-joint predictions, we refer you to @sec-pred-distr-theory. However, in
-practice, the two following observations are important.
-
-O1. Joint predictions are computationally more intensive than marginal
-predictions.
-
-O2. Joint predictions are required when the predictive target is at
-areal-level.
-
-O3. For spatially continuous targets, both marginal and joint
-predictions can be used but, in light of O1, we might prefer using the
-former.
-
-### Generating samples from the predictive distribution of $S(\tilde{X})$ (continue from @sec-liberia-estim1) {#sec-pred-samples}
-
-We now show how the ideas and concepts discussed above are put into
-practice in an geostatistical analysis, using the Liberia data example.
-Using the fitted model in @sec-liberia-estim1, we use the
-`setup_prediction()` function in RiskMap, to sample from the predictive
-distribution of the spatial Gaussian process $S(x)$ based on a regular
-grid spanning the country of Liberia.
-
-The `setup_prediction()` function enables us to predict the separate effects
-of the covariates, given by $d(x)^\top \beta$, and the spatial random
-effects, $S(x)$, at any desired location $x$. Hence, before we can use
-the `setup_prediction()` function, we need to do 1) obtain a shape file that
-defines the boundaries of our study area, 2) use that to create a
-regular grid and 3) extract the covariates values at those locations.
-The R script below performs all these steps.
+Consider a small region divided into 16 equally sized cells.
+At each cell, suppose prevalence is either 10% or 30%, with equal probability.
+In an idealised example of perfect positive dependence, all cells are low together or high together.
+Alternatively, imagine drawing independently from the same distribution at each cell.
+Both constructions give the same predictive distribution at every cell and the same expected regional average of 20%, but very different uncertainty about that average (@fig-joint-versus-marginal).
 
 ```{r}
-#| label: load-liberia-prediction-inputs
+#| label: fig-joint-versus-marginal
 #| echo: false
+#| out-width: "100%"
+#| fig-cap: "Perfect dependence (A) and independence (B) give the same distribution at any one cell (left) but very different distributions for the average over 16 cells (right). The maps show four possible draws of each, with the regional average of each draw. The marked cell is the same in every map. The bar charts are exact distributions over all possible draws. The dashed line and shaded area mark a decision threshold of 25%."
+knitr::include_graphics(if (knitr::is_latex_output()) {
+  "figures/joint-versus-marginal.pdf"
+} else {
+  "figures/joint-versus-marginal.png"
+})
+```
+
+Under perfect dependence, the regional average is either 10% or 30%, so its standard deviation is 10 percentage points.
+Under independence, let $H$ be the number of high-prevalence cells.
+Then $H\sim\operatorname{Binomial}(16,0.5)$ and the average is $0.1+0.2H/16$, with a standard deviation of only 2.5 percentage points.
+To see what this means for a decision, suppose action is needed when the regional average exceeds 25%, a threshold above the expected average of 20%.
+Under perfect dependence, the probability of exceeding it is 50%.
+Under independence it is $P(H\geq13)\approx1.06\%$.
+Treating dependent cells as independent would therefore make us much too certain that the threshold is not exceeded.
+Perfect dependence is used here to make the contrast clear.
+In a fitted spatial model the strength of dependence is estimated from the data.
+
+### Example: preparing predictions for Liberia (continuing from @sec-liberia-estim1) {#sec-pred-samples}
+
+We now apply these ideas to the river blindness example.
+We first load the packages used in this chapter.
+
+```{r}
+#| label: load-chapter-4-packages
 #| message: false
+# Load the packages used in this chapter
 library(sf)
-library(RiskMap)
+library(terra)
+library(geobounds)
+library(elevatr)
+library(dplyr)
 library(ggplot2)
+library(patchwork)
+library(RiskMap)
+```
+
+We then refit the model of @sec-liberia-estim1, which uses log elevation and a spatial Gaussian process, with no nugget.
+
+```{r}
+#| label: refit-liberia-model
+#| eval: false
+# Refit the river blindness model from Chapter 3
+data(liberia)
+liberia <- st_as_sf(liberia, coords = c("long", "lat"), crs = 4326)
+fit_liberia <- glgpm(npos ~ log(elevation) + gp(),
+                     denominator = ntest, data = liberia,
+                     model_crs = 32629,
+                     control_mcmc = set_control_mcmc(seed = 2026),
+                     return_samples = TRUE,
+                     family = "binomial")
+```
+
+Next, we prepare the study boundary, a regular prediction grid and elevation values at the grid locations.
+The `newdata` argument of `predict()` takes these locations and covariates together in one spatial object, so their rows remain aligned.
+We add the covariates as new columns of the grid created by `create_grid()`, which keeps the record of its cells and study boundary that later calculations and maps use.
+For elevation we use the SRTM raster prepared in Chapter 2 (@fig-rgee-elevation), which is also the source of the elevations recorded for the surveyed villages.
+Predicting with a covariate from a different source than the one used to fit the model would introduce an avoidable inconsistency.
+
+```{r}
+#| label: load-chapter-4-results
+#| include: false
+data(liberia)
+liberia <- st_as_sf(liberia, coords = c("long", "lat"), crs = 4326)
 fit_liberia <- readRDS("data/fit_Liberia.rds")
-data("malkenya")
-malkenya_comm <- malkenya[malkenya$Survey=="community", ]
+liberia_grid <- readRDS("data/liberia_grid.rds")
+liberia_prediction <- readRDS("data/liberia_prediction.rds")
+liberia_parameter_uncertainty <- readRDS(
+  "data/liberia_parameter_uncertainty.rds"
+)
+liberia_fixed <- liberia_parameter_uncertainty$fixed
+liberia_uncertain <- liberia_parameter_uncertainty$propagated
 fit_malkenya <- readRDS("data/fit_malkenya.rds")
-pred_age15 <- readRDS("data/pred_age15.rds")
-pred_aver_pop <- readRDS("data/pred_aver_pop.rds")
-lb_pred_S_m <- readRDS("data/lb_pred_S_m.rds")
-lb_pred_S_m$obs_loc <- FALSE
-lb_pred_S_j <- readRDS("data/lb_pred_S_j.rds")
-lb_pred_S_j$obs_loc <- FALSE
-liberia_grid <- lb_pred_S_j$grid_pred
+kenya_prediction <- readRDS("data/kenya_prediction.rds")
+kenya_age15 <- kenya_prediction$age15
+kenya_standardised <- kenya_prediction$standardised
+liberia_adm1 <- readRDS("data/lbr_adm1_geoboundaries.rds")
+liberia_county_area <- readRDS("data/liberia_county_area.rds")
+county_grid <- readRDS("data/liberia_county_grid.rds")
+liberia_county_adults <- readRDS("data/liberia_county_adults.rds")
+liberia_national <- readRDS("data/liberia_national.rds")
 an_fit <- readRDS("data/an_fit.rds")
-an_grid <- readRDS("data/an_grid.rds")
-an_weights <- readRDS("data/an_weights.rds")
-pred_an_S <- readRDS("data/pred_an_S.rds")
-pred_n_mosq_grid <- readRDS("data/pred_n_mosq_grid.rds")
-pred_n_mosq_shp <- readRDS("data/pred_n_mosq_shp.rds")
+anopheles_prediction <- readRDS("data/anopheles_prediction.rds")
 regularized <- readRDS("data/regularized.rds")
 regularized_scores <- regularized
 cluster <- readRDS("data/cluster.rds")
 cluster_scores <- cluster
-pred_shp <- readRDS("data/pred_shp.rds")
-pred_shp_w <- readRDS("data/pred_shp_w.rds")
 true_model <- readRDS("data/fit_sp_lib.rds")
-liberia_adm0 <- readRDS("data/lbr_adm0_geoboundaries.rds")
-lb_adm1 <- readRDS("data/lbr_adm1_geoboundaries.rds")
-library(dplyr)
 res_sim_grid <- readRDS("data/sim_grid_mse.rds")
-
 res_sim_area <- readRDS("data/sim_area_cl.rds")
-
 ```
 
 ```{r}
 #| label: prepare-liberia-prediction-grid
 #| message: false
 #| eval: false
-# 1) Obtain the Liberia boundary
-library(geobounds)
-liberia_adm0 <- gb_get_adm0("Liberia")
-liberia_adm0 <- st_transform(liberia_adm0, crs = 32629)
+# Download the national boundary and project it to UTM zone 29N
+liberia_adm0 <- gb_get_adm0("Liberia") |>
+  st_transform(crs = 32629)
 
-# 2) Create the grid at 5 km resolution
-liberia_grid <- create_grid(liberia_adm0, spacing = 5)
+# Create a 5 km grid, keeping cells that overlap the boundary
+liberia_grid <- create_grid(liberia_adm0, spacing = 5,
+                            distance_units = "km", keep = "overlap")
 
-# Download elevation data
-library(elevatr)
-liberia_elev <- get_elev_raster(locations = liberia_adm0, 
-                                z = 5, clip = "locations")
+# Import the SRTM elevation raster and mask non-positive values
+liberia_elev <- rast("data/lbr_elevation_srtm.tif")
+liberia_elev[liberia_elev <= 0] <- NA
 
-# 3) Extracting elevation at the grid locations
-lb_predictors <- data.frame(elevation = 
-                         terra::extract(liberia_elev,
-                                st_coordinates(liberia_grid)))
+# Extract elevation at the grid locations, in the raster's CRS
+extraction_points <- st_transform(liberia_grid, crs(liberia_elev))
+liberia_grid$elevation <- extract(liberia_elev, extraction_points,
+                                  search_radius = 5000)[[2]]
 ```
 
-In the code above, we generated a prediction grid, previously referred
-to as $\tilde{X}$, with a spatial resolution of 5 km. Generally, a
-higher spatial resolution (note that a "higher spatial resolution"
-corresponds to a lower value for `spacing`) yields more detailed
-prediction maps but also increases the computational cost. In this case,
-the choice of a 5 km grid strikes a balance between sufficient
-visualization clarity and manageable computation time.
+The prediction locations are spaced 5 km apart.
+A finer grid gives a finer representation of the surface, at greater computational cost.
+It does not add information to the survey data.
+With `keep = "overlap"`, the grid also includes cells along the coast and the borders whose centres lie just outside the country.
+They matter when we add up population later in the chapter, and maps clip them to the boundary.
+The elevation raster has no values outside Liberia, so for these cells `search_radius = 5000` takes the elevation of the nearest land cell within one grid spacing.
+We first set the few shoreline cells recorded at 0 m or below to missing, because the model uses the logarithm of elevation.
+In Chapter 2 we cautioned against borrowing a value across a coastline for a survey location.
+Here the value describes the part of a prediction cell that lies on land, which is the part these cells contribute to the population totals.
+The elevation raster and extraction points must use the same coordinate reference system.
 
-At this point, we have all the necessary inputs to execute the
-`setup_prediction()` function for both marginal and joint predictions, as
-demonstrated below.
+We use marginal prediction because our immediate goal is to summarise prevalence separately at each grid location.
+The following call also retains the spatial draws so that we can inspect a predictive distribution.
+The summaries of prevalence are discussed in the next section.
+The arguments of `predict()` for a RiskMap model are documented in `?predict.RiskMap`.
 
 ```{r}
 #| label: predict-liberia-spatial-process
 #| eval: false
-# Predicting the spatial process S(x) over the grid, as well as
-# covariates effects
-
-# Marginal predictions
-lb_pred_S_m <- setup_prediction(fit_liberia, 
-                            grid_pred = liberia_grid, 
-               predictors = lb_predictors, messages = FALSE,
-               type = "marginal")
-
-# Joint predictions
-lb_pred_S_j <- setup_prediction(fit_liberia, 
-                            grid_pred = liberia_grid, 
-               predictors = lb_predictors, messages = FALSE,
-               type = "joint")
+liberia_prediction <- predict(fit_liberia,
+                              newdata = liberia_grid,
+                              type = "marginal",
+                              summaries = c("mean", "interval_width",
+                                            "cv", "exceedance"),
+                              thresholds = 0.2,
+                              keep_samples = TRUE,
+                              seed = 2026,
+                              messages = FALSE)
 ```
 
-Both `lb_pred_S_m` and `lb_pred_S_j` contain lists with the same
-arguments, with one key difference: the samples in the list element
-named `S_samples` for the former are drawn from the marginal predictive
-distributions of the components of $S(\tilde{X})$, while for the latter,
-they come from the joint predictive distribution of $S(\tilde{X})$.
+Printing the result lists what it contains and how to map it.
 
-An important note is that in the code above we have used the default
-settings for the Markov Chain Monte Carlo (MCMC). To change these
-setting use the function `set_control_mcmc()` whose output should be passed
-to the argument `control_mcmc` of `setup_prediction()`. The diagnostic on the
-convergence of the MCMC can also be applying the `plot_mcmc()` function
-to either `lb_pred_S_m` or `lb_pred_S_j`; see @sec-summary for more
-details.
+```{r}
+#| label: print-liberia-prediction
+liberia_prediction
+```
 
-We can inspect the predictive distribution of any component
-$S(\tilde{X})$ through the Monte Carlo samples stored in `S_samples`.
-For example, the script below generates the histogram for the predictive
-distribution of the first component of $S(\tilde{X})$
-(@fig-hist-first-comp-pd).
+The `predictions` component contains the grid and its predictive summaries.
+Because we set `keep_samples = TRUE`, the spatial draws are retained in `samples$spatial`, with one row per prediction location and one column per draw.
+Using `type = "joint"` would preserve dependence between locations, but is unnecessary for the location-specific summaries shown here.
+Normally, `keep_samples = FALSE` avoids retaining these matrices after the summaries have been calculated.
+
+@fig-prediction-workflow shows what `predict()` does with this matrix.
+The spatial effect is drawn at every location (step 1), each target is calculated in every draw (step 2), and each row is then summarised across its draws (step 3).
+The last step, aggregation within areas, is used in @sec-areal-target.
+
+```{r}
+#| label: fig-prediction-workflow
+#| echo: false
+#| out-width: "100%"
+#| fig-cap: "Operations within predict(), shown as a matrix with one row per prediction location and one column per draw. The spatial effect is drawn (1) and the targets are calculated in every draw (2). Location-level summaries collapse each row across draws (3). Areal summaries first aggregate the rows within each polygon, separately in each draw, and then summarise each polygon across draws (4)."
+knitr::include_graphics(if (knitr::is_latex_output()) {
+  "figures/prediction-workflow.pdf"
+} else {
+  "figures/prediction-workflow.png"
+})
+```
+
+For this non-Gaussian model, prediction reuses the conditional samples stored in the fitted object when they are available.
+We should check the conditional sampler as described in @sec-summary.
+Supplying a `set_control_mcmc()` object through `control_mcmc` requests a fresh conditional run.
+Otherwise a fresh run is needed only if the fitted object has no stored samples.
+The seed above controls random draws made during prediction.
+
+To inspect uncertainty about the spatial process at the first grid location, we select the first row of the spatial-sample matrix.
+Its columns are repeated draws for that same location, rather than different locations in a single draw.
 
 ```{r}
 #| label: fig-hist-first-comp-pd
-#| fig-cap: "Histogram of the predictive distribution of the first component, $S(\\tilde{x}_1)$ of $S(\\tilde{X})$ for the Liberia data analysis."
-
-hist(lb_pred_S_m$S_samples[,1], main = "Predictive distribution",
-     xlab = expression(S(tilde(x)[1])))
+#| fig-cap: "Predictive distribution of the spatial effect at the first Liberia grid location, conditional on the observed data and estimated model parameters. The histogram uses repeated draws for one location."
+# Select the draws for the first grid location
+spatial_effect <- liberia_prediction$samples$spatial[1, ]
+spatial_draws <- data.frame(spatial_effect)
+ggplot(spatial_draws, aes(x = spatial_effect)) +
+  geom_histogram(bins = 30, fill = "#347B87", colour = "white") +
+  labs(x = expression(S(tilde(x)[1])), y = "Number of draws") +
+  theme_minimal()
 ```
 
 ## Spatially continuous targets {#sec-spat-cont-target}
 
-In the previous section, we explained and demonstrated how to obtain
-Monte Carlo samples from the predictive distribution of $S(\tilde{X})$,
-which we denoted by $[S(\tilde{X}) \: |\: y]$. Let $S_{(j)}(\tilde{X})$
-and $[S(\tilde{X}) \: |\: y]$ represent the $j$-th Monte Carlo samples
-for the entire grid and the specific location $x_k$, respectively, for
-$j=1,\ldots,B$ and $k=1,\ldots,q$.
+The previous section showed how to obtain predictive draws of the spatial effect at the grid locations.
+For a target $T(x)=f\{d(x)^\top\beta+S(x)\}$, we apply $f$ separately to each complete linear-predictor draw, including the fitted covariate contribution.
+With a nonlinear transformation, transforming the predictive mean is not the same as averaging the transformed draws.
+The latter gives the predictive mean of the target.
+By default, `predict()` takes $f$ to be the inverse link function of the fitted model: the inverse logit for a binomial model, which gives prevalence, and the exponential for a Poisson model, which gives a rate.
+This response-scale target is always calculated, and its summaries are stored in columns whose names begin with `response_`.
+Other targets can be requested through the `transform` argument, a named list of functions.
+Each function receives the matrix of linear-predictor draws, with one row per location and one column per draw, and must return a matrix of the same size.
+For example, `transform = list(odds = function(link) exp(link))` adds the predictive odds of infection, summarised in columns beginning with `odds_` and mapped with `plot(..., quantity = "odds")`.
+Common targets are listed in @tbl-spat-cont-pred-target.
 
-We define our predictive target, $T(x)$, at any given location $x$, as a
-transformation of $S(x)$. Thus, we express it as $T(x) = f\{S(x)\}$.
-Note that $f(\cdot)$ can represent any type of non-linear transformation
-of $S(x)$ and may include covariate effects and other non-structured
-random effects. A list of common predictive targets frequently used in
-geostatistical analysis is provided in @tbl-spat-cont-pred-target.
-
-| Predictive target $T(x)$ | Name of the predictive target | Generalized linear model (GLM) family |
+| Predictive target $T(x)$ | Name of the predictive target | Generalised linear model (GLM) family |
 |----------------------------|----------------------|-----------------------|
 | $d(x)^\top \beta + S(x)$ | Linear predictor | Any GLM |
 | $\frac{\exp\{d(x)^\top \beta + S(x)\}}{1+\exp\{d(x)^\top \beta + S(x)\}}$ | Prevalence | Binomial |
-| $\exp\{d(x)^\top \beta + S(x)\}$ | Mean number of cases | Poisson |
+| $\exp\{d(x)^\top \beta + S(x)\}$ | Rate per unit exposure | Poisson |
 | $S(x)$ | Spatial random effects | Any GLM |
-| $d(x)^\top \beta$ | Covariates effects | Any GLM |
+| $d(x)^\top \beta$ | Covariate effects | Any GLM |
 
-: List of some of the most common spatially continuous predictive
-targets in a geostatistical analysis. For each target, we also indicate
-the generalized linear model (GLM) family for which these can be
-defined. Note that this list not exhaustive and different predictive targets
-other than those listed in the table could also be considered.
+: Some of the most common spatially continuous predictive targets in a geostatistical analysis, with the generalised linear model (GLM) family for which each can be defined. The list is not exhaustive, and other targets can be defined from the same predictive draws. {#tbl-spat-cont-pred-target}
 
-An important feature of the predictive targets listed in
-@tbl-spat-cont-pred-target is that none of them include the nugget
-effect, denoted by $Z_i$ in our linear predictor definition for
-generalized linear geostatistical models. The reason for excluding $Z_i$
-from the predictive targets is that, in most cases, it lacks a clear,
-unambiguous scientific interpretation. However, $Z_i$ might be included,
-for example, in environmental studies focusing on highly localized
-phenomena where measurement error or small-scale variability is of
-direct scientific interest; or in epidemiological studies where
-inferences at the individual level, rather than the population level,
-are required, and where $Z_i$ is introduced to account for unexplained
-individual-level variation. It is also worth noticing, the primary
-impact of including $Z_i$ in $T(x)$ would be an increase in the
-uncertainty of predictive inferences for $T(x)$, with minimal effect (or
-none at all, if $T(x)$ corresponds to the linear predictor) on the point
-predictions.
+These targets describe the underlying spatial surface and omit the nugget $Z_i$.
+Whether a nugget belongs in a target depends on its scientific interpretation: measurement error is not part of the true surface, whereas genuine variation at a finer spatial scale may be relevant.
+For predictions at new locations, `predict()` excludes the nugget by default.
+`include = "nugget"` adds a new nugget realisation when the fitted model contains one.
+Adding a nugget can change both predictive uncertainty and the mean on a nonlinear response scale.
+A zero-mean nugget leaves the mean linear predictor unchanged, but generally does not leave the mean prevalence or rate unchanged.
+It should therefore be included because it belongs to the scientific target, rather than simply to widen an interval.
+The Liberia model used here has no nugget.
 
-The predictive targets in @tbl-spat-cont-pred-target corresponding to
-$d(x)^\top \beta$ or the spatial random effects $S(x)$ might be
-considered when the goal is to highlight the different contribution to
-the overall predictive inferences from the measured covariates.
+For a binomial model, the inverse link gives a probability, not a simulated positive count from a new survey.
+For a Poisson model, the inverse link gives a rate per unit exposure.
+The expected count additionally depends on exposure.
+The fixed covariate contribution and spatial effect can also be examined separately to understand their contributions to prediction.
 
 ### Example: mapping river blindness prevalence in Liberia (continuing from @sec-pred-samples) {#sec-liberia-prediction-1}
 
-Let us continue the geostatistical of the river blindness data in
-Liberia. The predictive target we consider is prevalence, hence
-$$T(x) = \frac{\exp\{ \beta_{0} + \beta_{1}\log\{e(x)\} + S(x)\}}{1+\exp\{\beta_{0} + \beta_{1}\log\{e(x)\} + S(x)\}},$$ {#eq-rb-prev-target}
-where $e(x)$ is the elevation in meters at location $x$.
+For the fitted Liberia model, the prevalence target is
+$$
+T(x)=\operatorname{logit}^{-1}\{\beta_0+\beta_1\log e(x)+S(x)\},
+$$ {#eq-rb-prev-target}
+where $e(x)$ is elevation in metres.
+The binomial inverse link is already part of `fit_liberia`, so the earlier `predict()` call has calculated the prevalence summaries without requiring us to supply the logistic transformation again.
+The requested summaries have the following interpretation:
 
-Through the `predict_grid_target()` we can use the output in `lb_pred_S_m`
-(or `lb_pred_S_j` as well, in this case) to generate predictions of
-prevalence over the regular grid at 5 km we have created earlier.
+- `"mean"` averages the prevalence draws at each location.
+- `"interval_width"` is the width of the 95% prediction interval, in percentage points of prevalence.
+- `"cv"` is the standard deviation of the draws divided by their mean, a relative measure of uncertainty.
+- `"exceedance"`, with `thresholds = 0.2`, gives the proportion of draws with prevalence above 20%, an estimate of $P\{T(x)>0.2\mid y\}$.
 
-```{r}
-#| label: predict-liberia-prevalence
-
-# Prediction of river blindness prevalence
-lb_prev <- 
-predict_grid_target(
-  lb_pred_S_m, 
-  f_target = list(prev = function(lp) exp(lp)/(1+exp(lp))),
-  pd_summary = list(mean = function(Tx) mean(Tx), 
-                    cv = function(Tx) sd(Tx)/ mean(Tx),
-                    exceed20 = function(Tx) mean(Tx > 0.2))
-)
-```
-
-In the function above the argument `f_target` can take a list of
-functions, as multiple predictive targets can be defined. Here, we only
-specified prevalence (`prev`). Note that in defining the predictive
-target in `f_target`, we need to express that as a function of
-$d(x)^\top \beta + S(x)$. The argument `include_covariates` also allows
-us to define predictive targets that do not use covariates from the
-model. By default `include_covariates = TRUE`, hence in the code above
-covariates are part of what is defined through `lp`. To predict the
-spatial random effects $S(x)$ only, for example, you can set
-`include_covariates = FALSE` and
-`f_target = list(Sx = function(lp) lp)`. In `pd_summary`, we define the
-summaries that we want to visualize from the predictive distribution.
-Here, we have specified the mean, coefficient of variation and the
-probability of exceeding a 20$\%$ prevalence threshold.
-
-We can then visualize the resulting maps as follows.
+The `plot()` function maps any of these summaries, and its options are documented in `?plot.RiskMap_prediction`.
+Its default colours depend on what is mapped: predicted levels, uncertainty and exceedance probabilities each have their own palette.
+Several summaries can be mapped in one call.
+The result is built with the ggplot2 and patchwork packages, so we can add layers to every map with `&`, here the surveyed villages.
 
 ```{r}
-#| fig-width: 18
-#| fig-height: 6
 #| label: fig-lb-maps
-#| fig-cap: "Mapping river blindness in Liberia. Plots of the mean (left panel), coefficient of variation (central panel) and exceedance probability (right panel) for a 20% prevalence threshold."
-
-# Displaying the results
-par(mfrow = c(1,3))
-plot(lb_prev, which_target = "prev", 
-     which_summary = "mean", main = "Mean")
-plot(lb_prev, which_target = "prev", 
-     which_summary = "cv", main = "Coefficient of variation")
-plot(lb_prev, which_target = "prev", 
-     which_summary = "exceed20", main = "Exceedance probability")
-par(mfrow=c(1,1))
+#| fig-width: 6
+#| fig-asp: 1.2
+#| out-width: "100%"
+#| fig-cap: "Predicted nodule prevalence in Liberia, conditional on the estimated model parameters, with the surveyed villages. Top left: predictive mean. Top right: width of the 95% prediction interval. Bottom: probability that prevalence exceeds 20%."
+plot(liberia_prediction, summary = c("mean", "interval_width", "exceedance")) &
+  geom_sf(data = liberia, shape = 21, size = 0.7, fill = "white",
+          colour = "black", stroke = 0.3, inherit.aes = FALSE)
 ```
 
-The maps in @fig-lb-maps indicate a higher prevalence as we move away
-from the coast and at higher altitudes. A very similar spatial pattern
-is observed in the likelihood of exceeding 20$\%$ prevalence. Also,
-based on the map of the coefficient of variation, the uncertainty around
-the point predictions of prevalence is higher along the coast and lower
-in the inland areas of Liberia.
+The maps in @fig-lb-maps separate predicted prevalence from the uncertainty about it.
+The interval width is read directly in percentage points of prevalence, which is how uncertainty is usually discussed in programme decisions.
+The coefficient of variation, also calculated above, is a relative measure: at low prevalence a small absolute uncertainty gives a large coefficient of variation, so it can make low-prevalence areas look more uncertain than they are in absolute terms.
+The exceedance map answers a different question from the mean map: it shows how strongly the fitted model and data support prevalence above 20% at each location, rather than simply whether the predicted mean exceeds 20%.
+
+The prediction combines two components on the log-odds scale: the fixed effects, $\beta_0 + \beta_1 \log e(x)$, and the spatial effect, $S(x)$.
+Mapping them side by side shows how much of the geographical variation each explains.
+We centre the fixed effects on their average across the grid, because the intercept only shifts the whole surface, and the spatial effect already has mean zero.
+With a common colour scale, the two maps then compare variation with variation.
+
+```{r}
+#| label: fig-lb-components
+#| fig-width: 4.65
+#| fig-asp: 0.6
+#| out-width: "100%"
+#| fig-cap: "Components of the predicted log-odds of nodule prevalence in Liberia, on a common colour scale. Left: fixed effects of log elevation, centred on their average. Right: predictive mean of the spatial effect."
+# Centre the fixed effects on their average across the grid
+components <- liberia_prediction
+components$predictions$fixed <- components$predictions$fixed -
+  mean(components$predictions$fixed)
+
+# Use the same symmetric colour limits for both maps
+component_limits <- c(-1, 1) * max(abs(c(components$predictions$fixed,
+                                         components$predictions$spatial_mean)))
+plot(components, quantity = c("fixed", "spatial"), limits = component_limits)
+```
+
+In @fig-lb-components, elevation produces a broad gradient from the coast inland.
+The spatial effect adds more local variation, with clusters of higher and lower prevalence than elevation alone would predict.
+Where the spatial effect is close to zero, either the data agree with the elevation trend or there are too few data nearby to suggest otherwise.
+
+::: callout-note
+## How many predictive draws are enough?
+
+Summaries such as exceedance probabilities are estimated from a finite number of draws, $B$.
+If the draws were independent, the Monte Carlo standard error of an estimated probability $p$ would be $\sqrt{p(1-p)/B}$, at most about 1.6 percentage points for the `r format(ncol(liberia_prediction$samples$spatial), big.mark = ",")` draws used here.
+Draws produced by Markov chain Monte Carlo are correlated, so the effective number of draws is smaller and the error larger.
+This matters most when a location or area lies close to a classification cut-off.
+Repeating the prediction with a different `seed`, or with more draws requested through `set_control_mcmc()`, shows whether the conclusions are stable.
+:::
+
+### Where can we trust the map? {#sec-extrapolation}
+
+Prediction intervals do not by themselves warn us when a map extrapolates beyond the data.
+Two kinds of extrapolation matter, and they call for different responses.
+
+The first is spatial.
+Far from the sampled locations, relative to the practical range of the estimated spatial correlation, the data say little about $S(x)$ and predictions fall back on the covariate trend.
+For the Liberia model, with an exponential correlation function and scale parameter $\hat\phi =$ `r round(coef(fit_liberia)$phi, 1)` km, the practical range is $\log(20)\hat\phi \approx$ `r round(log(20) * coef(fit_liberia)$phi)` km.
+We can measure this by the share of the spatial variance at $x$ that the data leave unexplained,
+$$
+U(x) = 1 - \rho(x)^\top R^{-1} \rho(x),
+$$ {#eq-spatial-unexplained}
+where $\rho(x)$ holds the estimated correlations between $x$ and the sampled locations, and $R$ is the correlation matrix of the sampled locations.
+$U(x)$ is close to 0 next to sampled locations and close to 1 where the data carry no information about $S(x)$.
+Unlike the distance to the nearest sampled location, it accounts for the estimated scale of spatial correlation and for the clustering of the sampled locations.
+It depends only on where the data were collected, so for binomial and Poisson outcomes, which carry less information than an exact observation of $S(x)$, it gives an optimistic picture.
+
+The second kind concerns the covariates.
+Where a covariate lies outside the range observed in the data, predictions rely on extending the fitted relationship beyond the conditions from which it was estimated.
+The check should be made on the scale used by the model.
+The Liberia model uses the logarithm of elevation, so a few metres below the lowest surveyed village is a large step on the model's scale.
+A combination of covariates can also be unusual even when each covariate is within its range, which the leverage of the location in the fixed-effects regression detects.
+Plug-in prediction intervals do not widen in either case, because they treat the regression coefficients as known.
+
+The `assess_extrapolation()` function computes these indicators at each prediction location.
+It classifies each location as supported, spatial extrapolation (more than 80% of the spatial variance unexplained, by default), covariate extrapolation (a covariate outside its observed range, or a leverage larger than at any sampled location), or both.
+
+```{r}
+#| label: assess-liberia-extrapolation
+liberia_extrapolation <- assess_extrapolation(fit_liberia,
+                                              newdata = liberia_grid)
+table(liberia_extrapolation$extrapolation)
+```
+
+```{r}
+#| label: fig-lb-extrapolation
+#| fig-width: 6
+#| fig-asp: 0.62
+#| out-width: "100%"
+#| fig-cap: "Extrapolation in the Liberia prevalence map. Left: share of the spatial variance not explained by the surveyed villages. Right: locations classed as supported or as spatial, covariate or combined extrapolation."
+plot(liberia_extrapolation,
+     indicator = c("spatial_unexplained", "extrapolation")) &
+  geom_sf(data = liberia, shape = 21, size = 0.7, fill = "white",
+          colour = "black", stroke = 0.3, inherit.aes = FALSE)
+```
+
+```{r}
+#| label: liberia-extrapolation-summary
+#| include: false
+covariate_cells <- liberia_extrapolation$covariates_outside > 0
+low_cells <- covariate_cells &
+  log(liberia_grid$elevation) < attr(liberia_extrapolation,
+                                     "covariate_ranges")[1, 1]
+spatial_share <- mean(liberia_extrapolation$spatial_unexplained > 0.8)
+```
+
+In @fig-lb-extrapolation, `r round(100 * spatial_share)`% of the grid locations have more than 80% of the spatial variance unexplained, in the gaps between clusters of surveyed villages.
+Elevation lies outside its observed range at `r sum(covariate_cells)` locations, `r sum(low_cells)` of them below the lowest surveyed village along the coast and the remaining `r sum(covariate_cells) - sum(low_cells)` above the highest, in the northern highlands.
+Predictions in these areas should be reported with this caveat or supported with additional data: further surveys where the data are sparse, and caution about the form of the elevation effect where the covariate is extrapolated.
+
+### Accounting for uncertainty in the model parameters {#sec-pred-parameter-uncertainty}
+
+The predictions above treat the estimated regression coefficients and covariance parameters as fixed.
+In practice, those estimates are also uncertain.
+For example, different values of the spatial variance $\sigma^2$ and scale parameter $\phi$ can imply different amounts of uncertainty about prevalence at an unsampled location.
+This additional source of uncertainty can matter particularly when the survey contains little information about those parameters.
+
+RiskMap can propagate parameter uncertainty by setting `parameter_uncertainty = TRUE` in `predict()`.
+It draws parameter values from an approximate multivariate normal sampling distribution of the estimates, using their estimated covariance matrix.
+At each parameter draw, RiskMap generates new samples of the unobserved effects conditional on the data, calculates the target, and pools the target draws to obtain predictive summaries.
+
+The approximation relies on the estimated covariance matrix and the normal approximation to the sampling distribution.
+These require care when parameters are poorly identified or near a boundary.
+Propagating uncertainty cannot compensate for an inadequately fitted model.
+The sampling-distribution perspective connects to the confidence intervals and parametric bootstrap discussed in @sec-bootstrap.
+
+We compare both approaches on the same Liberia grid, using the same fitted model, seed and total number of predictive draws.
+We request 95% prediction intervals as well as their widths.
+The second call uses 50 parameter draws.
+These Monte Carlo budgets control numerical precision and should be checked for stability in a substantive analysis.
+
+```{r}
+#| label: compare-liberia-parameter-uncertainty
+#| eval: false
+prediction_summaries <- c("mean", "lower", "upper", "interval_width")
+
+# Predict with the parameters fixed at their estimates
+liberia_fixed <- predict(fit_liberia,
+                         newdata = liberia_grid,
+                         type = "marginal",
+                         summaries = prediction_summaries,
+                         level = 0.95,
+                         seed = 2026,
+                         messages = FALSE)
+
+# Predict again, propagating uncertainty from 50 parameter draws
+liberia_uncertain <- predict(fit_liberia,
+                             newdata = liberia_grid,
+                             type = "marginal",
+                             summaries = prediction_summaries,
+                             level = 0.95,
+                             parameter_uncertainty = TRUE,
+                             parameter_draws = 50,
+                             seed = 2026,
+                             messages = FALSE)
+```
+
+We compare the two predictions location by location, grouping the locations by elevation, the covariate in the model.
+
+```{r}
+#| label: fig-liberia-parameter-uncertainty
+#| fig-width: 4.5
+#| fig-asp: 0.9
+#| out-width: "70%"
+#| fig-cap: "Width of the 95% prediction interval for nodule prevalence at each Liberia grid location, with the parameters fixed at their estimates and with parameter uncertainty propagated, by elevation. The dashed line marks equal widths."
+# Interval widths in percentage points, one row per grid location
+widths <- data.frame(
+  fixed = 100 * liberia_fixed$predictions$response_interval_width,
+  propagated = 100 * liberia_uncertain$predictions$response_interval_width,
+  elevation = cut(liberia_grid$elevation, breaks = c(0, 100, 300, Inf),
+                  labels = c("Below 100 m", "100 to 300 m", "Above 300 m"))
+)
+
+ggplot(widths, aes(x = fixed, y = propagated, colour = elevation)) +
+  geom_point(size = 0.7, alpha = 0.6) +
+  geom_abline(linetype = "dashed") +
+  scale_colour_manual(values = c("#00857F", "grey65", "#B5408F")) +
+  coord_equal() +
+  labs(x = "Fixed parameters (pp)", y = "Propagated uncertainty (pp)",
+       colour = "Elevation") +
+  theme_minimal() +
+  theme(legend.position = "top")
+```
+
+```{r}
+#| label: parameter-uncertainty-summary
+#| include: false
+width_ratio <- liberia_uncertain$predictions$response_interval_width /
+  liberia_fixed$predictions$response_interval_width
+mean_change <- 100 * (liberia_uncertain$predictions$response_mean -
+                        liberia_fixed$predictions$response_mean)
+lowland <- liberia_grid$elevation < 100
+upland <- liberia_grid$elevation > 300
+percent_change <- function(ratio) round(100 * (median(ratio) - 1))
+```
+
+Propagating parameter uncertainty widens the interval at `r round(100 * mean(width_ratio > 1))`% of the locations, but the median width increases by only `r percent_change(width_ratio)`%.
+The changes are concentrated in the coastal lowlands (@fig-liberia-parameter-uncertainty).
+Below 100 m, intervals are typically `r percent_change(width_ratio[lowland])`% wider and the mean prevalence rises by a median of `r round(median(mean_change[lowland]), 1)` percentage points, whereas above 300 m the predictions barely change.
+Uncertainty about the intercept and the elevation coefficient matters most where log elevation is furthest from that of the typical surveyed village, about `r round(exp(mean(log(liberia$elevation))))` m.
+At low elevations it is far from that value, and the lowest locations lie below the observed range (@sec-extrapolation).
+Plug-in prediction treats both coefficients as known, so its intervals miss this source of uncertainty.
+Propagating it partly corrects this, although it cannot tell us whether the log-linear form of the elevation effect still holds below the observed range.
+
+The mean changes because the inverse link is nonlinear and the predictions now average over different parameter values.
+Some intervals become narrower.
+Part of this is Monte Carlo error from a finite number of draws, and part reflects that we are comparing a distribution calculated at one set of estimates with a mixture of distributions over different parameter values.
+
+This choice is separate from marginal versus joint prediction.
+Marginal prediction remains sufficient for the location-specific comparison here.
+To quantify uncertainty about a regional target, we still need joint prediction, whether parameters are held fixed or their uncertainty is propagated.
 
 ### Example: mapping malaria using age and elevation as predictors {#sec-non-spar-covariates}
 
-We now consider an example on malaria mapping, where we use two
-different types of covariates: a spatially referenced covariate
-corresponding to elevation; the individual age. We use the
-`malkenya_comm` subset of the `malkenya` dataset (see
-@sec-indiv-expl-analysis) and, to alleviate the computational burden, we
-further reduce this dataset by taking the first 1000 rows. Hence, we
-create our new dataset, `malkenya_comm1000`, using the following code.
+We now consider an example on malaria mapping, where we use two different types of covariates: elevation, which is available at every location, and individual age, which is not.
+We use the `malkenya_comm` subset of the `malkenya` dataset (see @sec-indiv-expl-analysis) and, to reduce the computational burden, we take its first 1,000 rows.
 
 ```{r}
 #| label: prepare-malkenya-prediction-data
-malkenya_comm1000 <- malkenya_comm[1:1000,]
+# Select the community survey, as in Chapter 3
+data(malkenya)
+malkenya_comm <- malkenya[malkenya$Survey == "community", ]
 
-malkenya_comm1000 <- st_transform(malkenya_comm1000, crs = 32736)
+# Take the first 1,000 individuals and project to UTM zone 36S
+malkenya_comm1000 <- malkenya_comm[1:1000, ] |>
+  st_transform(crs = 32736)
 ```
 
-Based on the exploratory analysis shown in @sec-indiv-expl-analysis, we
-consider a geostatistical model fitted to the individual binary
-outcomes, $Y_{ij}$, which correspond the rapid diagnostic test (RDT)
-results for the $j$-th individual in the $i$-th community, and take
-value $Y_{ij}=1$ if the RDT is positive and $Y_{ij}=0$ if the RDT is
-negative. Using a Binomial geostatistical model, we model the individual
-probability, $p_{ij}$ of a positive RDT using the following linear
-predictor
-$$\log\left\{\frac{p_{ij}}{1-p_{ij}}\right\} = \beta_{0} + \beta_{1}a_{ij}+\beta_{2} \times\max\{a_{ij}-15, 0\} + \beta_{3}\max\{a_{ij}-40, 0\} + \beta_{4} e(x_i) + S(x_i),$$
- {#eq-lp-malkenya} where $e(x_{i})$ and $a_{ij}$ are the elevation in
-meter and the age in years for the $j$-th individual residing at the
-$i$-th household, respectively.
+Based on the exploratory analysis shown in @sec-indiv-expl-analysis, we consider a geostatistical model for the individual binary outcomes, $Y_{ij}$, the rapid diagnostic test (RDT) results for the $j$-th individual in the $i$-th household, with $Y_{ij}=1$ for a positive test.
+Using a binomial geostatistical model, we model the probability $p_{ij}$ of a positive RDT through the linear predictor
+$$
+\begin{aligned}
+\log\left\{\frac{p_{ij}}{1-p_{ij}}\right\} &= \beta_0 + f(a_{ij}) + \beta_4 e(x_i) + S(x_i) + Z_i,\\
+f(a) &= \beta_1 a + \beta_2 \max\{a - 15, 0\} + \beta_3 \max\{a - 40, 0\}.
+\end{aligned}
+$$ {#eq-lp-malkenya}
 
-When using the model in @eq-lp-malkenya to predict RDT prevalence, a key
-question arises: how should we handle the age variable, which, unlike
-elevation, is not available as a geo-referenced covariate at all
-locations in the study area? The answer depends on the research question
-being addressed.
-
-For instance, if the goal is to infer disease risk across different
-ages, we can generate different maps for each age of interest. This can
-be easily achieved by fixing the value of $a_{ij}$ to a specific age for
-all prediction locations. Alternatively, if the objective is to generate
-a predictive map for the general population, rather than for a specific
-age group, we must employ a probabilistic model for age and integrate
-out its effect.
-
-Developing a credible probabilistic model for age is beyond the scope of
-this section. Instead, we demonstrate a simple yet reasonable solution
-which uses the empirical age distribution from the data. The underlying
-idea is that we can assign ages to prediction locations by sampling
-randomly from this distribution, provided the age distribution is
-relatively homogeneous within the study area and our sample is
-representative of the target population. In the data used for this
-example, we believe these assumptions are reasonable, given the
-relatively small study area, where age is unlikely to exhibit
-significant spatial variation, and the fact that the data are a random
-sample from the community. We can the proceed through the following
-iterative steps to account for age in our predictions.
-
-1.  Obtain the empirical distribution of age from the data.
-2.  Sample with replacement from such distribution (the `sample`
-    function in R can be used for this purpose) as many times as the
-    number of prediction locations, so that each grid location
-    $\tilde{x}$ has a value of age assigned.
-3.  Generate a sample from the predictive distribution of the target
-    $T(\tilde{x})$ at each of the grid locations $\tilde{x}$.
-4.  Repeat 1 to 3, for as many times as the samples generates from
-    $S(\tilde{X})$.
-
-In the scripts presented in the remainder of this section, we show how
-to generate a predictive map of prevalence for children age 15 years,
-and another map that instead uses the approach described above to
-generate a map of prevalence for the general population.
-
-First, we fit the model. Note that the effect of age is not linear and
-we use linear splines to account for this, using the results of the
-exploratory analysis shown in @sec-indiv-expl-analysis.
+Here, $e(x_{i})$ is the elevation in metres of the $i$-th household and $a_{ij}$ is the age in years of its $j$-th individual.
+The age effect $f(a)$ is a linear spline with knots at 15 and 40 years, following the exploratory analysis.
+The $Z_i$ are independent zero-mean Gaussian variables with variance $\tau^2$, a nugget shared by the individuals of the $i$-th household.
+It captures differences between nearby households that are not spatially structured, such as bed-net use or housing quality, which would otherwise be absorbed by $S(x)$ at an artificially short scale.
+The nugget can be estimated because most households contribute several individuals.
+With a single binary outcome per location it could not be separated from the binomial variation.
 
 ```{r}
 #| label: fit-malkenya-geostatistical-model
 #| eval: false
-fit_malkenya <- glgpm(RDT ~ Age +  pmax(Age-15, 0) + 
-                        pmax(Age-40, 0) + elevation +
-                        gp(),
+# Fit the model with linear splines in age at 15 and 40 years and a nugget
+set.seed(2026)
+fit_malkenya <- glgpm(RDT ~ Age + pmax(Age - 15, 0) +
+                        pmax(Age - 40, 0) + elevation + gp(nugget = TRUE),
                       data = malkenya_comm1000,
-                      family = "binomial")
+                      family = "binomial",
+                      messages = FALSE)
 ```
 
-After fitting the model, we create a prediction grid at a spatial
-resolution of 500 meters and extract the values of elevation. In this
-analysis, due to the small size of the study area, we do not use
-administrative boundaries as they are too large. Instead, we use the
-convex hull of the sample locations to define the boundaries of our
-study area.
+```{r}
+#| label: malkenya-covariance-estimates
+#| include: false
+kenya_pars <- coef(fit_malkenya)
+kenya_phi_se <- sqrt(fit_malkenya$covariance["phi", "phi"])
+kenya_phi_ci <- kenya_pars$phi * exp(c(-1, 1) * qnorm(0.975) * kenya_phi_se)
+```
 
-::: callout-note
-The convex hull of a set of spatial locations is the smallest possible
-shape (usually a polygon) that completely encloses all the points, such
-that if you take any two points inside the shape, the straight line
-connecting them is also entirely inside the shape. In simple terms, it
-can be thought of as stretching a rubber band around the outermost
-points in a set, and the shape the rubber band forms is the convex hull.
-:::
+The estimated nugget variance, $\hat\tau^2 =$ `r round(kenya_pars$tau2, 2)`, is similar to the spatial variance, $\hat\sigma^2 =$ `r round(kenya_pars$sigma2, 2)`.
+The scale parameter, $\hat\phi =$ `r round(kenya_pars$phi, 1)` km, is estimated imprecisely, with a 95% confidence interval from `r round(kenya_phi_ci[1], 1)` to `r round(kenya_phi_ci[2])` km.
+The data show clear variation between households, but say little about how it is structured in space beyond a few kilometres.
+
+When we use this model to predict RDT prevalence, age raises a question that elevation does not: it is not available as a geo-referenced covariate at every location.
+The answer depends on the research question.
+To describe risk at a particular age, we fix $a_{ij}$ at that age for all prediction locations.
+To describe the general population, we need the prevalence averaged over the population's age distribution.
+
+Epidemiologists will recognise the second approach as *direct standardisation*.
+For each predictive draw and each location, we calculate prevalence for every age in a reference population and average those prevalences.
+With reference ages $a_1, \ldots, a_n$, the age-standardised target is
+$$
+T_{\textrm{std}}(x) = \frac{1}{n} \sum_{k=1}^{n}
+\operatorname{logit}^{-1}\{\beta_0 + f(a_k) + \beta_4 e(x) + S(x)\},
+$$
+where $f(a)$ is the spline function of age in @eq-lp-malkenya.
+The average is taken on the prevalence scale, so it is not the same as predicting at an average age.
+Here the reference population is the surveyed sample itself.
+This is reasonable if the sample represents the target population and the age distribution varies little across this small study area.
+A census or a gridded population age structure would provide a better reference when available.
+
+We predict over the two sub-counties that contain most of the surveyed households, Kabondo Kasipul and Kasipul, retrieved with the geobounds package as in Chapter 2.
+Together they contain 327 of the 350 households in these data.
+The four neighbouring sub-counties contain only a few households each, near their edges, so predictions for them would rely mostly on spatial extrapolation (@sec-extrapolation).
+The model is still fitted to all the data.
+We create a 500 m grid over the two sub-counties and extract elevation at the grid points.
 
 ```{r}
 #| label: create-kenya-prediction-grid
 #| eval: false
+# Select the two sub-counties and project them to UTM zone 36S
+kenya_subcounties <- gb_get_adm2("Kenya") |>
+  filter(shapeName %in% c("Kabondo Kasipul", "Kasipul")) |>
+  st_transform(crs = 32736)
 
-# Create grid from convex hull
-shp_ch <- create_convex_hull(malkenya_comm1000)
-ken_grid <- create_grid(shp_ch, spacing = 0.5)
+# Create a 500 m grid over the sub-counties
+kenya_grid <- create_grid(kenya_subcounties, spacing = 0.5,
+                          distance_units = "km", keep = "overlap")
 
-# Get elevation raster
-ken_elev <- 
-get_elev_raster(locations = shp_ch, 
-                z = 9, clip = "locations")
+# Download elevation with a 1 km margin and extract it at the grid locations
+kenya_elev <- get_elev_raster(locations = kenya_grid, z = 9,
+                              clip = "bbox", expand = 1000) |>
+  rast()
+kenya_points <- st_transform(kenya_grid, crs(kenya_elev))
+kenya_grid$elevation <- extract(kenya_elev, kenya_points)[[2]]
+
+# Fix age at 15 years for the first prediction
+kenya_grid$Age <- 15
 ```
 
-We then create the data frame of predictors where age is set to 15.
-
-```{r}
-#| label: prepare-kenya-prediction-covariates
-#| eval: false
-# Create the data fr
-ken_predictors <- data.frame(elevation = 
-                           extract(ken_elev, st_coordinates(ken_grid)),
-                         Age = 15)
-```
-
-We now have all the ingredients to carry out prediction.
-
-```{r}
-#| label: predict-kenya-spatial-process
-#| eval: false
-pred_ken_S <- setup_prediction(fit_malkenya, grid_pred = ken_grid,
-                             predictors = ken_predictors)
-
-pred_age15 <- 
-predict_grid_target(pred_ken_S, 
-                 f_target = list(prev = function(lp) exp(lp)/(1+exp(lp))),
-                 pd_summary = list(mean = function(Tx) mean(Tx)))
-```
-
-The code below shows how to perform the 4 steps described above to
-generate a predictive map for the general population. Below we use the
-function `update_predictors()` to update the covariates effects that are
-stored in `mu_pred`, a list element generated as the output of
-`setup_prediction()`.
+The first prediction uses age 15 at every location.
+The second supplies the reference population through `standardize`, whose values replace the `Age` column of the grid.
+Neither includes the nugget, which `predict()` leaves out by default (@sec-spat-cont-target), so the maps describe the underlying surface rather than prevalence in one particular household.
+Adding `include = "nugget"` would add a new draw of $Z$ and widen the predictive intervals accordingly.
 
 ```{r}
 #| label: predict-kenya-prevalence
 #| eval: false
-# Number of Monte Carlo samples
-n_sim <- ncol(pred_age15$lp_samples)
+# Predict prevalence at age 15
+kenya_age15 <- predict(fit_malkenya, newdata = kenya_grid,
+                       summaries = "mean", seed = 2026,
+                       messages = FALSE)
 
-# Number of prediction locations
-n_pred <- nrow(predictors)
-
-# The create object `pred_ken_S_i` with the goal of changing the 
-# coviariates effects stored in `mu_pred` according the sample values of age
-pred_ken_S_i <- pred_ken_S
-pred_ken_S_i$mu_pred <- matrix(NA, nrow = n_pred, ncol = n_sim)
-
-for(i in 1:n_sim) {
-  # Generate n_pred samples from the empirical distribution of age
-  ken_predictors$Age <- sample(malkenya_comm1000$Age, n_pred, replace = TRUE)
-  # Generate the new covariates effects with `update_predictors()` and store them in
-  # `mu_pred`
-  pred_ken_S_i$mu_pred[,i] <- update_predictors(pred_ken_S, ken_predictors)$mu_pred
-}
-
-# Prediction of prevalence
-pred_aver_pop <- predict_grid_target(pred_ken_S_i, 
-               f_target = list(prev = function(lp) exp(lp)/(1+exp(lp))))
+# Standardise to the ages of the surveyed individuals
+reference_ages <- data.frame(Age = malkenya_comm1000$Age)
+kenya_standardised <- predict(fit_malkenya, newdata = kenya_grid,
+                              standardize = reference_ages,
+                              summaries = "mean",
+                              seed = 2026,
+                              messages = FALSE)
 ```
 
-We can now plot the two maps and compare them.
+We map the two predictions with common colour limits, so that colours mean the same in both maps.
 
 ```{r}
-#| fig-width: 12
-#| fig-height: 6
 #| label: fig-malaria-maps
-#| fig-cap: "Maps of the predictive mean of the rapid diagnostic test (RDT) prevalence for
-#| children of the age of 15 (left panel) and the general population (right panel)."
-par(mfrow = c(1,2))
-plot(pred_age15, which_target = "prev", which_summary = "mean", main = "Prevalence (15 years)", range = c(0,0.6))
-plot(pred_aver_pop, which_target = "prev", which_summary = "mean",  main = "Prevalence (General population)", range = c(0,0.6))
-par(mfrow = c(1,1))
+#| fig-width: 4.65
+#| fig-asp: 0.6
+#| out-width: "100%"
+#| fig-cap: "Predictive mean of rapid diagnostic test (RDT) prevalence at age 15 (left) and age-standardised to the surveyed population (right), with common colour limits."
+# Use common colour limits for the two maps
+kenya_limits <- range(pretty(c(kenya_age15$predictions$response_mean,
+                               kenya_standardised$predictions$response_mean)))
+age15_map <- plot(kenya_age15, limits = kenya_limits) +
+  labs(fill = "Mean prevalence, age 15")
+standardised_map <- plot(kenya_standardised, limits = kenya_limits) +
+  labs(fill = "Mean age-standardised prevalence")
+
+# Draw the two maps side by side
+age15_map | standardised_map
 ```
 
-The exploratory analysis of @sec-indiv-expl-analysis had shown that the
-prevalence around the age of 15 is higher than at other ages. This is
-also reflected in @fig-malaria-maps, when the left panel, corresponding
-to the RDT prevalence for children at the age of 15 years, shows a
-higher level of prevalence than the right panel, which is instead for
-the general population.
+The exploratory analysis of @sec-indiv-expl-analysis showed that prevalence around the age of 15 is higher than at other ages.
+This is reflected in @fig-malaria-maps, where prevalence at age 15 is higher everywhere than the age-standardised prevalence for the general population.
+The spatial patterns are very similar, because age and location enter the linear predictor additively on the log-odds scale.
 
 ## Areal-level targets {#sec-areal-target}
 
-When determining areal-level targets, we must first address the
-following questions:
+When determining areal-level targets, we must first address the following questions:
 
-1.  What spatially continuous target, $T(x)$, are we seeking to
-    aggregate?
-2.  What are the spatial units, denoted as $A_i$ for $i = 1, \dots, N$,
-    over which the aggregation is required?
+1.  What spatially continuous target, $T(x)$, are we seeking to aggregate?
+2.  What are the spatial units, denoted as $A_i$ for $i = 1, \dots, N$, over which the aggregation is required?
 3.  What aggregating function should be applied?
-4.  Should spatial weights be incorporated in the aggregation, and if
-    so, what weights are appropriate?
+4.  Should spatial weights be incorporated in the aggregation, and if so, what weights are appropriate?
 
-The first question was discussed in earlier sections, where examples of
-predictive targets that define $T(x)$ can be found in
-@tbl-spat-cont-pred-target. The answers to the remaining questions are
-context-dependent and closely linked to the primary research objectives.
-In public health settings, the areas $A_i$ often correspond to
-administrative units or regions where decisions are made and resources
-are allocated.
+The first question was discussed in earlier sections, where examples of predictive targets that define $T(x)$ can be found in @tbl-spat-cont-pred-target.
+The answers to the remaining questions are context-dependent and closely linked to the primary research objectives.
+In public health settings, the areas $A_i$ often correspond to administrative units where decisions are made and resources are allocated.
 
-A common aggregating function for $T(x)$ is the mean, which is formally
-defined as:
-$$\mathcal{M}_i = \frac{1}{|A_i|}\int_{A_i} T(x) \: dx.$$
- {#eq-mean-alt} In addition to the mean, several other aggregating
-functions can be applied depending on the context of the analysis. We
-also note that computing the integral in @eq-mean-alt requires some
-approximations. Our approach utilizes the regular grid $\tilde{X}$,
-previously defined when dealing with spatially continuous targets. This
-grid covers the area $A_i$, allowing us to approximate $M_i$ as:
-$$\mathcal{M}_i \approx \frac{1}{\#\{j : \tilde{x}_j \in A_i\}} \sum_{\tilde{x}_j \in A_i} T(\tilde{x}_j), $$ {#eq-mean-alt-approx}
-where $\#\{j : \tilde{x}_j \in A_i\}$ denotes the number of grid
-locations $\tilde{x}_j$ that fall within $A_i$. The same approximation
-will be applied to other areal-level targets discussed in this section.
-However, for simplicity, we will omit the detailed explanation of this
-step and instead express the predictive target as an integral.
+A common aggregating function for $T(x)$ is the mean,
+$$\mathcal{T}_i = \frac{1}{|A_i|}\int_{A_i} T(x) \: dx.$$ {#eq-mean-alt}
 
-For instance, in the study of Anopheles mosquitoes in Cameroon, we may
-be interested in estimating the total number of mosquitoes that could be
-trapped within the study area ($A_i$ represents a single region in this
-case). If $T(x)$ denotes the number of mosquitoes trapped at location
-$x$, the areal-level target can be expressed as:
-$$\mathcal{S}_i = \int_{A_i} T(x) \: dx.$$
-Additionally, to quantify the heterogeneity of $T(x)$ within an area,
-variance-based measures can be used. The variance of $T(x)$ in $A_i$ is
-given by:
-$$\mathcal{V}_i = \frac{1}{|A_i|}\int_{A_i} \left(T(x) - \mathcal{M}_i\right)^2 \: dx,$$
-where $\mathcal{M}_i$ is the mean of $T(x)$ in $A_i$.
+We approximate the integral with the regular grid used for spatially continuous targets.
+Each grid point represents a square cell, and a cell on the edge of $A_i$ may lie only partly inside it.
+Writing $a_{ij}$ for the fraction of cell $j$ that lies inside $A_i$,
+$$\mathcal{T}_i \approx \frac{\sum_{j} a_{ij} T(\tilde{x}_j)}{\sum_{j} a_{ij}}.$$ {#eq-mean-alt-approx}
+For grids created by `create_grid()`, `predict()` calculates these fractions exactly.
+Other aggregating functions follow the same idea.
+For example, the maximum of $T(x)$ over $A_i$ describes the worst-affected part of an area, and the median is less sensitive to a few extreme locations.
+A total of prevalence over an area has no meaning on its own, but weighting by population counts and summing gives the number of people affected, as we show below.
 
-The formulation of the areal-level targets given so far assumes equal
-weighting for all locations within the area. Alternatively, if the we
-consider for example the areal level target in @eq-mean-alt, one could
-use spatial weights, $w(x) > 0$, and redefine $\mathcal{M}_i$ as:
-$$\mathcal{M}_i = \frac{\int_{A_i} w(x) T(x) \: dx}{\int_{A_i} w(x) \: dx}.$$
-Selecting appropriate spatial weights is crucial, as it reflects the
-significance of different locations within the area. We can define three
-types of weighting: population-density, risk-based, and distance-based.
-We point out that this distinction is not always clear cut (population
-could indeed be a risk factor in our analysis) but this classification
-is made only for the sake of making the explanation clearer.
+The formulation so far gives every location within an area equal weight.
+With spatial weights $w(x) \geq 0$, the weighted mean is
+$$\mathcal{T}_i = \frac{\int_{A_i} w(x) T(x) \: dx}{\int_{A_i} w(x) \: dx},$$ {#eq-weighted-mean}
+approximated by replacing $a_{ij}$ in @eq-mean-alt-approx with $w(\tilde{x}_j)\,a_{ij}$.
+The most common choice in public health is population.
+A population-weighted mean prevalence describes the prevalence experienced by a typical resident, whereas the unweighted mean describes the typical location.
+Weighting by population counts and summing instead of averaging gives the expected number of people with the condition, the burden that planning and costing require.
+Other weights can reflect exposure or proximity to a source of infection, and binary weights restrict a target to part of an area.
 
-For example, if the goal is to prioritize areas with higher populations,
-weights $w(x)$ could be proportional to population density at location
-$x$. This approach gives greater importance to locations where more
-people reside, which can be particularly relevant when aggregating
-disease prevalence data for resource allocation.
+These targets require joint prediction, and the order of operations matters (step 4 in @fig-prediction-workflow).
+The target is first calculated in every draw.
+For an areal target, locations are then aggregated within each joint draw, and only then are the resulting areal values summarised.
+For example, averaging the lower interval limits of the locations in an area does not give a lower interval limit for the area's average.
 
-In cases where certain sub-regions within $A_i$ are at higher risk for
-disease (e.g., proximity to environmental hazards or areas with lower
-access to healthcare), risk-based weights could be applied. Here, $w(x)$
-would be higher in regions identified as higher risk, providing a more
-targeted aggregation of disease prevalence. For example, populations in
-rural areas may face higher exposure to infectious diseases than those
-in urban areas, making it important to assign greater weight to these
-higher-risk regions in the aggregation process.
+### Example: river blindness prevalence and burden in Liberia's counties (continuing from @sec-liberia-prediction-1) {#sec-liberia-prediction-2}
 
-If the objective is to account for proximity effects (such as the spread
-of an infectious disease or contamination from a known source),
-distance-based weights could be used. Locations closer to a known
-disease outbreak area or source of exposure could be given more weight
-to reflect the spatial dynamics of disease transmission.
+We continue the Liberia analysis with the 15 counties as areas $A_i$ and nodule prevalence, @eq-rb-prev-target, as $T(x)$.
+A programme deciding where to deliver mass drug administration needs three things from this analysis: the average prevalence in each county, how certain we are that it exceeds 20%, and how many adults are affected.
 
-Using spatial weights in these ways ensures that the aggregation of
-disease prevalence $T(x)$ reflects not only the distribution of the
-disease but also the underlying population, risk, or spatial
-characteristics relevant to the public health problem under
-investigation.
-
-### Example: predicting the average river blindness prevalence at admin level 1 in Liberia (continuing from @sec-liberia-prediction-1) {#sec-liberia-prediction-2}
-
-We continue our analysis of the Liberia data and consider areal-level
-targets. More specifically, we aim to predict the average prevalence
-over the regions which give the administrative level 1 of Liberia. By
-denoting with $A_i$ the i-th out of the 15 regions in Liberia. By
-denoting with $T(x)$ river blindness prevalence as defined in
-@eq-rb-prev-target, we define our predictive target as
-$$T_{i} = \frac{1}{|A_i|} \int_{A_i} T(x) \: dx.$$
-The R code below shows how predictions for $T_i$ can be performed using
-the `predict_areal_target()` function.
+The surveys examined adults aged 20 and over, so the prevalence we predict is the prevalence of nodules among adults, and population weights should count adults.
+We use WorldPop estimates of the number of people aged 20 and over in 2011, the year of the survey, at about 1 km.
+As in @sec-population-grid, we sum the counts into 5 km cells and use the cell centres as prediction locations, so that each location carries the number of adults it represents.
+This grid replaces the one built from the national boundary in @sec-pred-samples, and we extract elevation at its locations in the same way.
 
 ```{r}
-#| label: prepare-liberia-admin-prediction
-#| message: false
+#| label: prepare-liberia-adult-grid
 #| eval: false
-# Obtain the admin level 1 boundaries
-lb_adm1 <- gb_get_adm1("Liberia")
+# Download WorldPop counts of adults aged 20 and over in 2011, at 1 km
+liberia_adults <- get_worldpop("LBR", year = 2011, ages = c(20, Inf),
+                               resolution = "1km")
 
-# Prediction of prevalence 
-pred_shp <- predict_areal_target(lb_pred_S_j, shp = lb_adm1,
-                            shp_target = function(Tx) mean(Tx),
-                            f_target = list(prev = 
-                                       function(lp) exp(lp)/(1+exp(lp))),
-                            pd_summary = list(mean = mean),
-                            col_names = "shapeName")
+# Project to UTM zone 29N at 1 km, preserving totals, and sum into 5 km cells
+adults_5km <- project(liberia_adults, "EPSG:32629", res = 1000,
+                      method = "sum") |>
+  aggregate(fact = 5, fun = "sum", na.rm = TRUE)
+names(adults_5km) <- "adults"
 
+# Use the 5 km cells that overlap Liberia as prediction locations
+county_grid <- create_grid(liberia_adm0, raster = adults_5km,
+                           keep = "overlap")
+county_grid$adults[is.na(county_grid$adults)] <- 0
 
+# Extract elevation at the new locations, as for the national grid
+county_points <- st_transform(county_grid, crs(liberia_elev))
+county_grid$elevation <- extract(liberia_elev, county_points,
+                                 search_radius = 5000)[[2]]
+
+# Drop the few coastal cells beyond the extent of the elevation raster
+county_grid <- county_grid[!is.na(county_grid$elevation), ]
 ```
 
-The argument `shp_target` is used define the type of aggregation
-function over the region $A_i$, in this case the mean of the target
-$T(x)$. Also note that, like for spatially continuous targets, we can
-define any summary of the predictive distribution of $\mathcal{M}_i$
-through the argument `pd_summary`. Here, we chose to compute only the
-mean of the predictive distribution but other summaries, such as
-exceedance probabilities, standard error, quantiles and so on, can be
-specified if needed.
-
-Before we plot the results on a map, let us also consider the
-population-density weighted target, defined as
-$$T_{i}^* = \frac{ \int_{A_i} w(x) T(x) \: dx}{\int_{A_i} w(x) \: dx}.$$
-To aid the explanation of the R code script, we first rewrite the above
-areal-level target as
-$$T_{i}^* = \int_{A_i} \tilde{w_i}(x) T(x) \: dx.$$
-where $\tilde{w}_{i}(x)$ are the standardized weights that integrate to
-1 in $A_i$ (i.e. $\int_{A_i} \tilde{w}_i(x) \: dx = 1$).
-
-We first retrieve the population density data from the WorldPop
-database (see @sec-pop-data) and use these to derive the un-standardized
-weights $w(x)$.
+The first call below predicts the unweighted county means.
+The second weights each location by its number of adults, which gives the prevalence among the adults of each county and, by summing, the expected number of adults with nodules.
+The third sums over the whole country, because the interval for a national total cannot be obtained by adding the county intervals.
+Supplying `boundaries` makes `predict()` use joint draws automatically.
 
 ```{r}
-#| label: prepare-liberia-population-weights
-#| message: false
+#| label: predict-liberia-counties
 #| eval: false
+# Download the county boundaries
+liberia_adm1 <- gb_get_adm1("Liberia")
 
-# Obtaining population density
-library(wpgpDownloadR)
-lbr_url <- wpgpGetCountryDataset(ISO3 = "LBR", covariate = "ppp_2014")
-library(terra)
-lbr_pop <- rast(lbr_url)
-lbr_pop <- project(lbr_pop, "EPSG:32629")
+# Average prevalence over the area of each county
+liberia_county_area <- predict(fit_liberia,
+                               newdata = county_grid,
+                               boundaries = liberia_adm1,
+                               aggregate = "mean",
+                               summaries = "mean",
+                               seed = 2026,
+                               messages = FALSE)
 
-# Extra pop density weights at the prediction grid
-weights_pred <- extract(lbr_pop, st_coordinates(liberia_grid))$lbr_ppp_2014
+# Prevalence among adults and number of adults with nodules in each county
+liberia_county_adults <- predict(fit_liberia,
+                                 newdata = county_grid,
+                                 boundaries = liberia_adm1,
+                                 aggregate = c("mean", "sum"),
+                                 weights = "adults",
+                                 summaries = c("mean", "lower", "upper",
+                                               "exceedance"),
+                                 thresholds = 0.2,
+                                 seed = 2026,
+                                 messages = FALSE)
+
+# Number of adults with nodules in the whole country
+liberia_national <- predict(fit_liberia,
+                            newdata = county_grid,
+                            boundaries = liberia_adm0,
+                            aggregate = "sum",
+                            weights = "adults",
+                            summaries = c("mean", "lower", "upper"),
+                            seed = 2026,
+                            messages = FALSE)
 ```
 
-In the code above the population density weights are extracted at the
-locations of the prediction grid. In the `predict_areal_target()` function, in
-order to use the weights for our predictive target, we need to specify
-two additional arguments: `weights` to which we pass the population
-density values (in our case these are stored in `weights_pred`);
-`standardize_weights`, which is a logical argument taking value `TRUE`
-if the weights to be standardized so that the sum over the grid covering
-a region $A_i$ adds up to one.
+Mapping the county means next to the location-level prediction, with one colour scale, shows what aggregation does.
 
 ```{r}
-#| label: predict-population-weighted-prevalence
-#| eval: false
-pred_shp_w <- predict_areal_target(lb_pred_S_j, shp = lb_adm1,
-                            shp_target = function(Tx) sum(Tx),
-                            f_target = list(prev = 
-                                       function(lp) exp(lp)/(1+exp(lp))),
-                            pd_summary = list(mean = mean),
-                            weights = weights_pred,
-                            standardize_weights = TRUE,
-                            col_names = "shapeName")
-```
-
-We can then finally plot the results from the prediction at admin level
-1, without using any weights and by weighing according to population
-density.
-
-```{r}
-#| fig-width: 12
-#| fig-height: 6
 #| label: fig-average-prev-Liberia
-#| fig-cap: "Maps of the predictive mean for the admin level 1 average prevalence in Liberia. The left panel uses a standard average of locations within an admin level 1 region, whilst in the right panel each location is weighted according to population density."
-plot_1 <- 
-plot(pred_shp, which_target = "prev", which_summary = "mean",
-     palette = "RdYlGn",
-    limits = c(0.1, 0.30),
-    breaks = seq(0.1,0.30, by = 0.05)) + 
-  guides(fill=guide_legend(title="Prevalence")) +
-  ggtitle("Average prevalence \n (no weights)") + 
-   theme(plot.title = element_text(size = 15))
-
-plot_2  <- 
-  plot(pred_shp_w, which_target = "prev", which_summary = "mean",
-     palette = "RdYlGn",
-    limits = c(0.1, 0.30),
-    breaks = seq(0.1,0.30, by = 0.05)) + 
-  guides(fill=guide_legend(title="Prevalence")) +
-  ggtitle("Average prevalence \n (population weighted)") + 
-  theme(plot.title = element_text(size = 15))
-
-library(gridExtra)
-grid.arrange(plot_1, plot_2, ncol = 2)
+#| fig-width: 4.65
+#| fig-asp: 0.62
+#| out-width: "100%"
+#| fig-cap: "Predictive mean nodule prevalence at the grid locations (left) and averaged over each county (right), with one colour scale."
+plot(liberia_county_area, spatial_scale = "both")
 ```
 
-In @fig-average-prev-Liberia, we observe that the differences between
-the two predictive targets, with and without weights, are not
-substantial. However, we observe that the predicted average prevalence
-shows slightly greater variation in coastal regions, particularly in
-Montserrado County, where the majority of the population residing in the
-capital of Monrovia. This concentration of population likely accounts
-for the more noticeable differences in this area.
+Aggregation hides the variation within counties that the left map shows: a county mean close to 20% can combine areas well above and well below that level, which matters when treatment is planned for smaller units.
 
-### Example: predicting the total number of Anopheles gambiae mosquitoes (continuing from @sec-anopheles-fit) {#sec-anopheles-pred}
-
-For the analysis on *Anopheles gambiae* mosquitoes, we consider the
-prediction of the total number of mosquitoes within the study area. In
-this case, because there is not a natural definition of the study area
-borders as in the previous analysis, we consider the convex hull as
-representing those borders. To pursue this let us first, visualize the
-predictive map of the number of mosquitoes on a regular grid cover the
-study area. In other words, we first consider the spatially continuous
-target
-$$T(x) = \exp\{\beta_0 + \beta_1 e(x) + S(x)\},$$
-where, we recall, $e(x)$ is the elevation in meters at location $x$. In
-the code below in addition to generate prediction for $T(x)$, we also
-create a binary indicator defined as
-$$w(x) = 
-\begin{cases}
-1 & \text{if  } 390 < e(x) < 837 \\
-0 & \text{otherwise.}
-\end{cases}$$
-The values of 390 and 837 meters correspond to the minimum and maximum
-values of elevation observed in the data.
+The areal summaries are returned as a tidy table in `boundary_summary`, with one row per county, aggregation, quantity and summary.
+The `to_table()` function formats them for a report, with one row per county, the mean and its prediction interval in one column, and probabilities as percentages.
 
 ```{r}
-#| label: prepare-anopheles-prediction-grid
-#| message: false
-#| eval: false
-# Create grid from convex hull
-shp_ch <- create_convex_hull(an_fit$data_sf)
-an_grid <- create_grid(shp_ch, spacing = 2)
-
-
-an_elev <- get_elev_raster(locations = shp_ch, 
-                                z = 9, clip = "locations")
-
-predictors <- data.frame(elevation= terra::extract(an_elev,
-                                                   st_coordinates(an_grid)))
-
-pred_an_S <- setup_prediction(an_fit, grid_pred = an_grid,
-               predictors = predictors,
-               type = "joint")
-
-pred_n_mosq_grid <- 
-predict_grid_target(pred_an_S, 
-                 f_target = list(n_mosq = function(lp) exp(lp)),
-                 pd_summary = list(mean = function(Tx) mean(Tx)))
-
-an_weights <- 1*(predictors$elevation > 390 & predictors$elevation < 837)
+#| label: tbl-liberia-counties
+#| tbl-cap: "Nodule prevalence among adults in each county of Liberia, with its 95% prediction interval, the probability that it exceeds 20%, and the expected number of adults with nodules, with its 95% prediction interval."
+to_table(liberia_county_adults, label = "shapeName", sort_by = "mean",
+         col_names = c("County", "Adult prevalence (%)", "P(> 20%) (%)",
+                       "Adults with nodules"))
 ```
 
-We now define our predictive target corresponding to the total number of
-mosquitoes within the study area $A$, given by the convex hull of the
-observed locations, as
-$$T = \int_{A} w(x) T(x) \: dx$$
- {#eq-tot-mosq} The rationale is to estimate the total number of
-mosquitoes in the study area while restricting predictions to locations
-within the observed range of elevation. This approach helps avoid the
-risk of predicting in ecological areas that may not be suitable for
-mosquito presence. It is also important to note that in @eq-tot-mosq, we
-do not standardize the weights in this case.
+```{r}
+#| label: liberia-national-summary
+#| include: false
+national <- liberia_national$boundary_summary
+national <- national[national$quantity == "response", ]
+county_mean <- function(prediction, county) {
+  rows <- prediction$boundary_summary
+  id <- which(prediction$boundaries$shapeName == county)
+  value <- rows$value[rows$boundary_id == id & rows$aggregate == "mean" &
+                        rows$quantity == "response" & rows$summary == "mean"]
+  paste0(format(round(100 * value, 1), nsmall = 1), "%")
+}
+national_value <- function(summary_name) {
+  value <- national$value[national$summary == summary_name]
+  format(round(value, -3), big.mark = ",")
+}
+```
+
+Weighting by adults matters most where they are concentrated in part of a county.
+In Montserrado, which contains the capital, Monrovia, prevalence averaged over the county's area is `r county_mean(liberia_county_area, "Montserrado")`, but among its adults it is only `r county_mean(liberia_county_adults, "Montserrado")`, because most of them live in the city, where prevalence is low.
+The burden column ranks counties differently from prevalence, because a populous county with moderate prevalence can contain more affected adults than a sparsely populated county with high prevalence.
+Nationally, about `r national_value("mean")` adults have nodules (95% prediction interval `r national_value("lower")` to `r national_value("upper")`), out of `r format(round(sum(county_grid$adults), -3), big.mark = ",")` adults.
+
+For a decision about mass drug administration, the exceedance probability is the most direct summary.
+A common way to act on it is to classify each county as likely above the threshold, likely below it, or uncertain.
+We map the probabilities next to the classes given by `breaks`, so that readers can see how far each county is from a cut-off.
+
+```{r}
+#| label: fig-liberia-county-classes
+#| fig-width: 6
+#| fig-asp: 0.6
+#| out-width: "100%"
+#| fig-cap: "Probability that nodule prevalence among the adults of each county exceeds 20% (left), and the same probability in three classes (right): likely below (under 20%), uncertain (20% to 80%) and likely above (over 80%)."
+# Exceedance probabilities on a continuous scale and in classes
+probabilities <- plot(liberia_county_adults, aggregate = "mean",
+                      summary = "exceedance")
+classes <- plot(liberia_county_adults, aggregate = "mean",
+                summary = "exceedance", breaks = c(0, 0.2, 0.8, 1))
+probabilities | classes
+```
+
+```{r}
+#| label: liberia-county-classes-summary
+#| include: false
+county_rows <- liberia_county_adults$boundary_summary
+county_rows <- county_rows[county_rows$quantity == "response" &
+                             county_rows$aggregate == "mean" &
+                             county_rows$summary == "exceedance", ]
+county_names <- liberia_adm1$shapeName[county_rows$boundary_id]
+name_list <- function(names) {
+  if (length(names) < 2) return(names)
+  paste(paste(names[-length(names)], collapse = ", "), "and",
+        names[length(names)])
+}
+likely_above <- name_list(county_names[county_rows$value > 0.8])
+uncertain <- name_list(county_names[county_rows$value >= 0.2 &
+                                      county_rows$value <= 0.8])
+```
+
+Only `r likely_above` are likely above 20%, while `r uncertain` are uncertain.
+The cut-offs of 20% and 80% are not statistical constants.
+They express how much risk of misclassification a programme accepts.
+Wrongly classifying a county as below the threshold leaves people untreated, whereas wrongly classifying it as above wastes resources, and the cut-offs can be chosen to reflect the relative costs of the two errors.
+Counties in the uncertain class are natural candidates for further surveys.
+Counties are used here to illustrate the method.
+Treatment decisions for onchocerciasis are usually made for smaller units, such as health districts, and the same code applies to them with their boundaries in place of `liberia_adm1`.
+
+### Example: *Anopheles gambiae* mosquitoes in Cameroon (continuing from @sec-anopheles-fit) {#sec-anopheles-pred}
+
+For the analysis of *Anopheles gambiae* mosquitoes, the fitted Poisson model gives the expected number of mosquitoes caught by a trap,
+$$T(x) = \exp\{\beta_0 + \beta_1 e(x) + S(x)\},$$
+where $e(x)$ is elevation in metres.
+The traps cover only part of the seven departments in which they lie, which together are about three times larger than the trapping area.
+Predicting over the departments would therefore rely largely on extrapolation.
+We instead use the convex hull of the trap locations as the study area $A$.
+
+::: callout-note
+The convex hull of a set of spatial locations is the smallest convex polygon that encloses all of them.
+It can be pictured as a rubber band stretched around the outermost points.
+It is a useful study area when there is no natural boundary, or when administrative units extend far beyond the data.
+:::
+
+The model is the one fitted in @sec-anopheles-fit.
+
+```{r}
+#| label: refit-anopheles-model
+#| eval: false
+# Refit the Anopheles gambiae model from Chapter 3
+data(anopheles)
+an_fit <- glgpm(An.gambiae ~ elevation + gp(),
+                data = anopheles,
+                family = "poisson",
+                control_mcmc = set_control_mcmc(seed = 2026),
+                messages = FALSE)
+```
+
+The traps were placed between `r round(min(an_fit$data$elevation))` and `r round(max(an_fit$data$elevation))` metres, and predicting at other elevations would extrapolate the fitted linear effect of elevation into conditions that may not suit the species (@sec-extrapolation).
+We therefore use the binary weight
+$$w(x) =
+\begin{cases}
+1 & \text{if elevation at } x \text{ is within the observed range,} \\
+0 & \text{otherwise,}
+\end{cases}$$
+and define the target as the weighted mean of @eq-weighted-mean over the study area, that is, the mean expected trap catch over its suitable part.
+
+A total would be tempting, but adding the expected trap catch over grid cells does not give the number of mosquitoes in the area.
+A trap catch is not a density per unit area, so the sum would change with the grid spacing.
+The mean expected catch is a well-defined target that can be compared across areas and over time.
+
+```{r}
+#| label: predict-anopheles-catch
+#| eval: false
+# Use the convex hull of the traps as the study area, with a 2 km grid
+anopheles_hull <- create_convex_hull(an_fit$data)
+anopheles_grid <- create_grid(anopheles_hull, spacing = 2,
+                              distance_units = "km")
+
+# Download elevation with a 1 km margin and extract it at the grid locations
+anopheles_elev <- get_elev_raster(locations = anopheles_grid, z = 9,
+                                  clip = "bbox", expand = 1000) |>
+  rast()
+anopheles_points <- st_transform(anopheles_grid, crs(anopheles_elev))
+anopheles_grid$elevation <- extract(anopheles_elev, anopheles_points)[[2]]
+
+# Weight 1 within the observed elevation range of the traps, 0 outside
+observed_elevation <- range(an_fit$data$elevation)
+anopheles_grid$suitable <- as.numeric(
+  anopheles_grid$elevation >= observed_elevation[1] &
+    anopheles_grid$elevation <= observed_elevation[2])
+
+# Average the expected catch over the suitable part of the hull
+anopheles_prediction <- predict(an_fit,
+                                newdata = anopheles_grid,
+                                boundaries = anopheles_hull,
+                                aggregate = "mean",
+                                weights = "suitable",
+                                summaries = c("mean", "lower", "upper"),
+                                seed = 2026,
+                                messages = FALSE)
+```
 
 ```{r}
 #| label: fig-mosq-map
-#| fig-cap: "Maps of the predicted averae number of mosqutoes (left panel). The right panel shows prediction locations in red if they have an elevation between 390 and 837 meters, or black otherwise.  "
-par(mfrow = c(1,2))
-plot(pred_n_mosq_grid, which_target = "n_mosq", which_summary = "mean",
-     main = "Number of mosquitoes")
-plot(an_grid, pch = 20, cex = 1, col = an_weights+1, main = "Weights")
-par(mfrow = c(1,1))
-```
-
-@fig-mosq-map shows the prediction map for the number of mosquitoes at
-each prediction location, indicating a relatively high spatial
-heterogeneity as was also indicated by the low value for the estimate of
-the scale of the spatial correction (parameter $\phi$). The right panel,
-we have an image of the weights $w(x)$, with locations that will not
-contribute to the prediction of the total number of mosquitoes denoted
-in black.
-
-```{r}
-#| label: predict-total-mosquito-abundance
-#| eval: false
-pred_n_mosq_shp <- 
-predict_areal_target(pred_an_S, shp = shp_ch, 
-                 weights = an_weights,
-                 shp_target = sum,
-                 f_target = list(n_mosq = function(lp) exp(lp)),
-                 pd_summary = list(mean = function(Tx) mean(Tx),
-                                   q025 = function(Tx) quantile(Tx, 0.025),
-                                   q075 = function(Tx) quantile(Tx, 0.975)))
-
+#| fig-width: 3.2
+#| fig-asp: 1.12
+#| out-width: "70%"
+#| fig-cap: "Predicted mean number of Anopheles gambiae caught per trap across the convex hull of the trap locations. Circles are the traps and crosses mark the grid locations outside the elevation range of the traps, which receive zero weight."
+# Mark the traps and the locations excluded by the elevation weight
+excluded <- anopheles_prediction$predictions |>
+  filter(suitable == 0)
+plot(anopheles_prediction, spatial_scale = "location") +
+  geom_sf(data = excluded, shape = 4, size = 0.6, colour = "grey25",
+          inherit.aes = FALSE) +
+  geom_sf(data = an_fit$data, shape = 21, size = 0.8, fill = "white",
+          colour = "black", stroke = 0.3, inherit.aes = FALSE) +
+  labs(fill = "Mean expected catch per trap")
 ```
 
 ```{r}
-#| label: summarize-total-mosquito-abundance
-#| echo: false
-pred_n_mosq_shp$target$reg1$n_mosq
+#| label: anopheles-areal-summary
+#| include: false
+anopheles_area <- anopheles_prediction$boundary_summary
+anopheles_area <- anopheles_area[anopheles_area$quantity == "response", ]
+anopheles_mean <- anopheles_area$value[anopheles_area$summary == "mean"]
+anopheles_lower <- anopheles_area$value[anopheles_area$summary == "lower"]
+anopheles_upper <- anopheles_area$value[anopheles_area$summary == "upper"]
 ```
 
-Since we are not standardizing the weights, there is no need to specify
-`standardize_weights`, as it is set to `FALSE` by default. In the code
-above, we printed the mean of the predictive distribution of $T$ along
-with the 95% prediction interval. The point estimate of approximately
-17,719 mosquitoes is likely an underestimate of the total number of
-*Anopheles gambiae* in the area, as the trap used to count the mosquitoes
-may not capture all of them, particularly those outside the immediate
-trapping zone or those active at different times.
-
-<!-- UP TO HERE -->
+Of the `r nrow(anopheles_prediction$predictions)` grid locations, `r sum(anopheles_prediction$predictions$suitable == 0)` lie outside the elevation range of the traps and receive zero weight, so the target excludes them.
+@fig-mosq-map shows strong local variation in the expected catch, in line with the short scale of spatial correlation: the estimated scale parameter is `r round(coef(an_fit)$phi, 1)` km, so the practical range is about `r round(log(20) * coef(an_fit)$phi)` km.
+Over the suitable part of the study area, the predicted mean catch per trap is `r round(anopheles_mean, 1)`, with a 95% prediction interval from `r round(anopheles_lower, 1)` to `r round(anopheles_upper, 1)`.
+This describes trap catches rather than the abundance of mosquitoes, which would also depend on the area each trap samples and on the trap's efficiency.
 
 ## Assessing the predictive performance of geostatistical models with cross-validation {#sec-compare-pp}
 
@@ -1028,11 +1093,7 @@ from the spatialsample package [@mahoney2023].
 #| fig-cap: "Examples of the use of spatial clustering methods for the splitting of the Liberia data on river blindness."
 library(spatialsample)
 set.seed(123)
-liberia_sf <- liberia %>%
-              st_as_sf(., coords = c("long", "lat"),
-                       crs = 4326) %>%
-              st_transform(.,crs = 32629)
-
+liberia_sf <- st_transform(liberia, crs = 32629)
 
 # K-means
 kmeans_liberia <- spatial_clustering_cv(liberia_sf,
@@ -1116,9 +1177,8 @@ grid.arrange(dist30_plot, dist40_plot, ncol = 2)
 In the code above, we randomly selected 20 locations from the original
 dataset, enforcing minimum distances of 30 km and 40 km between points.
 The results are presented in @fig-reg-loc. The choice of the minimum
-distance for the test sample should ideally consider the spatial
-correlation scale (previously denoted by $\phi$) of the spatial Gaussian
-process $S(X)$. To minimize correlation within the test set, the minimum
+distance for the test sample should ideally consider the scale
+parameter $\phi$ of the spatial Gaussian process $S(X)$. To minimize correlation within the test set, the minimum
 distance could be set to a value greater than $\phi$. However,
 increasing the minimum distance makes it more challenging to obtain a
 test set of the desired sample size. Reducing correlation within the
@@ -1306,8 +1366,9 @@ $$\text{nPIT}(u,y) =
 0, & u \leq F_{M}(y-1) \\ 
 \frac{u - F_{M}(y-1)}{F_{M}(y-1) - F_{M}(y-1)}, & F_{M}(y-1) \leq u \leq F_{M}(y) \\ 
 1, & u \geq F_{M}(y)
-\end{cases}.$$
- {#eq-anpit} We then take the average nPIT over the observed outcomes
+\end{cases}.$$ {#eq-anpit}
+
+We then take the average nPIT over the observed outcomes
 $y_{1}, \ldots, y_{n}$, hence
 $$\text{AnPIT}(u) = \frac{1}{n} \sum_{i=1}^n \text{nPIT}(u, y_{i}). $$
 Assessment of calibration is then carried out by checking wether the
@@ -1432,13 +1493,13 @@ liberia <- st_as_sf(liberia, coords = c("long", "lat"), crs = 4326)
 
 # Fitting M0
 set.seed(123)
-M0_fit <- glgpm(npos ~ gp(), den = ntest, data = liberia,
+M0_fit <- glgpm(npos ~ gp(), denominator = ntest, data = liberia,
                 model_crs = 32629,
                 family = "binomial", messages = FALSE)
 
 # Fitting M1
 M1_fit <- glgpm(npos ~ elevation + pmax(elevation - 150, 0) + gp(),
-                den = ntest, data = liberia,
+                denominator = ntest, data = liberia,
                 model_crs = 32629,
                 family = "binomial", messages = FALSE)
 ```
@@ -1453,11 +1514,10 @@ RiskMap
 #| label: create-regularized-test-sets
 #| eval: false
 
-regularized <- 
-assess_prediction(list(M0 = M0_fit, M1 = M1_fit),
-          which_metric = "AnPIT", 
-          method = "regularized", min_dist = 20,
-          n_size = 9, iter = 10, messages = FALSE)
+regularized <- assess_prediction(list(M0 = M0_fit, M1 = M1_fit),
+                                 metrics = "PIT",
+                                 method = "regularized", min_dist = 20,
+                                 size = 9, iter = 10, messages = FALSE)
 
 ```
 
@@ -1467,24 +1527,17 @@ assess_prediction(list(M0 = M0_fit, M1 = M1_fit),
 #| label: fig-anpit-reg
 #| fig-cap: "The average nonrandomized probability integral transform (AnPIT) averaged across 10 test sets of size 9 (upper panel) and for each of the 10 tests sets (lower panel). The test sets are generated using a spatially regularized sampling scheme."
 
-p1 <- plot_AnPIT(regularized, combine_panels = TRUE) +
-      theme(plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "lines")) 
-
-# For claudio: review this
-# p2 <- plot_AnPIT(regularized, mode = "all") +
-#       theme(plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "lines")) 
-
-p2 <- plot_AnPIT(regularized, mode = "all")
-
+p1 <- plot(regularized, metric = "PIT", combine_pit = TRUE)
+p2 <- plot(regularized, metric = "PIT", pit_mode = "all")
 grid.arrange(p1, p2, nrow = 2, heights = c(1, 1))
 ```
 
 In the above function, we have used a spatially regularized sampling
 scheme (`method = "clusterized"`), where the locations are at least 20
 kilometers (`min_dist = 20`) apart from each other to create 10 test
-sets (`iter = 10`) each of size 9 (`n_size = 9`) which corresponds to
-10% of the original dataset. The results reported in @fig-anpit-reg,
-show both the AnPIT for each of the 10 test sets and the averaged AnPIT
+sets (`iter = 10`) each of size 9 (`size = 9`) which corresponds to
+10% of the original dataset. The results reported in @fig-anpit-reg-1
+and @fig-anpit-reg-2 show both the AnPIT for each of the 10 test sets and the averaged AnPIT
 across the 10 test sets, for both $M_0$ and $M_1$. The AnPIT plots show
 curves that are not too far from the identity line, which leads us to
 conclude that both $M_0$ and $M_1$ can be considered to be approximately
@@ -1498,10 +1551,10 @@ create 10 folds and set `method = "cluster"`.
 #| label: create-clustered-test-sets
 #| eval: false
 
-cluster <- 
-assess_prediction(list(M0 = M0_fit, M1 = M1_fit),
-          which_metric = "AnPIT", 
-          method = "cluster", fold = 10, messages = FALSE)
+cluster <- assess_prediction(list(M0 = M0_fit, M1 = M1_fit),
+                             metrics = "PIT",
+                             method = "cluster", fold = 10,
+                             messages = FALSE)
 
 ```
 
@@ -1511,17 +1564,14 @@ assess_prediction(list(M0 = M0_fit, M1 = M1_fit),
 #| label: fig-anpit-clus
 #| fig-cap: "The average nonrandomized probability integral transform (AnPIT) averaged across 10 test sets of size 9 (upper panel) and for each of the 10 test sets (lower panel). The test sets are generated using a clustering algorithm based on the locations of the data."
 
-p1 <- plot_AnPIT(cluster, combine_panels = TRUE) +
-      theme(plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "lines")) # Tighter margins
-
-p2 <- plot_AnPIT(cluster, mode = "all") 
-      # theme(plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "lines")) # Tighter margins
-
-grid.arrange(p1, p2, nrow = 2, heights = c(1, 1)) # Equal heights
+p1 <- plot(cluster, metric = "PIT", combine_pit = TRUE)
+p2 <- plot(cluster, metric = "PIT", pit_mode = "all")
+grid.arrange(p1, p2, nrow = 2, heights = c(1, 1))
 ```
 
-The AnPIT from @fig-anpit-clus show very similar results to those of
-@fig-anpit-reg, hence similar conclusions are drawn.
+The AnPIT results in @fig-anpit-clus-1 and @fig-anpit-clus-2 are very
+similar to those in @fig-anpit-reg-1 and @fig-anpit-reg-2, hence similar
+conclusions are drawn.
 
 ### Assessing calibration and sharpness using continuous ranked probability scores
 
@@ -1559,8 +1609,7 @@ The *scaled CRPS (SCRPS)*, proposed by @bolin2023, refines the CRPS by
 addressing its dependence on the scale of the outcome variable, which
 can vary across observations. The SCRPS is defined as
 
-$$\text{SCRPS}(F_M, y_i) = -\frac{1}{2} \left[ 1 + \frac{\text{CRPS}(F_M, y_i)}{\text{CRPS}(F_M, F_M)} + \log\left\{2 \, \text{CRPS}(F_M, F_M)\right\} \right],$$
- {#eq-scrps}
+$$\text{SCRPS}(F_M, y_i) = -\frac{1}{2} \left[ 1 + \frac{\text{CRPS}(F_M, y_i)}{\text{CRPS}(F_M, F_M)} + \log\left\{2 \, \text{CRPS}(F_M, F_M)\right\} \right].$$ {#eq-scrps}
 
 where $\text{CRPS}(F_M, F_M)$ denotes the expected CRPS when the
 observation is drawn from the predictive distribution itself, i.e.,
@@ -1631,7 +1680,7 @@ minimizing errors for these high-variance predictions.
 When evaluating the predictive performance of a model $M$, we proceed as
 follows. Let $\left(x_{1}^{(i)}, \ldots, x_{m_i}^{(i)}\right)$ represent
 the set of locations in the $i$-th test set, for $i=1, \ldots, T$. For
-each location, we compute the score—either CRPS or SCRPS—and denote it
+each location, we compute the score (either CRPS or SCRPS) and denote it
 as $r_{M}\left(x_{j}^{(i)}\right)$.
 
 To assess the overall performance of model $M$, we calculate a weighted
@@ -1652,28 +1701,27 @@ now compare the predictive performance of the two, using both the CRPS
 and SCRPS metrics introduced previously.
 
 The `assess_prediction()` function also allows the user to compute the CRPS and
-SCRPS through the argument `which_metric` as shown below.
+SCRPS through the argument `metrics` as shown below.
 
 ```{r}
 #| label: score-liberia-validation-models
 #| eval: false
-regularized_scores <- 
-assess_prediction(list(M0 = M0_fit, M1 = M1_fit),
-          which_metric = c("CRSP", "SCRPS"), 
-          method = "regularized", min_dist = 20,
-          n_size = 9, iter = 10, messages = FALSE)
+regularized_scores <- assess_prediction(list(M0 = M0_fit, M1 = M1_fit),
+                                        metrics = c("CRPS", "SCRPS"),
+                                        method = "regularized",
+                                        min_dist = 20, size = 9,
+                                        iter = 10, messages = FALSE)
 
-cluster_scores <- 
-assess_prediction(list(M0 = M0_fit, M1 = M1_fit),
-          which_metric = c("CRSP", "SCRPS"), 
-          method = "cluster", fold = 10, messages = FALSE)
-
+cluster_scores <- assess_prediction(list(M0 = M0_fit, M1 = M1_fit),
+                                    metrics = c("CRPS", "SCRPS"),
+                                    method = "cluster", fold = 10,
+                                    messages = FALSE)
 
 ```
 
 Note that that `assess_prediction()` can be run once in order to obtain both the
 AnPIT diagnostic, introduced in @sec-anpit; by default
-`which_metric = c("AnPIT", "CRSP", "SCRPS")` which computes all three
+`metrics = c("PIT", "CRPS", "SCRPS")`, which computes all three
 diagnostic using the same test sets. The reason we have separated the
 AnPIT and the scores computations is only for pedagogical purposes.
 
@@ -1703,31 +1751,9 @@ a point map of the CRPS and SCRPS using the locations of the test sets.
 #| label: fig-scores-map
 #| fig-cap: "Point maps of the scores for model $M_{0}$ and $M_{1}$ across the test sets generated using a clusering approach for splitting the data. The upper panels are the map for the continuous ranked probability score (CRPS) and the lower panels for the scale CRPS (SCRPS). "
 
-# Define ranges for the color scales
-
-crps_range <- range(c(unlist(cluster_scores$model$M0$score$CRPS),
-                      unlist(cluster_scores$model$M1$score$CRPS)))  
-scrps_range <- range(c(unlist(cluster_scores$model$M0$score$SCRPS),
-                      unlist(cluster_scores$model$M1$score$SCRPS))) 
-
-# Generate the plots with consistent color scales
-p1 <- plot_score(cluster_scores, 
-                 which_score = "CRPS", which_model = "M0") +  
-      scale_color_viridis_c(option = "C", 
-      limits = crps_range, direction = 1) 
-p2 <- plot_score(cluster_scores, 
-                 which_score = "CRPS", which_model = "M1") +       
-      scale_color_viridis_c(option = "C", 
-      limits = crps_range, direction = 1) 
-p3 <- plot_score(cluster_scores, 
-                 which_score = "SCRPS", which_model = "M0") +  
-      scale_color_viridis_c(option = "C", 
-      limits = scrps_range, direction = 1) 
-p4 <- plot_score(cluster_scores, 
-                 which_score = "SCRPS", which_model = "M1") +
-      scale_color_viridis_c(option = "C", 
-      limits = scrps_range, direction = 1) 
-grid.arrange(p1, p2, p3, p4, nrow = 2, ncol = 2)
+crps_maps <- plot(cluster_scores, metric = "CRPS")
+scrps_maps <- plot(cluster_scores, metric = "SCRPS")
+grid.arrange(crps_maps, scrps_maps, nrow = 2)
 
 ```
 
@@ -1816,8 +1842,9 @@ geostatistical models: one that incorporates elevation as a predictor
 and another that excludes it. This example will be revisited throughout
 the steps outlined in this section on simulation. We can chose the
 following true model (henceforth $M_T$) for the simulation $$M_{T}: \:
-\log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_{0} + \beta_{1}e(x_i) + \beta_{2}\max\{e(x_i)-150, 0\} + S(x_i).$$
- {#eq-true-model-lib} The true model, described by the equation above,
+\log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_{0} + \beta_{1}e(x_i) + \beta_{2}\max\{e(x_i)-150, 0\} + S(x_i).$$ {#eq-true-model-lib}
+
+The true model, described by the equation above,
 assumes a nonlinear relationship with elevation based on a linear spline
 with a single knot at 150 meters. To simulate data from the true model,
 which constitutes the next step in our simulation study, we must first
@@ -1832,7 +1859,7 @@ can be derived as shown below.
 set.seed(123)
 true_model <- glgpm(npos ~ elevation + pmax(elevation - 150, 0) + 
                            gp(),
-                    den = ntest,
+                    denominator = ntest,
                     model_crs = 32629,
                     family = "binomial",
                     data = liberia)
@@ -2008,8 +2035,7 @@ One approach is to use the predictive mean from $M_C$ in each simulation
 and evaluate how it differs from $T(x)$. A natural choice for this
 comparison is the mean squared error (MSE), defined as:
 
-$$\frac{1}{B} \sum_{j=1}^B \sum_{i=1}^q \left(T(\tilde{x}_i) - \hat{T}_{C}(\tilde{x}_i)\right)^2$$
- {#eq-mse}
+$$\frac{1}{B} \sum_{j=1}^B \sum_{i=1}^q \left(T(\tilde{x}_i) - \hat{T}_{C}(\tilde{x}_i)\right)^2.$$ {#eq-mse}
 
 where $\tilde{x}_i$ is the $i$-th location on the grid $\tilde{X}$,
 $T(\tilde{x}_i)$ represents the true value of the target, and
@@ -2098,20 +2124,20 @@ decisions regarding interventions are often based on the classification
 of the areal-level target into predefined categories at the level of
 administrative regions; see, for example, @johnson2021 and @puranik2024.
 
-To formalize this problem mathematically, let $\mathcal{M}_i$ represent
+To formalize this problem mathematically, let $\mathcal{T}_i$ represent
 the true value of the areal-level target (e.g., the average prevalence
-over a district), and let $\hat{\mathcal{M}}_{C,i}$ denote the
+over a district), and let $\hat{\mathcal{T}}_{C,i}$ denote the
 corresponding prediction produced by the candidate model $M_C$. Note
-that $\mathcal{M}_i$ can be easily calculated in Step 1 during
+that $\mathcal{T}_i$ can be easily calculated in Step 1 during
 simulations from the true model (@sec-sim-step1).
 
-Now, consider that the target $\mathcal{M}_i$ is categorized into
+Now, consider that the target $\mathcal{T}_i$ is categorized into
 predefined classes, which are typically thresholds or ranges of the
 disease indicator (such as values that define low, medium, and high
 levels). Denote the true membership class of areal unit $i$ by
-$\mathcal{D}_i$, which is determined based on $\mathcal{M}_i$, and the
+$\mathcal{D}_i$, which is determined based on $\mathcal{T}_i$, and the
 predicted membership class by $\hat{\mathcal{D}}_{C,i}$, determined
-based on $\hat{\mathcal{M}}_{C,i}$. The goal is to assess the overall
+based on $\hat{\mathcal{T}}_{C,i}$. The goal is to assess the overall
 quality of the classification, which involves evaluating how well the
 predicted classes $\hat{\mathcal{D}}_{C,i}$ agree with the true classes
 $\mathcal{C}_i$ across all areal units and simulations. This assessment
@@ -2137,30 +2163,30 @@ indicators include:
 
 1.  *Sensitivity*: The proportion of areal units correctly classified as
     belonging to the true membership class when conditioned on that true
-    class:\
+    class:
 
     $$\text{Sensitivity} = \frac{\text{True Positives (TP)}}{\text{True Positives (TP)} + \text{False Negatives (FN)}}$$
 
 2.  *Specificity* (True Negative Rate): The proportion of areal units
     not belonging to a given membership class that are correctly
-    classified as not being in that class:\
+    classified as not being in that class:
 
     $$\text{Specificity} = \frac{\text{True Negatives (TN)}}{\text{True Negatives (TN)} + \text{False Positives (FP)}}$$
 
 3.  *Positive Predictive Value (PPV)*: The proportion of areal units
     predicted to belong to a membership class that are correctly
-    classified, conditioned on the predicted membership class:\
+    classified, conditioned on the predicted membership class:
 
     $$\text{PPV} = \frac{\text{True Positives (TP)}}{\text{True Positives (TP)} + \text{False Positives (FP)}}$$
 
 4.  *Negative Predictive Value (NPV)*: The proportion of areal units
     predicted not to belong to a membership class that are correctly
-    classified, conditioned on the predicted membership class:\
+    classified, conditioned on the predicted membership class:
 
     $$\text{NPV} = \frac{\text{True Negatives (TN)}}{\text{True Negatives (TN)} + \text{False Negatives (FN)}}$$
 
 5.  *Correct Classification Rate*: The overall proportion of areal units
-    whose predicted membership class matches the true membership class:\
+    whose predicted membership class matches the true membership class:
 
     $$\text{Correct Classification Rate} = \frac{\text{True Positives (TP)} + \text{True Negatives (TN)}}{\text{Total Cases (TP + TN + FP + FN)}}$$
 
@@ -2245,7 +2271,7 @@ The implementation first loads the admin level 1 shapefiles for Liberia,
 transforming them to the appropriate coordinate reference system. The
 arugment `f_area_target` is set to `mean`, ensuring that the target
 prevalence for each region is computed as the average over the area,
-corresponding to\
+corresponding to
 
 $$\frac{1}{|A|} \int_A T(x) \, dx$$
 The classification is performed by specifying
@@ -2505,7 +2531,7 @@ the metrics considered in this chapter is given in @tbl-summary-pp-diag.
 
 : Summary of the different diagnostic tools and metrics, that are used
 to assess the predictive performance of a geostatistical model using
-both cross-validation and simulatoin-based approaches.
+both cross-validation and simulation-based approaches. {#tbl-summary-pp-diag}
 
 ## FAQs
 
