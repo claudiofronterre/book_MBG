@@ -60,6 +60,23 @@ practical.
   marked `eval: false` and its saved result is loaded separately.
 - Use `readRDS()` for `.rds` files and assign the return value explicitly.
 - Do not use `load()` for `.rds` files.
+- When an object is built in a short sequence of steps, chain them with the
+  native pipe `|>` rather than reassigning the same object on consecutive
+  lines. Do not use the magrittr pipe `%>%`. Keep separate assignments when an
+  intermediate object is used again or the steps need their own comments.
+- Load packages in one visible chunk at the start of each chapter, listing
+  every package the chapter uses, so that readers can see and copy them.
+  A package needed for a single specialised step may be loaded where it is
+  used. Chapter 2, which introduces packages one at a time, loads each where
+  it is first needed. Hidden chunks may load saved results, but not packages
+  that readers need for the displayed code.
+- Each chapter can be read on its own; sections within a chapter build on
+  each other. Where a chapter first uses an object created in an earlier
+  chapter, such as a fitted model or a converted dataset, recreate it with
+  visible code and cross-reference the section that explains it, without
+  repeating the explanation. Show expensive fits with `eval: false` and load
+  the saved result silently. In Chapter 5, each case study is a
+  self-contained unit with its own packages and data.
 - For a function call split across lines, keep the first argument on the same
   line as the function name, align subsequent arguments with the first, and
   close the parenthesis on the final argument line:
@@ -107,3 +124,19 @@ trailing backslash as a layout device.
 Keep one blank line between paragraphs, headings, lists, tables, equations,
 and fenced code blocks. Formatting-only edits must not silently alter or
 remove scientific content.
+
+Write one sentence per line in the source, and separate paragraphs with a
+blank line. This keeps diffs and reviews readable and does not change the
+rendered text. Chapters converted to this layout set `editor: markdown: wrap:
+sentence` in their YAML, so the visual editor preserves it. Build paragraphs
+around one idea, and merge runs of one- or two-sentence paragraphs that
+continue the same point.
+
+Use one vocabulary for spatial correlation. Call $\phi$ the *scale
+parameter* of the correlation function, never the range or spatial range.
+The *practical range* is the distance at which the correlation falls to 0.05,
+$\log(20)\phi \approx 3\phi$ for the exponential correlation function; for
+other Matérn models report its value. Use the practical range whenever the
+text means a distance, and "the scale of spatial correlation" for the general
+idea. Keep "range" on its own for non-spatial meanings, such as the observed
+range of a covariate.
