@@ -56,6 +56,9 @@ practical.
 - Put spaces around `=` and binary operators.
 - Use `<-` for assignment in executable R code.
 - Use descriptive `snake_case` names.
+- Keep code lines to 70 characters or fewer, including comments. The PDF
+  sets code in a smaller font that fits 71 characters on a line, and
+  longer lines wrap.
 - Keep displayed code scientifically complete even when an expensive call is
   marked `eval: false` and its saved result is loaded separately.
 - Use `readRDS()` for `.rds` files and assign the return value explicitly.

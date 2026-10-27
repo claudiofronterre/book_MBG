@@ -73,6 +73,7 @@ format:
            \pagestyle{plain}
            \pagenumbering{roman}
            \RecustomVerbatimEnvironment{verbatim}{Verbatim}{
+             fontsize = \small,
              showspaces = false,
              showtabs = false,
              breaksymbolleft={},
