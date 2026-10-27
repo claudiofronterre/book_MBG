@@ -2789,7 +2789,11 @@ update preserves the usual single-stage fit. With repeated updates,
 convergence requires both a sufficiently small change in the parameter
 estimates, measured relative to their standard errors, and adequate
 overlap of the importance weights. The `max_iterations` argument sets an
-upper limit rather than guaranteeing convergence. In @sec-liberia-estim1,
+upper limit rather than guaranteeing convergence. If overlap is
+inadequate, RiskMap moves the reference distribution only part-way towards
+the fitted estimate before generating the next importance sample. This
+shortened reference update is a computational bridge, not a replacement
+for the fitted estimate reported by `glgpm()`. In @sec-liberia-estim1,
 estimation is performed using a geostatistical model fitted to prevalence
 data. The `start_pars` argument allows initial values for the model
 parameters to be supplied. If it is omitted, as in @sec-liberia-estim1,
@@ -2896,16 +2900,18 @@ plot_mcmc(fit_liberia2)
 ```
 
 The code above allows up to two MCML updates, regenerating the importance
-sample around the estimate from the preceding update. Each update uses
-10,000 retained MCMC samples. As shown in @fig-mcmc-10k, these MCMC samples
-exhibit good mixing and low autocorrelation, which indicates that they
-adequately approximate the likelihood function of the Binomial
-geostatistical model. Although additional MCMC iterations could be run
-to obtain estimates closer to the true maximum likelihood estimate
-(since we are approximating the likelihood function and not obtaining
-the exact MLE), we choose not to do so here. This decision is due to
-both the computational time required and the minimal impact of Monte
-Carlo error on spatial predictions in this case.
+sample around the reference update from the preceding iteration. This
+reference equals the fitted estimate when importance-sampling overlap is
+adequate; otherwise RiskMap takes a shorter step towards it. Each update
+uses 10,000 retained MCMC samples. As shown in @fig-mcmc-10k, these MCMC
+samples exhibit good mixing and low autocorrelation, which indicates that
+they adequately approximate the likelihood function of the Binomial
+geostatistical model. Although additional MCMC iterations could be run to
+obtain estimates closer to the true maximum likelihood estimate (since we
+are approximating the likelihood function and not obtaining the exact
+MLE), we choose not to do so here. This decision is due to both the
+computational time required and the minimal impact of Monte Carlo error on
+spatial predictions in this case.
 
 #### Alternative approaches
 
