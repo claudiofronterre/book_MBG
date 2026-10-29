@@ -88,36 +88,7 @@ For a map of location-specific summaries, marginal prediction is sufficient.
 For the distribution of a spatial average, total, maximum, or a simultaneous exceedance event, we need joint prediction.
 The expectation of a spatial average can be calculated from marginal means, but its variance also depends on the covariances between locations.
 Marginal draws must not be treated as complete spatial surfaces when calculating this uncertainty.
-
-#### Why dependence matters for a regional prediction {.unnumbered}
-
-Consider a small region divided into 16 equally sized cells.
-At each cell, suppose prevalence is either 10% or 30%, with equal probability.
-In an idealised example of perfect positive dependence, all cells are low together or high together.
-Alternatively, imagine drawing independently from the same distribution at each cell.
-Both constructions give the same predictive distribution at every cell and the same expected regional average of 20%, but very different uncertainty about that average (@fig-joint-versus-marginal).
-
-```{r}
-#| label: fig-joint-versus-marginal
-#| echo: false
-#| out-width: "100%"
-#| fig-cap: "Perfect dependence (A) and independence (B) give the same distribution at any one cell (left) but very different distributions for the average over 16 cells (right). The maps show four possible draws of each, with the regional average of each draw. The marked cell is the same in every map. The bar charts are exact distributions over all possible draws. The dashed line and shaded area mark a decision threshold of 25%."
-knitr::include_graphics(if (knitr::is_latex_output()) {
-  "figures/joint-versus-marginal.pdf"
-} else {
-  "figures/joint-versus-marginal.png"
-})
-```
-
-Under perfect dependence, the regional average is either 10% or 30%, so its standard deviation is 10 percentage points.
-Under independence, let $H$ be the number of high-prevalence cells.
-Then $H\sim\operatorname{Binomial}(16,0.5)$ and the average is $0.1+0.2H/16$, with a standard deviation of only 2.5 percentage points.
-To see what this means for a decision, suppose action is needed when the regional average exceeds 25%, a threshold above the expected average of 20%.
-Under perfect dependence, the probability of exceeding it is 50%.
-Under independence it is $P(H\geq13)\approx1.06\%$.
-Treating dependent cells as independent would therefore make us much too certain that the threshold is not exceeded.
-Perfect dependence is used here to make the contrast clear.
-In a fitted spatial model the strength of dependence is estimated from the data.
+@sec-areal-target shows with a simple example how much this matters for a regional prediction.
 
 ### Example: preparing predictions for Liberia (continuing from @sec-liberia-estim1) {#sec-pred-samples}
 
@@ -289,10 +260,14 @@ Its columns are repeated draws for that same location, rather than different loc
 spatial_effect <- liberia_prediction$samples$spatial[1, ]
 spatial_draws <- data.frame(spatial_effect)
 ggplot(spatial_draws, aes(x = spatial_effect)) +
-  geom_histogram(bins = 30, fill = "#347B87", colour = "white") +
-  labs(x = expression(S(tilde(x)[1])), y = "Number of draws") +
+  geom_histogram(aes(y = after_stat(density)), bins = 30,
+                 fill = "#347B87", colour = "white") +
+  labs(x = expression(S(tilde(x)[1])), y = "Density") +
   theme_minimal()
 ```
+
+The spread of this histogram is the uncertainty about the spatial effect at one unsampled location, given the data.
+@sec-spat-cont-target turns these draws into predictions of prevalence and maps them, and @sec-areal-target uses joint draws to predict averages and totals over counties.
 
 ## Spatially continuous targets {#sec-spat-cont-target}
 
@@ -356,16 +331,30 @@ The result is built with the ggplot2 and patchwork packages, so we can add layer
 #| fig-width: 6
 #| fig-asp: 1.2
 #| out-width: "100%"
-#| fig-cap: "Predicted nodule prevalence in Liberia, conditional on the estimated model parameters, with the surveyed villages. Top left: predictive mean. Top right: width of the 95% prediction interval. Bottom: probability that prevalence exceeds 20%."
+#| fig-cap: "Predicted nodule prevalence in Liberia, conditional on the estimated model parameters, with the surveyed villages. Top left: predictive mean. Top right: width of the 95% prediction interval. Bottom left: coefficient of variation. Bottom right: probability that prevalence exceeds 20%."
 plot(liberia_prediction,
-     summary = c("mean", "interval_width", "exceedance")) &
+     summary = c("mean", "interval_width", "cv", "exceedance")) &
   geom_sf(data = liberia, shape = 21, size = 0.7, fill = "white",
           colour = "black", stroke = 0.3, inherit.aes = FALSE)
 ```
 
+```{r}
+#| label: liberia-cv-summary
+#| include: false
+grid_summaries <- liberia_prediction$predictions
+high_cv <- grid_summaries$response_cv >=
+  quantile(grid_summaries$response_cv, 0.9)
+cv_mean <- round(100 * median(grid_summaries$response_mean[high_cv]), 1)
+cv_width <- round(100 * median(
+  grid_summaries$response_interval_width[high_cv]))
+all_width <- round(100 * median(grid_summaries$response_interval_width))
+```
+
 The maps in @fig-lb-maps separate predicted prevalence from the uncertainty about it.
 The interval width is read directly in percentage points of prevalence, which is how uncertainty is usually discussed in programme decisions.
-The coefficient of variation, also calculated above, is a relative measure: at low prevalence a small absolute uncertainty gives a large coefficient of variation, so it can make low-prevalence areas look more uncertain than they are in absolute terms.
+The coefficient of variation is a relative measure: at low prevalence a small absolute uncertainty gives a large coefficient of variation, so it can make low-prevalence areas look more uncertain than they are in absolute terms.
+In @fig-lb-maps it is largest along the coast, where predicted prevalence is lowest.
+At the tenth of grid locations with the largest coefficient of variation, the median predicted prevalence is `r cv_mean`% and the median interval width is `r cv_width` percentage points, against `r all_width` points across the whole grid.
 The exceedance map answers a different question from the mean map: it shows how strongly the fitted model and data support prevalence above 20% at each location, rather than simply whether the predicted mean exceeds 20%.
 
 The prediction combines two components on the log-odds scale: the fixed effects, $\beta_0 + \beta_1 \log e(x)$, and the spatial effect, $S(x)$.
@@ -416,10 +405,10 @@ Far from the sampled locations, relative to the practical range of the estimated
 For the Liberia model, with an exponential correlation function and scale parameter $\hat\phi =$ `r round(coef(fit_liberia)$phi, 1)` km, the practical range is $\log(20)\hat\phi \approx$ `r round(log(20) * coef(fit_liberia)$phi)` km.
 We can measure this by the share of the spatial variance at $x$ that the data leave unexplained,
 $$
-U(x) = 1 - \rho(x)^\top R^{-1} \rho(x),
+v(x) = 1 - \rho(x)^\top R^{-1} \rho(x),
 $$ {#eq-spatial-unexplained}
 where $\rho(x)$ holds the estimated correlations between $x$ and the sampled locations, and $R$ is the correlation matrix of the sampled locations.
-$U(x)$ is close to 0 next to sampled locations and close to 1 where the data carry no information about $S(x)$.
+$v(x)$ is close to 0 next to sampled locations and close to 1 where the data carry no information about $S(x)$.
 Unlike the distance to the nearest sampled location, it accounts for the estimated scale of spatial correlation and for the clustering of the sampled locations.
 It depends only on where the data were collected, so for binomial and Poisson outcomes, which carry less information than an exact observation of $S(x)$, it gives an optimistic picture.
 
@@ -474,10 +463,11 @@ For example, different values of the spatial variance $\sigma^2$ and scale param
 This additional source of uncertainty can matter particularly when the survey contains little information about those parameters.
 
 RiskMap can propagate parameter uncertainty by setting `parameter_uncertainty = TRUE` in `predict()`.
-It draws parameter values from an approximate multivariate normal sampling distribution of the estimates, using their estimated covariance matrix.
+It draws parameter values from an approximation to the sampling distribution of the estimates based on the multivariate Gaussian distribution, centred at the estimates and with their estimated covariance matrix.
+The approximation is made on the scale used for estimation, the logarithm for $\sigma^2$ and $\phi$, so the drawn values of these parameters are always positive.
 At each parameter draw, RiskMap generates new samples of the unobserved effects conditional on the data, calculates the target, and pools the target draws to obtain predictive summaries.
 
-The approximation relies on the estimated covariance matrix and the normal approximation to the sampling distribution.
+The approximation relies on the estimated covariance matrix and on the Gaussian form assumed for the sampling distribution.
 These require care when parameters are poorly identified or near a boundary.
 Propagating uncertainty cannot compensate for an inadequately fitted model.
 The sampling-distribution perspective connects to the confidence intervals and parametric bootstrap discussed in @sec-bootstrap.
@@ -724,6 +714,37 @@ The spatial patterns are very similar, because age and location enter the linear
 
 ## Areal-level targets {#sec-areal-target}
 
+An areal target combines the surface at many locations, so its uncertainty depends on how the predictions at those locations are related.
+A simple example shows how much this matters.
+
+Consider a small region divided into 16 equally sized cells.
+At each cell, suppose prevalence is either 10% or 30%, with equal probability.
+In an idealised example of perfect positive dependence, all cells are low together or high together.
+Alternatively, imagine drawing independently from the same distribution at each cell.
+Both constructions give the same predictive distribution at every cell and the same expected regional average of 20%, but very different uncertainty about that average (@fig-joint-versus-marginal).
+
+```{r}
+#| label: fig-joint-versus-marginal
+#| echo: false
+#| out-width: "100%"
+#| fig-cap: "Perfect dependence (A) and independence (B) give the same distribution at any one cell (left) but very different distributions for the average over 16 cells (right). The maps show four possible draws of each, with the regional average of each draw. The marked cell is the same in every map. The bar charts are exact distributions over all possible draws. The dashed line and shaded area mark a decision threshold of 25%."
+knitr::include_graphics(if (knitr::is_latex_output()) {
+  "figures/joint-versus-marginal.pdf"
+} else {
+  "figures/joint-versus-marginal.png"
+})
+```
+
+Under perfect dependence, the regional average is either 10% or 30%, so its standard deviation is 10 percentage points.
+Under independence, let $H$ be the number of high-prevalence cells.
+Then $H\sim\operatorname{Binomial}(16,0.5)$ and the average is $0.1+0.2H/16$, with a standard deviation of only 2.5 percentage points.
+To see what this means for a decision, suppose action is needed when the regional average exceeds 25%, a threshold above the expected average of 20%.
+Under perfect dependence, the probability of exceeding it is 50%.
+Under independence it is $P(H\geq13)\approx1.06\%$.
+Treating dependent cells as independent would therefore make us much too certain that the threshold is not exceeded.
+Perfect dependence is used here to make the contrast clear.
+In a fitted spatial model the strength of dependence is estimated from the data.
+
 When determining areal-level targets, we must first address the following questions:
 
 1.  What spatially continuous target, $T(x)$, are we seeking to aggregate?
@@ -756,7 +777,7 @@ A population-weighted mean prevalence describes the prevalence experienced by a 
 Weighting by population counts and summing instead of averaging gives the expected number of people with the condition, the burden that planning and costing require.
 Other weights can reflect exposure or proximity to a source of infection, and binary weights restrict a target to part of an area.
 
-These targets require joint prediction, and the order of operations matters (step 4 in @fig-prediction-workflow).
+As the example at the start of this section showed, these targets require joint prediction, and the order of operations matters (step 4 in @fig-prediction-workflow).
 The target is first calculated in every draw.
 For an areal target, locations are then aggregated within each joint draw, and only then are the resulting areal values summarised.
 For example, averaging the lower interval limits of the locations in an area does not give a lower interval limit for the area's average.
