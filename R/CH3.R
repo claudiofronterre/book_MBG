@@ -102,7 +102,7 @@ data(anopheles)  # from RiskMap
 an_fit <- glgpm(An.gambiae ~ elevation + gp(),
                 data = anopheles,
                 family = "poisson",
-                control_mcmc = set_control_mcmc(seed = 2026),
+                seed = 2026,
                 messages = FALSE)
 
 saveRDS(an_fit, file = "data/an_fit.rds")
@@ -110,8 +110,7 @@ saveRDS(an_fit, file = "data/an_fit.rds")
 ## ------------------------------------------------------------
 ## 6. Liberia river-blindness models
 ##    -> data/fit_Liberia.rds             (fit_liberia)
-##    -> data/fit_liberia_no_nugget.rds    (fit_liberia_no_nugget)
-##    -> data/fit_liberia2.rds             (fit_liberia2)
+##    -> data/fit_liberia_nugget.rds       (fit_liberia_nugget)
 ## ------------------------------------------------------------
 data(liberia)  # from RiskMap
 liberia <- st_as_sf(liberia, coords = c("long", "lat"), crs = 4326)
@@ -121,65 +120,48 @@ liberia <- st_as_sf(liberia, coords = c("long", "lat"), crs = 4326)
 fit_liberia <- glgpm(npos ~ log(elevation) + gp(),
                      denominator = ntest, data = liberia,
                      model_crs = 32629,
-                     control_mcmc = set_control_mcmc(seed = 2026),
+                     seed = 2026,
                      return_samples = TRUE,
                      family = "binomial")
 
 saveRDS(fit_liberia, file = "data/fit_Liberia.rds")
 
-## --- 6b. Same model, saved under the name used later in the
-##         parametric-bootstrap section
-fit_liberia_no_nugget <- fit_liberia
-
-saveRDS(fit_liberia_no_nugget, file = "data/fit_liberia_no_nugget.rds")
-
-## --- 6c. Refit with the nugget estimated and a much larger
-##         MCMC sample (110000 iterations, burn-in 10000, thin 10)
+## --- 6b. Refit with the nugget estimated, starting from the
+##         estimates of the model without it (Sec. "Adding a nugget
+##         effect")
 start_liberia <- coef(fit_liberia)
 start_liberia$tau2 <- 0.1
 
-fit_liberia2 <- glgpm(npos ~ log(elevation) + gp(nugget = TRUE),
-                      denominator = ntest, data = liberia,
-                      model_crs = 32629,
-                      start_pars = start_liberia,
-                      control_mcmc = set_control_mcmc(n_sim = 110000,
-                                                     burnin = 10000,
-                                                     thin = 10,
-                                                     seed = 2026),
-                      control_mcml = set_control_mcml(max_iterations = 2),
-                      return_samples = TRUE,
-                      family = "binomial", messages = FALSE)
+fit_liberia_nugget <- glgpm(npos ~ log(elevation) + gp(nugget = TRUE),
+                            denominator = ntest, data = liberia,
+                            model_crs = 32629,
+                            start_pars = start_liberia,
+                            seed = 2026,
+                            return_samples = FALSE,
+                            family = "binomial")
 
-saveRDS(fit_liberia2, file = "data/fit_liberia2.rds")
+saveRDS(fit_liberia_nugget, file = "data/fit_liberia_nugget.rds")
 
 ## ------------------------------------------------------------
-## 7. Parametric bootstrap for fit_liberia_no_nugget
-##    -> data/par_boot.rds (object: par_hat)
+## 7. Profile likelihoods for fit_liberia, with the joint profile of
+##    sigma2 and phi
+##    -> data/liberia_profile.rds (object: liberia_profile)
 ## ------------------------------------------------------------
-n_sim <- 100  # increase to >= 1000 for production-quality CIs
+liberia_profile <- profile(fit_liberia,
+                           pairs = list(c("sigma2", "phi")))
 
-liberia_boot <- simulate_glgpm(fit_liberia_no_nugget,
-                               nsim = n_sim,
-                               what = "data",
-                               seed = 2026)
+saveRDS(liberia_profile, file = "data/liberia_profile.rds")
 
-par_hat <- vector("list", n_sim)
+## ------------------------------------------------------------
+## 8. Parametric bootstrap for fit_liberia
+##    -> data/liberia_bootstrap.rds (object: liberia_bootstrap)
+## ------------------------------------------------------------
+liberia_bootstrap <- parametric_bootstrap(fit_liberia,
+                                          n_sim = 1000,
+                                          seed = 2026,
+                                          cores = 8)
 
-for (i in seq_len(n_sim)) {
-  sim_data <- simulated_data(liberia_boot, simulation = i)
-
-  fit_sim <- glgpm(formula = npos ~ log(elevation) + gp(),
-                   data = sim_data,
-                   family = "binomial",
-                   start_pars = coef(fit_liberia_no_nugget),
-                   denominator = ntest,
-                   control_mcmc = set_control_mcmc(seed = 2026 + i),
-                   messages = FALSE)
-
-  par_hat[[i]] <- coef(fit_sim)
-}
-
-saveRDS(par_hat, file = "data/par_boot.rds")
+saveRDS(liberia_bootstrap, file = "data/liberia_bootstrap.rds")
 
 ## ------------------------------------------------------------
 message("Done. All files written to ./data:")

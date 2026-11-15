@@ -361,12 +361,12 @@ malkenya_comm <- malkenya[malkenya$Survey == "community", ]
 malkenya_comm1000 <- malkenya_comm[1:1000, ] |>
   st_transform(crs = 32736)
 
-set.seed(2026)
 fit_malkenya <- glgpm(RDT ~ Age + pmax(Age - 15, 0) +
                         pmax(Age - 40, 0) + elevation +
                         gp(nugget = TRUE),
                       data = malkenya_comm1000,
                       family = "binomial",
+                      seed = 2026,
                       messages = FALSE)
 saveRDS(fit_malkenya, "data/fit_malkenya.rds")
 

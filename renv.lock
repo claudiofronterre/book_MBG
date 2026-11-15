@@ -593,11 +593,12 @@
         "loo",
         "Matrix",
         "numDeriv",
+        "parallel",
+        "patchwork",
         "Rcpp",
         "rlang",
         "scales",
         "sf",
-        "sns",
         "spatialEco",
         "spatialsample",
         "terra",
@@ -609,7 +610,7 @@
         "RcppEigen"
       ],
       "Suggests": [
-        "patchwork",
+        "RhpcBLASctl",
         "testthat (>= 3.0.0)",
         "withr"
       ],
@@ -625,8 +626,8 @@
       "RemoteHost": "api.github.com",
       "RemoteUsername": "claudiofronterre",
       "RemoteRepo": "RiskMap",
-      "RemoteRef": "83f5e5ef43ba20695792346bbad236eaffd75612",
-      "RemoteSha": "83f5e5ef43ba20695792346bbad236eaffd75612"
+      "RemoteRef": "1f5d8fd472513c0eb2b98ae95d34afbaf82e8a5d",
+      "RemoteSha": "1f5d8fd472513c0eb2b98ae95d34afbaf82e8a5d"
     },
     "S7": {
       "Package": "S7",

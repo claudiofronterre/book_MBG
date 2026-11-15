@@ -89,6 +89,11 @@ practical.
                data = data,
                family = "binomial")
   ```
+- Combine ggplot2 panels into one figure with the patchwork package rather
+  than `grid.arrange()` or `plot_grid()`. Label the panels with
+  `plot_annotation(tag_levels = "a", tag_prefix = "(", tag_suffix = ")")`
+  rather than with plot titles, and refer to them in the text and caption as
+  (a), (b) and so on.
 
 ## Code chunks
 

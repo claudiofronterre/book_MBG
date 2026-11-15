@@ -18,14 +18,17 @@ editor_options:
 | `glmer()` | *lme4* | Fitting generalized linear mixed models |
 | `glgpm()` | *RiskMap* | Fitting generalized linear geostatistical models |
 | `variogram()` | *RiskMap* | Computing the empirical variogram and a global envelope for spatial independence |
-| `plot_variogram()` | *RiskMap* | Plotting an empirical variogram and its global envelope |
+| `plot()` | *RiskMap* | Plotting an empirical variogram and its global envelope |
 | `summarise_distance()` | *RiskMap* | Summarising distances between sampling locations |
 | `to_table()` | *RiskMap* | Formatting model estimates as a table |
 | `set_control_mcmc()` | *RiskMap* | Configuring Markov chain Monte Carlo settings |
-| `set_control_mcml()` | *RiskMap* | Configuring repeated Monte Carlo maximum-likelihood updates |
+| `set_control_mcml()` | *RiskMap* | Configuring Monte Carlo maximum likelihood estimation |
 | `plot_mcmc()` | *RiskMap* | Checking Markov chain Monte Carlo output |
+| `summarise_mcmc()` | *RiskMap* | Computing effective sample sizes of Markov chain Monte Carlo samples |
+| `profile()` | *RiskMap* | Computing profile likelihoods and profile likelihood intervals |
 | `simulate_glgpm()` | *RiskMap* | Simulating replicated data from a fitted geostatistical model |
 | `simulated_data()` | *RiskMap* | Extracting one simulated dataset |
+| `parametric_bootstrap()` | *RiskMap* | Carrying out a parametric bootstrap of a fitted geostatistical model |
 
 This chapter introduces the process of moving from exploratory analysis
 to the formal specification of statistical models, through to parameter
@@ -35,6 +38,28 @@ approaches for exploring and modelling non-linear relationships. We then
 turn to the assessment of residual spatial correlation, which motivates
 the use of geostatistical models, and describe how maximum likelihood
 methods can be applied for their estimation.
+
+The code in this chapter uses the following packages and datasets.
+
+```{r}
+#| label: load-chapter-3-packages
+#| message: false
+# Load the packages used in this chapter
+library(sf)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(patchwork)
+library(lme4)
+library(RiskMap)
+
+# Load the datasets used in this chapter
+data(galicia)
+data(italy_sim)
+data(liberia)
+data(malkenya)
+data(anopheles)
+```
 
 ## Exploratory analysis
 
@@ -70,25 +95,7 @@ Chapter 1 of @weisberg2014).
 Let us first consider the example of the river blindness data in Liberia
 (@sec-rb-ch1), and examine the association between prevalence and
 elevation. We first generate a plot of the prevalence against the
-measured elevation at each of the sample locations
-
-```{r}
-#| label: load-packages-data
-#| echo: false
-#| message: false
-library(ggplot2)
-library(sf)
-library(RiskMap)
-library(tidyr)
-library(dplyr)
-library(lme4)
-library(gridExtra)
-data(galicia)
-data(italy_sim)
-data(liberia)
-data(malkenya)
-data(anopheles)
-```
+measured elevation at each of the sample locations.
 
 ```{r}
 #| label: fig-prev-elev-liberia
@@ -111,7 +118,7 @@ model? To answer this question rigorously, the plot in
 @fig-prev-elev-liberia cannot be used. This is because, when the
 modelled outcome is a bounded Binomial count, regression relationships
 are usually specified on the logit-transformed prevalence (log-odds)
-scale; see @tbl-glm in Section @sec-geostat-models. To explore
+scale, as shown in @tbl-glm in @sec-geostat-models. To explore
 regression relationships in the case of prevalence data, it is
 convenient to use the so-called empirical logit in place of the
 empirical prevalence. The empirical logit is defined as
@@ -1233,8 +1240,23 @@ liberia$Z_hat <- ranef(fit_glmer_lib)$ID_loc[, 1]
 
 We use `ranef()` to extract the estimates of the random effects $Z_i$
 and save them in the dataset. We then use `variogram()` from RiskMap to
-compute the empirical
-variogram for the estimated $\hat{Z}_i$.
+compute the empirical variogram for the estimated $\hat{Z}_i$, first
+with its default settings.
+
+```{r}
+#| label: liberia-variog-default
+liberia_variog_default <- variogram(data = liberia,
+                                    variable = "Z_hat",
+                                    distance_units = "km",
+                                    seed = 2026)
+```
+
+By default, `variogram()` divides the distances between locations into
+14 classes $\mathcal{U}$ of equal width, up to one third of the largest
+distance in the data. The number of classes and the largest distance
+can be changed through the arguments `n_bins` and `max_dist`.
+Alternatively, the classes can be set directly through the argument
+`breaks`, as in the code below.
 
 ```{r}
 #| label: liberia-variog
@@ -1247,16 +1269,13 @@ liberia_variog <- variogram(data = liberia,
                             seed = 2026)
 ```
 
-Through the argument `breaks` we can specify the classes of distance,
-previously denoted by $\mathcal{U}$; check the help page of
-`variogram()` to see how this is defined by default. The values passed
-to `breaks` in the code above define the following distance classes
+The values passed to `breaks` define the following distance classes
 $\mathcal{U}$: $[15, 30]$, $(30, 40]$ and so forth, with the final class
 being $(300, 350]$. Pairs separated by less than 15 km or more than
-350 km are excluded. The argument `n_permutations` allows the user
-to specify the number of permutations used to generate the global
-envelope for spatial independence. The `seed` argument makes the
-permutations reproducible.
+350 km are excluded. The argument `n_permutations`, 999 by default,
+allows the user to specify the number of permutations used to generate
+the global envelope for spatial independence. The `seed` argument makes
+the permutations reproducible.
 
 Both `variogram()` and `summarise_distance()` compute distances in the
 units selected through `distance_units`. If the data already use a
@@ -1288,20 +1307,45 @@ behaviour of the variogram at smaller distances. Consequently, it is
 generally advisable to experiment with different `breaks` configurations
 and observe how they impact the pattern of the empirical variogram.
 
+The `plot()` function draws an empirical variogram computed by
+`variogram()` as one point per distance class, together with the global
+envelope for spatial independence, which can be omitted with
+`plot_envelope = FALSE`. Points that fall outside the envelope are drawn
+in red. Setting `show_pairs = TRUE` labels each point with the number of
+pairs $|\mathcal{U}|$ in its distance class, which shows how much
+information each estimate rests on. Because `plot()` returns a `ggplot`
+object, it can be modified and combined with other plots. Below, we use
+the patchwork package to place the two empirical variograms side by side
+in @fig-liberia-variog and to label them.
+
 ```{r}
 #| label: fig-liberia-variog
-#| fig-cap: "Empirical variogram (solid line) computed using the estimated random effects from the model in @eq-liberia-bin-mixed-elev. The blue shaded area is the 95% global envelope for spatial independence described in @sec-expl-spatial."
-plot_variogram(liberia_variog, plot_envelope = TRUE)
+#| fig-width: 6.5
+#| fig-asp: 0.5
+#| out-width: "100%"
+#| fig-cap: "Empirical variograms computed using the estimated random effects from the model in @eq-liberia-bin-mixed-elev, (a) with the default distance classes of `variogram()` and (b) with the distance classes set through `breaks`. The numbers are the pairs of locations in each distance class. The blue shaded areas are the 95% global envelopes for spatial independence described in @sec-expl-spatial. The two panels have different vertical scales."
+default_plot <- plot(liberia_variog_default, show_pairs = TRUE)
+breaks_plot <- plot(liberia_variog, show_pairs = TRUE)
+
+default_plot + breaks_plot +
+  plot_annotation(tag_levels = "a", tag_prefix = "(", tag_suffix = ")")
 ```
 
-The empirical variogram in @fig-liberia-variog remains within the global
-envelope. This exploratory diagnostic therefore does not reveal a clear
-departure from spatial independence. It does not establish that residual
-spatial correlation is absent: the result depends on the selected
-distance classes and on how much information the data contain about the
-spatial pattern. As we will emphasise throughout this book, the empirical
-variogram should be used to guide further modelling rather than to draw
-formal statistical conclusions.
+In panel (a) of @fig-liberia-variog, the first distance class contains
+only `r liberia_variog_default$variogram$n_pairs[1]` pairs of villages.
+Its estimate is far from the others and its envelope is very wide,
+because a semivariance computed from so few pairs is unstable. The
+breaks used in panel (b) leave out the pairs closest together and use
+wider classes at longer distances, so that every class contains at
+least `r min(liberia_variog$variogram$n_pairs)` pairs and the empirical
+variogram is smoother. In both panels the empirical variogram remains
+within the global envelope. This exploratory diagnostic therefore does
+not reveal a clear departure from spatial independence. It does not
+establish that residual spatial correlation is absent: the result
+depends on the selected distance classes and on how much information
+the data contain about the spatial pattern. As we will emphasise
+throughout this book, the empirical variogram should be used to guide
+further modelling rather than to draw formal statistical conclusions.
 
 #### Exploring residual spatial correlation with linear Gaussian models {#sec-empirical-variog-lm}
 
@@ -1367,7 +1411,7 @@ the end of the last paragraph.
 
 ```{r}
 #| label: fig-galicia-variog
-#| fig-cap: "Empirical variogram (solid line) computed using the estimated residuals from the model in @eq-std-lm-galicia. The blue shaded area is the 95% global envelope for spatial independence described in @sec-expl-spatial."
+#| fig-cap: "Empirical variogram computed using the estimated residuals from the model in @eq-std-lm-galicia. The blue shaded area is the 95% global envelope for spatial independence described in @sec-expl-spatial, and the red points fall outside it."
 
 # Fitting of the linear model and extraction of the residuals
 lm_fit <- lm(log(lead) ~ 1, data = galicia)
@@ -1385,7 +1429,7 @@ galicia_variog <- variogram(galicia,
                             seed = 2026)
 
 # Plotting the results
-plot_variogram(galicia_variog, plot_envelope = TRUE)
+plot(galicia_variog)
 ```
 
 In the code above, we first fit the linear model in
@@ -1393,9 +1437,12 @@ In the code above, we first fit the linear model in
 for this simple model, the residuals of the model are obtained by simply
 centering the log-transformed outcome to zero by subtracting its mean.
 @fig-galicia-variog shows the empirical variogram and the 95% global
-envelope for spatial independence. Its coherent departure from the
-envelope at short distances suggests spatial correlation in the
-log-transformed lead concentrations.
+envelope for spatial independence. The semivariances of the first two
+distance classes fall well below the envelope. This coherent departure
+at short distances suggests spatial correlation in the log-transformed
+lead concentrations. The point at about 90 km lies only marginally
+above the envelope, and an isolated point of this kind carries little
+weight on its own.
 
 ##### More than one observation per location {#sec-explanal-lm}
 
@@ -1511,16 +1558,16 @@ italy_sim_variog <- variogram(italy_sim,
                               seed = 2026)
 
 # Plot the variogram
-plot_variogram(italy_sim_variog, plot_envelope = TRUE)
+plot(italy_sim_variog)
 ```
 
 ```{r}
 #| label: fig-italy-sim-variog
-#| fig-cap: "Empirical variogram (solid line) computed using the estimated random effects from the model in @eq-italy-sim-lmm. The blue shaded area is the 95% global envelope for spatial independence described in @sec-expl-spatial."
+#| fig-cap: "Empirical variogram computed using the estimated random effects from the model in @eq-italy-sim-lmm. The blue shaded area is the 95% global envelope for spatial independence described in @sec-expl-spatial, and the red points fall outside it."
 #| echo: false
 
 italy_sim_variog <- readRDS("data/italy_sim_variog.rds")
-plot_variogram(italy_sim_variog, plot_envelope = TRUE)
+plot(italy_sim_variog)
 ```
 
 In @fig-italy-sim-variog, the empirical variogram departs from the global
@@ -1584,7 +1631,7 @@ $$
 Y_i = \mu + S(x_i) + U_i
 $$ {#eq-galicia-lgm}
 
-where were $S(x)$ is a Matern process with variance
+where $S(x)$ is a Matern process with variance
 $\sigma^2$, scale parameter $\phi$ and smoothness parameter
 $\kappa$; the $U_i$ correspond to the measurement error term and denote
 with $\omega^2$ their variance.
@@ -1604,10 +1651,10 @@ fit_galicia <- readRDS("data/fit_galicia.rds")
 galicia_kappa_profile <- readRDS("data/galicia_kappa_profile.rds")
 italy_fit <- readRDS("data/italy_fit.rds")
 an_fit <- readRDS("data/an_fit.rds")
-fit_liberia_no_nugget <- readRDS("data/fit_liberia_no_nugget.rds")
 fit_liberia <- readRDS("data/fit_Liberia.rds")
-fit_liberia2 <- readRDS("data/fit_liberia2.rds")
-par_hat <- readRDS("data/par_boot.rds")
+fit_liberia_nugget <- readRDS("data/fit_liberia_nugget.rds")
+liberia_bootstrap <- readRDS("data/liberia_bootstrap.rds")
+liberia_profile <- readRDS("data/liberia_profile.rds")
 
 kappa_values <- galicia_kappa_profile$kappa_values
 llik_values <- galicia_kappa_profile$llik_values
@@ -1641,15 +1688,23 @@ kilometres or metres.
 summary(fit_galicia)
 ```
 
-We can then inspect the point and interval estimates for the model
-through the `summary()` function of the model as shown in the code chunk
-above. This output is presented in three sections: in the first section,
-we have the results for the regression coefficients; in the second
-section, we have the estimate for the variance of the measurement error
-component, $\omega^2$, whose point estimate is about 0.015; in the final
-section, we have the estimates for the parameters of the spatial
-covariance function, $\sigma^2$ and $\phi$, which are about 0.171 and
-9.021 (km), respectively. The message
+The output of `summary()` has three sections. The first gives the
+estimates of the regression coefficients, here only the intercept
+$\mu$. The second gives the estimate of the measurement-error variance
+$\omega^2$, about `r round(coef(fit_galicia)$sigma2_me, 3)`. Its 95%
+confidence interval, from
+`r format(signif(summary(fit_galicia)$me[1, "Lower limit"], 2), scientific = FALSE)` to
+`r signif(summary(fit_galicia)$me[1, "Upper limit"], 2)`, is very wide,
+a first sign that the data carry little information on $\omega^2$. Like
+all the confidence intervals reported by `summary()`, it is a *Wald
+interval*, based on a Gaussian approximation to the distribution of the
+maximum likelihood estimator. For variance and scale parameters,
+RiskMap applies this approximation to the logarithm of the parameter
+and transforms the limits back, so the interval is not symmetric about
+the estimate. The third section gives the estimates of the parameters
+of the spatial covariance function, $\sigma^2$ and $\phi$, about
+`r round(coef(fit_galicia)$sigma2, 3)` and
+`r round(coef(fit_galicia)$phi, 3)` km. The message
 `Variance of the nugget effect fixed at 0` indicates that the nugget has
 not been included in the model.
 
@@ -1704,37 +1759,33 @@ for (i in seq_len(n_kappa)) {
 ```
 
 ```{r}
-#| echo: false
-#| fig-align: "center"
-#| fig-height: 8
-#| fig-width: 12
-#| out-width: "8.5in"
 #| label: fig-galicia-matern
-#| fig-cap: "(a) Maximum likelihood estimate of the measurement-error variance $\\omega^2$ for each fixed value of $\\kappa$. (b) Profile log-likelihood for $\\kappa$. The dashed line is the approximate 95% profile-likelihood cutoff based on a $\\chi^2$ distribution with one degree of freedom."
-profile_cutoff <- max(llik_values) - qchisq(0.95, df = 1) / 2
+#| echo: false
+#| fig-width: 6.5
+#| fig-asp: 0.5
+#| out-width: "100%"
+#| fig-cap: "(a) Maximum likelihood estimate of the measurement-error variance $\\omega^2$ for each fixed value of $\\kappa$. (b) Relative profile log-likelihood for $\\kappa$. The dashed line is the approximate 95% cut-off, $-1.92$."
+relative_llik <- llik_values - max(llik_values)
+profile_cutoff <- -qchisq(0.95, df = 1) / 2
 profile_data <- data.frame(kappa = kappa_values,
                            sigma2_me = unlist(sigma2_me_hat),
-                           log_likelihood = llik_values)
+                           relative_llik = relative_llik)
 
 measurement_error_plot <- ggplot(profile_data,
                                  aes(x = kappa, y = sigma2_me)) +
   geom_line() +
   geom_point() +
-  labs(x = expression(kappa), y = expression(hat(omega)^2),
-       title = "(a)") +
-  theme(plot.title = element_text(hjust = 0.5))
+  labs(x = expression(kappa), y = expression(hat(omega)^2))
 
 profile_likelihood_plot <- ggplot(profile_data,
-                                  aes(x = kappa,
-                                      y = log_likelihood)) +
+                                  aes(x = kappa, y = relative_llik)) +
   geom_line() +
   geom_point() +
   geom_hline(yintercept = profile_cutoff, linetype = "dashed") +
-  labs(x = expression(kappa), y = "Profile log-likelihood",
-       title = "(b)") +
-  theme(plot.title = element_text(hjust = 0.5))
+  labs(x = expression(kappa), y = "Relative log-likelihood")
 
-grid.arrange(measurement_error_plot, profile_likelihood_plot, ncol = 2)
+measurement_error_plot + profile_likelihood_plot +
+  plot_annotation(tag_levels = "a", tag_prefix = "(", tag_suffix = ")")
 ```
 
 Panel (a) of @fig-galicia-matern shows that smaller values of $\kappa$
@@ -1743,29 +1794,91 @@ raises the question of which value should be chosen for $\kappa$.
 
 To answer this question, a natural approach is to estimate the model for
 different values of $\kappa$ and see which one gives the best fit to the
-data, according to the likelihood function. In panel (b) of
-@fig-galicia-matern, we show the profile log-likelihood for 10 values of
-$\kappa$ between 0.5 and 3.5. The horizontal dashed line gives the
-approximate 95% cutoff obtained by subtracting half of the 0.95 quantile
-of a $\chi^2$ distribution with one degree of freedom from the maximum
-profile log-likelihood. In R, this cutoff is obtained as
+data, according to the likelihood function. For each fixed value of
+$\kappa$, `glgpm()` maximises the likelihood over all the other
+parameters. The resulting function of $\kappa$ is the *profile
+likelihood* of $\kappa$. More generally, if $\theta$ is one parameter
+of the model and $\psi$ denotes all the others, the profile likelihood
+of $\theta$ is
+$$
+L_p(\theta) = \max_{\psi} L(\theta, \psi),
+$$ {#eq-profile-likelihood}
+which is maximised at the maximum likelihood estimate $\hat{\theta}$.
+We work with its logarithm, $\ell_p(\theta) = \log L_p(\theta)$,
+relative to its maximum, that is, with $\ell_p(\theta) -
+\ell_p(\hat{\theta})$, which is zero at $\hat{\theta}$ and negative
+elsewhere. Twice the drop $\ell_p(\hat{\theta}) - \ell_p(\theta)$ is
+the likelihood ratio statistic for testing that the parameter equals
+$\theta$, which approximately follows a $\chi^2$ distribution with one
+degree of freedom. An approximate 95% confidence interval, the *profile
+likelihood interval*, therefore contains the values of $\theta$ whose
+relative profile log-likelihood is above $-3.84/2 = -1.92$, where 3.84
+is the 0.95 quantile of that $\chi^2$ distribution.
+
+In panel (b) of @fig-galicia-matern, we show the relative profile
+log-likelihood for 10 values of $\kappa$ between 0.5 and 3.5, with the
+cut-off of $-1.92$ as a dashed line. In R, they are obtained from the
+values of the log-likelihood computed above as
 
 ```{r}
 #| label: galicia-kappa-confidence-interval
 #| eval: false
-profile_cutoff <- max(llik_values) - qchisq(0.95, df = 1) / 2
+relative_llik <- llik_values - max(llik_values)
+profile_cutoff <- -qchisq(0.95, df = 1) / 2
 ```
 
-All the values of $\kappa$ considered lie above the horizontal line, so
-the profile log-likelihood is essentially flat over this range. The data
-provide little information to distinguish between these values, which
-clearly illustrates the weak identifiability of $\kappa$. We therefore
-fix $\kappa=1.5$ as a pragmatic choice that the data do not contradict,
-rather than one selected by the likelihood. The difficulty of estimating
-$\kappa$ is well documented in geostatistics (@zhang2004), which supports
-this pragmatic approach. The problem is further exacerbated for count
-data, which tend to be less informative about the correlation structure
-than continuously measured data.
+All the values of $\kappa$ considered lie above the dashed line, so
+the profile log-likelihood is essentially flat over this range. Its
+highest and lowest values differ by only
+`r round(diff(range(llik_values)), 2)`. The data provide little
+information to distinguish between these values, which clearly
+illustrates the weak identifiability of $\kappa$. The highest value is
+at $\kappa$ = `r round(kappa_values[which.max(llik_values)], 2)`, where
+the estimate of $\omega^2$ is practically zero. With these data, a rough
+surface $S(x)$ without measurement error and a smoother surface with
+measurement error fit almost equally well. This is consistent with the
+wide confidence interval for $\omega^2$ given by `summary()`. We
+therefore fix $\kappa=1.5$ as a pragmatic choice that the data do not
+contradict, rather than one selected by the likelihood. The difficulty
+of estimating $\kappa$ is well documented in geostatistics (@zhang2004),
+which supports this pragmatic approach. The problem is further
+exacerbated for count data, which tend to be less informative about the
+correlation structure than continuously measured data.
+
+We computed the profile log-likelihood of $\kappa$ by refitting the
+model for each fixed value, because `glgpm()` does not estimate
+$\kappa$. For the parameters that it does estimate, the `profile()`
+function computes the profile likelihoods directly, together with the
+profile likelihood intervals. We return to these intervals, and compare
+them with other approaches, in @sec-bootstrap.
+
+```{r}
+#| label: profile-galicia-model
+#| message: false
+galicia_profile <- profile(fit_galicia)
+galicia_profile
+```
+
+```{r}
+#| label: fig-galicia-profile
+#| fig-width: 6.5
+#| fig-asp: 0.5
+#| out-width: "100%"
+#| fig-cap: "Relative profile log-likelihood of the measurement error variance $\\omega^2$ for the Galicia model with $\\kappa = 1.5$ (solid curve), and its quadratic approximation, which gives the Wald interval (dashed curve). The dotted line shows the 95% cut-off, the shaded area the profile likelihood interval and the vertical line the estimate. The horizontal axis is logarithmic."
+plot(galicia_profile, parameters = "sigma2_me")
+```
+
+The Wald interval corresponds to approximating the relative profile
+log-likelihood by a quadratic function of $\log \omega^2$, shown as a
+dashed curve in @fig-galicia-profile. As $\omega^2$ decreases towards
+zero, the relative profile log-likelihood stays above the 95% cut-off,
+so the profile likelihood interval for $\omega^2$ is open at zero. The
+data cannot distinguish $\omega^2$ from zero, but they rule out values
+above `r signif(galicia_profile$intervals$profile_upper[4], 2)`. The
+upper limit of the Wald interval,
+`r signif(galicia_profile$intervals$wald_upper[4], 2)`, is much larger,
+because the quadratic approximation on which it is based fails for a
+variance estimated close to zero.
 
 ### Modelling hierarchical geostatistical data using the `re()` function {#sec-add-re-glgm}
 
@@ -1816,7 +1929,7 @@ map_provinces <- ggplot() +
 #| echo: false
 #| label: fig-italy-maps
 #| fig-cap: "The plot shows the location of the dataset `italy_sim` (red crosses), with the boundaries of the regions (left) and provinces (right) of Italy."
-grid.arrange(map_regions, map_provinces, ncol = 2)
+map_regions + map_provinces
 ```
 
 Let $V_h$, for $h=1,\ldots,n_V$ and $Z_k$, for $k=1,\ldots,n_{Z}$, be a
@@ -1971,29 +2084,27 @@ in the following examples.
 
 ### Example: river blindness in Liberia {#sec-liberia-estim1}
 
-In section @sec-agg-count-exp, we carried out the exploratory analysis
-of the river blindness prevalence data to assess how elevation could be
-introduced into the model. In @sec-empirical-variog-bin, we then tested
-for residual spatial correlation using the empirical variogram and
-log-transformed elevation as a covariate. Based on these results, we can
-now formulate a Binomial geostatistical model which we then fit to the
-data. Hence, we extend the model presented in @eq-liberia-bin-mixed-elev
-through the inclusion of a spatial Gaussian process, $S(x)$, and write
+In @sec-agg-count-exp, we explored how elevation could be introduced
+into a model for the river blindness data, and in
+@sec-empirical-variog-bin we found evidence of residual spatial
+correlation after accounting for log-transformed elevation. We now
+replace the independent random effects $Z_i$ of the model in
+@eq-liberia-bin-mixed-elev with a spatial Gaussian process $S(x)$. Let
+$Y_i$ be the number of people who test positive out of the $n_i$
+tested at location $x_i$. Conditionally on $S(x)$, the $Y_i$ are
+independent Binomial variables with $n_i$ trials and probabilities
+$p(x_i)$, where
 $$
-\log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_{0} + \beta_{1}\log\{e(x_i)\} + S(x_i).
+\log\left\{\frac{p(x_i)}{1-p(x_i)}\right\} = \beta_{0} + \beta_{1}\log\{d(x_i)\} + S(x_i),
 $$ {#eq-liberia-geostat-bin-elev}
+and $d(x_i)$ is the elevation in metres at $x_i$. We assume that $S(x)$
+is a stationary and isotropic Gaussian process with variance $\sigma^2$
+and exponential correlation function $\rho(u) = \exp\{-u/\phi\}$.
 
-We shall assume that $S(x_i)$ is a
-stationary isotropic Gaussian process with an exponential correlation
-function $\rho(u) = \exp\{-u/\phi\}$, with scale parameter
-$\phi$.
-
-We apply the Monte Carlo Maximum Likelihood (MCML) method for parameter
-estimation, which is implemented via the `glgpm()` function. In this
-section, we set aside the technical details of the estimation process to
-focus exclusively on interpreting the results. A more detailed
-explanation of the MCML theory can be found in @sec-glgm-lik, with a
-concise summary of the practical aspects provided in @sec-summary.
+We estimate the parameters by Monte Carlo maximum likelihood (MCML),
+which is implemented in the `glgpm()` function. The method is explained
+in @sec-glgm-lik and its settings in RiskMap in @sec-mcml-settings. Here
+we focus on how to use `glgpm()` and interpret its results.
 
 ```{r}
 #| label: fit-liberia-geostatistical-model
@@ -2001,10 +2112,25 @@ concise summary of the practical aspects provided in @sec-summary.
 fit_liberia <- glgpm(npos ~ log(elevation) + gp(),
                      denominator = ntest, data = liberia,
                      model_crs = 32629,
-                     control_mcmc = set_control_mcmc(seed = 2026),
+                     seed = 2026,
                      return_samples = TRUE,
                      family = "binomial")
 ```
+
+For a Binomial model, the number of people tested at each location is
+passed through the argument `denominator`. The `liberia` object created
+in @sec-empirical-variog-bin stores the locations as longitude and
+latitude. The argument `model_crs = 32629` projects them onto the
+Universal Transverse Mercator (UTM) zone 29N, a projected coordinate
+reference system that covers Liberia, so that distances, and therefore
+$\phi$, are expressed in kilometres. The `seed` argument makes the Monte
+Carlo samples, and therefore the estimates, reproducible. With
+`return_samples = TRUE`, `glgpm()` also draws Markov chain Monte Carlo
+(MCMC) samples of $S(x)$ at the observed locations, given the data and
+the estimated parameters. These samples are used for spatial prediction
+in @sec-geo-prediction, and we check them in @sec-liberia-mcmc. The
+remaining arguments keep their defaults, which are suitable for most
+analyses.
 
 ```{r}
 #| label: tbl-liberia-geostatistical-model
@@ -2012,33 +2138,135 @@ fit_liberia <- glgpm(npos ~ log(elevation) + gp(),
 to_table(fit_liberia, digits = 3)
 ```
 
-When using the `glgpm()` function to fit a Binomial model, we need to
-specify the Binomial denominators, i.e. the number of people tested at a
-location in this case, through the argument `denominator`. Other arguments of
-`glgpm()` that are used for carrying out MCML include `control_mcmc`,
-which receives the settings created by `set_control_mcmc()`. Initial
-values for the model parameters can be supplied through `start_pars`;
-when it is omitted, RiskMap constructs default starting values. Here,
-`return_samples = TRUE` retains the
-MCMC samples so that they can be examined later with `plot_mcmc()`.
-The seed recorded in `set_control_mcmc()` makes those samples
-reproducible. For more information on the default values of these
-arguments, see the help page for `glgpm()`. To understand how the MCMC
-settings can be changed to improve the MCML estimation, see @sec-mcml.
-The model fitted here does not include a nugget effect.
-This agrees with the default `nugget = FALSE` setting of `gp()`.
+```{r}
+#| label: summarise-liberia-elevation-effect
+#| echo: false
+elevation_ci <- summary(fit_liberia)$reg_coef["log(elevation)",
+                                              c("Lower limit",
+                                                "Upper limit")]
+```
 
-In the above summary of the model, the interpretation of the regression
-coefficients is the same as in a standard logistic regression model.
-Hence, by taking the exponential of the estimate for the regression
-coefficient $\beta_1$, we can express the effect for a unit increase in
-the covariate, which in this case is the log-transformed elevation, on the
-odds of disease prevalence. Finally, the interpretation of estimates of
-the covariance parameters is not affected by the type of distribution
-used to model the main outcome. The estimate of $\sigma^2$ quantifies
-the residual spatial variation on the log-odds scale, while the estimate
-of $\phi$ indicates relatively long-range spatial correlation, with a
-*practical range* close to ($58.67 \times 3 \approx$) 180 km.
+@tbl-liberia-geostatistical-model gives the estimates with their 95%
+confidence intervals. The regression coefficients are interpreted as in
+a standard logistic regression model. Because elevation enters the model
+on the log scale, doubling the elevation multiplies the odds of testing
+positive by $2^{\beta_1}$, which is estimated as
+`r round(2^coef(fit_liberia)$beta[["log(elevation)"]], 2)`, with a 95%
+confidence interval from `r round(2^elevation_ci[[1]], 2)` to
+`r round(2^elevation_ci[[2]], 2)`. The covariance parameters are
+interpreted as in a linear geostatistical model, but on the scale of the
+linear predictor, here the log-odds. The estimate of $\sigma^2$,
+`r round(coef(fit_liberia)$sigma2, 3)`, quantifies the residual spatial
+variation in the log-odds that is not explained by elevation. The
+estimate of $\phi$, `r round(coef(fit_liberia)$phi, 1)` km, corresponds
+to a practical range, the distance at which the correlation falls to
+0.05, of about $\log(20) \times `r round(coef(fit_liberia)$phi, 1)`
+\approx `r round(log(20) * coef(fit_liberia)$phi)`$ km. As we show in
+@sec-bootstrap, the data are much less informative about $\phi$ than
+this single number suggests.
+
+When the fit is complete, `glgpm()` reports an approximate 95% upper
+bound on the Monte Carlo error of the estimates, in units of their
+standard errors. For this model the bound is
+`r signif(summary(fit_liberia)$mcml$certificate, 2)`, well below the
+default tolerance of 0.1, so the Monte Carlo error is negligible
+compared with the statistical uncertainty of the estimates. The bound
+is also printed by `summary()` and can be extracted with
+`summary(fit_liberia)$mcml$certificate`.
+
+#### Adding a nugget effect {#sec-liberia-nugget}
+
+The model above does not include a nugget effect $Z_i$, which is the
+default of `gp()`. To check this choice, we refit the model with
+`gp(nugget = TRUE)`, starting from the estimates of the model without
+the nugget effect and from 0.1 for the variance $\tau^2$ of $Z_i$.
+
+```{r}
+#| label: fit-liberia-nugget
+#| eval: false
+
+# Starting values for the model with a nugget effect
+start_liberia <- coef(fit_liberia)
+start_liberia$tau2 <- 0.1
+
+# Refit the model with a nugget effect
+fit_liberia_nugget <- glgpm(npos ~ log(elevation) + gp(nugget = TRUE),
+                            denominator = ntest, data = liberia,
+                            model_crs = 32629,
+                            start_pars = start_liberia,
+                            seed = 2026,
+                            return_samples = FALSE,
+                            family = "binomial")
+```
+
+```{r}
+#| label: tbl-liberia-nugget-model
+#| tbl-cap: "Parameter estimates for the Liberia binomial geostatistical model with a nugget effect."
+to_table(fit_liberia_nugget, digits = 3)
+```
+
+In @tbl-liberia-nugget-model, the estimate of $\tau^2$ is practically
+zero, below $10^{`r ceiling(log10(coef(fit_liberia_nugget)$tau2))`}$.
+When fitting the model, RiskMap warns that the nugget effect cannot be
+distinguished from zero with these data. It does not report a standard
+error for $\tau^2$, so the table gives no confidence interval for it.
+The estimates of the other parameters are the same as in
+@tbl-liberia-geostatistical-model, to three decimal places. This
+supports the simpler model without the nugget effect. Here we set
+`return_samples = FALSE`, because we do not use the MCMC samples of
+this model.
+
+#### Checking the MCMC samples {#sec-liberia-mcmc}
+
+The MCMC samples stored in `fit_liberia` do not affect the parameter
+estimates, whose Monte Carlo error is controlled by the certificate.
+They are used to compute the fitted values, and they are reused for
+spatial prediction in @sec-geo-prediction. Before using them, we should
+check that the MCMC algorithm has converged, with the diagnostics
+described in @sec-mcmc-mala. The `plot_mcmc()` function draws these
+diagnostics.
+
+```{r}
+#| label: fig-check-mcmc
+#| fig-width: 6.5
+#| fig-asp: 0.8
+#| out-width: "100%"
+#| fig-cap: "Diagnostics of the 1,000 Markov chain Monte Carlo (MCMC) samples of the spatial random effects from the river blindness data analysis. The upper panels show trace plots (left) and autocorrelation functions (right) for the mean of the spatial random effects over the locations and for the location with the smallest effective sample size (ESS). The lower panel shows the histogram of the ESS at all the locations, with the ESS of the mean marked by the vertical line. The samples were obtained by running the MCMC algorithm for 12,000 iterations, with a burn-in of 2,000 and thinning of 10."
+plot_mcmc(fit_liberia)
+```
+
+The first row of @fig-check-mcmc is for the averaged spatial random
+effect, $\bar{S} = \sum_{i=1}^n S(x_i) /n$. Inspecting $\bar{S}$ avoids
+checking every individual component $S(x_i)$, but a problem in a small
+number of components may be obscured by the average. The second row is
+therefore for the location whose samples have the smallest ESS, which
+is the one most worth inspecting. Other locations can be selected
+through the `component` argument. The histogram shows how the ESS varies
+across the locations. The `summarise_mcmc()` function returns the ESS
+of the mean and of each location as a table, which we sort to show the
+locations with the smallest ESS first.
+
+```{r}
+#| label: summarise-liberia-mcmc
+liberia_ess <- summarise_mcmc(fit_liberia)
+arrange(liberia_ess, ess)
+```
+
+```{r}
+#| label: summarise-liberia-ess-text
+#| echo: false
+location_ess <- liberia_ess$ess[liberia_ess$effect == "S"]
+mean_ess <- liberia_ess$ess[liberia_ess$effect == "mean of S"]
+```
+
+The trace plots in @fig-check-mcmc show good mixing, and the
+autocorrelation is negligible beyond the first lag. Across the
+locations, the ESS of the 1,000 samples ranges from
+`r round(min(location_ess))` to `r round(max(location_ess))`, and it is
+`r round(mean_ess)` for $\bar{S}$. If the diagnostics showed poor
+mixing, or if more precise predictions were needed, we would increase
+the number of MCMC iterations through the `control_mcmc` argument of
+`glgpm()`, as described in @sec-mcml-settings.
 
 ### Example: *Anopheles gambiae* mosquitoes in Cameroon {#sec-anopheles-fit}
 
@@ -2062,7 +2290,7 @@ We can then use the following script to fit the model in RiskMap.
 an_fit <- glgpm(An.gambiae ~ elevation + gp(),
                 data = anopheles,
                 family = "poisson",
-                control_mcmc = set_control_mcmc(seed = 2026),
+                seed = 2026,
                 messages = FALSE)
 ```
 
@@ -2088,32 +2316,108 @@ summarise_distance(anopheles, distance_units = "km")
 
 Using the `summarise_distance()` function, we can see that, among the
 locations of the dataset, the average distance is about 55 km and the
-minimum is about 384 metres. The estimate of $\phi$ of 4 km is thus
-relatively small compared to the distances between locations in the
-data. In @sec-geo-prediction, we will further investigate to what extent
-this small-scale spatial correlation can affect the predictions of the
-An. Gambiae counts.
+minimum is about 384 metres. The estimate of $\phi$,
+`r round(coef(an_fit)$phi, 1)` km, corresponds to a practical range of
+about `r round(log(20) * coef(an_fit)$phi, 1)` km, which is small
+compared to the distances between locations in the data. When fitting
+the model, RiskMap warns that the estimate of $\phi$ is shorter than the
+median distance between neighbouring locations, about 3.5 km. Spatial
+correlation on so short a scale is hard to distinguish from unstructured
+variation between locations, so the data may carry little information
+on $\phi$. In @sec-geo-prediction, we will further investigate to what
+extent this small-scale spatial correlation can affect the predictions
+of the *An. gambiae* counts.
 
-### Using parametric bootstrap for computing confidence intervals {#sec-bootstrap}
+### Confidence intervals for the covariance parameters {#sec-bootstrap}
+
+As explained in @sec-glm-parest, the confidence intervals reported by
+`summary()` and `to_table()` are Wald intervals. Although RiskMap
+applies the Gaussian approximation on which they are based to the
+log-transformed covariance parameters, the approximation can still be
+poor when the data carry little information on a parameter, as is often
+the case for $\sigma^2$ and $\phi$. In this section, we compare the Wald
+intervals for the Liberia model of @sec-liberia-estim1 with two
+alternatives, based on the profile likelihood and on the parametric
+bootstrap.
+
+#### Profile likelihood
+
+We introduced the profile likelihood and the profile likelihood
+interval in @sec-glm-parest. Unlike the Wald interval, the profile
+likelihood interval follows the shape of the likelihood, and it does not
+depend on the scale on which the parameter is expressed. For the
+Liberia model, we compute the profile likelihood of each parameter and,
+through the `pairs` argument, the joint profile likelihood of $\sigma^2$
+and $\phi$.
 
 ```{r}
-#| label: set-bootstrap-simulations
-#| echo: false
-#| message: false
-n_sim <- 100
+#| label: profile-liberia-model
+#| eval: false
+liberia_profile <- profile(fit_liberia,
+                           pairs = list(c("sigma2", "phi")))
 ```
+
+```{r}
+#| label: print-liberia-profile
+liberia_profile
+```
+
+Each point of a profile requires maximising the likelihood over the
+other parameters. For Binomial and Poisson models, `profile()` makes the
+profiles smooth functions of the parameters by evaluating the Monte
+Carlo approximation of the likelihood on one fixed set of 5,000
+samples, set by its `n_draws` argument. The joint profile likelihood of
+two parameters is defined as in @eq-profile-likelihood, with both
+parameters held fixed and the likelihood maximised over all the others.
+Its relative log-likelihood is compared with half the quantiles of a
+$\chi^2$ distribution with two degrees of freedom. For example, the
+pairs of values above $-5.99/2 \approx -3.00$ form an approximate 95%
+joint confidence region.
+
+```{r}
+#| label: fig-liberia-profile
+#| fig-width: 6.5
+#| fig-asp: 1
+#| out-width: "100%"
+#| fig-cap: "Profile likelihoods of $\\sigma^2$ and $\\phi$ for the Liberia model. Top and right panels: relative profile log-likelihoods of $\\sigma^2$ and $\\phi$ (solid curves) and their quadratic approximations, which give the Wald intervals (dashed curves), with the 95% cut-offs (dotted lines), the profile likelihood intervals (shaded areas) and the estimates (thin lines). Lower-left panel: regions of the relative joint profile log-likelihood of $\\sigma^2$ and $\\phi$ at the 50%, 80% and 95% levels, with the estimate (dot) and the ridges of the two marginal profiles (lines). The axes for $\\sigma^2$ and $\\phi$ are logarithmic."
+plot(liberia_profile, parameters = c("sigma2", "phi"))
+```
+
+@fig-liberia-profile shows that the marginal profiles of $\sigma^2$ and
+$\phi$ are asymmetric even on the logarithmic scale. The relative
+profile log-likelihood falls steeply towards small values and slowly
+towards large ones. As a result, the profile likelihood intervals of
+both parameters extend to much larger values than the Wald intervals,
+while their lower limits are similar. For $\phi$, the profile
+likelihood interval runs from
+`r round(liberia_profile$intervals$profile_lower[4], 1)` to
+`r round(liberia_profile$intervals$profile_upper[4])` km. The data rule
+out short scales of spatial correlation, but they carry little
+information on how long the scale is.
+
+The joint profile shows why. Its regions are elongated along a ridge on
+which large values of $\sigma^2$ go with large values of $\phi$, so
+that a long scale combined with a large variance fits the data almost
+as well as the estimates. The data constrain a combination of the two
+parameters better than either of them. For the exponential correlation
+function, @zhang2004 showed that, as the sampling locations become
+denser within a fixed region, only the ratio $\sigma^2/\phi$ can be
+estimated consistently. The lines in the lower-left panel show the
+ridges of the two marginal profiles, that is, the value of each
+parameter that maximises the likelihood for each fixed value of the
+other.
+
+#### Parametric bootstrap
 
 The bootstrap is a widely used resampling technique introduced by
 @efron1979 as a general approach to estimating the variability of
-statistical estimates without relying on strong parametric assumptions.
-
-While the classical non-parametric bootstrap resamples directly from the
-observed data, parametric bootstrap instead relies on simulating new
-datasets from an assumed parametric model, using plug-in estimates
-obtained from the original fit of the model to the data. This
-simulation-based method is particularly useful for complex models, such
-as those considered in this book, that yield an intractable likelihood
-function.
+statistical estimates. While the classical non-parametric bootstrap
+resamples directly from the observed data, the parametric bootstrap
+simulates new datasets from the fitted model, with its parameters set
+to their estimates. Refitting the model to each simulated dataset gives
+a sample from the distribution of the estimator. This approach is
+particularly useful for complex models, such as those considered in
+this book, that yield an intractable likelihood function.
 
 We now describe how to carry out parametric bootstrap for geostatistical
 models in RiskMap. The use of simulation-based approaches will be more
@@ -2155,28 +2459,14 @@ steps.
 7.  Simulate from the distribution of $Y$ given $\mu_{(j)}(x)$,
     according to the chosen model, for $j = 1, \ldots, B$.
 
-These steps have been implemented in the `simulate_glgpm()`
-function. To show how to perform parametric bootstrap in RiskMap, let
-us consider the Liberia data on river blindness and fit the following
-geostatistical model.
-
-```{r}
-#| label: fit-liberia-bootstrap-model
-#| eval: false
-fit_liberia_no_nugget <- glgpm(npos ~ log(elevation) + gp(),
-                               denominator = ntest, data = liberia,
-                               model_crs = 32629,
-                               control_mcmc = set_control_mcmc(seed = 2026),
-                               family = "binomial")
-```
-
-Using the fitted Binomial geostatistical above, we can simulate a single
-dataset as follows:
+These steps have been implemented in the `simulate_glgpm()` function.
+To show how to perform parametric bootstrap in RiskMap, we simulate a
+single dataset from the model `fit_liberia` of @sec-liberia-estim1.
 
 ```{r}
 #| label: simulate-liberia-dataset
 #| eval: false
-liberia_sim <- simulate_glgpm(fit_liberia_no_nugget,
+liberia_sim <- simulate_glgpm(fit_liberia,
                               nsim = 1,
                               what = "data",
                               seed = 2026)
@@ -2192,112 +2482,183 @@ refit the same model to `sim_data` as follows.
 ```{r}
 #| label: refit-liberia-simulation
 #| eval: false
-fit_liberia_no_nugget_sim <- glgpm(formula = npos ~ log(elevation) + gp(),
-                                   data = sim_data,
-                                   family = "binomial",
-                                   denominator = ntest,
-                                   control_mcmc = set_control_mcmc(seed = 2027))
+fit_liberia_sim <- glgpm(formula = npos ~ log(elevation) + gp(),
+                         data = sim_data,
+                         family = "binomial",
+                         denominator = ntest,
+                         seed = 2027,
+                         return_samples = FALSE)
 ```
 
 The simulated dataset uses the modelling CRS and distance units stored
 in the fitted model. This ensures that the covariance parameters retain
-the same spatial interpretation when the model is refitted.
+the same spatial interpretation when the model is refitted. Because we
+only need the estimates, we set `return_samples = FALSE`, so that no
+MCMC samples are drawn.
 
-This idea can be extended naturally to perform parametric bootstrap. The
-procedure involves simulating multiple datasets from the fitted model,
-refitting the model to each of them, and extracting the estimates of
-interest. For instance, the following code simulates 100 datasets and
-fits the same model to each, storing the estimated regression
-coefficients:
+This idea extends naturally to the parametric bootstrap. We simulate
+many datasets from the fitted model, refit the model to each of them and
+keep the estimates. The `parametric_bootstrap()` function carries out
+these steps. The following code simulates 1,000 datasets and refits the
+model to each, starting from the estimates from the data.
 
 ```{r}
 #| label: bootstrap-liberia-model
 #| eval: false
-
-# Simulate 100 datasets
-n_sim <- 100
-liberia_boot <- simulate_glgpm(fit_liberia_no_nugget,
-                               nsim = n_sim,
-                               what = "data",
-                               seed = 2026)
-
-# List where we will store the estimates from each of the simulated datasets
-par_hat <- vector("list", n_sim)
-for (i in seq_len(n_sim)) {
-
-  # Extract one simulated dataset
-  sim_data <- simulated_data(liberia_boot, simulation = i)
-
-  # Fitting the geostatistical model
-  fit_sim <- glgpm(formula = npos ~ log(elevation) + gp(),
-                   data = sim_data,
-                   family = "binomial",
-                   start_pars = coef(fit_liberia_no_nugget),
-                   denominator = ntest,
-                   control_mcmc = set_control_mcmc(seed = 2026 + i),
-                   messages = FALSE)
-
-  # Extracting the parameter estimates
-  par_hat[[i]] <- coef(fit_sim)
-}
+liberia_bootstrap <- parametric_bootstrap(fit_liberia,
+                                          n_sim = 1000,
+                                          seed = 2026,
+                                          cores = 8)
 ```
 
-After obtaining the parameter estimates, we extract them and rearrange
-them in a matrix format to facilitate the computation of any summary,
-including the confidence intervals as shown in the code below.
+Each simulated dataset is generated and refitted with its own seed,
+derived from `seed`, so the results are reproducible. The `cores`
+argument sets the number of datasets processed in parallel. It does not
+change the results, and on Windows the datasets are always processed one
+after another. A refit that fails is recorded, rather than stopping the
+bootstrap.
+
+The simplest bootstrap interval is the *percentile interval*, given by
+the 2.5% and 97.5% quantiles of the bootstrap estimates. It is accurate
+when the bootstrap estimates are centred on the estimate from the data.
+When the estimator is biased, so that most bootstrap estimates fall on
+one side of the estimate from the data, the *bias-corrected* percentile
+interval is more accurate [@efron1993]. Let $p$ be the proportion of
+the bootstrap estimates that are smaller than the estimate from the
+data, and let $z_0 = \Phi^{-1}(p)$, where $\Phi$ is the distribution
+function of the standard Gaussian distribution. The bias-corrected
+interval is given by the quantiles of the bootstrap estimates of orders
+$\Phi(2 z_0 - 1.96)$ and $\Phi(2 z_0 + 1.96)$. When $p = 0.5$, it
+coincides with the percentile interval. For each parameter, `summary()`
+reports the median of the bootstrap estimates, their bias, that is,
+their mean minus the estimate from the data, their standard deviation,
+which estimates the standard error of the estimator, the proportion $p$
+and both intervals.
 
 ```{r}
-#| label: prepare-liberia-bootstrap-intervals
+#| label: summarise-liberia-bootstrap
+summary(liberia_bootstrap)
+```
 
-# Extract all parameters maintaining beta as a vector
-all_params <- sapply(seq_len(n_sim), function(i) {
-  c(par_hat[[i]]$beta,
-    par_hat[[i]]$sigma2,
-    par_hat[[i]]$phi)
-})
-CI <- t(apply(all_params, 1, function(x) quantile(x, c(0.025, 0.975))))
-
-# Combine the Wald and bootstrap intervals for comparison
-fit_summary <- summary(fit_liberia_no_nugget)
-wald_CI <- rbind(fit_summary$reg_coef[, c("Lower limit", "Upper limit")],
-                 fit_summary$sp[, c("Lower limit", "Upper limit")])
-parameter_names <- rownames(wald_CI)
-rownames(CI) <- parameter_names
-
-interval_comparison <- data.frame(Parameter = parameter_names,
-                                  `Wald lower` = wald_CI[, "Lower limit"],
-                                  `Wald upper` = wald_CI[, "Upper limit"],
-                                  `Bootstrap lower` = CI[, "2.5%"],
-                                  `Bootstrap upper` = CI[, "97.5%"],
-                                  check.names = FALSE)
+```{r}
+#| label: fig-liberia-bootstrap
+#| fig-width: 6.5
+#| fig-asp: 0.5
+#| out-width: "100%"
+#| fig-cap: "Histograms of the 1,000 bootstrap estimates of $\\sigma^2$ (left) and $\\phi$ (right) for the Liberia model. The solid lines show the estimates from the data, the dashed lines the 95% percentile intervals and the dash-dotted lines the 95% bias-corrected (BC) intervals."
+plot(liberia_bootstrap, parameters = c("sigma2", "phi"))
 ```
 
 ```{r}
 #| label: tbl-liberia-bootstrap-intervals
-#| tbl-cap: "Wald and parametric-bootstrap 95% confidence intervals for the Liberia binomial geostatistical model."
+#| tbl-cap: "Estimates and 95% confidence intervals for the Liberia binomial geostatistical model: Wald, profile likelihood, and bootstrap percentile and bias-corrected intervals."
 #| echo: false
-knitr::kable(interval_comparison, digits = 3, row.names = FALSE)
+format_number <- function(x) formatC(x, format = "f", digits = 3)
+format_interval <- function(lower, upper) {
+  sprintf("(%s, %s)", format_number(lower), format_number(upper))
+}
+bootstrap_table <- summary(liberia_bootstrap)$table
+rownames(bootstrap_table) <- bootstrap_table$parameter
+profile_ci <- liberia_profile$intervals
+fit_summary <- summary(fit_liberia)
+interval_comparison <- data.frame(
+  Parameter = c(rownames(fit_summary$reg_coef), rownames(fit_summary$sp)),
+  Estimate = format_number(bootstrap_table$estimate),
+  Wald = format_interval(profile_ci$wald_lower, profile_ci$wald_upper),
+  `Profile likelihood` = format_interval(profile_ci$profile_lower,
+                                         profile_ci$profile_upper),
+  `Bootstrap percentile` = format_interval(bootstrap_table$percentile_lower,
+                                           bootstrap_table$percentile_upper),
+  `Bootstrap bias-corrected` = format_interval(bootstrap_table$bc_lower,
+                                               bootstrap_table$bc_upper),
+  check.names = FALSE
+)
+knitr::kable(interval_comparison, row.names = FALSE,
+             align = c("l", "r", "r", "r", "r", "r"))
 ```
 
-By comparing the Wald confidence intervals with those derived from the
-bootstrap approach in @tbl-liberia-bootstrap-intervals, we
-observe that the former are considerably narrower for the covariance
-parameters, while the intervals are fairly similar for the regression
-coefficients.
+```{r}
+#| label: summarise-liberia-bootstrap-text
+#| echo: false
+phi_bootstrap <- liberia_bootstrap$estimates[, "phi"]
+bc_orders_phi <- pnorm(2 * qnorm(bootstrap_table["phi", "below"]) +
+                         qnorm(c(0.025, 0.975)))
+n_sim_text <- format(liberia_bootstrap$settings$n_sim, big.mark = ",")
+```
 
-This discrepancy arises because the Wald-type confidence intervals from
-`summary()` rely on a Gaussian approximation of the maximum likelihood
-estimator for the covariance parameters, which may not be entirely
-reliable. RiskMap improves the accuracy of this approximation by
-applying it to the log-transformed parameters and then transforming the
-confidence intervals back to the original scale. On the other hand,
-bootstrap-based confidence intervals can better represent finite-sample
-asymmetry in the estimator, although they remain conditional on the
-fitted model being an adequate data-generating mechanism. They are also
-more computationally demanding. The use of only 100 bootstrap samples,
-as shown above, may be insufficient. It is generally recommended to use
-at least 1000 iterations, if computationally feasible, to reduce the
-Monte Carlo error arising from the bootstrap simulations.
+@tbl-liberia-bootstrap-intervals shows that the four intervals for the
+regression coefficients agree closely. For these parameters, the
+Gaussian approximation to the distribution of the estimator is
+adequate. For the covariance parameters, the intervals differ. The
+bootstrap estimates show that the estimators of $\sigma^2$ and $\phi$
+are biased downwards. Of the bootstrap estimates,
+`r round(100 * bootstrap_table["sigma2", "below"])`% for $\sigma^2$ and
+`r round(100 * bootstrap_table["phi", "below"])`% for $\phi$ are smaller
+than the estimates from the data. The median of the bootstrap estimates
+of $\phi$ is `r sprintf("%.1f", bootstrap_table["phi", "median"])` km,
+against an estimate of `r round(bootstrap_table["phi", "estimate"], 1)`
+km. In
+`r sum(phi_bootstrap < 1, na.rm = TRUE)` of the `r n_sim_text`
+simulated datasets, the estimate of $\phi$ is below 1 km, far shorter
+than the distance between the two closest villages, about 3 km. In
+those datasets, the model attributes the spatial variation to effects
+that are practically independent between villages.
+
+The percentile intervals inherit the bias of the estimators and are
+shifted towards small values. The percentile interval for $\phi$ starts
+at `r signif(bootstrap_table["phi", "percentile_lower"], 2)` km, far
+below the lower limit of the profile likelihood interval. The bias
+correction moves both intervals upwards, but it does not centre them on
+the estimate. For $\phi$, it takes the quantiles of orders
+`r round(100 * bc_orders_phi[1], 1)`% and
+`r round(100 * bc_orders_phi[2], 2)`% of the bootstrap estimates, which
+give an interval from `r round(bootstrap_table["phi", "bc_lower"], 1)`
+to `r round(bootstrap_table["phi", "bc_upper"])` km. Its upper limit is
+determined by the one or two largest of the `r n_sim_text` estimates,
+so it carries a large Monte Carlo error. The bias correction also
+assumes that some transformation of the estimator has a Gaussian
+distribution, which is doubtful for $\phi$, given the group of
+estimates close to zero. The agreement between the bias-corrected and
+profile likelihood intervals for $\phi$ should therefore not be
+over-interpreted. For $\sigma^2$, the upper limit of the bias-corrected
+interval, `r round(bootstrap_table["sigma2", "bc_upper"], 3)`, remains
+well below that of the profile likelihood interval.
+
+Each of the three approaches has strengths and weaknesses. The Wald
+intervals come at no extra cost, since they only require the standard
+errors of the estimates. They rely on a quadratic approximation to the
+log-likelihood, which is adequate for the regression coefficients but
+can be poor for the covariance parameters, in particular for a variance
+close to zero, as for $\omega^2$ in @sec-glm-parest, or when the
+likelihood is flat in one direction, as for large values of $\phi$.
+The profile likelihood intervals follow the shape of the likelihood,
+and they can be open at zero for a variance that the data cannot
+distinguish from zero. They still rely on an asymptotic approximation,
+the $\chi^2$ distribution of the likelihood ratio statistic. Each of
+their points requires a maximisation of the likelihood, which for
+Binomial and Poisson models is itself approximated by Monte Carlo, and
+they consider one or two parameters at a time. The parametric bootstrap
+approximates the distribution of the estimator by simulation rather than
+by an asymptotic formula. It shows the bias and skewness of the
+estimator, and the datasets in which an estimate collapses, which
+neither of the other approaches can show, and it extends directly to any
+function of the parameters, such as the practical range. It is also the
+most expensive approach. Its intervals depend on extreme quantiles of
+the bootstrap estimates, which require many simulated datasets, and the
+data are simulated with the parameters set to their estimates, which is
+itself an approximation when the estimators are biased.
+
+Comparing the three approaches is most useful for parameters that the
+data identify poorly, typically the covariance parameters, and when the
+number of locations is small. When the intervals agree, as for the
+regression coefficients here, the Wald interval is sufficient. When
+they disagree, as for $\sigma^2$ and $\phi$, the disagreement is itself
+informative. It shows that the asymptotic approximations are unreliable
+and that the data determine the parameter poorly, especially its upper
+limit. In that case, the range of values supported by the different
+intervals should be reported, rather than the narrowest interval. All
+three approaches assume that the fitted model is an adequate description
+of the process that generated the data.
 
 ## The residuals of a geostatistical model: issues to consider
 
@@ -2533,8 +2894,9 @@ scale parameter $\phi$ and smoothness parameter $\kappa$; see
 @eq-matern.
 
 In the next two sections we provide a brief overview of Monte Carlo
-maximum likelihood and the use of Markov chain Monte Carlo to
-approximate @eq-glgm-lik2.
+maximum likelihood, which approximates @eq-glgm-lik2 by importance
+sampling, and of Markov chain Monte Carlo, which samples the random
+effects given the data.
 
 #### Monte Carlo maximum likelihood {#sec-mcml}
 
@@ -2584,32 +2946,83 @@ $$ {#eq-mcml2}
 As $B \rightarrow \infty$, the Monte Carlo approximation
 $R_{MC}(\theta, \theta_0)$ converges to the exact likelihood ratio in
 @eq-mcml1. It therefore estimates the likelihood up to the constant
-$L(\theta_0)$. The maximisation of this approximation is performed using an
-optimisation algorithm that uses the analytical expressions of the first
-and second derivatives. This approach is especially useful for exploring
-the likelihood surface, which can be relatively flat, particularly in
-the space of covariance parameters. To improve the approximation of the
-likelihood ratio in @eq-mcml2, this process can be repeated
-iteratively, replacing $\theta_0$ after each step with the estimate
-obtained from equation @eq-mcml2, until convergence is achieved.
+$L(\theta_0)$. The approximation is precise only for values of $\theta$
+close to $\theta_0$, because elsewhere a few samples receive most of the
+weight in @eq-mcml2. The procedure is therefore usually repeated,
+replacing $\theta_0$ after each step with the latest estimate. Because
+of Monte Carlo error, the estimates still vary from one iteration to the
+next, and it is difficult to tell when they are close enough to the
+maximum likelihood estimate.
 
-However, due to Monte Carlo error, the estimates after each iteration
-may still vary considerably, making convergence difficult to reach if
-very strict criteria are used. In practice, relaxed convergence criteria
-or a fixed maximum number of iterations (typically 3-5) are employed
-with a sufficiently large number of Monte Carlo samples (e.g.,
-$10,000$). Under these conditions, we find that the procedure provides
-reliable parameter estimates, and the impact of Monte Carlo error on
-spatial prediction has been observed to be negligible.
+RiskMap uses a development of this idea that addresses both problems.
+Instead of a single importance sampling distribution, it uses one that
+changes with $\theta$. For each value of $\theta$, the samples are drawn
+from a multivariate Gaussian approximation to $[W \mid Y; \theta]$,
+fitted to the whole of that distribution rather than only around its
+mode, and the likelihood is approximated as
+
+$$
+L_{MC}(\theta) = \frac{1}{B} \sum_{j=1}^B
+\frac{[W_{(j)}, Y; \theta]}{q(W_{(j)}; \theta)},
+$$ {#eq-mcml3}
+
+where $q(\cdot\,; \theta)$ is the density of the importance sampling
+distribution. By default, 5% of the samples are drawn from a Gaussian
+distribution with the covariance matrix of $W$, which prevents the
+importance weights in @eq-mcml3 from taking extreme values. The samples
+for every $\theta$ are obtained by transforming one fixed set of
+standard Gaussian draws, so that $L_{MC}(\theta)$ is a smooth function
+of $\theta$ that can be maximised with a standard optimisation
+algorithm. No MCMC is needed for this step.
+
+Monte Carlo error makes the maximiser of @eq-mcml3 differ from the
+maximum likelihood estimate. RiskMap controls this difference, measured
+in units of the standard errors of the estimates, in three steps that
+each use an independent set of samples.
+
+1.  *Fit*. Maximise @eq-mcml3 using 1,000 samples by default, starting
+    from the maximum of a Laplace approximation to the likelihood.
+2.  *Correct*. Using 5,000 new samples by default, estimate the
+    gradient of the log-likelihood at the maximum found in the first
+    step, and move the estimate by a Newton-Raphson step. If the samples
+    of the first step predict that one step falls short of the maximum,
+    as can happen for a variance close to zero, up to four further steps
+    are taken.
+3.  *Certify*. Using another 5,000 new samples, compute an approximate
+    95% upper bound on the distance between the corrected estimate and
+    the maximum likelihood estimate. We call this bound the
+    *certificate*.
+
+If the certificate exceeds a chosen tolerance, by default 0.1, the
+numbers of samples are increased to the size predicted to meet it and
+the three steps are repeated, for at most four stages. A certificate
+below 0.1 means that the Monte Carlo error is unlikely to move any
+parameter, or any linear combination of the parameters, by more than a
+tenth of its standard error. This is negligible both for inference and
+for spatial prediction.
+
+The certificate concerns the maximum of the likelihood that has been
+found, and it does not establish that no higher maximum exists. This
+matters mostly for the scale parameter $\phi$, whose likelihood can have
+separate maxima at short and long scales when the data carry little
+information on spatial correlation. RiskMap therefore searches for other
+maxima, by refitting from several dispersed starting values when the
+estimate of $\phi$ is short compared with the distances between
+neighbouring locations, and by evaluating the likelihood at shorter
+scales otherwise. It keeps the highest maximum and warns when it differs
+from the first one found.
 
 #### Markov chain Monte Carlo: sampling from the predictive distribution of the spatial Gaussian process {#sec-mcmc-mala}
 
 Building on the outline of the MCML method from the previous section, we
-now address the task of sampling from the distribution $[W \mid Y]$ to
-generate the samples $W_{(j)}$ used in equation @eq-mcml2. To simplify
+now address the task of sampling from the distribution $[W \mid Y]$.
+Such samples are needed by the classical MCML method in @eq-mcml2.
+RiskMap draws them at the estimated parameters, to compute fitted
+values, to check the fit with the diagnostics described below and for
+spatial prediction, as we shall see in @sec-geo-prediction. To simplify
 the notation, we will use $[W \mid Y]$ in place of
-$[W \mid Y; \theta_0]$, but it is important to emphasise that the
-parameters $\theta_0$ are considered fixed when sampling from
+$[W \mid Y; \theta]$, but it is important to emphasise that the
+parameters $\theta$ are considered fixed when sampling from
 $[W \mid Y]$. Since direct simulation from $[W \mid Y]$ is not feasible,
 we must rely on Markov chain Monte Carlo (MCMC) methods, which we will
 briefly introduce next.
@@ -2644,9 +3057,9 @@ The algorithm ensures that, under certain conditions, the chain
 converges to the target distribution $\pi(W)$ as the number of steps
 increases @roberts1996exponential.
 
-The functions of the RiskMap package for fitting Binomial and Poisson
-geostatistical models implement the *Metropolis-Adjusted Langevin
-Algorithm (MALA)*, which is an improvement over traditional
+For Binomial and Poisson geostatistical models, RiskMap samples from
+$[W \mid Y]$ with the *Metropolis-Adjusted Langevin Algorithm (MALA)*,
+which is an improvement over traditional
 Metropolis-Hastings MCMC methods. Introduced by @rossky1978brownian and
 further developed by @roberts1996exponential, MALA incorporates gradient
 information from the target distribution to propose more informed moves,
@@ -2716,12 +3129,14 @@ obtained MCMC samples.
 
     where $N$ is the total number of MCMC samples and $\rho_k$ is the
     autocorrelation at lag $k$. A high ESS indicates that the chain has
-    good mixing properties and the samples are nearly independent. The
-    summation of autocorrelations up to a sufficiently large lag is used
-    to estimate the reduction in effective sample size due to the
-    dependence between samples. A small ESS suggests high
-    autocorrelation and that more samples are needed to achieve the same
-    precision as a set of independent samples.
+    good mixing properties and the samples are nearly independent. In
+    practice, the sum is truncated, because the sample autocorrelations
+    at large lags are dominated by noise. RiskMap uses the initial
+    monotone sequence estimator of @geyer1992, which adds pairs of
+    consecutive sample autocorrelations while their sum is positive. A
+    small ESS suggests high autocorrelation and that more samples are
+    needed to achieve the same precision as a set of independent
+    samples.
 
 Other diagnostics can provide complementary information. The
 Gelman--Rubin diagnostic compares variation between and within multiple
@@ -2759,45 +3174,39 @@ specified in RiskMap.
 For a more thorough and complete overview of MCMC algorithms, chapters
 10 to 13 of @gelman2013bayesian are recommended reading.
 
-#### Summary with example {#sec-summary}
+#### Settings in RiskMap {#sec-mcml-settings}
 
-In summary, here are the steps required to perform Monte Carlo Maximum
-Likelihood (MCML):
+RiskMap carries out the steps of @sec-mcml in `glgpm()` for Binomial
+and Poisson models. Their settings are created by `set_control_mcml()`
+and passed through `control_mcml`. Its argument `tolerance` sets the
+tolerance of the certificate, 0.1 by default, while `initial_samples`,
+`validation_samples`, `max_samples` and `max_stages` set the numbers of
+samples and the maximum number of stages. For example,
+`set_control_mcml(tolerance = 0.05)` asks for a certificate below 0.05.
+If the certificate still exceeds the tolerance after the last stage,
+`glgpm()` returns the estimate with a warning that its Monte Carlo
+precision could not be established.
 
-1.  Start by selecting an initial guess for the model parameters,
-    denoted as $\theta_0$.
-2.  Simulate samples from $[W \mid Y; \theta_0]$ using MCMC methods.
-    Perform a check on the MCMC samples to assess convergence of the
-    MCMC algorithm.
-3.  Compute and maximise the approximate likelihood function in @eq-mcml2.
-4.  Set the newly estimated parameter as $\theta_0$ for the next
-    iteration.
-5.  Repeat steps 2 to 4 until convergence is achieved.
-6.  Monitor the estimates for convergence. If strict convergence
-    criteria are set, Monte Carlo error may cause fluctuations, making
-    it harder to achieve convergence.
-7.  Perform additional iterations, if necessary. For inference on model
-    parameters, continue iterating to reduce Monte Carlo error. For
-    spatial prediction, a pragmatic approach may involve stopping after
-    a second iteration with 10,000 samples, as prediction is less
-    affected by Monte Carlo error.
+The settings of the MCMC algorithm described in @sec-mcmc-mala are
+created by `set_control_mcmc()` and passed through `control_mcmc`. Its
+arguments `n_sim`, `burnin` and `thin` set the number of iterations,
+the burn-in and the thinning, by default 12,000, 2,000 and 10, which
+give 1,000 retained samples. The MCMC samples are drawn at the
+estimated parameters when `return_samples = TRUE`, which is the
+default. More iterations give a larger ESS and more precise predictions,
+at a greater computational cost.
 
-RiskMap automates these steps through `glgpm()`. The MCMC sample should
-still be inspected by the user. Repeated MCML updates are configured with
-`set_control_mcml()` and passed through `control_mcml`; its default of one
-update preserves the usual single-stage fit. With repeated updates,
-convergence requires both a sufficiently small change in the parameter
-estimates, measured relative to their standard errors, and adequate
-overlap of the importance weights. The `max_iterations` argument sets an
-upper limit rather than guaranteeing convergence. If overlap is
-inadequate, RiskMap moves the reference distribution only part-way towards
-the fitted estimate before generating the next importance sample. This
-shortened reference update is a computational bridge, not a replacement
-for the fitted estimate reported by `glgpm()`. In @sec-liberia-estim1,
-estimation is performed using a geostatistical model fitted to prevalence
-data. The `start_pars` argument allows initial values for the model
-parameters to be supplied. If it is omitted, as in @sec-liberia-estim1,
-the following defaults are used:
+The `seed` argument of `glgpm()` makes the Monte Carlo samples used for
+estimation, and the MCMC samples returned with the fit, reproducible.
+Without a seed, `glgpm()` draws one from the random number generator of
+the R session, so calling `set.seed()` before `glgpm()` also reproduces
+the fit. The seed used is stored as `seed` in the fitted object, and
+refitting the model with `seed = fit$seed`, where `fit` is the fitted
+object, reproduces the fit.
+
+Initial values for the model parameters can be supplied through the
+`start_pars` argument of `glgpm()`, as in @sec-liberia-nugget. If it is
+omitted, as in @sec-liberia-estim1, the following defaults are used:
 
 -   The initial guess for the regression coefficients $\beta$ is set to
     the maximum likelihood estimates obtained from a standard
@@ -2818,100 +3227,12 @@ starting point. Values supplied explicitly through `start_pars` remain
 authoritative and bypass this automatic comparison.
 
 In our experience, this automatic procedure provides useful starting
-values across a range of settings. Further MCML updates or longer MCMC
-samples may still be needed, depending on the parameter stability,
-importance-weight overlap and MCMC diagnostics.
-
-An alternative approach for setting initial guesses for the covariance
-parameters $\sigma^2$, $\tau^2$, and $\phi$ is to apply an interpolation
-technique to the variogram, as proposed in the seminal work by
-@cressie1985. However, in our experience, this approach does not
-consistently provide better approximations of the likelihood function
-compared to the method mentioned above. This may be due to the
-instability in estimating the variogram based on residuals from mixed
-models, as well as the sensitivity of empirical variogram estimation to
-the chosen distance breaks.
-
-To better illustrate some of the points above, we continue the analysis
-of the Liberia data from @sec-liberia-estim1. Diagnostic summaries on
-the convergence of the MCMC algorithm can be obtained with the
-`plot_mcmc()` function by passing the fitted model `fit_liberia` to the
-function. The fitted object must contain retained MCMC samples, as
-requested earlier with `return_samples = TRUE`.
-These diagnostic plots are generated by RiskMap using base graphics.
-They are retained here as package diagnostic output rather than as
-finished explanatory figures.
-
-```{r}
-#| label: fig-check-mcmc-mean
-#| fig-cap: "Trace plot (left panel) and autocorrelation function plot (right panel) for the averaged spatial random effects from the river blindness data analysis. The title of the right panel also shows the effective sample size of the 1,000 Markov chain Monte Carlo (MCMC) samples. The MCMC samples are obtained by running the MCMC algorithm for 12,000 iterations, with a burn-in of 2,000 and thinning of 10."
-plot_mcmc(fit_liberia)
-```
-
-The plots shown in @fig-check-mcmc-mean are for the MCMC samples of the
-averaged spatial random effect, that is
-$\bar{S} = \sum_{i=1}^n S(x_i) /n$. Inspecting $\bar{S}$ avoids checking
-every individual component $S(x_i)$. A problem in a small number of
-components may be obscured by the average, so individual components
-should also be inspected when there is a reason for concern. This can
-be done as follows.
-
-```{r}
-#| label: fig-check-comp10-mcmc
-#| fig-cap: "Trace plot (left panel) and autocorrelation function plot (right panel) for the tenth component of the spatial random effects from the river blindness data analysis."
-plot_mcmc(fit_liberia, check_mean = FALSE, component = 10)
-```
-
-Both @fig-check-mcmc-mean and @fig-check-comp10-mcmc show reasonably
-good mixing and relatively low autocorrelation. The MCMC settings for
-`glgpm()` are created by `set_control_mcmc()` and passed through the
-`control_mcmc` argument. By default, `set_control_mcmc()` uses 12,000
-iterations, a burn-in of 2,000 and thinning of 10, giving 1,000 retained
-samples. This configuration may be sufficient for the first MCML run.
-More iterations may be needed to obtain a larger ESS and improve the
-precision of the Monte Carlo approximation.
-
-```{r}
-#| label: refit-liberia-large-mcmc
-#| eval: false
-
-# Set starting values for the model with a nugget effect
-start_liberia <- coef(fit_liberia)
-start_liberia$tau2 <- 0.1
-
-# Refit the model and increase the MCMC samples
-fit_liberia2 <- glgpm(npos ~ log(elevation) + gp(nugget = TRUE),
-                      denominator = ntest, data = liberia,
-                      model_crs = 32629,
-                      start_pars = start_liberia,
-                      control_mcmc = set_control_mcmc(n_sim = 110000,
-                                                     burnin = 10000,
-                                                     thin = 10,
-                                                     seed = 2026),
-                      control_mcml = set_control_mcml(max_iterations = 2),
-                      return_samples = TRUE,
-                      family = "binomial", messages = FALSE)
-```
-
-```{r}
-#| label: fig-mcmc-10k
-#| fig-cap: "Trace plot (left panel) and autocorrelation function plot (right panel) for the averaged spatial random effects from the river blindness data analysis. The Markov chain Monte Carlo (MCMC) samples are obtained by running the MCMC algorithm for 110,000 iterations, with a burn-in of 10,000 and thinning of 10."
-plot_mcmc(fit_liberia2)
-```
-
-The code above allows up to two MCML updates, regenerating the importance
-sample around the reference update from the preceding iteration. This
-reference equals the fitted estimate when importance-sampling overlap is
-adequate; otherwise RiskMap takes a shorter step towards it. Each update
-uses 10,000 retained MCMC samples. As shown in @fig-mcmc-10k, these MCMC
-samples exhibit good mixing and low autocorrelation, which indicates that
-they adequately approximate the likelihood function of the Binomial
-geostatistical model. Although additional MCMC iterations could be run to
-obtain estimates closer to the true maximum likelihood estimate (since we
-are approximating the likelihood function and not obtaining the exact
-MLE), we choose not to do so here. This decision is due to both the
-computational time required and the minimal impact of Monte Carlo error on
-spatial predictions in this case.
+values across a range of settings. Initial values for $\sigma^2$,
+$\tau^2$ and $\phi$ could also be obtained by fitting a parametric
+variogram to the empirical variogram [@cressie1985]. However, this does
+not consistently give better starting values, because the variogram of
+residuals from mixed models is unstable and sensitive to the choice of
+distance classes.
 
 #### Alternative approaches
 
@@ -3119,7 +3440,7 @@ fixed-effects design matrix $D$.
     compare this with the confidence intervals obtained from the model
     summary.
 
-7.  In Section @sec-glm-parest, we explained that for a linear model
+7.  In @sec-glm-parest, we explained that for a linear model
     with one observation per location, we cannot simultaneously estimate
     both the measurement error variance $\omega^2$ and the nugget effect
     variance $\tau^2$. However, if $\omega^2$ is known, we can fix this
