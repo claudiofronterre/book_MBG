@@ -120,7 +120,7 @@ liberia <- st_as_sf(liberia, coords = c("long", "lat"), crs = 4326)
 fit_liberia <- glgpm(npos ~ log(elevation) + gp(),
                      denominator = ntest, data = liberia,
                      model_crs = 32629,
-                     control_mcmc = set_control_mcmc(seed = 2026),
+                     seed = 2026,
                      return_samples = TRUE,
                      family = "binomial")
 ```
@@ -245,7 +245,7 @@ knitr::include_graphics(if (knitr::is_latex_output()) {
 ```
 
 For this non-Gaussian model, prediction reuses the conditional samples stored in the fitted object when they are available.
-We should check the conditional sampler as described in @sec-summary.
+We should check the conditional sampler as described in @sec-liberia-mcmc.
 Supplying a `set_control_mcmc()` object through `control_mcmc` requests a fresh conditional run.
 Otherwise a fresh run is needed only if the fitted object has no stored samples.
 The seed above controls random draws made during prediction.
@@ -448,10 +448,11 @@ covariate_cells <- liberia_extrapolation$covariates_outside > 0
 low_cells <- covariate_cells &
   log(liberia_grid$elevation) < attr(liberia_extrapolation,
                                      "covariate_ranges")[1, 1]
-spatial_share <- mean(liberia_extrapolation$spatial_unexplained > 0.8)
+spatial_unexplained <- liberia_extrapolation$spatial_unexplained
 ```
 
-In @fig-lb-extrapolation, `r round(100 * spatial_share)`% of the grid locations have more than 80% of the spatial variance unexplained, in the gaps between clusters of surveyed villages.
+In @fig-lb-extrapolation, the share of the spatial variance left unexplained ranges from `r round(100 * min(spatial_unexplained))`% to `r round(100 * max(spatial_unexplained))`%.
+It is highest in the gaps between clusters of surveyed villages and along parts of the border, but only `r sum(spatial_unexplained > 0.8)` grid locations exceed 80%, because the practical range is long compared with the distances between neighbouring villages.
 Elevation lies outside its observed range at `r sum(covariate_cells)` locations, `r sum(low_cells)` of them below the lowest surveyed village along the coast and the remaining `r sum(covariate_cells) - sum(low_cells)` above the highest, in the northern highlands.
 Predictions in these areas should be reported with this caveat or supported with additional data: further surveys where the data are sparse, and caution about the form of the elevation effect where the covariate is extrapolated.
 
@@ -545,9 +546,9 @@ upland <- liberia_grid$elevation > 300
 percent_change <- function(ratio) round(100 * (median(ratio) - 1))
 ```
 
-Propagating parameter uncertainty widens the interval at `r round(100 * mean(width_ratio > 1))`% of the locations, but the median width increases by only `r percent_change(width_ratio)`%.
-The changes are concentrated in the coastal lowlands (@fig-liberia-parameter-uncertainty).
-Below 100 m, intervals are typically `r percent_change(width_ratio[lowland])`% wider and the mean prevalence rises by a median of `r round(median(mean_change[lowland]), 1)` percentage points, whereas above 300 m the predictions barely change.
+Propagating parameter uncertainty widens the interval at `r round(100 * mean(width_ratio > 1))`% of the locations, and the median width increases by `r percent_change(width_ratio)`%.
+The relative increase is largest in the coastal lowlands (@fig-liberia-parameter-uncertainty), where intervals below 100 m are typically `r percent_change(width_ratio[lowland])`% wider, against `r percent_change(width_ratio[upland])`% above 300 m.
+The mean prevalence changes by less than `r round(quantile(abs(mean_change), 0.9), 1)` percentage points at 90% of the locations.
 Uncertainty about the intercept and the elevation coefficient matters most where log elevation is furthest from that of the typical surveyed village, about `r round(exp(mean(log(liberia$elevation))))` m.
 At low elevations it is far from that value, and the lowest locations lie below the observed range (@sec-extrapolation).
 Plug-in prediction treats both coefficients as known, so its intervals miss this source of uncertainty.
@@ -597,12 +598,12 @@ With a single binary outcome per location it could not be separated from the bin
 #| label: fit-malkenya-geostatistical-model
 #| eval: false
 # Linear splines in age with knots at 15 and 40 years, and a nugget
-set.seed(2026)
 fit_malkenya <- glgpm(RDT ~ Age + pmax(Age - 15, 0) +
                         pmax(Age - 40, 0) + elevation +
                         gp(nugget = TRUE),
                       data = malkenya_comm1000,
                       family = "binomial",
+                      seed = 2026,
                       messages = FALSE)
 ```
 
@@ -614,7 +615,7 @@ kenya_phi_se <- sqrt(fit_malkenya$covariance["phi", "phi"])
 kenya_phi_ci <- kenya_pars$phi * exp(c(-1, 1) * qnorm(0.975) * kenya_phi_se)
 ```
 
-The estimated nugget variance, $\hat\tau^2 =$ `r round(kenya_pars$tau2, 2)`, is similar to the spatial variance, $\hat\sigma^2 =$ `r round(kenya_pars$sigma2, 2)`.
+The estimated nugget variance, $\hat\tau^2 =$ `r format(round(kenya_pars$tau2, 2), nsmall = 2)`, is similar to the spatial variance, $\hat\sigma^2 =$ `r format(round(kenya_pars$sigma2, 2), nsmall = 2)`.
 The scale parameter, $\hat\phi =$ `r round(kenya_pars$phi, 1)` km, is estimated imprecisely, with a 95% confidence interval from `r round(kenya_phi_ci[1], 1)` to `r round(kenya_phi_ci[2])` km.
 The data show clear variation between households, but say little about how it is structured in space beyond a few kilometres.
 
@@ -982,7 +983,7 @@ data(anopheles)
 an_fit <- glgpm(An.gambiae ~ elevation + gp(),
                 data = anopheles,
                 family = "poisson",
-                control_mcmc = set_control_mcmc(seed = 2026),
+                seed = 2026,
                 messages = FALSE)
 ```
 
@@ -1062,7 +1063,7 @@ anopheles_upper <- anopheles_area$value[anopheles_area$summary == "upper"]
 
 Of the `r nrow(anopheles_prediction$predictions)` grid locations, `r sum(anopheles_prediction$predictions$suitable == 0)` lie outside the elevation range of the traps and receive zero weight, so the target excludes them.
 @fig-mosq-map shows strong local variation in the expected catch, in line with the short scale of spatial correlation: the estimated scale parameter is `r round(coef(an_fit)$phi, 1)` km, so the practical range is about `r round(log(20) * coef(an_fit)$phi)` km.
-Over the suitable part of the study area, the predicted mean catch per trap is `r round(anopheles_mean, 1)`, with a 95% prediction interval from `r round(anopheles_lower, 1)` to `r round(anopheles_upper, 1)`.
+Over the suitable part of the study area, the predicted mean catch per trap is `r format(round(anopheles_mean, 1), nsmall = 1)`, with a 95% prediction interval from `r format(round(anopheles_lower, 1), nsmall = 1)` to `r format(round(anopheles_upper, 1), nsmall = 1)`.
 This describes trap catches rather than the abundance of mosquitoes, which would also depend on the area each trap samples and on the trap's efficiency.
 
 ## Assessing the predictive performance of geostatistical models with cross-validation {#sec-compare-pp}
