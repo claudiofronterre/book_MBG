@@ -3,7 +3,7 @@
 library(rgee)
 library(geobounds)
 library(terra)
-library(wpgpDownloadR)
+library(RiskMap)
 
 # Liberia administrative boundaries ----------------------------------------
 # -> data/lbr_adm0_geoboundaries.rds
@@ -31,31 +31,18 @@ saveRDS(liberia_admin0, "data/lbr_adm0_geoboundaries.rds")
 saveRDS(liberia_admin1, "data/lbr_adm1_geoboundaries.rds")
 
 # Liberia population from WorldPop ------------------------------------------
-# -> data/lbr_pop_100.tif
+# -> data/lbr_ppp_2014.tif
+#
+# The unconstrained WorldPop counts at 3 arc-seconds (about 100 m), licensed
+# CC BY 4.0. get_worldpop() saves the file as WorldPop distributes it, as in
+# the chunk liberia-wpop of Chapter 2, and skips the download if the file is
+# already there.
 
-worldpop_file <- wpgpGetCountryDataset(ISO3 = "LBR",
-                                       covariate = "ppp_2014",
-                                       destDir = tempdir())
-lbr_pop_100 <- rast(worldpop_file)
+lbr_pop_100 <- get_worldpop("LBR", year = 2014, dest_dir = "data")
 
-if (!"lbr_ppp_2014" %in% names(lbr_pop_100)) {
-  stop("The downloaded WorldPop raster does not contain 'lbr_ppp_2014'.")
+if (!file.exists("data/lbr_ppp_2014.tif")) {
+  stop("get_worldpop() did not save 'data/lbr_ppp_2014.tif'.")
 }
-
-lbr_pop_100 <- lbr_pop_100[["lbr_ppp_2014"]]
-metags(lbr_pop_100) <- c("provider=WorldPop",
-                         "product=Global1 unconstrained population count",
-                         "reference_year=2014",
-                         "units=estimated people per grid cell",
-                         "native_resolution=3 arc-seconds",
-                         "licence=CC BY 4.0",
-                         paste0("retrieved_on=", Sys.Date()))
-
-writeRaster(lbr_pop_100,
-            filename = "data/lbr_pop_100.tif",
-            overwrite = TRUE)
-
-message("Done. File written to data/lbr_pop_100.tif")
 
 # Liberia elevation from Google Earth Engine --------------------------------
 # -> data/lbr_elevation_srtm.tif

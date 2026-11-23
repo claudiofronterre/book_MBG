@@ -1,48 +1,51 @@
-# LOAD REQUIRED PACKAGES AND FUNCTIONS -----------------------------------------
-if (!require("pacman")) install.packages("pacman")
-pkgs = c("sf", "mapview", "RiskMap", "dplyr") # package names
-pacman::p_load(pkgs, character.only = T)
-
 # FIGURES FOR CHAPTER 1 --------------------------------------------------------
+#
+# The interactive maps of Chapter 1, saved as HTML for the website and as PNG
+# for the PDF. mapshot2() needs the webshot2 package and a Chrome browser for
+# the PNG files.
 
-# Figure 1.1
+library(sf)
+library(mapview)
+library(RiskMap)
+library(dplyr)
+
+# Background layers, with the first shown by default. CARTO, the default of
+# mapview, now needs an API key.
+mapviewOptions(basemaps = c("OpenStreetMap", "Esri.WorldImagery",
+                            "OpenTopoMap"))
+
+# Figure 1.1, in EPSG:32629 as distributed
 data("galicia")
-galicia_sf <- st_as_sf(galicia, coords = c("x", "y"), crs = 32629)
-map <- mapview(galicia_sf, zcol = "lead", layer.name = "Lead conc.") 
+map <- mapview(galicia, zcol = "lead", layer.name = "Lead conc.")
 mapshot2(map, file = "figures/galicia_ch1.png")
 mapshot2(map, url = "figures/galicia_ch1.html")
 
-# Figure 1.2
+# Figure 1.2, from a data frame of longitudes and latitudes
 data("liberia")
 liberia_sf <- st_as_sf(liberia, coords = c("long", "lat"), crs = 4326)
 liberia_sf$prev <- liberia_sf$npos / liberia_sf$ntest
-map <- mapview(liberia_sf, zcol = "prev", layer.name = "Prevalence") 
+map <- mapview(liberia_sf, zcol = "prev", layer.name = "Prevalence")
 mapshot2(map, file = "figures/liberia_ch1.png")
 mapshot2(map, url = "figures/liberia_ch1.html")
 
-# Figure 1.3
+# Figure 1.3, prevalence at each household location of the community survey
 data("malkenya")
-
-malkenya_sf <- malkenya |> 
-  filter(Survey == "community") |> 
-  group_by(Long, Lat) |> 
-  summarise(prev = mean(RDT)) |> 
-  st_as_sf(coords = c("Long", "Lat"), crs = 4326)
-
-map <- mapview(malkenya_sf, zcol = "prev", layer.name = "Prevalence") 
+malkenya_prev <- malkenya |>
+  filter(Survey == "community") |>
+  group_by(geometry) |>
+  summarise(prev = mean(RDT))
+map <- mapview(malkenya_prev, zcol = "prev", layer.name = "Prevalence")
 mapshot2(map, file = "figures/malkenya_ch1.png")
 mapshot2(map, url = "figures/malkenya_ch1.html")
 
-# Figure 1.4
+# Figure 1.4, in EPSG:32632 as distributed
 data("anopheles")
-anopheles_sf <- st_as_sf(anopheles, coords = c("web_x", "web_y"), crs = 3857)
-map <- mapview(anopheles_sf, zcol = "An.gambiae", layer.name = "An. gambiae") 
+map <- mapview(anopheles, zcol = "An.gambiae", layer.name = "An. gambiae")
 mapshot2(map, file = "figures/anopheles_ch1.png")
 mapshot2(map, url = "figures/anopheles_ch1.html")
 
-# Figure 1.5
-data(italy_sim)
-italy_sim_sf <- st_as_sf(italy_sim, coords = c("x1", "x2"), crs = 32634)
-map <- mapview(italy_sim_sf, zcol = "y", layer.name = "Outcome") 
+# Figure 1.5, in EPSG:32633 as distributed
+data("italy_sim")
+map <- mapview(italy_sim, zcol = "y", layer.name = "Outcome")
 mapshot2(map, file = "figures/italy_sim_ch1.png")
 mapshot2(map, url = "figures/italy_sim_ch1.html")
