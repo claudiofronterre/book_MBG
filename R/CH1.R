@@ -9,6 +9,11 @@ library(mapview)
 library(RiskMap)
 library(dplyr)
 
+# Background layers, with the first shown by default. CARTO, the default of
+# mapview, now needs an API key.
+mapviewOptions(basemaps = c("OpenStreetMap", "Esri.WorldImagery",
+                            "OpenTopoMap"))
+
 # Figure 1.1, in EPSG:32629 as distributed
 data("galicia")
 map <- mapview(galicia, zcol = "lead", layer.name = "Lead conc.")
