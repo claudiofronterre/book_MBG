@@ -321,7 +321,7 @@ A matching CRS is necessary for overlaying these objects, although it does not b
 
 #### Reprojecting spatial data to a common CRS
 
-If datasets have different CRSs, one or more of them may need to be transformed before they can be overlaid or analysed together. The `st_transform()` function transforms vector coordinates to a specified CRS. To choose a projected CRS for computing distances, RiskMap's `propose_crs()` function compares the UTM zones around the centre of the data with projections centred on the data. It proposes the UTM zone that distorts distances least over the region covered by the data when this distortion is at most 0.5%, and the best centred projection otherwise. For Liberia it proposes UTM zone 29N, returns its EPSG code and reports in a message that it distorts distances by at most 0.05% over the survey locations.
+If datasets have different CRSs, one or more of them may need to be transformed before they can be overlaid or analysed together. The `st_transform()` function transforms vector coordinates to a specified CRS. To choose a projected CRS for computing distances, RiskMap's `propose_crs()` function compares the UTM zones around the centre of the data with projections centred on the data. It proposes the UTM zone that distorts distances least over the region covered by the data when this distortion is at most 0.5%, and the best centred projection otherwise. For Liberia it proposes UTM zone 29N and returns its EPSG code. It also reports in a message, not shown here, that this CRS distorts distances by at most 0.047% over the survey locations.
 
 ```{r}
 #| label: st-transform
@@ -517,7 +517,7 @@ The grid holds almost the whole population. The small difference comes from Worl
 Visualisation is a key part of spatial data analysis because it allows spatial patterns and relationships to be explored and communicated effectively. So far, we have used basic plotting functions for quick inspection. We now introduce the ggplot2 package, which provides a flexible framework for combining geographic data in simple or complex figures. Functions such as `geom_sf()` and `geom_raster()` can display point locations, polygons and continuous raster data.
 
 ::: callout-note
-The results of RiskMap that we meet in later chapters, such as variograms and predictions, have their own `plot()` methods. They return ggplot2 objects, or patchwork objects for figures with several panels, so they can be modified with the functions introduced in this section. Each method has a matching function, such as `plot_variogram()` or `plot_prediction()`, which documents its arguments, and both give the same figure. In this book we write `plot()` for plain calls and the matching function when we set its arguments.
+The results of RiskMap that we meet in later chapters, such as variograms and predictions, have their own `plot()` methods. They return ggplot2 objects, which can be modified with the functions introduced in this section. Figures with several panels are patchwork objects, in which `&` in place of `+` applies a change to every panel. Each method has a matching function, such as `plot_variogram()` or `plot_prediction()`, which documents its arguments, and both give the same figure. In this book we write `plot()` for plain calls and the matching function when we set its arguments.
 :::
 
 ### Visualising point data

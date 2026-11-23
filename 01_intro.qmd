@@ -83,7 +83,7 @@ install.packages("pak")
 pak::pkg_install("claudiofronterre/RiskMap")
 ```
 
-This installs the current development version of RiskMap. Because RiskMap contains C++ code, installing it from GitHub requires [Rtools](https://cran.r-project.org/bin/windows/Rtools/) on Windows and the Xcode command line tools on macOS. Unless you need a feature that has not yet been released, we recommend installing the stable CRAN version described above, as this is the version used and verified throughout this book.
+This installs the current development version of RiskMap. Because RiskMap contains C++ code and links to Fortran libraries, installing it from GitHub requires [Rtools](https://cran.r-project.org/bin/windows/Rtools/) on Windows, and the Xcode command line tools and the GNU Fortran compiler, both described on the [R for macOS tools page](https://mac.r-project.org/tools/), on macOS. Unless you need a feature that has not yet been released, we recommend installing the stable CRAN version described above, as this is the version used and verified throughout this book.
 
 ## Datasets used in the book {#sec-examples-ch1}
 
@@ -255,7 +255,7 @@ where $d(x_i)$ is a vector of spatially referenced covariates with associated re
 
 : Type of outcomes $Y_{i}$ considered in this book. {#tbl-glm}
 
-Based on the formulation in ([-@eq-linear-predictor-ch1]), we can see that $S(x_i)$ quantifies residual spatial effects on $\mu_i$ that have not been accounted for by the covariates $d(x_i)$. In an ideal scenario, the covariates $d(x_i)$ should explain all the spatial variation without the need for $S(x_i)$. Although this is often unrealistic, in practice we may be able to explain most of the variation in $\mu_i$ through $d(x_i)$ and, hence, reduce $S(x_i)$ to a negligible component. In Chapter 2, we will show how a thorough exploratory analysis can help to understand whether we have come close to that ideal scenario or if we need to use a GLGM to model the data. The model described in ([-@eq-linear-predictor-ch1]) can be seen as the most basic GLGM that can be used for a geostatistical analysis. As we will see in the analysis of some of the examples, extensions of this model will be required to accommodate the intrinsic non-spatial random variation of the data which is not captured by the covariates.
+Based on the formulation in ([-@eq-linear-predictor-ch1]), we can see that $S(x_i)$ quantifies residual spatial effects on $\mu_i$ that have not been accounted for by the covariates $d(x_i)$. In an ideal scenario, the covariates $d(x_i)$ should explain all the spatial variation without the need for $S(x_i)$. Although this is often unrealistic, in practice we may be able to explain most of the variation in $\mu_i$ through $d(x_i)$ and, hence, reduce $S(x_i)$ to a negligible component. In @sec-estimation, we will show how a thorough exploratory analysis can help to understand whether we have come close to that ideal scenario or if we need to use a GLGM to model the data. The model described in ([-@eq-linear-predictor-ch1]) can be seen as the most basic GLGM that can be used for a geostatistical analysis. As we will see in the analysis of some of the examples, extensions of this model will be required to accommodate the intrinsic non-spatial random variation of the data which is not captured by the covariates.
 
 Statistical models are typically applied either to make predictions or to model associations that help us understand relationships between variables, whether causal or not. Most geostatistical applications fall into the first category, where the objective is to make predictive inferences about the process $S(x)$ at locations $x$ that are typically outside the set of sampled sites. However, as we will illustrate in later chapters, geostatistical models also play an important role in understanding associations between variables. In particular, we will show that accounting for spatial correlation can substantially affect both the point estimates and standard errors of the regression parameters $\beta$.
 
@@ -372,7 +372,7 @@ Finally, let us consider the correlation functions shown in panel (b) of @fig-ma
 #| echo: false
 #| message: false
 #| label: fig-matern-sim
-#| fig-cap: "Simulated spatial surface using the three correlation functions shown in @fig-matern-func. Panels (a), (b) and (c) correspond to the correlation functions from panel (a) in @fig-matern-func, with (a) $\\phi = 0.05$ and $\\kappa=0.5$, (b) $\\phi=0.1$ and $\\kappa=0.5$, and (c) $\\phi=0.2$ and $\\kappa=0.5$. Panels (d), (e) and (f) correspond to the correlation functions from panel (b) in @fig-matern-func, with (d) $\\phi = 0.1$ and $\\kappa=0.5$, (e) $\\phi=0.063$ and $\\kappa=1.5$, and (f) $\\phi=0.051$ and $\\kappa=2.5$."
+#| fig-cap: "Simulated spatial surface using the six correlation functions shown in @fig-matern-func. Panels (a), (b) and (c) correspond to the correlation functions from panel (a) in @fig-matern-func, with (a) $\\phi = 0.05$ and $\\kappa=0.5$, (b) $\\phi=0.1$ and $\\kappa=0.5$, and (c) $\\phi=0.2$ and $\\kappa=0.5$. Panels (d), (e) and (f) correspond to the correlation functions from panel (b) in @fig-matern-func, with (d) $\\phi = 0.1$ and $\\kappa=0.5$, (e) $\\phi=0.063$ and $\\kappa=1.5$, and (f) $\\phi=0.051$ and $\\kappa=2.5$."
 
 library(terra)
 r_1 <- rast("data/sim_matern_1.tif")
