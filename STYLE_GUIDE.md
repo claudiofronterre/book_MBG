@@ -138,13 +138,17 @@ blank line. This keeps diffs and reviews readable and does not change the
 rendered text. Chapters converted to this layout set `editor: markdown: wrap:
 sentence` in their YAML, so the visual editor preserves it. Build paragraphs
 around one idea, and merge runs of one- or two-sentence paragraphs that
-continue the same point.
+continue the same point. Keep paragraph breaks within a section to a minimum,
+merging consecutive paragraphs where it makes sense.
+
+Avoid semicolons and colons where they are not really needed, semicolons
+especially.
 
 Use one vocabulary for spatial correlation. Call $\phi$ the *scale
 parameter* of the correlation function, never the range or spatial range.
 The *practical range* is the distance at which the correlation falls to 0.05,
-$\log(20)\phi \approx 3\phi$ for the exponential correlation function; for
-other Matérn models report its value. Use the practical range whenever the
+$\log(20)\phi \approx 3\phi$ for the exponential correlation function. For
+other Matérn models, report its value. Use the practical range whenever the
 text means a distance, and "the scale of spatial correlation" for the general
 idea. Keep "range" on its own for non-spatial meanings, such as the observed
 range of a covariate.
