@@ -180,13 +180,13 @@ draw_prediction_workflow <- function() {
              colour = ink, linewidth = 0.55, linetype = "22") +
     annotate("rect", xmin = 3.55, xmax = 3.85, ymin = 10.0, ymax = 10.1,
              fill = NA, colour = ink, linewidth = 0.5) +
-    txt(3.95, 10.25, 'type = "marginal"', 2.55, blue, family = mono,
+    txt(3.95, 10.25, 'joint = FALSE', 2.55, blue, family = mono,
         hjust = 0) +
     txt(3.95, 9.97, "each row (one location) has the\nright distribution", 2.4,
         muted, hjust = 0, vjust = 0.7) +
     annotate("rect", xmin = 3.65, xmax = 3.75, ymin = 9.0, ymax = 9.42,
              fill = NA, colour = ink, linewidth = 0.5, linetype = "22") +
-    txt(3.95, 9.47, 'type = "joint"', 2.55, blue, family = mono,
+    txt(3.95, 9.47, 'joint = TRUE', 2.55, blue, family = mono,
         hjust = 0) +
     txt(3.95, 9.19, "each column (one draw) is also\none possible map", 2.4,
         muted, hjust = 0, vjust = 0.7) +
@@ -320,7 +320,7 @@ saveRDS(liberia_grid, "data/liberia_grid.rds")
 ##    -> data/liberia_prediction.rds
 liberia_prediction <- predict(fit_liberia,
                               newdata = liberia_grid,
-                              type = "marginal",
+                              joint = FALSE,
                               summaries = c("mean", "interval_width",
                                             "cv", "exceedance"),
                               thresholds = 0.2,
@@ -337,14 +337,14 @@ saveRDS(liberia_prediction, "data/liberia_prediction.rds")
 prediction_summaries <- c("mean", "lower", "upper", "interval_width")
 liberia_fixed <- predict(fit_liberia,
                          newdata = liberia_grid,
-                         type = "marginal",
+                         joint = FALSE,
                          summaries = prediction_summaries,
                          level = 0.95,
                          seed = 2026,
                          messages = FALSE)
 liberia_uncertain <- predict(fit_liberia,
                              newdata = liberia_grid,
-                             type = "marginal",
+                             joint = FALSE,
                              summaries = prediction_summaries,
                              level = 0.95,
                              parameter_uncertainty = TRUE,
@@ -396,7 +396,7 @@ kenya_age15 <- predict(fit_malkenya, newdata = kenya_grid,
                        messages = FALSE)
 reference_ages <- data.frame(Age = malkenya_comm1000$Age)
 kenya_standardised <- predict(fit_malkenya, newdata = kenya_grid,
-                              standardize = reference_ages,
+                              standardise = reference_ages,
                               summaries = "mean",
                               seed = 2026,
                               messages = FALSE)
@@ -488,6 +488,20 @@ anopheles_prediction <- predict(an_fit,
                                 messages = FALSE)
 saveRDS(anopheles_prediction, "data/anopheles_prediction.rds")
 
+## 4.3: Anopheles gambiae mean catch with parameter uncertainty
+##    -> data/anopheles_uncertain.rds
+anopheles_uncertain <- predict(an_fit,
+                               newdata = anopheles_grid,
+                               boundaries = anopheles_hull,
+                               aggregate = "mean",
+                               weights = "suitable",
+                               summaries = c("mean", "lower", "upper"),
+                               parameter_uncertainty = TRUE,
+                               parameter_draws = 500,
+                               seed = 2026,
+                               messages = FALSE)
+saveRDS(anopheles_uncertain, "data/anopheles_uncertain.rds")
+
 library(dplyr)
 
 ## ------------------------------------------------------------
@@ -499,12 +513,12 @@ library(dplyr)
 set.seed(123)
 M0_fit <- glgpm(npos ~ gp(),
                 denominator = ntest, data = liberia,
-                model_crs = 32629,
+                distance_crs = 32629,
                 family = "binomial", messages = FALSE)
 
 M1_fit <- glgpm(npos ~ elevation + pmax(elevation - 150, 0) + gp(),
                 denominator = ntest, data = liberia,
-                model_crs = 32629,
+                distance_crs = 32629,
                 family = "binomial", messages = FALSE)
 
 # The default metrics = c("PIT", "CRPS", "SCRPS") computes all three
