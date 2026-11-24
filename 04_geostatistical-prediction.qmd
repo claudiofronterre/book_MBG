@@ -440,7 +440,7 @@ Printing the result counts the locations in each class and states the thresholds
 #| label: assess-liberia-extrapolation
 liberia_extrapolation <- assess_extrapolation(fit_liberia,
                                               newdata = liberia_grid)
-liberia_extrapolation
+print(liberia_extrapolation)
 ```
 
 ```{r}
@@ -1105,7 +1105,25 @@ Of the `r nrow(anopheles_prediction$predictions)` grid locations, `r sum(anophel
 The data cannot tell whether there is spatial correlation at so short a scale or none at all (@sec-check-fit), in part because only `r anopheles_pairs` of the `r format(choose(nrow(an_fit$data), 2), big.mark = ",")` pairs of traps are closer together than the scale.
 The patches around single traps are therefore a consequence of the model, and not evidence of spatial correlation.
 Over the suitable part of the study area, the predicted mean catch per trap is `r area_value(anopheles_prediction, "mean")`, with a 95% prediction interval from `r area_value(anopheles_prediction, "lower")` to `r area_value(anopheles_prediction, "upper")` that treats the parameters as known.
-With `parameter_uncertainty = TRUE` and 500 parameter draws (@sec-pred-parameter-uncertainty), the mean is `r area_value(anopheles_uncertain, "mean")` and the interval runs from `r area_value(anopheles_uncertain, "lower")` to `r area_value(anopheles_uncertain, "upper")`.
+We repeat the prediction, propagating the uncertainty in the parameters as in @sec-pred-parameter-uncertainty, with 500 parameter draws.
+
+```{r}
+#| label: predict-anopheles-uncertainty
+#| eval: false
+# Propagate parameter uncertainty to the mean catch
+anopheles_uncertain <- predict(an_fit,
+                               newdata = anopheles_grid,
+                               boundaries = anopheles_hull,
+                               aggregate = "mean",
+                               weights = "suitable",
+                               summaries = c("mean", "lower", "upper"),
+                               parameter_uncertainty = TRUE,
+                               parameter_draws = 500,
+                               seed = 2026,
+                               messages = FALSE)
+```
+
+With parameter uncertainty, the mean is `r area_value(anopheles_uncertain, "mean")` and the interval runs from `r area_value(anopheles_uncertain, "lower")` to `r area_value(anopheles_uncertain, "upper")`.
 This wider interval is itself approximate, because the scale parameter is poorly determined.
 This describes trap catches rather than the abundance of mosquitoes, which would also depend on the area each trap samples and on the trap's efficiency.
 
@@ -1642,7 +1660,7 @@ grid.arrange(p1, p2, nrow = 2, heights = c(1, 1))
 ```
 
 In the above function, we have used a spatially regularized sampling
-scheme (`method = "clusterized"`), where the locations are at least 20
+scheme (`method = "regularized"`), where the locations are at least 20
 kilometers (`min_dist = 20`) apart from each other to create 10 test
 sets (`iter = 10`) each of size 9 (`size = 9`) which corresponds to
 10% of the original dataset. The results reported in @fig-anpit-reg
@@ -1837,7 +1855,11 @@ diagnostic using the same test sets. The reason we have separated the
 AnPIT and the scores computations is only for pedagogical purposes.
 
 Printing `regularized_scores` and `cluster_scores` gives the average
-score over all test observations, as defined in @eq-average-score.
+score over all test observations, as defined in @eq-average-score. The
+results shown here come from a single run with all three diagnostics, so
+the tables also have the area between the AnPIT curve and the identity
+line (`PIT_area`), and the value that area would have on average if the
+model were perfectly calibrated (`PIT_area_expected`).
 
 ```{r}
 #| label: summarize-liberia-validation-scores
@@ -1868,9 +1890,9 @@ grid.arrange(crps_maps, scrps_maps, nrow = 2)
 In the code above, we evaluated the cross-validation results generated
 using a clustering algorithm to split the original dataset. The map
 reveals that the scores across most locations are generally similar.
-At three villages on the coast near Monrovia both scores are higher,
-and so worse, for $M_1$, while at several others they are lower. This
-suggests a consistent predictive performance across the dataset, with
+Both scores are lower, and so better, for $M_1$ at most villages. They
+are higher at some, including the three villages with the largest
+scores, which lie inland to the east of Monrovia. This suggests a consistent predictive performance across the dataset, with
 some localized variations.
 
 ## Simulation-based assessment of predictive performance
