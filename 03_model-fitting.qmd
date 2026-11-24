@@ -2295,7 +2295,7 @@ an_fit <- glgpm(An.gambiae ~ elevation + gp(),
 ```{r}
 #| label: tbl-anopheles-geostatistical-model
 #| tbl-cap: "Parameter estimates for the Anopheles gambiae Poisson geostatistical model."
-to_table(an_fit, digits = 4)
+to_table(an_fit, digits = 3)
 ```
 
 ```{r}
@@ -2362,8 +2362,9 @@ nearest neighbour is about `r round(nearest_km, 1)` km, more than twice
 the estimate. Only `r close_pairs` of the
 `r format(n_pairs, big.mark = ",")` pairs of locations are within 2 km
 of each other, so the data hold almost no information on scales of 1 to
-2 km. A model with independent location effects, that is, with no
-spatial correlation, fits these data as well as the spatial model
+2 km. The check also reports that the likelihood is not clearly above
+its limit with independent location effects. In other words, a model
+with no spatial correlation fits these data as well as the spatial model
 (@sec-check-fit). The Liberia data of @sec-liberia-estim1 are different.
 The log-likelihood of a model with independent effects is about 5 units
 below that of the spatial model, so those data support spatial
@@ -3124,7 +3125,9 @@ The checks answer the following questions.
 -   **Spatial scale**. Is the estimate of $\phi$ long enough to be
     learned from these data? It is compared with the median distance
     between neighbouring locations, because few pairs of locations are
-    close enough to inform a shorter scale.
+    close enough to inform a shorter scale. The check also says when the
+    likelihood is not clearly above that of a model with independent
+    location effects.
 -   **Importance distribution**. Could the Gaussian approximation of
     @sec-mcml be computed throughout? If not, RiskMap uses a simpler
     approximation, which may need more samples.
