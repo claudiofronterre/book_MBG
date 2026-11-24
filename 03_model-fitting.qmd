@@ -2073,9 +2073,11 @@ in the following examples.
 ### Example: river blindness in Liberia {#sec-liberia-estim1}
 
 In @sec-agg-count-exp, we explored how elevation could be introduced
-into a model for the river blindness data, and in
-@sec-empirical-variog-bin we found evidence of residual spatial
-correlation after accounting for log-transformed elevation. We now
+into a model for the river blindness data. In
+@sec-empirical-variog-bin, the empirical variograms did not reveal a
+clear departure from spatial independence after accounting for
+log-transformed elevation, but this does not establish that residual
+spatial correlation is absent. To investigate it with a model, we now
 replace the independent random effects $Z_i$ of the model in
 @eq-liberia-bin-mixed-elev with a spatial Gaussian process $S(x)$. Let
 $Y_i$ be the number of people who test positive out of the $n_i$
@@ -3080,7 +3082,10 @@ loglik_error <- function(x) {
 }
 liberia_error <- loglik_error(liberia_weights)
 an_error <- loglik_error(an_weights)
-stopifnot(2 * liberia_error < 0.01, abs(an_limit) < 2 * an_error)
+an_screen_run <- check_data(an_checks,
+                            "Other maxima")[["Screen of short scales"]]
+stopifnot(2 * liberia_error < 0.01, abs(an_limit) < 2 * an_error,
+          round(-liberia_limit) == 5, an_screen_run == "not run")
 stopifnot(is.numeric(liberia_limit), is.numeric(an_limit),
           is.numeric(liberia_weights[["Effective draws"]]))
 ```
@@ -3108,11 +3113,14 @@ The checks answer the following questions.
 -   **Other maxima**. Is the estimate at the highest point of the
     likelihood? RiskMap looks for higher maxima as described above.
     Finding none is reassuring, but it does not prove that none exists.
--   **Variances**. Was a variance estimated as zero? If so, RiskMap
-    checks whether the likelihood falls as the variance moves away from
-    zero. If it does, as for the nugget of @sec-liberia-nugget, zero is
-    the estimate. If it rises, the fit has stopped
-    in the wrong place, and if the samples cannot tell, RiskMap says so.
+-   **Variances**. Was a variance estimated as zero? If it is the
+    variance of the nugget or of a `re()` term, RiskMap checks whether
+    the likelihood falls as the variance moves away from zero. If it
+    does, as for the nugget of @sec-liberia-nugget, zero is the
+    estimate. If it rises, the fit has stopped in the wrong place, and
+    if the samples cannot tell, RiskMap says so. If $\sigma^2$ is
+    estimated as zero, $\phi$ cannot be estimated, and the check is
+    marked with a cross.
 -   **Spatial scale**. Is the estimate of $\phi$ long enough to be
     learned from these data? It is compared with the median distance
     between neighbouring locations, because few pairs of locations are
@@ -3135,7 +3143,7 @@ panel that needs explaining is the one named `"screen"`, shown in
 #| fig-width: 8
 #| fig-asp: 0.5
 #| out-width: "100%"
-#| fig-cap: "Log-likelihood at short spatial scales, relative to that of the estimate (open circle, at zero), for (a) the Liberia model and (b) the *An. gambiae* model. The black lines show a lower bound that can be computed exactly, and the blue line, in (a) only, a Monte Carlo approximation. The dotted lines show the log-likelihood of a model with independent location effects."
+#| fig-cap: "Log-likelihood at short spatial scales, relative to that of the estimate (open circle, at zero), for (a) the Liberia model and (b) the *An. gambiae* model. The black lines show a lower bound that can be computed exactly, and the blue line, in (a) only, a Monte Carlo approximation. The dashed line in (a) is 0.25 below the estimate. The dotted lines show the log-likelihood of a model with independent location effects. The vertical axes are cut, so the black lines leave the panels where the bound is far below the estimate."
 liberia_screen <- plot_check(liberia_checks, which = "screen")
 an_screen <- plot_check(check_fit(an_fit), which = "screen")
 
@@ -3143,15 +3151,22 @@ liberia_screen + an_screen +
   plot_annotation(tag_levels = "a", tag_prefix = "(", tag_suffix = ")")
 ```
 
-Each panel asks whether a shorter scale of spatial correlation would fit
-the data as well as the estimate does. The horizontal axis gives the
-scale, and the vertical axis the log-likelihood minus that of the
-estimate, so points below zero fit worse. If the blue line came above
-the dashed line, RiskMap would repeat the fit from the best of those
-scales. If the black line came clearly above zero, the estimate could
-not be the maximum likelihood estimate. The dotted line is the limit of
-the log-likelihood as $\phi$ approaches zero, when the effects of
-different locations become independent and there is no spatial
+The panels help to see whether a shorter scale of spatial correlation
+would fit the data as well as the estimate does. The horizontal axis
+gives the scale, and the vertical axis the log-likelihood minus that of
+the estimate. The blue line approximates the log-likelihood at four
+short scales, so its points below zero fit worse than the estimate. If
+it came above the dashed line, RiskMap would repeat the fit from the
+best of those scales. There is no blue or dashed line in panel (b),
+because the estimate of $\phi$ is short compared with the distances
+between neighbouring locations and RiskMap then refits the model from
+dispersed starting values instead (@sec-mcml). The black line is only a
+lower bound, so the log-likelihood can be much higher than the line. A
+point of the black line below zero therefore tells us nothing about the
+fit at that scale, but if one were clearly above zero, the estimate
+could not be the maximum likelihood estimate. The dotted line is the
+limit of the log-likelihood as $\phi$ approaches zero, when the effects
+of different locations become independent and there is no spatial
 correlation.
 
 The log-likelihood of the spatial model is a Monte Carlo approximation,
@@ -3170,17 +3185,17 @@ of a model with independent location effects needs no Monte Carlo. Its
 likelihood is a product of one-dimensional integrals, one for each
 location, which are computed numerically with negligible error.
 
-In panel (a), all the short scales fit worse than the estimate, and the
-dotted line is `r round(-liberia_limit, 1)` units below it, a difference
-far larger than the Monte Carlo standard error. The Liberia data
-therefore favour a model with spatial correlation, although the
-empirical variograms of @fig-liberia-variog did not reveal it. In panel
-(b), the dotted line is practically at zero, at `r round(an_limit, 2)`,
-which is of the size of the Monte Carlo standard error. A model with
-independent location effects fits the *An. gambiae* data as well as the
-spatial model. These data cannot tell whether there is spatial
-correlation at a short scale or none at all, so the estimate of $\phi$
-in @sec-anopheles-fit should be read with caution.
+In panel (a), the blue line shows that the short scales fit worse than
+the estimate, and the dotted line is `r round(-liberia_limit, 1)` units
+below it, a difference far larger than the Monte Carlo standard error.
+The Liberia data therefore favour a model with spatial correlation,
+although the empirical variograms of @fig-liberia-variog did not reveal
+it. In panel (b), the dotted line is practically at zero, at
+`r round(an_limit, 2)`, which is of the size of the Monte Carlo standard
+error. A model with independent location effects fits the *An. gambiae*
+data as well as the spatial model. These data cannot tell whether there
+is spatial correlation at a short scale or none at all, so the estimate
+of $\phi$ in @sec-anopheles-fit should be read with caution.
 
 Checks that take computing time run only when the `extra` argument names
 them. For example, `check_fit(an_fit, extra = "profile")` adds the
@@ -3395,8 +3410,10 @@ print(liberia_parameters)
 
 The column `flat` gives the names used by `profile()` and
 `parametric_bootstrap()`, and the last line of the output is a template
-for `start_pars`. The column `start` gives the rule for the starting
-value of each parameter that is not supplied, as follows.
+for `start_pars`. The column `held` gives the values of any parameters
+that the model holds fixed, here none. The column `start` gives the rule
+for the starting value of each parameter that is not supplied, as
+follows.
 
 -   The initial guess for the regression coefficients $\beta$ is set to
     the maximum likelihood estimates obtained from a standard
@@ -3556,7 +3573,7 @@ fixed-effects design matrix $D$.
     Poisson), bounded counts (e.g. Binomial) and binary outcomes.
 -   Define the theoretical and empirical variogram, making appropriate
     use of equations.
--   How do we use the empirical variogram to test for spatial
+-   How do we use the empirical variogram to explore residual spatial
     correlation? What are the limitations of this approach?
 -   Define the class of generalized linear geostatistical models and
     list all the assumptions.
