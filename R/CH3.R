@@ -70,7 +70,7 @@ for (i in seq_len(n_kappa)) {
   fit_galicia_list[[i]] <- glgpm(formula_i,
                                  data = galicia, family = "gaussian",
                                  distance_units = "km", messages = FALSE)
-  llik_values[i] <- fit_galicia_list[[i]]$log_lik
+  llik_values[i] <- logLik(fit_galicia_list[[i]])
   sigma2_me_hat[i] <- coef(fit_galicia_list[[i]])$sigma2_me
 }
 
@@ -119,7 +119,7 @@ liberia <- st_as_sf(liberia, coords = c("long", "lat"), crs = 4326)
 ##         throughout Sec. "Example: river-blindness in Liberia"
 fit_liberia <- glgpm(npos ~ log(elevation) + gp(),
                      denominator = ntest, data = liberia,
-                     model_crs = 32629,
+                     distance_crs = 32629,
                      seed = 2026,
                      return_samples = TRUE,
                      family = "binomial")
@@ -134,7 +134,7 @@ start_liberia$tau2 <- 0.1
 
 fit_liberia_nugget <- glgpm(npos ~ log(elevation) + gp(nugget = TRUE),
                             denominator = ntest, data = liberia,
-                            model_crs = 32629,
+                            distance_crs = 32629,
                             start_pars = start_liberia,
                             seed = 2026,
                             return_samples = FALSE,
@@ -148,7 +148,8 @@ saveRDS(fit_liberia_nugget, file = "data/fit_liberia_nugget.rds")
 ##    -> data/liberia_profile.rds (object: liberia_profile)
 ## ------------------------------------------------------------
 liberia_profile <- profile(fit_liberia,
-                           pairs = list(c("sigma2", "phi")))
+                           pairs = list(c("sigma2", "phi")),
+                           seed = 1)
 
 saveRDS(liberia_profile, file = "data/liberia_profile.rds")
 
