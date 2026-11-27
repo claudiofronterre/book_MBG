@@ -22,8 +22,8 @@ editor_options:
 | `plot_variogram()` | *RiskMap* | Plotting an empirical variogram and its global envelope |
 | `summarise_distance()` | *RiskMap* | Summarising distances between sampling locations |
 | `to_table()` | *RiskMap* | Formatting model estimates as a table |
-| `check_fit()` | *RiskMap* | Checking how a model was fitted |
-| `plot_check()` | *RiskMap* | Plotting the checks of a fitted model |
+| `check_computation()` | *RiskMap* | Checking how the fit of a model was computed |
+| `plot_computation()` | *RiskMap* | Plotting the checks on the computation of a fit |
 | `set_control_mcmc()` | *RiskMap* | Configuring Markov chain Monte Carlo settings |
 | `set_control_mcml()` | *RiskMap* | Configuring Monte Carlo maximum likelihood estimation |
 | `plot_mcmc()` | *RiskMap* | Checking Markov chain Monte Carlo output |
@@ -2202,15 +2202,15 @@ In @tbl-liberia-nugget-model, the estimate of $\tau^2$ is practically
 zero, below $10^{`r ceiling(log10(coef(fit_liberia_nugget)$tau2))`}$.
 The likelihood is maximised at the boundary $\tau^2 = 0$, so the nugget
 effect cannot be distinguished from zero with these data, as the checks
-of `check_fit(fit_liberia_nugget)` also report. RiskMap does not report
-a standard error for an estimate on the boundary, so the table gives no
-confidence interval for $\tau^2$. The estimates of the other parameters
-are practically the same as in @tbl-liberia-geostatistical-model, for
-example `r round(coef(fit_liberia_nugget)$phi, 1)` km for $\phi$,
-against `r round(coef(fit_liberia)$phi, 1)` km. This supports the
-simpler model without the nugget effect. Here we set
-`return_samples = FALSE`, because we do not use the MCMC samples of
-this model.
+of `check_computation(fit_liberia_nugget)` also report. RiskMap does not
+report a standard error for an estimate on the boundary, so the table
+gives no confidence interval for $\tau^2$. The estimates of the other
+parameters are practically the same as in
+@tbl-liberia-geostatistical-model, for example
+`r round(coef(fit_liberia_nugget)$phi, 1)` km for $\phi$, against
+`r round(coef(fit_liberia)$phi, 1)` km. This supports the simpler model
+without the nugget effect. Here we set `return_samples = FALSE`, because
+we do not use the MCMC samples of this model.
 
 #### Checking the MCMC samples {#sec-liberia-mcmc}
 
@@ -2337,11 +2337,11 @@ minimum is about 383 metres. The estimate of $\phi$,
 about `r round(log(20) * coef(an_fit)$phi, 1)` km, which is small
 compared to the distances between locations in the data. The
 `summary()` of the fit reports that one of the checks on the fit needs
-attention, and the `check_fit()` function describes the checks.
+attention, and the `check_computation()` function describes the checks.
 
 ```{r}
 #| label: check-anopheles-fit
-check_fit(an_fit)
+check_computation(an_fit)
 ```
 
 ```{r}
@@ -3051,25 +3051,26 @@ from the first one found.
 #### Checking a fit {#sec-check-fit}
 
 The certificate tells us that the Monte Carlo error is small. Other
-things can go wrong when a model is fitted, and the `check_fit()`
-function looks for them. All its checks concern the computation of the
-estimates, and not whether the model suits the data. A check marked with
-a tick needs no action. An exclamation mark means that the computation
-is valid but that the result needs care, and a cross that the estimates,
-or their certificate, should not be relied on as they stand. The checks
-that need attention come first, each with a suggestion after an arrow.
-We use the Liberia model of @sec-liberia-estim1 as an example.
+things can go wrong when a model is fitted, and the
+`check_computation()` function looks for them. All its checks concern
+the computation of the estimates, and not whether the model suits the
+data. A check marked with a tick needs no action. An exclamation mark
+means that the computation is valid but that the result needs care, and
+a cross that the estimates, or their certificate, should not be relied
+on as they stand. The checks that need attention come first, each with a
+suggestion after an arrow. We use the Liberia model of
+@sec-liberia-estim1 as an example.
 
 ```{r}
 #| label: check-liberia-fit
-liberia_checks <- check_fit(fit_liberia)
+liberia_checks <- check_computation(fit_liberia)
 liberia_checks
 ```
 
 ```{r}
 #| label: check-fit-text
 #| echo: false
-an_checks <- check_fit(an_fit)
+an_checks <- check_computation(an_fit)
 check_data <- function(x, check) x$results[[check]]$data
 liberia_weights <- check_data(liberia_checks, "Importance weights")
 an_weights <- check_data(an_checks, "Importance weights")
@@ -3133,13 +3134,13 @@ The checks answer the following questions.
     approximation, which may need more samples.
 
 The numbers behind each answer are given by `summary(liberia_checks)`,
-and `plot_check()` draws them. Most of its panels show how a quantity,
-such as the certificate or the effective draws, changes from one stage
-of the fit to the next, with its limit, if it has one, as a dashed
-line. Our two models
-needed a single stage, so those panels would contain one point each. The
-panel that needs explaining is the one named `"screen"`, shown in
-@fig-check-screen for the Liberia and *An. gambiae* models.
+and `plot_computation()` draws them. Most of its panels show how a
+quantity, such as the certificate or the effective draws, changes from
+one stage of the fit to the next, with its limit, if it has one, as a
+dashed line. Our two models needed a single stage, so those panels would
+contain one point each. The panel that needs explaining is the one
+named `"screen"`, shown in @fig-check-screen for the Liberia and
+*An. gambiae* models.
 
 ```{r}
 #| label: fig-check-screen
@@ -3147,8 +3148,8 @@ panel that needs explaining is the one named `"screen"`, shown in
 #| fig-asp: 0.5
 #| out-width: "100%"
 #| fig-cap: "Log-likelihood at short spatial scales, relative to that of the estimate (open circle, at zero), for (a) the Liberia model and (b) the *An. gambiae* model. The black lines show a lower bound that can be computed exactly, and the blue line, in (a) only, a Monte Carlo approximation. The dashed line in (a) is 0.25 below the estimate. The dotted lines show the log-likelihood of a model with independent location effects. The vertical axes are cut, so the black lines leave the panels where the bound is far below the estimate."
-liberia_screen <- plot_check(liberia_checks, which = "screen")
-an_screen <- plot_check(check_fit(an_fit), which = "screen")
+liberia_screen <- plot_computation(liberia_checks, which = "screen")
+an_screen <- plot_computation(check_computation(an_fit), which = "screen")
 
 liberia_screen + an_screen +
   plot_annotation(tag_levels = "a", tag_prefix = "(", tag_suffix = ")")
@@ -3201,9 +3202,12 @@ is spatial correlation at a short scale or none at all, so the estimate
 of $\phi$ in @sec-anopheles-fit should be read with caution.
 
 Checks that take computing time run only when the `extra` argument names
-them. For example, `check_fit(an_fit, extra = "profile")` adds the
-profile likelihoods of the covariance parameters, which show whether the
-data determine them.
+them. For example, `check_computation(an_fit, extra = "profile")` adds
+the profile likelihoods of the covariance parameters, which show whether
+the data determine them. Other questions about a model, such as whether
+it could have produced the data or how well it predicts, are answered by
+other functions of RiskMap, which we use in @sec-compare-pp. The help
+page `?assessment` says which function answers which question.
 
 #### Markov chain Monte Carlo: sampling from the predictive distribution of the spatial Gaussian process {#sec-mcmc-mala}
 
