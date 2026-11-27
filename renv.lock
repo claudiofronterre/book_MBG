@@ -583,8 +583,6 @@
         "ggspatial",
         "jsonlite",
         "RhpcBLASctl",
-        "spatialEco",
-        "spatialsample",
         "testthat (>= 3.0.0)",
         "withr"
       ],
@@ -600,8 +598,8 @@
       "RemoteHost": "api.github.com",
       "RemoteUsername": "claudiofronterre",
       "RemoteRepo": "RiskMap",
-      "RemoteRef": "ef96403c555872e071cbc963c41f25f7e7bb3f92",
-      "RemoteSha": "ef96403c555872e071cbc963c41f25f7e7bb3f92"
+      "RemoteRef": "48f9241e643f98d10f122c99d1a9b1021dbf1cf6",
+      "RemoteSha": "48f9241e643f98d10f122c99d1a9b1021dbf1cf6"
     },
     "S7": {
       "Package": "S7",
