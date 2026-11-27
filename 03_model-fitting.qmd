@@ -3149,7 +3149,7 @@ named `"screen"`, shown in @fig-check-screen for the Liberia and
 #| out-width: "100%"
 #| fig-cap: "Log-likelihood at short spatial scales, relative to that of the estimate (open circle, at zero), for (a) the Liberia model and (b) the *An. gambiae* model. The black lines show a lower bound that can be computed exactly, and the blue line, in (a) only, a Monte Carlo approximation. The dashed line in (a) is 0.25 below the estimate. The dotted lines show the log-likelihood of a model with independent location effects. The vertical axes are cut, so the black lines leave the panels where the bound is far below the estimate."
 liberia_screen <- plot_computation(liberia_checks, which = "screen")
-an_screen <- plot_computation(an_checks, which = "screen")
+an_screen <- plot_computation(check_computation(an_fit), which = "screen")
 
 liberia_screen + an_screen +
   plot_annotation(tag_levels = "a", tag_prefix = "(", tag_suffix = ")")
